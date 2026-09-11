@@ -1,0 +1,35 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Live Track Aircraft",
+        "description": "Aircraft within the radius appear on the map as they arrive and depart on their own. Centred on your Home Assistant location.",
+        "data": {
+          "radius_km": "Radius (km)",
+          "scan_interval": "Update interval (seconds)",
+          "max_aircraft": "Maximum aircraft published"
+        },
+        "data_description": {
+          "radius_km": "How far out counts as overhead.",
+          "scan_interval": "The sources rate-limit below 15 seconds.",
+          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Aircraft are already tracked for this location and radius."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Live Track Aircraft",
+        "data": {
+          "radius_km": "Radius (km)",
+          "scan_interval": "Update interval (seconds)",
+          "max_aircraft": "Maximum aircraft published"
+        }
+      }
+    }
+  }
+}
