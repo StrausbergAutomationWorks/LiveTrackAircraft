@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+__MACOSX/
+
+# Never commit collected or cached data. The route artifact and the FAA
+# registry caches are built on the user's machine and live in HA's .storage;
+# nothing derived from them belongs in this repository.
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.zip
+routes*.json
+routes*.json.gz
