@@ -6,6 +6,7 @@ Contract: 10_SEED/05_SHARED_LESSONS.md section D.
 from __future__ import annotations
 
 import logging
+import re
 import time
 from datetime import timedelta
 from typing import Any
@@ -30,6 +31,12 @@ from .const import (
 )
 from .sources.adsb import fetch
 from .sources.base import Observation, SourceError
+from . import icons
+from .aircraft import classify, describe_aircraft, lookup_manufacturer
+from .airlines import lookup_operator
+from .registrations import lookup_government, lookup_owner, prettify_owner
+from .routes import RouteStore
+from .web import picture_url
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -77,6 +84,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
 
         self._consecutive_failures = 0
         self._last_good: dict[str, Any] | None = None
+
+        # The shared route artifact. Absent or stale means no route fields
+        # and nothing else changes - see routes.py.
+        self.routes = RouteStore(hass)
 
     async def _async_update_data(self) -> dict[str, Any]:
         now = time.time()
@@ -183,18 +194,12 @@ class AircraftCoordinator(DataUpdateCoordinator):
             "observed_at": latest[2],
             "last_seen": latest[2],
             "distance_km": metres / 1000,
-            # ! callsign -> type code -> hex, and NEVER blank. Measured
-            # 2026-09-10: 9.5% of aircraft in a poll carried no callsign, and
-            # that was ordinary ADS-B traffic between transmissions. One
-            # marker in ten would otherwise be an unlabelled dot.
-            "marker_label": obs.callsign or obs.type_code or obs.identity.upper(),
         }
 
         # Absent values are OMITTED, never sentinels (D0): a wrong value is
         # worse than a missing one because the consumer cannot tell.
         for key, value in (
             ("callsign", obs.callsign),
-            ("type_code", obs.type_code),
             ("registration", obs.registration),
             ("emitter_category", obs.emitter_category),
             ("squawk", obs.squawk),
@@ -202,13 +207,27 @@ class AircraftCoordinator(DataUpdateCoordinator):
             ("speed_kmh", obs.speed_kmh),
             ("vertical_rate_ms", obs.vertical_rate_ms),
             # ! Two different fields. heading_deg is where it POINTS and is
-            # present on about a quarter of records; course_deg is where it
-            # is GOING. This is the first integration here with both.
+            # measured at roughly 1% of AIRBORNE aircraft - it is a ground
+            # field. course_deg is where it is GOING.
             ("heading_deg", obs.heading_deg),
             ("course_deg", obs.course_deg),
         ):
             if value is not None:
                 rec[key] = value
+
+        rec.update(self._describe(obs))
+
+        # ! THE MARKER LABEL IS DECIDED LAST, because it depends on what the
+        # lookups returned. The map renders this attribute and nothing else.
+        rec["marker_label"] = _marker_label(obs, rec)
+
+        # --- route ------------------------------------------------------
+        # ! Read from the shared artifact, never resolved live. No artifact
+        # means no route keys at all - the aircraft is still tracked.
+        route = self.routes.lookup(obs.callsign)
+        if route:
+            rec.update(route)
+            rec["route_source"] = "saw_filed_routes"
 
         # ! previous_* let the map INTERPOLATE between two MEASURED fixes.
         # There is no max_extrapolation_s here and that is deliberate: this
@@ -226,3 +245,185 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 rec["segment_duration_s"] = segment
 
         return rec
+
+    # ------------------------------------------------------------------
+    # Enrichment. Nothing in the ADS-B feed names an aircraft or an
+    # operator: `r` is an N-number and `t` is a four-letter designator.
+    # ! A watcher gets nothing from "N746SK". These lookups are the whole
+    # difference between a dot and "SkyWest CRJ-700".
+    #
+    # ! ALL FOUR MODULES ARE LIFTED VERBATIM and every one degrades to None
+    # on any failure path, so enrichment can never break tracking.
+    # ------------------------------------------------------------------
+    @staticmethod
+    def _describe(obs: Observation) -> dict[str, Any]:
+        out: dict[str, Any] = {}
+
+        # --- type -------------------------------------------------------
+        if obs.type_code:
+            out["aircraft_type"] = obs.type_code
+            name = describe_aircraft(obs.type_code)
+            if name:
+                out["aircraft_name"] = name
+            maker = lookup_manufacturer(obs.type_code)
+            if maker:
+                out["aircraft_manufacturer"] = maker
+
+        # --- what KIND of aircraft, and what to draw --------------------
+        # ! From emitter_category, which the feed supplies on effectively
+        # every aircraft. A7 is rotorcraft, and this integration is called
+        # Aircraft precisely because rotorcraft are not an edge case here.
+        icon_category, category_label, icon = classify(
+            obs.emitter_category, obs.type_code)
+        out["icon_category"] = icon_category
+        out["category_label"] = category_label
+        out["icon"] = icon
+
+        # --- the marker silhouette, pointing where it is going ----------
+        # ! ROTATE BY HEADING, FALL BACK TO COURSE - 05_SHARED_LESSONS D2.
+        # heading_deg is where the aircraft POINTS and course_deg is where it
+        # is GOING; in still air they agree and in a crosswind they do not.
+        # Measured 2026-09-11, heading is a GROUND field here: present on
+        # roughly 1% of AIRBORNE aircraft, so course does nearly all the work
+        # - which is exactly what D2 calls the documented fallback.
+        key = icons.pick(obs.emitter_category, obs.type_code, icon_category)
+        bearing = obs.heading_deg if obs.heading_deg is not None else obs.course_deg
+        rotatable = icons.is_rotatable(key)
+        angle = icons.quantise(bearing) if rotatable else None
+
+        out["icon_rotatable"] = rotatable
+        if angle is not None:
+            out["icon_rotation_deg"] = angle
+            out["icon_rotation_basis"] = (
+                "heading" if obs.heading_deg is not None else "course")
+        out["entity_picture"] = picture_url(key, angle)
+
+        # --- operator ---------------------------------------------------
+        # ("UAL", "United Airlines") a known airline
+        # ("ZZZ", None)              looks like a designator, not in the table
+        # (None,  "Private")         flying under a US registration
+        # (None,  None)              no usable callsign
+        operator_code, operator = lookup_operator(obs.callsign)
+        if operator_code:
+            out["operator_code"] = operator_code
+        if operator:
+            out["operator"] = operator
+
+        # --- government -------------------------------------------------
+        # ! The single strongest reason the table exists: police, fire and
+        # air-ambulance rotorcraft read "Private" without it.
+        #
+        # ! The returned keys are registration / operator / operator_category
+        # / operator_state, and `operator` is ALREADY prettified by the
+        # registry. Written first against owner/name/category, which exist
+        # nowhere in this module - it would have produced no government names
+        # at all, silently, because every miss degrades to None.
+        gov = lookup_government(obs.identity)
+        if gov:
+            out["is_government"] = True
+            if gov.get("operator"):
+                # A real airline designator still wins; this beats a
+                # registry title holder.
+                out["operator"] = out.get("operator") or gov["operator"]
+                out["operator_name_source"] = "government"
+            if gov.get("operator_category"):
+                out["operator_category"] = gov["operator_category"]
+            if gov.get("operator_state"):
+                out["operator_state"] = gov["operator_state"]
+            if gov.get("registration") and not out.get("registration"):
+                out["registration"] = gov["registration"]
+        else:
+            out["is_government"] = False
+
+        # --- registered owner -------------------------------------------
+        # ! THE TITLE HOLDER, NOT THE OPERATOR. N964AV is "Avianca" to
+        # adsbdb and "Bank of Utah Trustee" to the FAA, so this must never
+        # displace a real operator name - it is the fallback that always
+        # works. Order: airline designator -> government table -> registry.
+        if not out.get("operator") or out.get("operator") == "Private":
+            owner = lookup_owner(obs.identity)
+            if owner:
+                name = owner.get("owner") if isinstance(owner, dict) else owner
+                if name:
+                    out["operator"] = prettify_owner(name)
+                    out["operator_name_source"] = "registry"
+                if isinstance(owner, dict) and owner.get("category"):
+                    out.setdefault("operator_category", owner["category"])
+
+        # --- climb ------------------------------------------------------
+        # Derived, not measured: a label for a rate we already publish.
+        if obs.vertical_rate_ms is not None:
+            if obs.vertical_rate_ms > 0.5:
+                out["climb_status"] = "climbing"
+            elif obs.vertical_rate_ms < -0.5:
+                out["climb_status"] = "descending"
+            else:
+                out["climb_status"] = "level"
+
+        return out
+
+
+# --------------------------------------------------------------------------
+# The marker label.
+#
+# ! THIS ATTRIBUTE IS THE ENTIRE MAP DISPLAY. auto-entities renders
+# marker_label beside each marker at size 28 and nothing else, so it is a
+# short answer to "what is that", not a description.
+#
+# ! THE RULE CHANGED 2026-09-11, and the reason is worth keeping. It was
+# callsign -> type code -> hex, decided when phase 1 had no operator lookup at
+# all. With enrichment in, the callsign is the BEST label for an airliner and
+# the WORST for general aviation: measured on 68 live aircraft, 25 markers -
+# 36.8% - read as a bare N-number while ALL 25 held an operator name, 21 of
+# them from the registry. The map was showing tail numbers while "Lewis
+# University" sat one tap away.
+#
+# ! An airline callsign IS the identity. AAL1782 is exactly what belongs on
+# that marker. A registration is not an identity to a watcher - nobody
+# recognises N674MA, and everybody recognises the flight school.
+# --------------------------------------------------------------------------
+
+# A callsign that is really a registration: US N-numbers, and the common
+# foreign hyphenated forms (C-GEPW, G-ABCD, D-EFGH).
+_LOOKS_LIKE_REGISTRATION = re.compile(
+    r"^(N\d[A-Z0-9]*|[A-Z]{1,2}-[A-Z0-9]{3,5})$")
+
+# Long enough to be useful, short enough for a busy map.
+MAX_LABEL_CHARS = 22
+
+
+def _marker_label(obs: Observation, rec: dict[str, Any]) -> str:
+    """Never blank. Measured 2026-09-10: 9.5% of aircraft carry no callsign."""
+    callsign = (obs.callsign or "").strip()
+
+    if callsign and not _LOOKS_LIKE_REGISTRATION.match(callsign.upper()):
+        # An airline or military callsign. This is the identity.
+        return callsign
+
+    # A registration, or nothing at all. Say something a watcher can use.
+    operator = rec.get("operator")
+    if operator and operator != "Private":
+        return _shorten(operator)
+
+    name = rec.get("aircraft_name")
+    if name:
+        return _shorten(name)
+
+    # ! The tail number is the LAST resort, not the first - and the hex
+    # behind it, so a marker is never unlabelled.
+    return callsign or obs.type_code or obs.identity.upper()
+
+
+def _shorten(text: str) -> str:
+    """Trim a company name to something a 28px label can carry."""
+    out = text.strip()
+    if len(out) <= MAX_LABEL_CHARS:
+        return out
+    # Drop a trailing corporate form before truncating mid-word.
+    for tail in (" Llc", " Inc", " Corp", " Co", " Ltd", " Trustee", " Trust"):
+        if out.endswith(tail):
+            out = out[: -len(tail)].rstrip()
+            break
+    if len(out) <= MAX_LABEL_CHARS:
+        return out
+    return out[: MAX_LABEL_CHARS - 1].rstrip() + "\u2026"

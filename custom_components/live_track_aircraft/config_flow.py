@@ -29,9 +29,35 @@ from .const import (
 )
 
 
-def _schema(defaults: dict[str, Any]) -> vol.Schema:
+def _title(cfg: dict[str, Any]) -> str:
+    """What the integration card shows: where, and how far.
+
+    e.g. "39.817, -84.050 - 56 km". Four decimal places is about 11 m, which
+    is more than a radius of kilometres needs; three is about 110 m and reads
+    without clutter.
+    """
+    return "%.3f, %.3f - %.0f km" % (
+        float(cfg[CONF_LATITUDE]), float(cfg[CONF_LONGITUDE]),
+        float(cfg[CONF_RADIUS_KM]))
+
+
+def _schema(defaults: dict[str, Any], hass) -> vol.Schema:
+    # ! THE CENTRE IS THE USER'S CHOICE, NOT THE INSTANCE'S LOCATION.
+    # It defaults to Home Assistant's own coordinates because that is what
+    # most people want, but it is a FIELD, not an assumption. Somebody in
+    # Germany may well want to watch O'Hare, and an integration that reads
+    # hass.config and never asks makes that impossible. Added 2026-09-11
+    # after exactly that was pointed out.
     return vol.Schema(
         {
+            vol.Required(
+                CONF_LATITUDE,
+                default=defaults.get(CONF_LATITUDE, hass.config.latitude),
+            ): vol.All(vol.Coerce(float), vol.Range(min=-90, max=90)),
+            vol.Required(
+                CONF_LONGITUDE,
+                default=defaults.get(CONF_LONGITUDE, hass.config.longitude),
+            ): vol.All(vol.Coerce(float), vol.Range(min=-180, max=180)),
             vol.Required(
                 CONF_RADIUS_KM, default=defaults.get(CONF_RADIUS_KM, DEFAULT_RADIUS_KM)
             ): vol.All(vol.Coerce(float), vol.Range(min=MIN_RADIUS_KM, max=MAX_RADIUS_KM)),
@@ -66,22 +92,24 @@ class LiveTrackAircraftConfigFlow(ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         if user_input is not None:
-            latitude = self.hass.config.latitude
-            longitude = self.hass.config.longitude
-            # One entry per centre and radius, matching the fork's shape.
+            # One entry per centre and radius.
             await self.async_set_unique_id(
-                f"{latitude:.4f}_{longitude:.4f}_{user_input[CONF_RADIUS_KM]}"
+                "%.4f_%.4f_%s" % (user_input[CONF_LATITUDE],
+                                  user_input[CONF_LONGITUDE],
+                                  user_input[CONF_RADIUS_KM])
             )
             self._abort_if_unique_id_configured()
             return self.async_create_entry(
-                title=f"Aircraft within {user_input[CONF_RADIUS_KM]:.0f} km",
-                data={
-                    CONF_LATITUDE: latitude,
-                    CONF_LONGITUDE: longitude,
-                    **user_input,
-                },
+                # ! The title IS the integration card. It carries the three
+                # things that distinguish one entry from another - where,
+                # how far, and therefore what you are watching. "Aircraft
+                # within 56 km" said nothing about WHERE, which matters now
+                # that the centre is a free choice anywhere on earth.
+                title=_title(user_input),
+                data=user_input,
             )
-        return self.async_show_form(step_id="user", data_schema=_schema({}))
+        return self.async_show_form(
+            step_id="user", data_schema=_schema({}, self.hass))
 
     @staticmethod
     @callback
@@ -90,7 +118,7 @@ class LiveTrackAircraftConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class LiveTrackAircraftOptionsFlow(OptionsFlow):
-    """Allow radius, interval and cap to be changed after setup."""
+    """Allow the centre, radius, interval and cap to be changed after setup."""
 
     def __init__(self, entry: ConfigEntry) -> None:
         self._entry = entry
@@ -99,8 +127,19 @@ class LiveTrackAircraftOptionsFlow(OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         if user_input is not None:
+            # ! Keep the card honest. Changing the centre or the radius
+            # changes what this entry IS, so the title has to follow - a card
+            # reading "39.817, -84.050 - 56 km" while pointed at Frankfurt
+            # would be worse than no coordinates at all.
+            #
+            # ! Only on an explicit save. Home Assistant lets a user rename an
+            # entry by hand, and doing this at setup would stomp that name on
+            # every restart.
+            self.hass.config_entries.async_update_entry(
+                self._entry, title=_title(user_input))
             return self.async_create_entry(title="", data=user_input)
         return self.async_show_form(
             step_id="init",
-            data_schema=_schema({**self._entry.data, **self._entry.options}),
+            data_schema=_schema({**self._entry.data, **self._entry.options},
+                                self.hass),
         )

@@ -84,6 +84,10 @@ class AircraftInRange(SensorEntity):
             # to adsb.fi silently, and without this there is no way to notice
             # you have been running on the backup feed for a week.
             "source": data["source"],
+            # Whether the shared route artifact is installed and current.
+            # Low cardinality: a handful of distinct strings, so it
+            # de-duplicates in the recorder like the rest.
+            "route_artifact": self._coordinator.routes.status,
         }
 
     async def async_added_to_hass(self) -> None:

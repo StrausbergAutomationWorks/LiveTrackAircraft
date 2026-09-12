@@ -46,15 +46,38 @@ _PASSTHROUGH = (
     "identity",
     "marker_label",
     "callsign",
-    "type_code",
+    # --- description: what the feed cannot tell a watcher on its own ---
+    "aircraft_type",
+    "aircraft_name",
+    "aircraft_manufacturer",
     "registration",
+    "operator",
+    "operator_code",
+    "operator_category",
+    "operator_state",
+    "operator_name_source",
+    "is_government",
     "emitter_category",
+    # D4 display helpers: a consumer MAY use these and MUST NOT require them.
+    "icon_category",
+    "category_label",
+    "icon_rotatable",
+    "icon_rotation_deg",
+    "icon_rotation_basis",
     "squawk",
+    # --- kinematics, in contract units (D0) ---
     "altitude_m",
     "speed_kmh",
     "vertical_rate_ms",
+    "climb_status",
     "heading_deg",
     "course_deg",
+    # --- route, from the shared artifact; absent when it is not installed ---
+    "origin_icao",
+    "destination_icao",
+    "route_observations",
+    "route_source",
+    # --- freshness and motion ---
     "last_seen",
     "observed_at",
     "previous_latitude",
@@ -100,10 +123,27 @@ class Aircraft(GeolocationEvent):
 
     _attr_attribution = ATTRIBUTION
     _attr_should_poll = False
-    _attr_icon = "mdi:airplane"
     _attr_unit_of_measurement = "km"
     # The discriminator the shared map's auto-entities card filters on.
     _attr_source = DOMAIN
+
+    # ! NOT a class constant. It was `_attr_icon = "mdi:airplane"`, which
+    # drew every rotorcraft as an aeroplane - measured 2026-09-11, five A7
+    # rotorcraft including two City of Chicago Bells, all rendering as
+    # aircraft. The feed says what kind it is on effectively every aircraft
+    # and the integration was ignoring it.
+    @property
+    def icon(self) -> str:
+        rec = self._rec()
+        return (rec or {}).get("icon") or "mdi:airplane"
+
+    # ! The silhouette, already rotated. ha-map-card's get picture() falls
+    # back to attributes.entity_picture, so this is what puts a turning
+    # aeroplane on the map rather than a dot.
+    @property
+    def entity_picture(self) -> str | None:
+        rec = self._rec()
+        return (rec or {}).get("entity_picture")
 
     def __init__(self, coordinator: AircraftCoordinator, identity: str) -> None:
         self._coordinator = coordinator
