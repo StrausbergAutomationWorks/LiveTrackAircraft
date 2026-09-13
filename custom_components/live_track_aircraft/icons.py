@@ -162,6 +162,75 @@ _VIEWBOX = re.compile(r'viewBox\s*=\s*"([^"]+)"', re.I)
 # Fitting a rotated square inside the original box.
 _FIT = 1.0 / math.sqrt(2.0)
 
+# --------------------------------------------------------------------------
+# ! 18 OF THE 37 SOURCE FILES ARE NOT WELL-FORMED XML. Measured 2026-09-12:
+# every file exported from Boxy SVG carries a <bx:grid> element whose `bx:`
+# prefix is never declared, which is a fatal well-formedness error. A browser
+# parses an SVG fetched through background-image STRICTLY, so those icons
+# rendered NOTHING AT ALL - a1, a3, a7 and the rest of the emitter-category
+# fallbacks, which is to say every aircraft we could not match to a type.
+#
+# ! WHY THIS SURVIVED A VISUAL CHECK. The note at the top of this file says
+# every icon was verified by rendering all 37 and looking. That was true and
+# it proved orientation; whatever rendered them tolerated the undeclared
+# prefix and a browser does not. A fixture that does not exercise the failing
+# behaviour proves nothing about it - 05_SHARED_LESSONS D6a-0.
+#
+# ! STRIPPED, NOT DECLARED. Adding xmlns:bx would make the file parse while
+# keeping an editor's grid guide in shipped artwork. The element draws
+# nothing; it should not be there.
+_FOREIGN_EMPTY = re.compile(r"<([a-zA-Z_][\w.-]*):([\w.-]+)\b[^>]*/\s*>")
+_FOREIGN_PAIR = re.compile(
+    r"<([a-zA-Z_][\w.-]*):([\w.-]+)\b[^>]*>.*?</\1:\2\s*>", re.S)
+_FOREIGN_ATTR = re.compile(
+    r'\s([a-zA-Z_][\w.-]*):([\w.-]+)\s*=\s*"[^"]*"')
+_KNOWN_PREFIXES = frozenset(("xlink", "svg", "xml"))
+
+# ! BLACK ON NEAR-BLACK. ha-map-card draws every picture marker on a disc
+# filled with var(--card-background-color), and .marker.dark hardcodes
+# #1c1c1c with no variable at all. The source artwork is #000000. Measured
+# contrast: about 1.15:1 - the silhouettes were rendering and could not be
+# seen.
+#
+# ! SO WE PAINT BOTH. The badge is ours and opaque, which is what makes this
+# work from ONE URL: an integration cannot know whether the browser asking
+# for a picture is in light or dark mode, so a fill tuned for one theme is
+# wrong in the other. Owning the background removes the question.
+BADGE = "#1F2327"
+
+# ! COLOUR CARRIES MEANING, NOT DECORATION. Identity is the label's job -
+# never encode it here, because a colour nobody can look up is noise.
+_TONES = {
+    "default": "#EDEAE2",
+    "gov": "#EF9F27",      # government, law enforcement, air ambulance
+    "rotor": "#9FE1CB",    # rotorcraft, which are not an edge case here
+}
+
+# ! SIZE FROM emitter_category, NOT FROM THE ARTWORK. The ADS-B Radar site
+# says their icons vary in size to separate light aircraft from heavy ones.
+# That is their app's rendering, not something baked into the files:
+# measured 2026-09-12, the 37 SVGs declare only three distinct viewBoxes and
+# b737 and b747 are identical. So the ramp is ours, off the category the
+# feed already gives us. A1 light -> A5 heavy.
+_WEIGHT = {
+    "A1": 0.62, "A2": 0.72, "A3": 0.85, "A4": 0.88, "A5": 1.00,
+    "A6": 0.80, "A7": 0.78, "B1": 0.66, "B2": 0.78, "B4": 0.62,
+}
+DEFAULT_WEIGHT = 0.80
+
+
+def tone_for(is_government: bool, icon_category: str | None) -> str:
+    """Which colour the silhouette is drawn in."""
+    if is_government:
+        return "gov"
+    if icon_category == "rotorcraft":
+        return "rotor"
+    return "default"
+
+
+def weight_for(emitter_category: str | None) -> float:
+    return _WEIGHT.get((emitter_category or "").strip().upper(), DEFAULT_WEIGHT)
+
 
 def _inner(svg: str) -> tuple[str, float, float]:
     """The artwork inside the root <svg>, plus the box it is drawn in."""
@@ -180,29 +249,76 @@ def _inner(svg: str) -> tuple[str, float, float]:
     return body, 512.0, 512.0
 
 
-def render(path: str, degrees: int | None, size: int = 64) -> str:
-    """One icon, rotated. `degrees` of None means do not rotate."""
+def strip_foreign(body: str) -> str:
+    """Remove elements AND attributes in an undeclared namespace.
+
+    ! TWO SEPARATE CAUSES, and fixing only the first leaves 48 renders
+    broken. <bx:grid/> is a foreign ELEMENT; bx:shape="ring 565 355 ..." on
+    an ordinary <path> is a foreign ATTRIBUTE. Both are fatal, because the
+    xmlns:bx declaration lives on the root <svg> tag that _inner() discards
+    by design - we build our own root.
+    """
+    def drop(m: "re.Match[str]") -> str:
+        return "" if m.group(1) not in _KNOWN_PREFIXES else m.group(0)
+    body = _FOREIGN_PAIR.sub(drop, body)
+    body = _FOREIGN_EMPTY.sub(drop, body)
+    return _FOREIGN_ATTR.sub(
+        lambda m: "" if m.group(1) not in _KNOWN_PREFIXES else m.group(0),
+        body)
+
+
+# ! fill="none" and stroke="none" are KEPT. They are deliberate - an element
+# drawn with a stroke only, or a hit area that must not paint. Stripping them
+# would fill shapes the artist left hollow.
+_PAINT_ATTR = re.compile(r'\s(?:fill|stroke)\s*=\s*"(?!none\s*")[^"]*"', re.I)
+_PAINT_STYLE = re.compile(r"(?:fill|stroke)\s*:\s*[^;\"']*;?", re.I)
+
+
+def decolour(body: str) -> str:
+    """Strip hardcoded paint so the wrapper's fill can be inherited.
+
+    ! THE ARTWORK CARRIES fill="#000000" EXPLICITLY in several files, and an
+    attribute on a child beats inheritance from a parent group. Setting fill
+    on the wrapper alone changes nothing - which is why recolouring looked
+    impossible before this.
+    """
+    body = _PAINT_ATTR.sub(" ", body)
+    return _PAINT_STYLE.sub("", body)
+
+
+def render(path: str, degrees: int | None, size: int = 64,
+           tone: str = "default", weight: float = DEFAULT_WEIGHT) -> str:
+    """One icon: badged, coloured, sized and rotated."""
     with open(path, "r", encoding="utf-8", errors="replace") as fh:
         src = fh.read()
     body, w, h = _inner(src)
+    body = decolour(strip_foreign(body))
     cx, cy = w / 2.0, h / 2.0
 
-    if degrees:
-        # Scale about the centre, THEN rotate about the centre, so nothing
-        # reaches a corner it cannot fit into.
-        transform = (
-            'transform="translate(%.4f %.4f) scale(%.6f) translate(%.4f %.4f) '
-            'rotate(%d %.4f %.4f)"'
-            % (cx - cx * _FIT, cy - cy * _FIT, _FIT, 0.0, 0.0,
-               degrees, cx, cy))
-    else:
-        transform = ""
+    # ! The rotation fit and the weight ramp COMPOSE. 1/sqrt(2) is what keeps
+    # a square inside its own box at 45 degrees; the weight is how big this
+    # class of aircraft should read. Applying both keeps every angle whole at
+    # every size.
+    k = _FIT * max(0.1, min(1.0, weight))
 
+    parts = ["translate(%.4f %.4f)" % (cx - cx * k, cy - cy * k),
+             "scale(%.6f)" % k]
+    if degrees:
+        parts.append("rotate(%d %.4f %.4f)" % (degrees, cx, cy))
+
+    fill = _TONES.get(tone, _TONES["default"])
+
+    # ! THE BADGE IS DRAWN BY US, not by the card. It is opaque on purpose -
+    # see the note beside BADGE. It also means the 50% crop ha-map-card
+    # applies lands on our own circle instead of shaving a wingtip.
     return (
         '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
         'viewBox="0 0 %s %s">'
-        '<g %s>%s</g></svg>'
-        % (size, size, _fmt(w), _fmt(h), transform, body)
+        '<circle cx="%.4f" cy="%.4f" r="%.4f" fill="%s"/>'
+        '<g transform="%s" fill="%s">%s</g></svg>'
+        % (size, size, _fmt(w), _fmt(h),
+           cx, cy, min(cx, cy), BADGE,
+           " ".join(parts), fill, body)
     )
 
 

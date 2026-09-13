@@ -29,9 +29,23 @@ _LOGGER = logging.getLogger(__name__)
 URL_BASE = "/api/live_track_aircraft/icon"
 
 
-def picture_url(key: str, degrees: int | None) -> str:
-    """The entity_picture for one icon at one angle."""
-    return "%s/%s/%s.svg" % (URL_BASE, key, "fixed" if degrees is None else degrees)
+def picture_url(key: str, degrees: int | None,
+                tone: str = "default", weight: float | None = None) -> str:
+    """The entity_picture for one icon at one angle, tone and size.
+
+    ! TONE AND WEIGHT RIDE AS QUERY PARAMETERS, not path segments. The route
+    shape is unchanged, so an older cached URL still resolves, and the query
+    is part of the cache key - a government aircraft and an airliner on the
+    same silhouette are two different cached images, as they should be.
+    """
+    url = "%s/%s/%s.svg" % (
+        URL_BASE, key, "fixed" if degrees is None else degrees)
+    extra = []
+    if tone and tone != "default":
+        extra.append("t=%s" % tone)
+    if weight is not None:
+        extra.append("w=%.2f" % weight)
+    return url + ("?" + "&".join(extra) if extra else "")
 
 
 class AircraftIconView(HomeAssistantView):
@@ -61,9 +75,18 @@ class AircraftIconView(HomeAssistantView):
             except ValueError:
                 return web.Response(status=400, text="bad angle")
 
+        # ! Both are UNTRUSTED input off a URL. tone resolves through a
+        # lookup that falls back to default, and weight is clamped in
+        # render(), so neither can reach the filesystem or the output.
+        tone = request.query.get("t", "default")
+        try:
+            weight = float(request.query.get("w", icons.DEFAULT_WEIGHT))
+        except (TypeError, ValueError):
+            weight = icons.DEFAULT_WEIGHT
+
         try:
             svg = await request.app["hass"].async_add_executor_job(
-                icons.render, path, degrees)
+                icons.render, path, degrees, 64, tone, weight)
         except Exception:  # noqa: BLE001
             _LOGGER.exception("Could not render %s at %s", key, angle)
             return web.Response(status=500, text="render failed")

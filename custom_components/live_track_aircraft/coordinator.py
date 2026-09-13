@@ -296,7 +296,22 @@ class AircraftCoordinator(DataUpdateCoordinator):
             out["icon_rotation_deg"] = angle
             out["icon_rotation_basis"] = (
                 "heading" if obs.heading_deg is not None else "course")
-        out["entity_picture"] = picture_url(key, angle)
+
+        # ! COLOUR AND SIZE ARE DECIDED HERE, and both carry meaning. The
+        # silhouette used to be black on a near-black disc - ha-map-card
+        # fills every picture marker with var(--card-background-color), and
+        # .marker.dark hardcodes #1c1c1c. We now paint the badge ourselves,
+        # so the fill is free to say something instead of merely being
+        # visible. Weight comes from emitter_category because the artwork
+        # does not carry size - measured 2026-09-12.
+        #
+        # ! is_government is resolved BELOW this point in the original
+        # order, so it is looked up here rather than read from `out`.
+        gov_now = lookup_government(obs.identity) is not None
+        out["entity_picture"] = picture_url(
+            key, angle,
+            icons.tone_for(gov_now, icon_category),
+            icons.weight_for(obs.emitter_category))
 
         # --- operator ---------------------------------------------------
         # ("UAL", "United Airlines") a known airline
