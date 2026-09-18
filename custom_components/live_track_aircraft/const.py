@@ -69,6 +69,25 @@ MAX_TRANSIENT_FAILURES = 3
 # Measured 2026-09-09: p95 update gap 35 s, p99 150 s, max 1,250 s.
 MAX_SEGMENT_S = 300
 
+# ! Below this groundspeed, course over ground is noise rather than a
+# direction: a hovering helicopter reports a different course every
+# cycle. A judgement, not a measurement - 30 km/h is about 16 kt,
+# below any approach speed and above hover jitter.
+SLOW_GROUND_SPEED_KMH = 30.0
+
+# ! WHO ROTATES THE ICON. Off, the integration serves an
+# already-rotated silhouette and the marker is correct on any map
+# card - that is the shipped behaviour and it depends on nothing.
+# On, the icon is served unrotated and the card is expected to turn
+# it from icon_rotation_deg, which is the only way the rotation can
+# SLIDE rather than snap: two images cannot be interpolated, one
+# CSS transform can.
+#
+# ! DEFAULT OFF ON PURPOSE. On, every marker points north wherever
+# the card cannot rotate.
+CONF_CARD_ROTATION = "card_rotation"
+DEFAULT_CARD_ROTATION = False
+
 # Below this the aircraft is not meaningfully moving and a bearing between
 # two fixes is noise. Also the threshold that keeps ground clutter honest.
 STATIONARY_KT = 40.0

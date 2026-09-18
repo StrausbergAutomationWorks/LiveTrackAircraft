@@ -18,16 +18,19 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util.location import distance as _distance
 
 from .const import (
+    CONF_CARD_ROTATION,
     CONF_LATITUDE,
     CONF_LONGITUDE,
     CONF_MAX_AIRCRAFT,
     CONF_RADIUS_KM,
     CONF_SCAN_INTERVAL,
+    DEFAULT_CARD_ROTATION,
     DEFAULT_MAX_AIRCRAFT,
     DEFAULT_RADIUS_KM,
     DEFAULT_SCAN_INTERVAL,
     MAX_SEGMENT_S,
     MAX_TRANSIENT_FAILURES,
+    SLOW_GROUND_SPEED_KMH,
 )
 from .sources.adsb import fetch
 from .sources.base import Observation, SourceError
@@ -52,6 +55,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         self.longitude = float(opts.get(CONF_LONGITUDE, hass.config.longitude))
         self.radius_km = float(opts.get(CONF_RADIUS_KM, DEFAULT_RADIUS_KM))
         self.max_aircraft = int(opts.get(CONF_MAX_AIRCRAFT, DEFAULT_MAX_AIRCRAFT))
+        # Serve the silhouette unrotated and let the card turn it.
+        self.card_rotation = bool(
+            opts.get(CONF_CARD_ROTATION, DEFAULT_CARD_ROTATION))
 
         super().__init__(
             hass,
@@ -81,6 +87,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # of the population.
         self._fix: dict[str, Fix] = {}
         self._prev_fix: dict[str, Fix] = {}
+        # Last bearing actually used for a marker, per aircraft. A slow
+        # aircraft's course is noise, and this is what is held instead.
+        self._angle: dict[str, float] = {}
 
         self._consecutive_failures = 0
         self._last_good: dict[str, Any] | None = None
@@ -144,6 +153,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
         for gone in [k for k in self._fix if k not in aircraft]:
             del self._fix[gone]
             self._prev_fix.pop(gone, None)
+            self._angle.pop(gone, None)
 
         result = {
             "aircraft": aircraft,
@@ -255,8 +265,11 @@ class AircraftCoordinator(DataUpdateCoordinator):
     # ! ALL FOUR MODULES ARE LIFTED VERBATIM and every one degrades to None
     # on any failure path, so enrichment can never break tracking.
     # ------------------------------------------------------------------
-    @staticmethod
-    def _describe(obs: Observation) -> dict[str, Any]:
+    # ! NO LONGER A STATICMETHOD, deliberately. It was pure while every
+    # enrichment was a lookup. It now needs two pieces of instance state: the
+    # last bearing used for this aircraft, so a slow one can hold it, and
+    # whether the map card is doing the rotating.
+    def _describe(self, obs: Observation) -> dict[str, Any]:
         out: dict[str, Any] = {}
 
         # --- type -------------------------------------------------------
@@ -288,14 +301,34 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # - which is exactly what D2 calls the documented fallback.
         key = icons.pick(obs.emitter_category, obs.type_code, icon_category)
         bearing = obs.heading_deg if obs.heading_deg is not None else obs.course_deg
+        basis = "heading" if obs.heading_deg is not None else "course"
+
+        # ! A SLOW AIRCRAFT HAS NO USEFUL COURSE. Course over ground is the
+        # direction of TRAVEL, so it is undefined when there is no travel. A
+        # hovering or pedal-turning helicopter reports a different value every
+        # cycle and the marker spins on the spot while the aircraft sits
+        # still. Rotorcraft are not an edge case in this integration.
+        #
+        # Below the floor the LAST GOOD BEARING IS HELD rather than followed,
+        # and the basis says so. Heading is different: it is where the
+        # airframe POINTS, it stays meaningful at zero groundspeed, and it is
+        # therefore never held.
+        if (basis == "course" and obs.speed_kmh is not None
+                and obs.speed_kmh < SLOW_GROUND_SPEED_KMH):
+            held = self._angle.get(obs.identity)
+            if held is not None:
+                bearing = held
+                basis = "held"
+
         rotatable = icons.is_rotatable(key)
         angle = icons.quantise(bearing) if rotatable else None
+        if bearing is not None and basis != "held":
+            self._angle[obs.identity] = bearing
 
         out["icon_rotatable"] = rotatable
         if angle is not None:
             out["icon_rotation_deg"] = angle
-            out["icon_rotation_basis"] = (
-                "heading" if obs.heading_deg is not None else "course")
+            out["icon_rotation_basis"] = basis
 
         # ! COLOUR AND SIZE ARE DECIDED HERE, and both carry meaning. The
         # silhouette used to be black on a near-black disc - ha-map-card
@@ -308,8 +341,12 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # ! is_government is resolved BELOW this point in the original
         # order, so it is looked up here rather than read from `out`.
         gov_now = lookup_government(obs.identity) is not None
+        # ! THE ANGLE GOES INTO THE IMAGE, OR INTO THE ATTRIBUTE, NEVER BOTH.
+        # A card rotating an already-rotated silhouette would double it.
+        # icon_rotation_deg is published either way, so nothing downstream
+        # has to know which mode this is.
         out["entity_picture"] = picture_url(
-            key, angle,
+            key, None if self.card_rotation else angle,
             icons.tone_for(gov_now, icon_category),
             icons.weight_for(obs.emitter_category))
 

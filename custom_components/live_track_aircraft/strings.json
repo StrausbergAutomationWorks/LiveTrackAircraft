@@ -9,14 +9,16 @@
           "longitude": "Longitude",
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
-          "max_aircraft": "Maximum aircraft published"
+          "max_aircraft": "Maximum aircraft published",
+          "card_rotation": "Let the map card rotate the icons"
         },
         "data_description": {
           "latitude": "Centre of the area to watch.",
           "longitude": "Centre of the area to watch.",
           "radius_km": "How far out counts as overhead.",
           "scan_interval": "The sources rate-limit below 15 seconds.",
-          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer."
+          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
+          "card_rotation": "Off: icons arrive already rotated and work on any map card. On: icons arrive unrotated for a card that can turn them, which lets a course change slide instead of jump."
         }
       }
     },
@@ -33,7 +35,8 @@
           "longitude": "Longitude",
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
-          "max_aircraft": "Maximum aircraft published"
+          "max_aircraft": "Maximum aircraft published",
+          "card_rotation": "Let the map card rotate the icons"
         }
       }
     }

@@ -11,11 +11,13 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
+    CONF_CARD_ROTATION,
     CONF_LATITUDE,
     CONF_LONGITUDE,
     CONF_MAX_AIRCRAFT,
     CONF_RADIUS_KM,
     CONF_SCAN_INTERVAL,
+    DEFAULT_CARD_ROTATION,
     DEFAULT_MAX_AIRCRAFT,
     DEFAULT_RADIUS_KM,
     DEFAULT_SCAN_INTERVAL,
@@ -79,6 +81,15 @@ def _schema(defaults: dict[str, Any], hass) -> vol.Schema:
                 # the card. A ceiling is not a count (A2).
                 vol.Range(min=MIN_MAX_AIRCRAFT, max=MAX_MAX_AIRCRAFT),
             ),
+            # ! A capability of the MAP CARD, declared here because only the
+            # integration can act on it. Off, the silhouette arrives already
+            # rotated and is correct anywhere. On, it arrives unrotated and
+            # the card turns it - which is what lets a course change slide
+            # instead of snap.
+            vol.Required(
+                CONF_CARD_ROTATION,
+                default=defaults.get(CONF_CARD_ROTATION, DEFAULT_CARD_ROTATION),
+            ): bool,
         }
     )
 
