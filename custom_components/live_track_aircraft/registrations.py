@@ -257,6 +257,13 @@ def lookup_government(hex_code: str | None) -> dict[str, Any] | None:
 # 28 unnamed aircraft overhead, 26 would still be named, because light aircraft
 # near a city are overwhelmingly flight school and rental fleets registered to
 # companies.
+#
+# ! SUPERSEDED 2026-09-12 - THIS FILTER NO LONGER EXISTS. The paragraph
+# above describes what the FORK still does, and is kept for that reason.
+# The withholding is applied by the FAA BEFORE the archive is published,
+# so TYPE REGISTRANT = 1 was never the Section 803 population. See the
+# DIVERGENCE comment inside build_owner_db below, and
+# 30_Integrations/Live_Track_Aircraft/SSOT.md.
 # --------------------------------------------------------------------------
 
 _TYPE_REGISTRANT_INDIVIDUAL = "1"
