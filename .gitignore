@@ -20,3 +20,6 @@ __MACOSX/
 *.zip
 routes*.json
 routes*.json.gz
+
+# Local backup copies made while editing. Never commit them.
+*.bak
