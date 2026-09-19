@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 import re
 import time
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -44,6 +44,16 @@ from .web import picture_url
 _LOGGER = logging.getLogger(__name__)
 
 Fix = tuple[float, float, int]  # lat, lon, observed_at
+
+
+def _iso(epoch_s: int) -> str:
+    """Epoch seconds -> ISO 8601 UTC, the D0 form for an instant.
+
+    ! Fixes stay integer epoch seconds INTERNALLY - the new/duplicate test
+    and segment_duration_s are integer arithmetic on them. Only the emitted
+    attribute is converted, here, at the boundary.
+    """
+    return datetime.fromtimestamp(epoch_s, UTC).isoformat()
 
 
 class AircraftCoordinator(DataUpdateCoordinator):
@@ -201,8 +211,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
             "identity": obs.identity,
             "latitude": here[0],
             "longitude": here[1],
-            "observed_at": latest[2],
-            "last_seen": latest[2],
+            "observed_at": _iso(latest[2]),
+            "last_seen": _iso(latest[2]),
             "distance_km": metres / 1000,
         }
 
@@ -251,7 +261,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             if 0 < segment <= MAX_SEGMENT_S:
                 rec["previous_latitude"] = prev[0]
                 rec["previous_longitude"] = prev[1]
-                rec["previous_observed_at"] = prev[2]
+                rec["previous_observed_at"] = _iso(prev[2])
                 rec["segment_duration_s"] = segment
 
         return rec
