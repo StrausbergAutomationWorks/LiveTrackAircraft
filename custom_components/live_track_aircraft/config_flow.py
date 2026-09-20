@@ -146,8 +146,18 @@ class LiveTrackAircraftOptionsFlow(OptionsFlow):
             # ! Only on an explicit save. Home Assistant lets a user rename an
             # entry by hand, and doing this at setup would stomp that name on
             # every restart.
+            #
+            # ! TITLE AND OPTIONS IN ONE CALL. async_update_entry fires the
+            # update listeners on ANY change, a title alone included, and our
+            # listener reloads the entry. A title-only update here reloaded it
+            # BEFORE Home Assistant stored the new options, and the entry kept
+            # observing the old radius: measured 2026-09-19, options 156 km,
+            # coordinator 155 km. Setting both together fires the listener once
+            # with the new options in place; the options write Home Assistant
+            # makes when this flow finishes then changes nothing and fires
+            # nothing.
             self.hass.config_entries.async_update_entry(
-                self._entry, title=_title(user_input))
+                self._entry, title=_title(user_input), options=user_input)
             return self.async_create_entry(title="", data=user_input)
         return self.async_show_form(
             step_id="init",
