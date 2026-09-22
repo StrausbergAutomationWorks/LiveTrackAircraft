@@ -17,10 +17,12 @@ from .const import (
     CONF_MAX_AIRCRAFT,
     CONF_RADIUS_KM,
     CONF_SCAN_INTERVAL,
+    CONF_SILHOUETTE_ONLY,
     DEFAULT_CARD_ROTATION,
     DEFAULT_MAX_AIRCRAFT,
     DEFAULT_RADIUS_KM,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_SILHOUETTE_ONLY,
     DOMAIN,
     MAX_MAX_AIRCRAFT,
     MAX_RADIUS_KM,
@@ -89,6 +91,13 @@ def _schema(defaults: dict[str, Any], hass) -> vol.Schema:
             vol.Required(
                 CONF_CARD_ROTATION,
                 default=defaults.get(CONF_CARD_ROTATION, DEFAULT_CARD_ROTATION),
+            ): bool,
+            # ! Also a capability of the MAP CARD. Off, the icon brings its
+            # own dark disc and reads on any card. On, the silhouette comes
+            # alone, outlined, for a card with a transparent marker.
+            vol.Required(
+                CONF_SILHOUETTE_ONLY,
+                default=defaults.get(CONF_SILHOUETTE_ONLY, DEFAULT_SILHOUETTE_ONLY),
             ): bool,
         }
     )

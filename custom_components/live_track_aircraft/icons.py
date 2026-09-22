@@ -65,24 +65,36 @@ _BY_TYPE = {
     "C182": "cessna", "C206": "cessna", "C210": "cessna", "C72R": "cessna",
     "P28A": "cessna", "P28B": "cessna", "PA28": "cessna", "SR20": "cessna",
     "SR22": "cessna", "DA40": "cessna", "BE36": "cessna", "M20P": "cessna",
+    "COL3": "cessna",
     "CRJ1": "crjx", "CRJ2": "crjx", "CRJ7": "crjx", "CRJ9": "crjx",
     "CRJX": "crjx",
     "DH8A": "dh8a", "DH8B": "dh8a", "DH8C": "dh8a", "DH8D": "dh8a",
     "AT43": "dh8a", "AT45": "dh8a", "AT72": "dh8a", "AT75": "dh8a",
-    "AT76": "dh8a", "SF34": "dh8a", "B190": "dh8a",
+    "AT76": "dh8a", "SF34": "dh8a", "B190": "dh8a", "SH36": "dh8a",
+    # ! THE E-JETS ARE e195, NOT erj - reconciled with the icon author
+    # 2026-09-21. erj draws REAR-mounted engines (the ERJ-145); the E170/175
+    # carry theirs under the wing. The author's erj field reads "erj,e145"
+    # in full. 11 of 66 aircraft overhead that night were drawn wrong.
     "E190": "e195", "E195": "e195", "E290": "e195", "E295": "e195",
-    "E170": "erj", "E175": "erj", "E75L": "erj", "E75S": "erj",
+    "E170": "e195", "E175": "e195", "E75L": "e195", "E75S": "e195",
     "E135": "erj", "E145": "erj", "E45X": "erj",
     "F100": "f100", "F70": "f100",
     "FA7X": "fa7x", "FA8X": "fa7x", "FA50": "fa7x", "F2TH": "fa7x",
+    "E35L": "fa7x",                       # the author's own grouping
     "GLF5": "glf5", "GLF4": "glf5", "GLF6": "glf5", "GL5T": "glf5",
     "G280": "glf5", "GALX": "glf5", "CL60": "glf5", "CL35": "glf5",
+    "GLF3": "glf5",
     "LJ35": "learjet", "LJ45": "learjet", "LJ60": "learjet",
     "LJ75": "learjet", "LJ31": "learjet", "C25A": "learjet",
     "C25B": "learjet", "C25C": "learjet", "C56X": "learjet",
     "C68A": "learjet", "E55P": "learjet", "PC12": "learjet",
-    "MD11": "md11", "MD82": "md11", "MD83": "md11", "MD88": "md11",
-    "MD90": "md11", "B712": "md11", "DC10": "md11",
+    "C750": "learjet", "E50P": "learjet",  # unmapped overhead 2026-09-21
+    # ! THE MD-80/90 AND 717 ARE f100, NOT md11 - reconciled 2026-09-21.
+    # md11 draws a TRIJET; these are rear-engined twins, and the author puts
+    # md81 with f100. DC10 is a trijet and stays.
+    "MD11": "md11", "DC10": "md11",
+    "MD81": "f100", "MD82": "f100", "MD83": "f100", "MD87": "f100",
+    "MD88": "f100", "MD90": "f100", "B712": "f100",
 }
 
 # --- what must NOT be turned ---------------------------------------------
@@ -108,12 +120,37 @@ ROTATION_STEP = 5
 _SAFE = re.compile(r"^[a-z0-9]+$")
 
 
+# ! A FALLBACK ON THE AIRCRAFT NAME, behind the designator table and ahead of
+# the category icon. The name comes from aircraft.py keyed on the type code, so
+# this catches designators aircraft.py knows and _BY_TYPE does not - measured
+# 2026-09-21, a C510 "Cessna Citation Mustang" and a C550 "Cessna Citation II"
+# were both on the generic a1 icon. Idea taken from another project that uses
+# these icons in production; no code came with it.
+# ! ONLY FAMILIES WHOSE SILHOUETTE FITS UNAMBIGUOUSLY. No bare "cessna" - that
+# name covers the 421 twin as well as the 172. Order matters: first match wins.
+_BY_NAME: tuple[tuple["re.Pattern[str]", str], ...] = tuple(
+    (re.compile(p, re.I), k) for p, k in (
+        (r"\bcitation\b|\bphenom\b|\blearjet\b|\bhawker\b|\bhonda ?jet\b"
+         r"|\bbeechjet\b|\bpremier\b", "learjet"),
+        (r"\bgulfstream\b|\bchallenger\b|\bglobal (?:\d|express)", "glf5"),
+        (r"\bfalcon\b|\blegacy\b|\bpraetor\b", "fa7x"),
+        (r"\bembraer e1[79]\d\b|\bembraer e2\b", "e195"),
+        (r"\bdash ?8\b|\bq400\b|\batr ?[47]2\b|\bsaab 340\b|\bshorts? 3[36]0\b", "dh8a"),
+        (r"\bcirrus\b|\bskyhawk\b|\bskylane\b|\bcherokee\b|\barcher\b"
+         r"|\bbonanza\b|\bmooney\b", "cessna"),
+    ))
+
+
 def pick(emitter_category: str | None, type_code: str | None,
-         icon_category: str | None = None) -> str:
-    """Which silhouette to draw. Type beats category; never returns None."""
+         icon_category: str | None = None, name: str | None = None) -> str:
+    """Which silhouette to draw. Type, then name, then category; never None."""
     t = (type_code or "").strip().upper()
     if t in _BY_TYPE:
         return _BY_TYPE[t]
+    if name:
+        for rx, key in _BY_NAME:
+            if rx.search(name):
+                return key
     cat = (emitter_category or "").strip().upper()
     if cat in _BY_CATEGORY:
         return _BY_CATEGORY[cat]
@@ -286,9 +323,43 @@ def decolour(body: str) -> str:
     return _PAINT_STYLE.sub("", body)
 
 
+# ! SILHOUETTE-ONLY NEEDS AN OUTLINE, OR IT VANISHES ON LIGHT TILES. The
+# badge existed so one URL reads in light and dark mode alike. Without it the
+# pale fill sits straight on the map, so a dark edge is drawn round it - the
+# same answer as the card's label outline. This is the VISIBLE edge, in
+# pixels of the rendered icon at `size`. 2.0 chosen by eye 2026-09-21 from
+# 2, 3 and 4 on light, water and dark: at 3 and above a light aircraft turns
+# to a blob, and a fixed edge inflates small icons most, fighting the ramp.
+OUTLINE_PX = 2.0
+
+# ! THE EDGE IS A FILTER, NOT A STROKE. Two stroke designs failed on the
+# artwork, measured 2026-09-21:
+#   * 15 of the 37 files carry stroke="none" on their only path (a330, a340,
+#     a380, a6, b737, b747, b767, b777, b787, crjx, e195, erj, f100, learjet,
+#     md11). A child attribute beats the stroke a parent group sets, so those
+#     icons drew NO edge and vanished on light tiles.
+#   * The 512-viewBox airliners carry their OWN transform on the path, a
+#     second scale-down inside ours, so any stroke width came out thinner on
+#     exactly those files. vector-effect="non-scaling-stroke" did not rescue
+#     it: resvg measured it in viewBox units and browsers are free to read
+#     "host coordinate space" differently. An edge whose width depends on the
+#     renderer is the wrong design.
+# Dilating the silhouette's own ALPHA works on what was actually drawn,
+# after every transform in every file, so neither problem can reach it.
+_OUTLINE_FILTER = (
+    '<defs><filter id="e" filterUnits="userSpaceOnUse" x="0" y="0" '
+    'width="%s" height="%s" color-interpolation-filters="sRGB">'
+    '<feMorphology in="SourceAlpha" operator="dilate" radius="%.4f" result="d"/>'
+    '<feFlood flood-color="%s" result="c"/>'
+    '<feComposite in="c" in2="d" operator="in" result="edge"/>'
+    '<feMerge><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge>'
+    '</filter></defs>')
+
+
 def render(path: str, degrees: int | None, size: int = 64,
-           tone: str = "default", weight: float = DEFAULT_WEIGHT) -> str:
-    """One icon: badged, coloured, sized and rotated."""
+           tone: str = "default", weight: float = DEFAULT_WEIGHT,
+           badge: bool = True) -> str:
+    """One icon: coloured, sized and rotated, on our badge or outlined."""
     with open(path, "r", encoding="utf-8", errors="replace") as fh:
         src = fh.read()
     body, w, h = _inner(src)
@@ -307,19 +378,25 @@ def render(path: str, degrees: int | None, size: int = 64,
         parts.append("rotate(%d %.4f %.4f)" % (degrees, cx, cy))
 
     fill = _TONES.get(tone, _TONES["default"])
+    transform = " ".join(parts)
+    head = ('<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
+            'viewBox="0 0 %s %s">' % (size, size, _fmt(w), _fmt(h)))
+    art = '<g transform="%s" fill="%s">%s</g>' % (transform, fill, body)
 
-    # ! THE BADGE IS DRAWN BY US, not by the card. It is opaque on purpose -
-    # see the note beside BADGE. It also means the 50% crop ha-map-card
-    # applies lands on our own circle instead of shaving a wingtip.
-    return (
-        '<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" '
-        'viewBox="0 0 %s %s">'
-        '<circle cx="%.4f" cy="%.4f" r="%.4f" fill="%s"/>'
-        '<g transform="%s" fill="%s">%s</g></svg>'
-        % (size, size, _fmt(w), _fmt(h),
-           cx, cy, min(cx, cy), BADGE,
-           " ".join(parts), fill, body)
-    )
+    if badge:
+        # ! THE BADGE IS DRAWN BY US, not by the card. It is opaque on
+        # purpose - see the note beside BADGE. It also means the 50% crop
+        # ha-map-card applies lands on our own circle instead of shaving a
+        # wingtip.
+        return (head + '<circle cx="%.4f" cy="%.4f" r="%.4f" fill="%s"/>'
+                % (cx, cy, min(cx, cy), BADGE) + art + '</svg>')
+
+    # ! The filter sits on an UNTRANSFORMED wrapper, so its radius is in root
+    # viewBox units: the visible edge converted by the one scale that maps
+    # the viewBox onto `size` pixels (by the longer side, as SVG fits it).
+    radius = OUTLINE_PX * max(w, h) / float(size)
+    return (head + _OUTLINE_FILTER % (_fmt(w), _fmt(h), radius, BADGE)
+            + '<g filter="url(#e)">' + art + '</g></svg>')
 
 
 def _fmt(v: float) -> str:

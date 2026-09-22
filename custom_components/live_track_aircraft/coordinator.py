@@ -19,12 +19,14 @@ from homeassistant.util.location import distance as _distance
 
 from .const import (
     CONF_CARD_ROTATION,
+    CONF_SILHOUETTE_ONLY,
     CONF_LATITUDE,
     CONF_LONGITUDE,
     CONF_MAX_AIRCRAFT,
     CONF_RADIUS_KM,
     CONF_SCAN_INTERVAL,
     DEFAULT_CARD_ROTATION,
+    DEFAULT_SILHOUETTE_ONLY,
     DEFAULT_MAX_AIRCRAFT,
     DEFAULT_RADIUS_KM,
     DEFAULT_SCAN_INTERVAL,
@@ -68,6 +70,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # Serve the silhouette unrotated and let the card turn it.
         self.card_rotation = bool(
             opts.get(CONF_CARD_ROTATION, DEFAULT_CARD_ROTATION))
+        self.silhouette_only = bool(
+            opts.get(CONF_SILHOUETTE_ONLY, DEFAULT_SILHOUETTE_ONLY))
 
         super().__init__(
             hass,
@@ -309,7 +313,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # Measured 2026-09-11, heading is a GROUND field here: present on
         # roughly 1% of AIRBORNE aircraft, so course does nearly all the work
         # - which is exactly what D2 calls the documented fallback.
-        key = icons.pick(obs.emitter_category, obs.type_code, icon_category)
+        key = icons.pick(obs.emitter_category, obs.type_code, icon_category,
+                         out.get("aircraft_name"))
         bearing = obs.heading_deg if obs.heading_deg is not None else obs.course_deg
         basis = "heading" if obs.heading_deg is not None else "course"
 
@@ -358,7 +363,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         out["entity_picture"] = picture_url(
             key, None if self.card_rotation else angle,
             icons.tone_for(gov_now, icon_category),
-            icons.weight_for(obs.emitter_category))
+            icons.weight_for(obs.emitter_category),
+            badge=not self.silhouette_only)
 
         # --- operator ---------------------------------------------------
         # ("UAL", "United Airlines") a known airline

@@ -88,6 +88,18 @@ SLOW_GROUND_SPEED_KMH = 30.0
 CONF_CARD_ROTATION = "card_rotation"
 DEFAULT_CARD_ROTATION = False
 
+# ! WHETHER THE ICON CARRIES ITS OWN DISC. Off, each silhouette sits on an
+# opaque dark badge drawn inside our SVG, which reads on any card and any
+# theme - that is what ships. On, the silhouette is drawn alone with a dark
+# edge, for a card that paints picture markers on a transparent background
+# (LiveTrackMapCard with color: transparent). Only then does the size ramp
+# show: a full-size disc behind a small Cessna reads as a rendering fault.
+#
+# ! DEFAULT OFF ON PURPOSE, as card_rotation. On a card that fills the
+# marker itself, the badge is what keeps the silhouette readable.
+CONF_SILHOUETTE_ONLY = "silhouette_only"
+DEFAULT_SILHOUETTE_ONLY = False
+
 # Below this the aircraft is not meaningfully moving and a bearing between
 # two fixes is noise. Also the threshold that keeps ground clutter honest.
 STATIONARY_KT = 40.0

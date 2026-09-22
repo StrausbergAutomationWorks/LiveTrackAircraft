@@ -30,7 +30,8 @@ URL_BASE = "/api/live_track_aircraft/icon"
 
 
 def picture_url(key: str, degrees: int | None,
-                tone: str = "default", weight: float | None = None) -> str:
+                tone: str = "default", weight: float | None = None,
+                badge: bool = True) -> str:
     """The entity_picture for one icon at one angle, tone and size.
 
     ! TONE AND WEIGHT RIDE AS QUERY PARAMETERS, not path segments. The route
@@ -45,6 +46,10 @@ def picture_url(key: str, degrees: int | None,
         extra.append("t=%s" % tone)
     if weight is not None:
         extra.append("w=%.2f" % weight)
+    # ! Only the NON-default is written, so every URL issued before this
+    # option existed still means what it meant.
+    if not badge:
+        extra.append("b=0")
     return url + ("?" + "&".join(extra) if extra else "")
 
 
@@ -83,10 +88,12 @@ class AircraftIconView(HomeAssistantView):
             weight = float(request.query.get("w", icons.DEFAULT_WEIGHT))
         except (TypeError, ValueError):
             weight = icons.DEFAULT_WEIGHT
+        # Anything but "0" keeps the badge, so a mangled value fails safe.
+        badge = request.query.get("b") != "0"
 
         try:
             svg = await request.app["hass"].async_add_executor_job(
-                icons.render, path, degrees, 64, tone, weight)
+                icons.render, path, degrees, 64, tone, weight, badge)
         except Exception:  # noqa: BLE001
             _LOGGER.exception("Could not render %s at %s", key, angle)
             return web.Response(status=500, text="render failed")
