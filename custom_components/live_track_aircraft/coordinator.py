@@ -104,6 +104,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # Last bearing actually used for a marker, per aircraft. A slow
         # aircraft's course is noise, and this is what is held instead.
         self._angle: dict[str, float] = {}
+        # The last record actually published, per aircraft. An observation
+        # OLDER than the retained fix re-publishes this unchanged - see
+        # _record. SSOT "2026-09-22 EVENING - THE STALE BOUNCE".
+        self._last_rec: dict[str, dict[str, Any]] = {}
 
         self._consecutive_failures = 0
         self._last_good: dict[str, Any] | None = None
@@ -168,6 +172,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             del self._fix[gone]
             self._prev_fix.pop(gone, None)
             self._angle.pop(gone, None)
+            self._last_rec.pop(gone, None)
 
         result = {
             "aircraft": aircraft,
@@ -195,6 +200,34 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # clock; belt and braces now that it is, because a source that
         # reorders records must not be able to reintroduce it.
         cur = self._fix.get(obs.identity)
+
+        # ! DROP A STALE OBSERVATION ENTIRELY. An observation OLDER than the
+        # fix already held is not news; it is the other feed not having caught
+        # up on this aircraft yet. Until 2026-09-22 the fix correctly refused
+        # to advance, but the record was still built from THIS observation -
+        # its position, course, speed and altitude, under the NEWER
+        # observed_at - so the marker was thrown back along its own track and
+        # forward again on the next poll: an exact A-B-A. Measured: 15 of 27
+        # reversals in a 10-minute capture, while adsb.lol and adsb.fi
+        # alternated on every poll. Every field of a stale observation is
+        # stale, so none of it is used - not even for the held bearing.
+        # Re-publish what was already published instead. Dropping the
+        # aircraft from the result would be worse: the forget loop would
+        # discard both fixes and it would return as a fresh segment.
+        #
+        # ! EQUAL IS NOT NEWER EITHER. The same capture found 10 events where
+        # the two feeds reported the SAME whole second at positions 1-67 m
+        # apart (0.0-1.9 s of travel) - two decodes of one second. Treated as
+        # new, each one made a zero-length segment, dropped previous_* and
+        # flicked the marker back and forth. Within ONE feed, the same second
+        # at a different position cannot occur 15 s apart: observed_at is
+        # feed now minus seen_pos, so a repeat second is a repeat fix.
+        # SSOT "2026-09-22 EVENING - THE STALE BOUNCE".
+        if cur is not None and obs.observed_at <= cur[2]:
+            held = self._last_rec.get(obs.identity)
+            if held is not None:
+                return held
+
         is_new = cur is None or (
             obs.observed_at > cur[2] or
             (obs.observed_at == cur[2] and (cur[0], cur[1]) != here)
@@ -268,6 +301,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 rec["previous_observed_at"] = _iso(prev[2])
                 rec["segment_duration_s"] = segment
 
+        self._last_rec[obs.identity] = rec
         return rec
 
     # ------------------------------------------------------------------
