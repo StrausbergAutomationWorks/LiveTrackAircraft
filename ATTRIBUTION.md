@@ -19,7 +19,7 @@ adsb.fi and link to its home page. This file, the Data sources section of
 
 ## Aircraft marker icons
 
-The 37 SVG files in `custom_components/live_track_aircraft/icons/` are by
+37 of the 38 SVG files in `custom_components/live_track_aircraft/icons/` are by
 **ADS-B Radar** — https://adsb-radar.com
 
 Source: https://adsb-radar.com/help/icons.html
@@ -31,6 +31,16 @@ file, and the Icons section of `README.md`, are that backlink.
 
 The icons belong to their author. They are not covered by the MIT licence
 in `LICENSE`, which applies to the code in this repository.
+
+The exception is `kingair.svg`, drawn for this project in the style of the set
+(ADS-B Radar had no King Air icon) and offered to its author for his set. It is
+covered by the MIT licence with the code.
+
+### Which icon each aircraft type gets
+
+The type-to-icon table in `icons.py` is based on the default lists from the
+ADS-B Radar app, shared by its author, Jos Nutbroek, in September 2026, with
+corrections this project sent back to him.
 
 ### Changes made by this integration
 

@@ -6,6 +6,11 @@ projects. The only requirement: please provide a backlink to ADS-B Radar
 somewhere in your project, website, or documentation." That backlink lives in
 the README and in ATTRIBUTION.md, and must survive any rewrite of either.
 
+! ONE ICON IS NOT HIS: kingair.svg was drawn for this project on 2026-09-23,
+in his style, and given to him for his set (his app files the King Air under
+the Cessna). ATTRIBUTION.md says so. It points north like the rest, checked by
+rendering it beside his Cessna and Dash 8 at 512, 64, 40 and 28 px.
+
 ! EVERY ICON POINTS NORTH. Verified by rendering all 37 and looking at them,
 not by reading the XML - the SVGs carry baked-in transforms that make the
 source misleading. So rotation is the bearing applied directly, with no
@@ -43,59 +48,114 @@ _BY_CATEGORY = {
 
 # --- ICAO type designator -> a specific silhouette ------------------------
 # Checked before the category, because "a Boeing 737" beats "a large aircraft".
-_BY_TYPE = {
-    "A318": "a320", "A319": "a320", "A320": "a320", "A321": "a320",
-    "A19N": "a320", "A20N": "a320", "A21N": "a320",
-    "A306": "a330", "A310": "a330", "A332": "a330", "A333": "a330",
-    "A338": "a330", "A339": "a330", "A35K": "a330", "A359": "a330",
-    "A342": "a340", "A343": "a340", "A345": "a340", "A346": "a340",
-    "A388": "a380",
-    "B731": "b737", "B732": "b737", "B733": "b737", "B734": "b737",
-    "B735": "b737", "B736": "b737", "B737": "b737", "B738": "b737",
-    "B739": "b737", "B37M": "b737", "B38M": "b737", "B39M": "b737",
-    "B741": "b747", "B742": "b747", "B743": "b747", "B744": "b747",
-    "B748": "b747", "B74S": "b747",
-    "B762": "b767", "B763": "b767", "B764": "b767",
-    "B752": "b767", "B753": "b767",
-    "B772": "b777", "B773": "b777", "B77L": "b777", "B77W": "b777",
-    "B778": "b777", "B779": "b777",
-    "B788": "b787", "B789": "b787", "B78X": "b787",
-    "C130": "c130", "C30J": "c130", "L100": "c130",
-    "C172": "cessna", "C152": "cessna", "C162": "cessna", "C177": "cessna",
-    "C182": "cessna", "C206": "cessna", "C210": "cessna", "C72R": "cessna",
-    "P28A": "cessna", "P28B": "cessna", "PA28": "cessna", "SR20": "cessna",
-    "SR22": "cessna", "DA40": "cessna", "BE36": "cessna", "M20P": "cessna",
-    "COL3": "cessna",
-    "CRJ1": "crjx", "CRJ2": "crjx", "CRJ7": "crjx", "CRJ9": "crjx",
-    "CRJX": "crjx",
-    "DH8A": "dh8a", "DH8B": "dh8a", "DH8C": "dh8a", "DH8D": "dh8a",
-    "AT43": "dh8a", "AT45": "dh8a", "AT72": "dh8a", "AT75": "dh8a",
-    "AT76": "dh8a", "SF34": "dh8a", "B190": "dh8a", "SH36": "dh8a",
-    # ! THE E-JETS ARE e195, NOT erj - reconciled with the icon author
-    # 2026-09-21. erj draws REAR-mounted engines (the ERJ-145); the E170/175
-    # carry theirs under the wing. The author's erj field reads "erj,e145"
-    # in full. 11 of 66 aircraft overhead that night were drawn wrong.
-    "E190": "e195", "E195": "e195", "E290": "e195", "E295": "e195",
-    "E170": "e195", "E175": "e195", "E75L": "e195", "E75S": "e195",
-    "E135": "erj", "E145": "erj", "E45X": "erj",
-    "F100": "f100", "F70": "f100",
-    "FA7X": "fa7x", "FA8X": "fa7x", "FA50": "fa7x", "F2TH": "fa7x",
-    "E35L": "fa7x",                       # the author's own grouping
-    "GLF5": "glf5", "GLF4": "glf5", "GLF6": "glf5", "GL5T": "glf5",
-    "G280": "glf5", "GALX": "glf5", "CL60": "glf5", "CL35": "glf5",
-    "GLF3": "glf5",
-    "LJ35": "learjet", "LJ45": "learjet", "LJ60": "learjet",
-    "LJ75": "learjet", "LJ31": "learjet", "C25A": "learjet",
-    "C25B": "learjet", "C25C": "learjet", "C56X": "learjet",
-    "C68A": "learjet", "E55P": "learjet", "PC12": "learjet",
-    "C750": "learjet", "E50P": "learjet",  # unmapped overhead 2026-09-21
-    # ! THE MD-80/90 AND 717 ARE f100, NOT md11 - reconciled 2026-09-21.
-    # md11 draws a TRIJET; these are rear-engined twins, and the author puts
-    # md81 with f100. DC10 is a trijet and stays.
-    "MD11": "md11", "DC10": "md11",
-    "MD81": "f100", "MD82": "f100", "MD83": "f100", "MD87": "f100",
-    "MD88": "f100", "MD90": "f100", "B712": "f100",
+#
+# ! THE BASE IS THE ICON AUTHOR'S OWN TABLE. Jos Nutbroek (ADS-B Radar) sent the
+# app's full default type -> icon lists on 2026-09-22; we corrected them and sent
+# the corrections back on 2026-09-23 (20 codes filed under two icons, 737-600/800
+# on the 767, A350 on the A340, the Falcon 2000 on the Dash 8, CRJs on the F100,
+# and 30 designators the feeds actually carry). This is that corrected version,
+# verbatim, lower case as he writes it. Record:
+# 30_Integrations/Live_Track_Aircraft/30_Correspondence/20260923_adsb-radar_fixes/
+# ! Many entries are model NAMES (crj200, phenom100) that never appear in a
+# feed, which sends ICAO Doc 8643 designators. They are harmless and kept so
+# this stays his list; the designators sit beside them.
+# ! It includes his non-ICAO keys (FLARM f-codes, emitter categories as codes).
+# The emitter category itself is still resolved by _BY_CATEGORY, below the type.
+_AUTHOR_LISTS: dict[str, str] = {
+    "a320": "a320,a20n,a318,a21n,a319,a321,bcs1,bcs3,c919",
+    "a330": "a330,a300,a30b,a310,a332,a333,a338,a306,a339,a350,a359,a35k",
+    "a340": "a340,a342,a343,a345,a346",
+    "a380": "a380,a388",
+    "b737": ("b737,b727,b721,b722,b38m,b733,b734,b731,b732,b735,b736,b738,"
+             "b739,b37m,b39m,b3xm"),
+    "b747": "b741,b742,b743,b747,b744,b748,b74d,b74s,b74r,blcf,bsca",
+    "b767": "b757,b753,b752,b767,b707,b703,b763,b762,b764",
+    "b777": "b777,b772,b77l,b773,b77w,b778,b779",
+    "b787": "b787,b788,b789,b78x",
+    "c130": ("c130,c130h,c130j,c130j30,c135,c135b,c135c,k35r,c30j,c27j,c17,"
+             "c160,a400"),
+    "cessna": ("b209,c172,c172r,c172s,c152,c182,cruz,m20,m20j,m20k,m20p,"
+               "m20t,c208,pc12,pc24,be33,c206,c340,sira,jfox,p46t,r22,fk9,"
+               "f260,pc6t,dr40,slg2,slg4,slgp,slg5,vl3,br23,br24,ct2k,ctsw,"
+               "ctls,fk14,icp2,icp3,ev97,evss,wt9,wt91,rans,tl20,tl22,tl200,"
+               "tl300,p96g,tec2,tec4,stin,skyr,ch60,ch70,ch80,ch200,ch650,"
+               "p68,p68t,vtor,fdct,pa11,pa12,pa14,pa15,pa16,pa17,pa18,pa20,"
+               "pa22,pa24,pa25,p28a,p28b,p28r,p28s,p28t,p28u,pa32,pa38,twen,"
+               "pc21,da40"),
+    "kingair": "be20,b350,be30,be9l,be9t,be10",
+    "crjx": ("crjx,crj,crj1,crj2,crj7,crj9,crj100,crj200,crj440,crj700,"
+             "crj705,crj900,crj900er,crj1000,crj1000er"),
+    "dh8a": "dh8a,dh8b,dh8c,dh8d,at43,at45,at46,at72,at75,at76,da42,da62",
+    "e195": "e195,e190,e290,e295,e170,e75l,e75s,e175",
+    "erj": "erj,erj135,erj140,erj145,e135,e145,e45x,e35l",
+    "f100": ("f100,f70,md81,md82,md83,md87,md88,md90,md95,b712,ba146,at146,"
+             "b461,b462,b463,avro,rj,rj70,rj85,rj1h,avrorj70,avrorj85,"
+             "avrorj100"),
+    "fa7x": ("fa7x,fa8x,fa50,fa900,f900,fa2000,fa2000lx,fa2000s,fa2000ex,"
+             "f2th,gl7t"),
+    "glf5": ("glf3,glf4,glf4e,glf5,glf6,glf7,g650,be40,e50p,e55p,e500,e550,"
+             "g450,cl60,cl65"),
+    "learjet": ("c25a,c25b,c25c,c525,c525a,c525b,c525c,c510,c510a,c510b,"
+                "c56x,c560,c560xl,c56,cl35,cl30,c680,c680a,c68a,c650,c650er,"
+                "c750,c750er,lj35,lj35a,lj35a3,lj45,lj45ea,lj45xr,lj60,"
+                "lj60xr,phenom100,phenom300,hawk100,hawk125"),
+    "md11": "md11",
+    "a7": ("a7,f3,f03,ec20,ec25,ec30,ec35,ec35e,ec135,ec135t2,ec145,ec145t,"
+           "ec145t2,ec145t2m,ec155,ec155b,ec155b1,ec175,as32,as350,as355,"
+           "as365,as365n,as365n2,a129,a129d,a139,bk117,bk117a,bk117b,bk117c,"
+           "bk117d,bk117c1,bk117c2,bk117c3,bk117c4,bk117c5,h60,h60m,h145,"
+           "h145m,h47,h64,h65,s76,mi8,mi17,mi24,mi28,mi35,mi26,ka27,ka32,"
+           "ka50,ka52,ec45,b429,a109,bk17,ec75,ec55,expl,as50,as55,as65,"
+           "h160"),
+    "b0": "b0,b5,b6,b7,f13,vfhc",
+    "b1": ("a21c,arcp,arcus,arcusm,arcust,ask13,ask18,ask21,ask23,as15,as17,"
+           "as19,as20,as22,as24,as27,as28,as29,as30,asti,twinasti,b1,"
+           "califa21,dg1000,dg1000t,dg300,dg40,dg400,dg505,dg600,dg808,"
+           "discus,discus2,disc,duod,f01,f1,f02,f2,fox,glid,hph304,hph304e,"
+           "hph304s,janm,janusc,janc,jans,js1,js3,js5,js7,js8,ka6,ka6cr,k6,"
+           "la12,la17,la19,l13,l23,libe,ls01,ls03,ls04,ls06,ls07,ls08,ls09,"
+           "ls10,ls11,mini-nimbus,mistralc,perkoz,phoe,phoebus,pik20,pik20b,"
+           "pik20d,pik20e,swift,s1,sz30,sz36,sz48,sz50,taurus,ultraligh,"
+           "ven2,ventus2,ven3,ventus3,venb,ventusb,venc,ventusc,vent"),
+    "b2": "b2,f12",
+    "b3": "b3,f4,f04",
+    "b4": ("b4,f6,f7,f06,f07,paraglide,ulac,b4208,foka4,foka5,foka6,foka7,"
+           "szd56,diana2,szd59,szd54,szd48,szd42,szd41,ls4,ls6,ls8,ls9,"
+           "discus3,asw20,asw22,asw24,asw27,asw28,asw29,asw30"),
+    "c0": "c0,c1,c2,c3",
+    "f5": "f5,f05",
+    "f11": "f11",
+    "f15": "f15",
 }
+
+# ! OURS, where his lists are SILENT - never over an author entry. Designators
+# seen overhead or chosen before his lists arrived. Where ours and his disagreed
+# (2026-09-23, five codes) HIS won: PC12 -> cessna (a single turboprop, not a
+# jet), E35L -> erj (built on the ERJ-135), CL35 -> learjet, E50P and E55P ->
+# glf5. The Phenoms were on learjet here; glf5 is his call, kept as his.
+_OURS = {
+    "A19N": "a320",
+    "SR20": "cessna", "SR22": "cessna", "C162": "cessna", "C177": "cessna",
+    "C210": "cessna", "C72R": "cessna", "PA28": "cessna", "BE36": "cessna",
+    "COL3": "cessna",
+    "SF34": "dh8a", "B190": "dh8a", "SH36": "dh8a",
+    "G280": "glf5", "GALX": "glf5", "GL5T": "glf5",
+    "LJ31": "learjet", "LJ75": "learjet",
+    "L100": "c130",
+    # ! THE E-JETS ARE e195, NOT erj - erj draws REAR-mounted engines (the
+    # ERJ-145); the E170/175 carry theirs under the wing. His list agrees.
+    # ! THE MD-80/90 AND 717 ARE f100, NOT md11 - md11 draws a TRIJET. His list
+    # agrees. DC10 is a trijet and is ours alone.
+    "DC10": "md11",
+}
+
+_BY_TYPE: dict[str, str] = {
+    code.strip().upper(): key
+    for key, codes in _AUTHOR_LISTS.items()
+    for code in codes.split(",") if code.strip()
+}
+for _code, _key in _OURS.items():
+    _BY_TYPE.setdefault(_code, _key)
 
 # --- what must NOT be turned ---------------------------------------------
 # ! An icon is unrotatable when turning it says nothing or breaks the
