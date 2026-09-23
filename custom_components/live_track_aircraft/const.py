@@ -7,7 +7,16 @@ recovers it - 00_START_HERE.md damage item 2.
 from __future__ import annotations
 
 DOMAIN = "live_track_aircraft"
-ATTRIBUTION = "Data from adsb.lol and adsb.fi"
+# ! THE FEEDS' TERMS REQUIRE THIS (read 2026-09-22). adsb.fi: "You must cite
+# adsb.fi and include a link to our home page." adsb.lol: its API and data are
+# ODbL 1.0, whose notice is required when the data is used publicly - not for a
+# private map, but a user may share theirs, so it rides along. HA shows this
+# string on every entity's attribution, so it carries both. README.md and
+# ATTRIBUTION.md carry the same, with links.
+ATTRIBUTION = (
+    "Data from adsb.lol (https://adsb.lol, ODbL 1.0) "
+    "and adsb.fi (https://adsb.fi)"
+)
 
 # --- configuration keys ---
 CONF_LATITUDE = "latitude"
@@ -54,7 +63,11 @@ MAX_MAX_AIRCRAFT = 1000
 # the count sensor publishes which source answered.
 SOURCE_URLS: tuple[tuple[str, str], ...] = (
     ("adsb.lol", "https://api.adsb.lol/v2/point/{lat}/{lon}/{nm}"),
-    ("adsb.fi", "https://opendata.adsb.fi/api/v2/lat/{lat}/lon/{lon}/dist/{nm}"),
+    # ! v3, NOT v2: adsb.fi's README (updated 2026-05-17) calls v2/lat/lon/dist
+    # DEPRECATED and asks new integrations to use v3. Measured 2026-09-22: v3
+    # answers in adsb.lol's shape ("ac", `now` in MILLISECONDS) where v2 used
+    # "aircraft" and seconds. The parser reads both; see the `now` sniff.
+    ("adsb.fi", "https://opendata.adsb.fi/api/v3/lat/{lat}/lon/{lon}/dist/{nm}"),
 )
 
 REQUEST_TIMEOUT = 20

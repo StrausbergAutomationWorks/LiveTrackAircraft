@@ -1,5 +1,22 @@
 # Attribution
 
+## Aircraft position data
+
+Live positions are fetched at runtime from two services. Nothing from either is
+shipped in this repository.
+
+**adsb.lol** - https://adsb.lol. The API and all data adsb.lol makes public are
+licensed under the Open Database License (ODbL) 1.0,
+https://opendatacommons.org/licenses/odbl/ (stated in the API's own
+description at https://api.adsb.lol/docs, read 2026-09-22).
+
+**adsb.fi** - https://adsb.fi. Terms, as stated in
+https://github.com/adsbfi/opendata (read 2026-09-22; that README last changed
+2026-05-17): the open data is for personal, non-commercial use only; it may
+not be licensed, sold, rented or leased; it is provided as-is; users must cite
+adsb.fi and link to its home page. This file, the Data sources section of
+`README.md`, and the attribution shown on every entity are that citation.
+
 ## Aircraft marker icons
 
 The 37 SVG files in `custom_components/live_track_aircraft/icons/` are by

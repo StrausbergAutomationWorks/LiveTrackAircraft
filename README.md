@@ -35,6 +35,21 @@ Written from scratch. An earlier tracking fork of another project exists
 separately and is unaffected by this repository; no code is shared between
 them.
 
+## Data sources
+
+Aircraft positions come from two free community networks, tried in order:
+
+- **[adsb.lol](https://adsb.lol)** - data under the
+  [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/).
+- **[adsb.fi](https://adsb.fi)** - open data for **personal, non-commercial
+  use only**, under the terms in its
+  [open data README](https://github.com/adsbfi/opendata).
+
+By installing this integration you use both services, and their terms apply to
+you. Both are volunteer-run; if you can, support them by feeding a receiver.
+Each configured area polls at most once every 15 seconds, and the integration
+backs off when a service answers HTTP 429. See [`ATTRIBUTION.md`](ATTRIBUTION.md).
+
 ## Icons
 
 The aircraft marker icons are by [ADS-B Radar](https://adsb-radar.com),
