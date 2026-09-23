@@ -168,3 +168,61 @@ def describe_rejection(route, lat, lon, altitude_ft=None):
             f"leg={leg:.0f}km cross_track={xt:.0f}km "
             f"limit={max(MIN_CROSS_TRACK_KM, leg * CROSS_TRACK_FRACTION):.0f}km "
             f"alt={altitude_ft}")
+
+
+# --------------------------------------------------------------------------
+# Choosing among a callsign's legs. Added 2026-09-22, when airport coordinates
+# became available (airports.py). Until then this module was INERT.
+#
+# ! 48.7% of callsigns fly more than one route, and most of those are ONE city
+# pair flown both ways. The artifact carries every leg with its observation
+# count; the old lookup returned only the most-observed one, unchecked. Here
+# every leg is tested against the aircraft's own position:
+#
+#   1. geometrically plausible legs beat unchecked ones, which beat implausible
+#   2. among those, a leg whose DESTINATION lies ahead on the aircraft's course
+#      beats one whose destination is behind it - this is what separates A-B
+#      from B-A, which geometry alone cannot (both lie on the same great circle)
+#   3. then observation count, as before
+#
+# Unchecked means an endpoint has no coordinates; it is not evidence either way.
+# --------------------------------------------------------------------------
+
+PLAUSIBLE, UNCHECKED, IMPLAUSIBLE = "plausible", "unchecked", "implausible"
+_RANK = {PLAUSIBLE: 0, UNCHECKED: 1, IMPLAUSIBLE: 2}
+AHEAD_DEG = 90.0
+
+
+def _angle_diff(a, b):
+    return abs((a - b + 180.0) % 360.0 - 180.0)
+
+
+def choose_leg(legs, resolve, lat, lon, altitude_ft=None, course_deg=None):
+    """Pick the leg this aircraft can be flying.
+
+    legs     : [(dep, arr, n), ...] - every leg on file for the callsign
+    resolve  : code -> {'lat', 'lon', 'tz', ...} or None
+    Returns (leg dict or None, verdict, number of legs considered). The leg
+    dict carries the endpoint coordinates and zones when known.
+    """
+    if not legs:
+        return None, None, 0
+    scored = []
+    for dep, arr, n in legs:
+        o, d = resolve(dep), resolve(arr)
+        leg = {"origin_icao": dep, "destination_icao": arr, "route_observations": n}
+        if o:
+            leg.update(origin_lat=o["lat"], origin_lon=o["lon"], origin_tz=o["tz"])
+        if d:
+            leg.update(destination_lat=d["lat"], destination_lon=d["lon"], destination_tz=d["tz"])
+        if o is None or d is None or lat is None or lon is None:
+            verdict = UNCHECKED
+        else:
+            verdict = PLAUSIBLE if route_is_plausible(leg, lat, lon, altitude_ft) else IMPLAUSIBLE
+        behind = 1                                    # unknown direction sorts after "ahead"
+        if d and course_deg is not None and lat is not None and lon is not None:
+            behind = 0 if _angle_diff(course_deg, _bearing(lat, lon, d["lat"], d["lon"])) <= AHEAD_DEG else 2
+        scored.append((_RANK[verdict], behind, -(n or 0), verdict, leg))
+    scored.sort(key=lambda s: s[:3])
+    best = scored[0]
+    return best[4], best[3], len(legs)

@@ -88,6 +88,8 @@ class AircraftInRange(SensorEntity):
             # Low cardinality: a handful of distinct strings, so it
             # de-duplicates in the recorder like the rest.
             "route_artifact": self._coordinator.routes.status,
+            # Same, for the shared airport table (airports.py).
+            "airport_table": self._coordinator.airports.status,
         }
 
     async def async_added_to_hass(self) -> None:

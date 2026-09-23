@@ -174,3 +174,23 @@ class RouteStore:
             return None
         return {"origin_icao": row[0], "destination_icao": row[1],
                 "route_observations": row[2]}
+
+    def legs(self, callsign: str | None) -> list[tuple[str, str, int]]:
+        """EVERY leg on file for a callsign, most-observed first.
+
+        Added 2026-09-22 so route_check.choose_leg can test each leg against
+        the aircraft's position instead of trusting the most-observed one.
+        Same fail-closed store: no valid artifact means no legs.
+        """
+        if not callsign:
+            return []
+        con = self._ensure()
+        if con is None:
+            return []
+        try:
+            rows = con.execute(
+                "SELECT dep, arr, n FROM routes WHERE acid=? ORDER BY n DESC",
+                (callsign.strip().upper(),)).fetchall()
+        except sqlite3.Error:
+            return []
+        return [(d, a, n) for d, a, n in rows if d and a]

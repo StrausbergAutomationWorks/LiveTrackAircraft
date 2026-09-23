@@ -41,6 +41,8 @@ from .aircraft import classify, describe_aircraft, lookup_manufacturer
 from .airlines import lookup_operator
 from .registrations import lookup_government, lookup_owner, prettify_owner
 from .routes import RouteStore
+from .airports import AirportStore
+from .route_check import choose_leg
 from .web import picture_url
 
 _LOGGER = logging.getLogger(__name__)
@@ -115,6 +117,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # The shared route artifact. Absent or stale means no route fields
         # and nothing else changes - see routes.py.
         self.routes = RouteStore(hass)
+        # The shared airport table: coordinates and time zones per airport.
+        # Absent means every route reports route_check "unchecked" and
+        # nothing else changes - see airports.py.
+        self.airports = AirportStore(hass)
 
     async def _async_update_data(self) -> dict[str, Any]:
         now = time.time()
@@ -281,10 +287,32 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # --- route ------------------------------------------------------
         # ! Read from the shared artifact, never resolved live. No artifact
         # means no route keys at all - the aircraft is still tracked.
-        route = self.routes.lookup(obs.callsign)
-        if route:
-            rec.update(route)
+        #
+        # ! EVERY LEG IS TESTED, since 2026-09-22. The artifact holds every
+        # leg a callsign has been seen on; choose_leg tests each against this
+        # aircraft's position (route_check.py) using airport coordinates from
+        # the shared airport table, and prefers a plausible leg whose
+        # destination lies AHEAD on the course - which is what separates A-B
+        # from B-A. Before this, the most-observed leg was published unchecked.
+        #
+        # ! AN IMPLAUSIBLE ROUTE IS FLAGGED, NOT HIDDEN - Lee, 2026-09-22, to
+        # work on problems. route_check says which: plausible | unchecked |
+        # implausible. Whether to suppress implausible routes is a later call.
+        leg, verdict, considered = choose_leg(
+            self.routes.legs(obs.callsign), self.airports.lookup,
+            here[0], here[1],
+            None if obs.altitude_m is None else obs.altitude_m * 3.28084,
+            obs.course_deg)
+        if leg:
+            rec["origin_icao"] = leg["origin_icao"]
+            rec["destination_icao"] = leg["destination_icao"]
+            rec["route_observations"] = leg["route_observations"]
             rec["route_source"] = "saw_filed_routes"
+            rec["route_check"] = verdict
+            rec["route_candidates"] = considered
+            for key in ("origin_tz", "destination_tz"):
+                if leg.get(key):
+                    rec[key] = leg[key]
 
         # ! previous_* let the map INTERPOLATE between two MEASURED fixes.
         # There is no max_extrapolation_s here and that is deliberate: this

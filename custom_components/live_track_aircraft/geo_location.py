@@ -77,6 +77,11 @@ _PASSTHROUGH = (
     "destination_icao",
     "route_observations",
     "route_source",
+    # route verification (route_check.choose_leg) and the airport table's zones
+    "route_check",
+    "route_candidates",
+    "origin_tz",
+    "destination_tz",
     # --- freshness and motion ---
     "last_seen",
     "observed_at",
