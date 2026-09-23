@@ -14,11 +14,22 @@ the count sensor publishes it.
 from __future__ import annotations
 
 import logging
+import time
+from collections.abc import Callable
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any
 
 import aiohttp
 
-from ..const import REQUEST_TIMEOUT, SOURCE_URLS, USER_AGENT
+from ..const import (
+    BACKOFF_FIRST_S,
+    BACKOFF_MAX_S,
+    REQUEST_TIMEOUT,
+    RETRY_AFTER_MAX_S,
+    SOURCE_URLS,
+    USER_AGENT,
+)
 from .base import Observation, SourceError
 
 _LOGGER = logging.getLogger(__name__)
@@ -100,24 +111,121 @@ def _parse(record: dict[str, Any], now: float) -> Observation | None:
     )
 
 
+def _retry_after_s(value: str | None, wall_now: float) -> float | None:
+    """Retry-After as seconds from now, clamped; None if absent or unreadable.
+
+    RFC 9110 allows delay-seconds or an HTTP-date. Both are accepted.
+    """
+    if not value:
+        return None
+    value = value.strip()
+    try:
+        secs = float(value)
+    except ValueError:
+        try:
+            when = parsedate_to_datetime(value)
+        except (TypeError, ValueError, IndexError):
+            return None
+        if when is None:
+            return None
+        if when.tzinfo is None:
+            when = when.replace(tzinfo=timezone.utc)
+        secs = when.timestamp() - wall_now
+    if secs != secs or abs(secs) == float("inf"):
+        return None
+    return max(1.0, min(RETRY_AFTER_MAX_S, secs))
+
+
+class Backoff:
+    """Per-source skip windows after HTTP 429.
+
+    ! MODULE-LEVEL, SHARED BY EVERY CONFIG ENTRY, ON PURPOSE: the limit is
+    per IP, not per entry. Decisions use the monotonic clock; the wall-clock
+    deadline exists only to be displayed.
+    """
+
+    def __init__(
+        self,
+        clock: Callable[[], float] = time.monotonic,
+        wall: Callable[[], float] = time.time,
+    ) -> None:
+        self._clock = clock
+        self._wall = wall
+        self._until: dict[str, float] = {}
+        self._until_wall: dict[str, float] = {}
+        self._strikes: dict[str, int] = {}
+
+    def remaining(self, name: str) -> float | None:
+        """Seconds left in this source's skip window, or None."""
+        until = self._until.get(name)
+        if until is None:
+            return None
+        left = until - self._clock()
+        return left if left > 0 else None
+
+    def refused(self, name: str, retry_after: float | None) -> tuple[float, int]:
+        """Record a 429. Returns (skip seconds, consecutive refusals)."""
+        strikes = self._strikes.get(name, 0) + 1
+        self._strikes[name] = strikes
+        if retry_after is not None:
+            delay = retry_after
+        else:
+            delay = min(BACKOFF_MAX_S, BACKOFF_FIRST_S * 2 ** (strikes - 1))
+        self._until[name] = self._clock() + delay
+        self._until_wall[name] = self._wall() + delay
+        return delay, strikes
+
+    def answered(self, name: str) -> int:
+        """Record a 200. Returns the refusals it ended (0 if none)."""
+        self._until.pop(name, None)
+        self._until_wall.pop(name, None)
+        return self._strikes.pop(name, 0)
+
+    def status(self) -> dict[str, str]:
+        """{source: resume time, UTC ISO} for every source now skipped.
+
+        One fixed value per episode, not a countdown, so the attribute does
+        not change on every poll and the recorder de-duplicates it.
+        """
+        return {
+            name: datetime.fromtimestamp(self._until_wall[name], timezone.utc)
+            .replace(microsecond=0).isoformat().replace("+00:00", "Z")
+            for name in self._until
+            if self.remaining(name) is not None
+        }
+
+
+BACKOFF = Backoff()
+
+
 async def fetch(
     session: aiohttp.ClientSession,
     latitude: float,
     longitude: float,
     radius_km: float,
     now: float,
+    backoff: Backoff | None = None,
 ) -> tuple[str, list[Observation]]:
-    """Fetch from the first source that answers.
+    """Fetch from the first source that answers and is not backing off.
 
     Returns the source name and its observations. Raises SourceError when
-    every source failed - the caller decides whether to serve its last good
-    result or fail.
+    every source failed or is backing off - the caller decides whether to
+    serve its last good result or fail.
     """
+    backoff = BACKOFF if backoff is None else backoff
     nm = max(1, min(250, round(radius_km / 1.852)))
     headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
     last_error = "no sources configured"
+    failures: list[str] = []
 
     for name, template in SOURCE_URLS:
+        left = backoff.remaining(name)
+        if left is not None:
+            # Not requested at all: that is the point.
+            last_error = f"{name} backing off, {left:.0f} s left"
+            failures.append(last_error)
+            _LOGGER.debug("%s", last_error)
+            continue
         url = template.format(lat=round(latitude, 6), lon=round(longitude, 6), nm=nm)
         try:
             async with session.get(
@@ -128,13 +236,34 @@ async def fetch(
                     # ! A non-200 is never a negative RESULT. 429 in
                     # particular means slow down, not "no aircraft".
                     last_error = f"{name} returned HTTP {resp.status}"
-                    _LOGGER.debug("%s", last_error)
+                    if resp.status == 429:
+                        header = resp.headers.get("Retry-After")
+                        delay, strikes = backoff.refused(
+                            name, _retry_after_s(header, time.time()))
+                        # First refusal of an episode at INFO; a repeat
+                        # means the backoff is not enough, so WARNING.
+                        _LOGGER.log(
+                            logging.WARNING if strikes > 1 else logging.INFO,
+                            "%s rate-limited (HTTP 429, %s in a row); skipping "
+                            "it for %.0f s (%s)",
+                            name, strikes, delay,
+                            f"Retry-After {header!r}" if header
+                            else "no Retry-After")
+                    else:
+                        _LOGGER.info("%s; trying the next source", last_error)
+                    failures.append(last_error)
                     continue
                 payload = await resp.json(content_type=None)
         except (aiohttp.ClientError, TimeoutError, ValueError) as err:
             last_error = f"{name} unreachable: {err!r}"
+            failures.append(last_error)
+            _LOGGER.info("%s; trying the next source", last_error)
             _LOGGER.debug("%s", last_error, exc_info=True)
             continue
+
+        ended = backoff.answered(name)
+        if ended:
+            _LOGGER.info("%s answering again after %s refusal(s)", name, ended)
 
         # ! USE THE SERVER'S CLOCK, NOT OURS. The payload carries `now` in
         # MILLISECONDS, and every record's seen_pos is an age measured
@@ -174,4 +303,6 @@ async def fetch(
                 seen[obs.identity] = obs
         return name, list(seen.values())
 
-    raise SourceError(last_error)
+    # Every source, not only the last: "adsb.fi returned 503" alone hides
+    # that adsb.lol was skipped for a backoff.
+    raise SourceError("; ".join(failures) or last_error)

@@ -34,7 +34,7 @@ from .const import (
     MAX_TRANSIENT_FAILURES,
     SLOW_GROUND_SPEED_KMH,
 )
-from .sources.adsb import fetch
+from .sources.adsb import BACKOFF, fetch
 from .sources.base import Observation, SourceError
 from . import icons
 from .aircraft import classify, describe_aircraft, lookup_manufacturer
@@ -141,7 +141,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 _LOGGER.debug(
                     "All sources failed (%s consecutive): %s; serving the "
                     "previous result", self._consecutive_failures, err)
-                return self._last_good
+                # The aircraft are the last good ones; the backoff is NOW.
+                return {**self._last_good, "source_backoff": BACKOFF.status()}
             raise UpdateFailed(
                 f"all sources failed ({self._consecutive_failures} consecutive): {err}"
             ) from err
@@ -186,6 +187,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
             "published": len(aircraft),
             "capped": capped,
             "source": source_name,
+            # {source: resume time} for sources skipped after HTTP 429;
+            # empty when none is. Backlog item 244.
+            "source_backoff": BACKOFF.status(),
             "radius_km": self.radius_km,
         }
         self._last_good = result

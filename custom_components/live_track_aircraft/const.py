@@ -58,6 +58,18 @@ SOURCE_URLS: tuple[tuple[str, str], ...] = (
 )
 
 REQUEST_TIMEOUT = 20
+
+# ! BACK OFF ON HTTP 429 (backlog item 244). Measured 2026-09-22: adsb.lol
+# refused 1 poll in 2 with Flights Above polling the same endpoint from the
+# same IP, ~1 in 8 without it. Retrying a refusing source every 15 s spends
+# the budget it is asking us to spare. A refused source is skipped for its
+# Retry-After when it sends one, else BACKOFF_FIRST_S doubling per
+# consecutive refusal up to BACKOFF_MAX_S; one 200 resets it. Retry-After is
+# clamped to RETRY_AFTER_MAX_S so a malformed header cannot park a source
+# for a day.
+BACKOFF_FIRST_S = 60.0
+BACKOFF_MAX_S = 600.0
+RETRY_AFTER_MAX_S = 900.0
 USER_AGENT = "LiveTrackAircraft/0.1 (+https://github.com/StrausbergAutomationWorks/LiveTrackAircraft)"
 
 # A single failed fetch must not blank every marker.

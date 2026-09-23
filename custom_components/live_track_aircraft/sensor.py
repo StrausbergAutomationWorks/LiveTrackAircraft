@@ -84,6 +84,9 @@ class AircraftInRange(SensorEntity):
             # to adsb.fi silently, and without this there is no way to notice
             # you have been running on the backup feed for a week.
             "source": data["source"],
+            # Sources skipped after HTTP 429, with the time each resumes.
+            # One value per episode, not a countdown (backlog item 244).
+            "source_backoff": data.get("source_backoff", {}),
             # Whether the shared route artifact is installed and current.
             # Low cardinality: a handful of distinct strings, so it
             # de-duplicates in the recorder like the rest.
