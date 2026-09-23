@@ -107,6 +107,7 @@ class RouteStore:
         self._con: sqlite3.Connection | None = None
         self._meta: dict[str, Any] = {}
         self._checked: dt.datetime | None = None
+        self._has_times: tuple[sqlite3.Connection, bool] | None = None
         self.status = "not loaded"
 
     def close(self) -> None:
@@ -194,3 +195,39 @@ class RouteStore:
         except sqlite3.Error:
             return []
         return [(d, a, n) for d, a, n in rows if d and a]
+
+    def leg_times(self, callsign: str | None) -> dict[tuple[str, str], dict[str, Any]]:
+        """Typical times per leg, {(dep, arr): {...}}, or {} when there are none.
+
+        Added 2026-09-23 (Lee: leg selection uses departure and arrival times).
+        Table leg_times: dep_min / arr_min are clock minutes after local
+        midnight at the ORIGIN and DESTINATION respectively, dep_spread_min
+        their spread, arr_basis says where the arrival came from. Written
+        today by the local stand-in builder only for COMMERCIAL and CARGO
+        (the 2026-09-19 publication scope); the published shape is not
+        decided. ! OPTIONAL: an artifact without the table, or without an
+        arrival column value, is normal - route_check degrades to departures
+        only, then to no times.
+        """
+        if not callsign:
+            return {}
+        con = self._ensure()
+        if con is None:
+            return {}
+        if self._has_times is None or self._has_times[0] is not con:
+            try:
+                ok = con.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
+                                 "AND name='leg_times'").fetchone() is not None
+            except sqlite3.Error:
+                ok = False
+            self._has_times = (con, ok)
+        if not self._has_times[1]:
+            return {}
+        try:
+            rows = con.execute(
+                "SELECT dep, arr, dep_min, dep_spread_min, arr_min, arr_basis "
+                "FROM leg_times WHERE acid=?", (callsign.strip().upper(),)).fetchall()
+        except sqlite3.Error:
+            return {}
+        return {(d, a): {"dep_min": m, "dep_spread_min": s, "arr_min": am, "arr_basis": b}
+                for d, a, m, s, am, b in rows if d and a and m is not None}

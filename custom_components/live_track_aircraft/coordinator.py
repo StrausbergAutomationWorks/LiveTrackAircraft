@@ -307,11 +307,20 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # filed flight plans are current, so they carry more weight than a
         # schedule snapshot like adsbdb. See route_check.PROFILES. Every
         # rejecting threshold there is relative, so it holds worldwide.
+        #
+        # ! WHICH LEG uses TIMES and FLIGHT PHASE, since 2026-09-23 (Lee):
+        # the leg whose typical departure-to-arrival window holds the time of
+        # this fix outranks history, and a low aircraft's climb or descent
+        # says which END of the leg is near. See route_check "WHICH LEG".
+        # Times are optional; without them the ranking falls back.
         leg, verdict, considered = choose_leg(
             self.routes.legs(obs.callsign), self.airports.lookup,
             here[0], here[1],
             None if obs.altitude_m is None else obs.altitude_m * 3.28084,
-            obs.course_deg, profile=FILED)
+            obs.course_deg, profile=FILED,
+            vertical_rate_ms=obs.vertical_rate_ms,
+            now=latest[2],
+            times=self.routes.leg_times(obs.callsign))
         if leg:
             rec["origin_icao"] = leg["origin_icao"]
             rec["destination_icao"] = leg["destination_icao"]
@@ -319,6 +328,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             rec["route_source"] = "saw_filed_routes"
             rec["route_check"] = verdict
             rec["route_check_rule"] = leg["route_check_rule"]
+            rec["route_time_check"] = leg["route_time_check"]
             rec["route_candidates"] = considered
             for key in ("origin_tz", "destination_tz"):
                 if leg.get(key):

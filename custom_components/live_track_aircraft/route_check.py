@@ -63,7 +63,10 @@ cacheable per aircraft since origin does not change mid-flight. Left out here
 because it needs user-supplied credentials.
 """
 
+import datetime as dt
+import functools
 import math
+from zoneinfo import ZoneInfo
 
 # Cross-track allowance. Aircraft do deviate for weather and airways, and long
 # international legs wander more, so the limit scales with leg length - but
@@ -252,19 +255,142 @@ def _angle_diff(a, b):
     return abs((a - b + 180.0) % 360.0 - 180.0)
 
 
-def choose_leg(legs, resolve, lat, lon, altitude_ft=None, course_deg=None, profile=SCHEDULE):
+# --------------------------------------------------------------------------
+# WHICH LEG, BY TIME AND BY FLIGHT PHASE - added 2026-09-23, Lee's decision.
+#
+# Measured the night before (Live Track Aircraft SSOT, "THE VERDICT CAPTURE,
+# READ AGAINST WHAT WAS ACTUALLY FLYING"): the route shown was a leg OTHER than
+# the one in the air for 60 of 296 checkable verdicts, and for 43 of them the
+# right leg WAS on file - near Chicago several legs rank plausible, "destination
+# ahead" often ties, and the tiebreak fell to how often each leg had been seen.
+# Loosening or tightening thresholds cannot fix that; choosing the leg can.
+#
+# Two new keys, both between the geometry verdict and "ahead":
+#
+#   PHASE - a LOW aircraft (below TERMINAL_ALT_FT) is near one of the ends of
+#     the leg it is flying. Climbing -> that end is the ORIGIN; descending ->
+#     the DESTINATION; level or no rate -> either end. Tested against the
+#     LEG'S OWN ENDS within TERMINAL_RANGE_KM, never "the nearest airport": an
+#     aircraft climbing out of O'Hare can be closer to Midway, and a leg from
+#     either of them passes. Very low (< VERY_LOW_FT) with neither end near is
+#     counted against the leg; between the two altitudes with no rate, nothing.
+#     ! A RANK, NOT A REJECTION: it only orders legs against each other. A GA
+#     flight cruising low between two distant fields has every leg ranked the
+#     same, so nothing changes for it.
+#
+#   TIME - a leg whose typical departure-to-arrival window contains "now" (with
+#     slack for early departure and delay) beats a leg with no times, which
+#     beats a leg whose window does not. Arrival is used when present; with a
+#     departure only, arrival is estimated from distance; with no times at all
+#     this key ties and the ranking is the one used before. Among legs in their
+#     window, the one whose expected PROGRESS (fraction of the time window
+#     elapsed) best matches the aircraft's actual progress along the leg wins.
+#
+# Observation count is now the LAST tiebreak, not the one that decides.
+# Times are clock minutes after local midnight in each end's own zone, so a
+# daylight-saving change moves them with the schedule (see routes.leg_times).
+# --------------------------------------------------------------------------
+
+VERY_LOW_FT = 5000.0
+CLIMB_MS = 2.5                  # ~500 ft/min; below this "level" (turbulence, GA)
+TIME_EARLY_MIN = 30.0           # before typical departure
+TIME_LATE_MIN = 90.0            # after typical arrival - a delay shifts the whole flight
+EST_FIXED_MIN, EST_KMH = 15.0, 780.0    # departure-only: arrival = dep + this
+IN_WINDOW, NO_TIMES, OUT_OF_WINDOW = "in_window", "no_times", "out_of_window"
+_TIME_RANK = {IN_WINDOW: 0, NO_TIMES: 1, OUT_OF_WINDOW: 2}
+# The sort order. Named so an offline replay can test alternatives with the
+# same code; the integration never changes it.
+ORDER = ("verdict", "phase", "time", "behind", "progress", "history")
+
+
+@functools.lru_cache(maxsize=512)
+def _zone(name):
+    if not name:
+        return None
+    try:
+        return ZoneInfo(name)
+    except Exception:           # unknown key, missing tzdata
+        return None
+
+
+def _local(day, minute, zone):
+    return dt.datetime(day.year, day.month, day.day, minute // 60, minute % 60, tzinfo=zone)
+
+
+def leg_time(times, leg, now):
+    """(IN_WINDOW | NO_TIMES | OUT_OF_WINDOW, expected progress 0..1 or None).
+
+    times : {'dep_min', 'dep_spread_min', 'arr_min', ...} or None
+    leg   : the leg dict, with origin/destination tz and coordinates
+    now   : epoch seconds
+    """
+    if not times or now is None or times.get("dep_min") is None:
+        return NO_TIMES, None
+    oz, dz = _zone(leg.get("origin_tz")), _zone(leg.get("destination_tz"))
+    if oz is None:
+        return NO_TIMES, None
+    dep_min, arr_min = int(times["dep_min"]) % 1440, times.get("arr_min")
+    spread = float(times.get("dep_spread_min") or 0)
+    early = dt.timedelta(minutes=TIME_EARLY_MIN + spread)
+    late = dt.timedelta(minutes=TIME_LATE_MIN + spread)
+    now_dt = dt.datetime.fromtimestamp(now, dt.UTC)
+    base = now_dt.astimezone(oz).date()
+    for off in (-1, 0, 1):
+        dep = _local(base + dt.timedelta(days=off), dep_min, oz)
+        arr = None
+        if arr_min is not None and dz is not None:
+            dday = dep.astimezone(dz).date()
+            cands = [_local(dday + dt.timedelta(days=k), int(arr_min) % 1440, dz) for k in (-1, 0, 1, 2)]
+            cands = [a for a in cands if dt.timedelta(minutes=5) < a - dep <= dt.timedelta(hours=20)]
+            arr = min(cands) if cands else None
+        if arr is None:
+            if None in (leg.get("origin_lat"), leg.get("destination_lat")):
+                return NO_TIMES, None
+            km = _hav_km(leg["origin_lat"], leg["origin_lon"], leg["destination_lat"], leg["destination_lon"])
+            arr = dep + dt.timedelta(minutes=EST_FIXED_MIN + km / EST_KMH * 60.0)
+        if dep - early <= now_dt <= arr + late:
+            span = (arr - dep).total_seconds()
+            prog = min(1.0, max(0.0, (now_dt - dep).total_seconds() / span)) if span > 0 else None
+            return IN_WINDOW, prog
+    return OUT_OF_WINDOW, None
+
+
+def leg_phase(leg, lat, lon, altitude_ft, vertical_rate_ms):
+    """0 consistent, 1 no evidence, 2 inconsistent - see PHASE above."""
+    if altitude_ft is None or altitude_ft >= TERMINAL_ALT_FT or lat is None or lon is None:
+        return 1
+    if None in (leg.get("origin_lat"), leg.get("destination_lat")):
+        return 1
+    near_o = _hav_km(lat, lon, leg["origin_lat"], leg["origin_lon"]) <= TERMINAL_RANGE_KM
+    near_d = _hav_km(lat, lon, leg["destination_lat"], leg["destination_lon"]) <= TERMINAL_RANGE_KM
+    if vertical_rate_ms is not None and vertical_rate_ms > CLIMB_MS:
+        return 0 if near_o else 2
+    if vertical_rate_ms is not None and vertical_rate_ms < -CLIMB_MS:
+        return 0 if near_d else 2
+    if near_o or near_d:
+        return 0
+    return 2 if altitude_ft < VERY_LOW_FT else 1
+
+
+def choose_leg(legs, resolve, lat, lon, altitude_ft=None, course_deg=None, profile=SCHEDULE,
+               vertical_rate_ms=None, now=None, times=None):
     """Pick the leg this aircraft can be flying.
 
     legs     : [(dep, arr, n), ...] - every leg on file for the callsign
     resolve  : code -> {'lat', 'lon', 'tz', ...} or None
     profile  : how much the route SOURCE is trusted - FILED for FiledRoutesDB,
                SCHEDULE (the strict original rules) for adsbdb-like sources
+    vertical_rate_ms, now (epoch s), times ({(dep, arr): {...}}) - all
+               optional; absent, the ranking is the one used before 2026-09-23
+               apart from the phase key, which then needs only altitude.
     Returns (leg dict or None, verdict, number of legs considered). The leg
-    dict carries the endpoint coordinates and zones when known, and
-    'route_check_rule' - the test that decided the verdict.
+    dict carries the endpoint coordinates and zones when known,
+    'route_check_rule' - the test that decided the verdict - and
+    'route_time_check' - in_window | no_times | out_of_window.
     """
     if not legs:
         return None, None, 0
+    times = times or {}
     scored = []
     for dep, arr, n in legs:
         o, d = resolve(dep), resolve(arr)
@@ -282,7 +408,18 @@ def choose_leg(legs, resolve, lat, lon, altitude_ft=None, course_deg=None, profi
         behind = 1                                    # unknown direction sorts after "ahead"
         if d and course_deg is not None and lat is not None and lon is not None:
             behind = 0 if _angle_diff(course_deg, _bearing(lat, lon, d["lat"], d["lon"])) <= AHEAD_DEG else 2
-        scored.append((_RANK[verdict], behind, -(n or 0), verdict, leg))
-    scored.sort(key=lambda s: s[:3])
+        tstate, expected = leg_time(times.get((dep, arr)), leg, now)
+        leg["route_time_check"] = tstate
+        progress = 0.0
+        if expected is not None and o and d and lat is not None and lon is not None:
+            a, b = _hav_km(lat, lon, o["lat"], o["lon"]), _hav_km(lat, lon, d["lat"], d["lon"])
+            if a + b > 0:
+                progress = abs(expected - a / (a + b))
+        keys = {"verdict": _RANK[verdict],
+                "phase": leg_phase(leg, lat, lon, altitude_ft, vertical_rate_ms),
+                "time": _TIME_RANK[tstate], "behind": behind,
+                "progress": progress, "history": -(n or 0)}
+        scored.append((tuple(keys[k] for k in ORDER), verdict, leg))
+    scored.sort(key=lambda s: s[0])
     best = scored[0]
-    return best[4], best[3], len(legs)
+    return best[2], best[1], len(legs)

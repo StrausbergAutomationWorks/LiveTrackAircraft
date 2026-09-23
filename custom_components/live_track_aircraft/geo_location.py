@@ -80,6 +80,7 @@ _PASSTHROUGH = (
     # route verification (route_check.choose_leg) and the airport table's zones
     "route_check",
     "route_check_rule",
+    "route_time_check",
     "route_candidates",
     "origin_tz",
     "destination_tz",
