@@ -104,56 +104,111 @@ def _cross_track_km(o_lat, o_lon, d_lat, d_lon, lat, lon):
     return abs(math.asin(math.sin(d13) * math.sin(t13 - t12)) * _EARTH_KM)
 
 
-def route_is_plausible(route, lat, lon, altitude_ft=None):
-    """Whether a looked-up route can be true for an aircraft at (lat, lon).
+# --------------------------------------------------------------------------
+# TRUST PROFILES - added 2026-09-22, Lee's decision.
+#
+# The rules below were written against adsbdb: a schedule snapshot that is
+# often STALE (47% wrong near ORD, 2026-08-25). That is the "schedule" profile
+# and it is unchanged - same rules, same order, same thresholds.
+#
+# FiledRoutesDB routes are FILED FLIGHT PLANS, current to the week, so they
+# carry more weight ("filed" profile). A filed route is rejected only on
+# evidence that holds anywhere in the world:
+#   * past an end of the leg                    - relative to the leg's length
+#   * far off the great circle                  - 25% of the leg, not 6%
+#   * flying AWAY from its destination          - course vs bearing, > 120 deg
+# and NOT for being low far from both ends: that rule assumes airline traffic;
+# a general-aviation or air-taxi plan at 6,000 ft between two fields is normal.
+#
+# Forced by measurement, 2026-09-22 21:34-22:00, 177 legs: 7 rejected, ALL for
+# cross-track, all long legs, six of them airline flights almost certainly on
+# the route - AAL458 KMIA-KMSP 215 km off a 150 km allowance at FL380 heading
+# for MSP; BAW21ML KDEN-EGLL 811/450; TAP23SL KSFO-LPPT 1094/547; DAL685,
+# DAL392, UAL1792. Eastbound and westbound traffic follows jet streams and
+# flow routes well off the great circle.
+#
+# ! WORLDWIDE. Every threshold that can REJECT is relative - a fraction of
+# the leg, or an angle. The two absolute distances (TERMINAL_RANGE_KM and the
+# cross-track floor) only ever ACCEPT more. So dense Europe, the Pacific and
+# the southern hemisphere are judged by the same geometry as the US.
+# --------------------------------------------------------------------------
 
-    Returns True when the route has no coordinates to check against - the
-    point is to reject demonstrable nonsense, not to discard everything that
-    cannot be proven.
+SCHEDULE, FILED = "schedule", "filed"
+PROFILES = {
+    SCHEDULE: {"xt_fraction": CROSS_TRACK_FRACTION, "xt_floor_km": MIN_CROSS_TRACK_KM,
+               "low_far": True, "direction": False},
+    FILED:    {"xt_fraction": 0.25, "xt_floor_km": MIN_CROSS_TRACK_KM,
+               "low_far": False, "direction": True},
+}
+PAST_END_FACTOR = 1.25
+AWAY_DEG = 120.0
+
+
+def evaluate(route, lat, lon, altitude_ft=None, course_deg=None, profile=SCHEDULE):
+    """(plausible, rule, numbers) for a route at an aircraft's position.
+
+    rule names the test that DECIDED: no_position | no_coordinates |
+    same_airport | near_an_end | off_great_circle | past_end | flying_away |
+    low_far_from_ends | on_route. Accepts when there is nothing to test -
+    the point is to reject demonstrable nonsense.
     """
+    p = PROFILES[profile]
     if not route or lat is None or lon is None:
-        return True
-
-    o_lat = route.get("origin_lat")
-    o_lon = route.get("origin_lon")
-    d_lat = route.get("destination_lat")
-    d_lon = route.get("destination_lon")
+        return True, "no_position", {}
+    o_lat, o_lon = route.get("origin_lat"), route.get("origin_lon")
+    d_lat, d_lon = route.get("destination_lat"), route.get("destination_lon")
     if None in (o_lat, o_lon, d_lat, d_lon):
-        return True
+        return True, "no_coordinates", {}
 
     leg_km = _hav_km(o_lat, o_lon, d_lat, d_lon)
+    info = {"leg_km": round(leg_km)}
     if leg_km < 1.0:                      # origin == destination; nothing to test
-        return True
-
+        return True, "same_airport", info
     to_origin = _hav_km(lat, lon, o_lat, o_lon)
     to_dest = _hav_km(lat, lon, d_lat, d_lon)
+    info.update(to_origin_km=round(to_origin), to_dest_km=round(to_dest))
 
     # 0. Close to either endpoint, accept without further question. Arrivals
-    #    get vectored onto downwind legs and into holds, and departures turn
-    #    out before turning on course, so cross-track distance means nothing
-    #    within about 150 km of an airport. Checking this FIRST prevents the
-    #    geometry below from rejecting perfectly good arrivals.
+    #    get vectored and held, departures turn out before turning on course,
+    #    so nothing below means anything within about 150 km of an airport.
     if min(to_origin, to_dest) <= TERMINAL_RANGE_KM:
-        return True
+        return True, "near_an_end", info
 
-    # 1. Is the aircraft anywhere near the great circle between the two?
-    limit = max(MIN_CROSS_TRACK_KM, leg_km * CROSS_TRACK_FRACTION)
-    if _cross_track_km(o_lat, o_lon, d_lat, d_lon, lat, lon) > limit:
-        return False
+    # 1. Anywhere near the great circle between the two?
+    xt = _cross_track_km(o_lat, o_lon, d_lat, d_lon, lat, lon)
+    limit = max(p["xt_floor_km"], leg_km * p["xt_fraction"])
+    info.update(xt_km=round(xt), limit_km=round(limit))
+    if xt > limit:
+        return False, "off_great_circle", info
 
-    # 2. Is it past either end? Being on the great circle is not enough - the
-    #    extension of the line runs right round the planet.
-    if to_origin > leg_km * 1.25 or to_dest > leg_km * 1.25:
-        return False
+    # 2. Past either end? The great circle's extension runs round the planet.
+    if to_origin > leg_km * PAST_END_FACTOR or to_dest > leg_km * PAST_END_FACTOR:
+        return False, "past_end", info
 
-    # 3. Low means near an airport, but rule 0 already established that no
-    #    endpoint is close - so a low aircraft here is nowhere near either end
-    #    of its claimed route. This is what catches a 700 ft aircraft over
-    #    Chicago claiming HOU-LAS.
-    if altitude_ft is not None and altitude_ft < TERMINAL_ALT_FT:
-        return False
+    # 3. (filed) Flying away from the destination. Outside both terminal
+    #    areas an aircraft on this leg is heading for its destination; a
+    #    reroute bends the course, it does not reverse it. Also what rejects
+    #    a filed A-B when the aircraft is flying the unfiled B-A.
+    if p["direction"] and course_deg is not None:
+        off = _angle_diff(course_deg, _bearing(lat, lon, d_lat, d_lon))
+        info["course_off_deg"] = round(off)
+        if off > AWAY_DEG:
+            return False, "flying_away", info
 
-    return True
+    # 4. (schedule) Low means near an airport, but rule 0 found no endpoint
+    #    close - so a low aircraft here is nowhere near either end. Catches a
+    #    700 ft aircraft over Chicago claiming HOU-LAS. Not applied to filed
+    #    routes: low cross-country general aviation is ordinary.
+    if p["low_far"] and altitude_ft is not None and altitude_ft < TERMINAL_ALT_FT:
+        return False, "low_far_from_ends", info
+
+    return True, "on_route", info
+
+
+def route_is_plausible(route, lat, lon, altitude_ft=None, course_deg=None, profile=SCHEDULE):
+    """Whether a looked-up route can be true for an aircraft at (lat, lon).
+    Default profile is the original adsbdb behaviour, unchanged."""
+    return evaluate(route, lat, lon, altitude_ft, course_deg, profile)[0]
 
 
 def describe_rejection(route, lat, lon, altitude_ft=None):
@@ -197,13 +252,16 @@ def _angle_diff(a, b):
     return abs((a - b + 180.0) % 360.0 - 180.0)
 
 
-def choose_leg(legs, resolve, lat, lon, altitude_ft=None, course_deg=None):
+def choose_leg(legs, resolve, lat, lon, altitude_ft=None, course_deg=None, profile=SCHEDULE):
     """Pick the leg this aircraft can be flying.
 
     legs     : [(dep, arr, n), ...] - every leg on file for the callsign
     resolve  : code -> {'lat', 'lon', 'tz', ...} or None
+    profile  : how much the route SOURCE is trusted - FILED for FiledRoutesDB,
+               SCHEDULE (the strict original rules) for adsbdb-like sources
     Returns (leg dict or None, verdict, number of legs considered). The leg
-    dict carries the endpoint coordinates and zones when known.
+    dict carries the endpoint coordinates and zones when known, and
+    'route_check_rule' - the test that decided the verdict.
     """
     if not legs:
         return None, None, 0
@@ -216,9 +274,11 @@ def choose_leg(legs, resolve, lat, lon, altitude_ft=None, course_deg=None):
         if d:
             leg.update(destination_lat=d["lat"], destination_lon=d["lon"], destination_tz=d["tz"])
         if o is None or d is None or lat is None or lon is None:
-            verdict = UNCHECKED
+            verdict, rule = UNCHECKED, ("no_position" if lat is None or lon is None else "no_coordinates")
         else:
-            verdict = PLAUSIBLE if route_is_plausible(leg, lat, lon, altitude_ft) else IMPLAUSIBLE
+            ok, rule, _ = evaluate(leg, lat, lon, altitude_ft, course_deg, profile)
+            verdict = PLAUSIBLE if ok else IMPLAUSIBLE
+        leg["route_check_rule"] = rule
         behind = 1                                    # unknown direction sorts after "ahead"
         if d and course_deg is not None and lat is not None and lon is not None:
             behind = 0 if _angle_diff(course_deg, _bearing(lat, lon, d["lat"], d["lon"])) <= AHEAD_DEG else 2

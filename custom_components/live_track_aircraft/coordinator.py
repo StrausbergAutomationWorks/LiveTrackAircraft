@@ -42,7 +42,7 @@ from .airlines import lookup_operator
 from .registrations import lookup_government, lookup_owner, prettify_owner
 from .routes import RouteStore
 from .airports import AirportStore
-from .route_check import choose_leg
+from .route_check import FILED, choose_leg
 from .web import picture_url
 
 _LOGGER = logging.getLogger(__name__)
@@ -298,17 +298,23 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # ! AN IMPLAUSIBLE ROUTE IS FLAGGED, NOT HIDDEN - Lee, 2026-09-22, to
         # work on problems. route_check says which: plausible | unchecked |
         # implausible. Whether to suppress implausible routes is a later call.
+        #
+        # ! FILED routes are judged with the FILED profile (Lee, 2026-09-22):
+        # filed flight plans are current, so they carry more weight than a
+        # schedule snapshot like adsbdb. See route_check.PROFILES. Every
+        # rejecting threshold there is relative, so it holds worldwide.
         leg, verdict, considered = choose_leg(
             self.routes.legs(obs.callsign), self.airports.lookup,
             here[0], here[1],
             None if obs.altitude_m is None else obs.altitude_m * 3.28084,
-            obs.course_deg)
+            obs.course_deg, profile=FILED)
         if leg:
             rec["origin_icao"] = leg["origin_icao"]
             rec["destination_icao"] = leg["destination_icao"]
             rec["route_observations"] = leg["route_observations"]
             rec["route_source"] = "saw_filed_routes"
             rec["route_check"] = verdict
+            rec["route_check_rule"] = leg["route_check_rule"]
             rec["route_candidates"] = considered
             for key in ("origin_tz", "destination_tz"):
                 if leg.get(key):
