@@ -9,18 +9,14 @@
           "longitude": "Longitude",
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
-          "max_aircraft": "Maximum aircraft published",
-          "card_rotation": "Let the map card rotate the icons",
-          "silhouette_only": "Draw icons without a background disc"
+          "max_aircraft": "Maximum aircraft published"
         },
         "data_description": {
           "latitude": "Centre of the area to watch.",
           "longitude": "Centre of the area to watch.",
           "radius_km": "How far out counts as overhead.",
           "scan_interval": "The sources rate-limit below 15 seconds.",
-          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
-          "card_rotation": "Off: icons arrive already rotated and work on any map card. On: icons arrive unrotated for a card that can turn them, which lets a course change slide instead of jump.",
-          "silhouette_only": "Off: each icon sits on its own dark disc and reads on any map card. On: the aircraft outline alone, for a card that draws markers with a transparent background. Light and heavy aircraft then show their difference in size."
+          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer."
         }
       }
     },
@@ -37,9 +33,7 @@
           "longitude": "Longitude",
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
-          "max_aircraft": "Maximum aircraft published",
-          "card_rotation": "Let the map card rotate the icons",
-          "silhouette_only": "Draw icons without a background disc"
+          "max_aircraft": "Maximum aircraft published"
         }
       }
     }

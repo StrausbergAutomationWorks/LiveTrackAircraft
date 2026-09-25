@@ -26,31 +26,12 @@ from . import icons
 
 _LOGGER = logging.getLogger(__name__)
 
-URL_BASE = "/api/live_track_aircraft/icon"
-
-
-def picture_url(key: str, degrees: int | None,
-                tone: str = "default", weight: float | None = None,
-                badge: bool = True) -> str:
-    """The entity_picture for one icon at one angle, tone and size.
-
-    ! TONE AND WEIGHT RIDE AS QUERY PARAMETERS, not path segments. The route
-    shape is unchanged, so an older cached URL still resolves, and the query
-    is part of the cache key - a government aircraft and an airliner on the
-    same silhouette are two different cached images, as they should be.
-    """
-    url = "%s/%s/%s.svg" % (
-        URL_BASE, key, "fixed" if degrees is None else degrees)
-    extra = []
-    if tone and tone != "default":
-        extra.append("t=%s" % tone)
-    if weight is not None:
-        extra.append("w=%.2f" % weight)
-    # ! Only the NON-default is written, so every URL issued before this
-    # option existed still means what it meant.
-    if not badge:
-        extra.append("b=0")
-    return url + ("?" + "&".join(extra) if extra else "")
+# The URL shape and the picture URL live in icons.py, testable without HA.
+# ! The view still answers every URL ever issued - angles and the disc
+# included - so an older cached URL resolves; the integration now issues
+# only unrotated, disc-less ones (icons.picture_url).
+URL_BASE = icons.URL_BASE
+picture_url = icons.picture_url
 
 
 class AircraftIconView(HomeAssistantView):

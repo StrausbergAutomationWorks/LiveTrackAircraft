@@ -445,66 +445,24 @@ _CATEGORY = {
     "C3": ("obstacle", "Point obstacle", "mdi:tower-fire"),
 }
 
-# ! A FALLBACK FOR WHEN THE FEED DOES NOT SAY. Type designators are a weaker
-# signal than emitter_category and are used only when it is absent - a
-# rotorcraft drawn as an aeroplane is a worse error than a missing icon.
-#
-# ! EXACT DESIGNATORS FIRST, PREFIXES ONLY WHERE THEY CANNOT COLLIDE.
-# The first version of this was prefixes alone, and "A19" matched **A19N,
-# the Airbus A319neo** - an airliner drawn as a helicopter, which is the
-# worst mistake this table can make. Found by testing the rule against all
-# 246 designators in _AIRCRAFT_TYPES rather than by reading it.
-#
-# ! THE TEST IS THE POINT, NOT THE LIST. Any addition here must be re-run
-# against the table: `classify(None, t)` over every designator, and a
-# fixed-wing type coming back "rotorcraft" is a defect. Two-character and
-# three-character prefixes are where collisions live - prefer the full code.
-_ROTOR_TYPES = frozenset((
-    # Bell
-    "B06", "B06T", "B204", "B205", "B206", "B210", "B212", "B214", "B222",
-    "B230", "B407", "B412", "B427", "B429", "B430", "B505", "B525", "B47G",
-    "B47J", "UH1", "UH1H", "UH1Y", "H1",
-    # Robinson
-    "R22", "R44", "R66",
-    # Airbus Helicopters / Eurocopter / Aerospatiale
-    "AS50", "AS55", "AS65", "AS32", "AS3B", "ASetc", "ALO2", "ALO3",
-    "EC20", "EC25", "EC30", "EC35", "EC45", "EC55", "EC75", "EC20",
-    "H125", "H130", "H135", "H145", "H160", "H175", "H215", "H225",
-    "GAZL", "PUMA", "SUCO",
-    # Leonardo / AgustaWestland
-    "A109", "A119", "A139", "A169", "A189", "AW09", "AW139", "EH10", "A129",
-    # Sikorsky
-    "S61", "S61R", "S64", "S70", "S76", "S92", "H60", "UH60", "MH60", "S300",
-    # Boeing / vertical lift
-    "CH47", "H47", "V22", "V280", "CH46", "AH64", "H64",
-    # MD / Hughes / Schweizer / Enstrom
-    "MD50", "MD52", "MD53", "MD60", "MD62", "MD87H", "H500", "H269", "H369",
-    "EN28", "EN48", "S269", "S300C",
-    # Russian
-    "MI8", "MI17", "MI24", "MI26", "MI2", "KA32", "KA26", "KA52",
-    # Other
-    "NH90", "LYNX", "EH101", "AW101", "W3", "BK17", "BO05", "SK76",
-))
+# ! ROTORCRAFT IS DECIDED IN airframe.py, NOT HERE (Lee, 2026-09-25). This
+# function used to trust the category first and a rotor type table second,
+# while icons.pick() trusted the type first - so the tone and icon_category
+# could disagree with the silhouette. The rotor tables moved to airframe.py;
+# classify() now asks is_rotorcraft(), as pick() and map_layer do.
+# The names stay importable from here for bin\prefix_test.py.
+from .airframe import _ROTOR_PREFIXES, _ROTOR_TYPES, is_rotorcraft  # noqa: E402,F401
 
-# Prefix families that cannot collide with a fixed-wing designator. Each is
-# four characters or a three-character stem verified against the type table.
-_ROTOR_PREFIXES = (
-    "EC1", "EC2", "EC3", "EC4", "EC5", "EC6", "EC7",   # Eurocopter EC1xx-EC7xx
-    "AS3", "AS5", "AS6",                               # AS332/350/355/365
-    "MI",                                              # Mil Mi-
-    "KA",                                              # Kamov Ka-
-    "MD5", "MD6",                                      # MD 500/600 - NOT MD8/MD9
-    "B06", "B21", "B22", "B23", "B40", "B41", "B42", "B43", "B47",
-)
+_ROTORCRAFT = _CATEGORY["A7"]
 
 
 def classify(emitter_category: str | None, type_code: str | None):
     """(icon_category, category_label, icon) - never None."""
+    if is_rotorcraft(emitter_category, type_code):
+        return _ROTORCRAFT
     cat = (emitter_category or "").strip().upper()
-    if cat in _CATEGORY:
+    # A7 on a type the icon table knows as fixed-wing is not a rotorcraft:
+    # the type wins (airframe.py, rule 1).
+    if cat in _CATEGORY and cat != "A7":
         return _CATEGORY[cat]
-    t = (type_code or "").strip().upper()
-    if t:
-        if t in _ROTOR_TYPES or any(t.startswith(p) for p in _ROTOR_PREFIXES):
-            return ("rotorcraft", "Rotorcraft", "mdi:helicopter")
     return ("airplane", "Aircraft", "mdi:airplane")

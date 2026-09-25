@@ -1,4 +1,4 @@
-"""ADS-B sources: adsb.lol, then adsb.fi.
+"""ADS-B sources: adsb.fi, then adsb.lol (adsb.fi first since 2026-09-25).
 
 Both serve the readsb JSON shape, so one parser covers them; only the URL
 path differs. They are tried in order and any non-200 is that source
@@ -197,6 +197,23 @@ class Backoff:
 
 BACKOFF = Backoff()
 
+# ! A SHORT ANSWER IS NOT A NEGATIVE RESULT. Measured 2026-09-25: on the edges
+# of its 429 cycle adsb.lol answered HTTP 200 with 38 aircraft, then with 0,
+# where ~200 were overhead a poll earlier. Taken as the truth, every aircraft
+# missing from it was removed and put back a poll later - the map stopped,
+# then jumped. Half is far outside what a real sky does in one poll at this
+# scale; below SHORT_GUARD_MIN aircraft the guard is off, because a quiet sky
+# genuinely halves (4 -> 2) and a floor there would only freeze it.
+SHORT_GUARD_MIN = 20
+SHORT_FRACTION = 0.5
+
+
+def short_floor(previous_count: int | None) -> int | None:
+    """The fewest aircraft a believable answer may carry, or None for no guard."""
+    if not previous_count or previous_count < SHORT_GUARD_MIN:
+        return None
+    return int(previous_count * SHORT_FRACTION)
+
 
 async def fetch(
     session: aiohttp.ClientSession,
@@ -205,18 +222,27 @@ async def fetch(
     radius_km: float,
     now: float,
     backoff: Backoff | None = None,
+    min_expected: int | None = None,
 ) -> tuple[str, list[Observation]]:
-    """Fetch from the first source that answers and is not backing off.
+    """Fetch from the first source that answers fully and is not backing off.
 
     Returns the source name and its observations. Raises SourceError when
     every source failed or is backing off - the caller decides whether to
     serve its last good result or fail.
+
+    ! min_expected (short_floor of the last good count): a 200 with fewer
+    aircraft is a SHORT answer and the next source is tried. If every
+    source answered and all were short, the largest is returned - two
+    sources agreeing the sky emptied are believed. If one was short and
+    another could not answer at all, that is a failure, not an empty sky.
     """
     backoff = BACKOFF if backoff is None else backoff
     nm = max(1, min(250, round(radius_km / 1.852)))
     headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
     last_error = "no sources configured"
     failures: list[str] = []
+    shorts: list[tuple[str, list[Observation]]] = []
+    unanswered = 0
 
     for name, template in SOURCE_URLS:
         left = backoff.remaining(name)
@@ -224,6 +250,7 @@ async def fetch(
             # Not requested at all: that is the point.
             last_error = f"{name} backing off, {left:.0f} s left"
             failures.append(last_error)
+            unanswered += 1
             _LOGGER.debug("%s", last_error)
             continue
         url = template.format(lat=round(latitude, 6), lon=round(longitude, 6), nm=nm)
@@ -252,11 +279,13 @@ async def fetch(
                     else:
                         _LOGGER.info("%s; trying the next source", last_error)
                     failures.append(last_error)
+                    unanswered += 1
                     continue
                 payload = await resp.json(content_type=None)
         except (aiohttp.ClientError, TimeoutError, ValueError) as err:
             last_error = f"{name} unreachable: {err!r}"
             failures.append(last_error)
+            unanswered += 1
             _LOGGER.info("%s; trying the next source", last_error)
             _LOGGER.debug("%s", last_error, exc_info=True)
             continue
@@ -301,7 +330,20 @@ async def fetch(
             if obs is not None:
                 # A feed can carry the same hex twice; the later record wins.
                 seen[obs.identity] = obs
-        return name, list(seen.values())
+        result = list(seen.values())
+        if min_expected is not None and len(result) < min_expected:
+            last_error = (f"{name} answered short: {len(result)} aircraft, "
+                          f"expected at least {min_expected}")
+            failures.append(last_error)
+            shorts.append((name, result))
+            _LOGGER.info("%s; trying the next source", last_error)
+            continue
+        return name, result
+
+    if shorts and not unanswered:
+        # Every source answered and every one was short: believe the
+        # largest. Two feeds agreeing the sky emptied is not a glitch.
+        return max(shorts, key=lambda s: len(s[1]))
 
     # Every source, not only the last: "adsb.fi returned 503" alone hides
     # that adsb.lol was skipped for a backoff.

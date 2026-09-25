@@ -18,15 +18,11 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util.location import distance as _distance
 
 from .const import (
-    CONF_CARD_ROTATION,
-    CONF_SILHOUETTE_ONLY,
     CONF_LATITUDE,
     CONF_LONGITUDE,
     CONF_MAX_AIRCRAFT,
     CONF_RADIUS_KM,
     CONF_SCAN_INTERVAL,
-    DEFAULT_CARD_ROTATION,
-    DEFAULT_SILHOUETTE_ONLY,
     DEFAULT_MAX_AIRCRAFT,
     DEFAULT_RADIUS_KM,
     DEFAULT_SCAN_INTERVAL,
@@ -34,16 +30,17 @@ from .const import (
     MAX_TRANSIENT_FAILURES,
     SLOW_GROUND_SPEED_KMH,
 )
-from .sources.adsb import BACKOFF, fetch
+from .sources.adsb import BACKOFF, fetch, short_floor
 from .sources.base import Observation, SourceError
 from . import icons
 from .aircraft import classify, describe_aircraft, lookup_manufacturer
+from .airframe import map_layer
+from .map_keys import object_ids, registry_registration
 from .airlines import lookup_operator
 from .registrations import lookup_government, lookup_owner, prettify_owner
 from .routes import RouteStore
 from .airports import AirportStore
 from .route_check import FILED, choose_leg
-from .web import picture_url
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,11 +66,6 @@ class AircraftCoordinator(DataUpdateCoordinator):
         self.longitude = float(opts.get(CONF_LONGITUDE, hass.config.longitude))
         self.radius_km = float(opts.get(CONF_RADIUS_KM, DEFAULT_RADIUS_KM))
         self.max_aircraft = int(opts.get(CONF_MAX_AIRCRAFT, DEFAULT_MAX_AIRCRAFT))
-        # Serve the silhouette unrotated and let the card turn it.
-        self.card_rotation = bool(
-            opts.get(CONF_CARD_ROTATION, DEFAULT_CARD_ROTATION))
-        self.silhouette_only = bool(
-            opts.get(CONF_SILHOUETTE_ONLY, DEFAULT_SILHOUETTE_ONLY))
 
         super().__init__(
             hass,
@@ -113,6 +105,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
 
         self._consecutive_failures = 0
         self._last_good: dict[str, Any] | None = None
+        # How many aircraft the last good poll carried, before any filter:
+        # what the short-answer guard in sources/adsb.py compares against.
+        self._last_obs_count: int | None = None
 
         # The shared route artifact. Absent or stale means no route fields
         # and nothing else changes - see routes.py.
@@ -125,8 +120,11 @@ class AircraftCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self) -> dict[str, Any]:
         now = time.time()
         try:
+            # ! A 200 carrying under half the last good count is a SHORT
+            # answer, not an empty sky (measured 2026-09-25, sources/adsb.py).
             source_name, observations = await fetch(
-                self._session, self.latitude, self.longitude, self.radius_km, now
+                self._session, self.latitude, self.longitude, self.radius_km, now,
+                min_expected=short_floor(self._last_obs_count),
             )
         except SourceError as err:
             self._consecutive_failures += 1
@@ -147,6 +145,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 f"all sources failed ({self._consecutive_failures} consecutive): {err}"
             ) from err
         self._consecutive_failures = 0
+        self._last_obs_count = len(observations)
 
         aircraft: dict[str, dict[str, Any]] = {}
         for obs in observations:
@@ -387,6 +386,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
         out["icon_category"] = icon_category
         out["category_label"] = category_label
         out["icon"] = icon
+        # ! THE LAYER, from the same decider as the silhouette and the tone
+        # (airframe.is_rotorcraft), so they cannot disagree: air_low for a
+        # rotorcraft, air otherwise. The card owns the offsets (D10).
+        out["map_layer"] = map_layer(obs.emitter_category, obs.type_code)
 
         # --- the marker silhouette, pointing where it is going ----------
         # ! ROTATE BY HEADING, FALL BACK TO COURSE - 05_SHARED_LESSONS D2.
@@ -438,15 +441,12 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # ! is_government is resolved BELOW this point in the original
         # order, so it is looked up here rather than read from `out`.
         gov_now = lookup_government(obs.identity) is not None
-        # ! THE ANGLE GOES INTO THE IMAGE, OR INTO THE ATTRIBUTE, NEVER BOTH.
-        # A card rotating an already-rotated silhouette would double it.
-        # icon_rotation_deg is published either way, so nothing downstream
-        # has to know which mode this is.
-        out["entity_picture"] = picture_url(
-            key, None if self.card_rotation else angle,
-            icons.tone_for(gov_now, icon_category),
-            icons.weight_for(obs.emitter_category),
-            badge=not self.silhouette_only)
+        # ! THE PICTURE IS NEVER ROTATED AND NEVER ON A DISC (Lee,
+        # 2026-09-25): the card turns the marker from icon_rotation_deg, and
+        # an angle in the image as well would double the turn.
+        out["entity_picture"] = icons.picture_url(
+            key, icons.tone_for(gov_now, icon_category),
+            icons.weight_for(obs.emitter_category))
 
         # --- operator ---------------------------------------------------
         # ("UAL", "United Airlines") a known airline
@@ -485,13 +485,21 @@ class AircraftCoordinator(DataUpdateCoordinator):
         else:
             out["is_government"] = False
 
+        # --- identifiers for the shared map (D11) -----------------------
+        # ! icao24 is our identity; registration ONLY as the FAA registry
+        # states it for this Mode S code, never the feed's `r` (map_keys.py).
+        owner_row = lookup_owner(obs.identity)
+        ids = object_ids(obs.identity, registry_registration(owner_row, gov))
+        if ids:
+            out["object_ids"] = ids
+
         # --- registered owner -------------------------------------------
         # ! THE TITLE HOLDER, NOT THE OPERATOR. N964AV is "Avianca" to
         # adsbdb and "Bank of Utah Trustee" to the FAA, so this must never
         # displace a real operator name - it is the fallback that always
         # works. Order: airline designator -> government table -> registry.
         if not out.get("operator") or out.get("operator") == "Private":
-            owner = lookup_owner(obs.identity)
+            owner = owner_row
             if owner:
                 name = owner.get("owner") if isinstance(owner, dict) else owner
                 if name:

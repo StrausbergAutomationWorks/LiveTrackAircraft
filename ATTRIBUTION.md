@@ -44,8 +44,13 @@ corrections this project sent back to him.
 
 ### Changes made by this integration
 
-The files ship as downloaded. At runtime the integration serves altered
-copies: editor metadata is removed so browsers parse them strictly, the
-hardcoded fill is replaced, a circular background is added, and each icon
-is scaled by aircraft category and, by default, rotated to the direction
-of travel.
+The files ship as downloaded except `a7.svg` (the helicopter), whose two
+rotor blades are grouped and animated so the rotor spins; the shapes are
+unchanged. The type list is followed except where `icons.py` overrides it:
+`R22`, the Robinson helicopter, is drawn as a helicopter, not the light
+aircraft the list gives it. At
+runtime the integration serves altered copies: editor metadata is removed
+so browsers parse them strictly, the hardcoded fill is replaced, a dark
+outline is drawn round the silhouette, and each icon is scaled by aircraft
+category. Icons are served pointing north; the map card turns them to the
+direction of travel.

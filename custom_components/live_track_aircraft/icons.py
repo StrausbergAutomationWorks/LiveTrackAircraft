@@ -16,10 +16,18 @@ not by reading the XML - the SVGs carry baked-in transforms that make the
 source misleading. So rotation is the bearing applied directly, with no
 per-icon offset table.
 
-! ROTATION HAPPENS HERE, NOT IN THE CARD. ha-map-card has no rotation support
-- checked, the only "rotat" in its source is a CSS hue-rotate - but it does
-honour entity_picture. So the integration serves an already-rotated SVG and
-the card simply draws a picture.
+! THE CARD TURNS THE MARKER, since 2026-09-25 (Lee), with no option: every
+picture is served UNROTATED and without a disc, and LiveTrackMapCard turns it
+from icon_rotation_deg. render() can still turn an icon, for the view's
+angle URLs, but the integration never issues one. Before this, rotation and
+the disc were per-entry options (card rotation, silhouette without its
+disc), default OFF so any card would draw correctly; Live Track Ships dropped the same
+options the same day, on the ground that strangers get our map card.
+
+! THE HELICOPTER'S ROTOR SPINS (Lee, 2026-09-25), ported from Live Track
+Ships' SAR helicopter: a7.svg's two blades sit in their own group with an
+animateTransform about the hub. It animates whatever the aircraft does,
+hovering included, as Ships' does.
 """
 
 from __future__ import annotations
@@ -149,6 +157,17 @@ _OURS = {
     "DC10": "md11",
 }
 
+# ! OVERRIDES of an author entry, where his is wrong for what we draw. Lee,
+# 2026-09-25: "We can override Jos's table when necessary." Every entry here
+# says why, and each is worth sending back to him for his set.
+_OVERRIDES = {
+    # The Robinson R22 is a two-seat HELICOPTER; his list files it under the
+    # cessna. Found 2026-09-25 when the rotorcraft rule moved to the type
+    # table first (airframe.py), which would otherwise have made it an
+    # aeroplane in colour and map layer too.
+    "R22": "a7",
+}
+
 _BY_TYPE: dict[str, str] = {
     code.strip().upper(): key
     for key, codes in _AUTHOR_LISTS.items()
@@ -156,6 +175,22 @@ _BY_TYPE: dict[str, str] = {
 }
 for _code, _key in _OURS.items():
     _BY_TYPE.setdefault(_code, _key)
+_BY_TYPE.update(_OVERRIDES)
+
+# The helicopter silhouette. airframe.is_rotorcraft() treats "the table draws
+# this" as the answer for any type the table knows.
+ROTOR_KEY = "a7"
+
+# Where a7's two blades cross, in its 200-unit viewBox: the centre its rotor
+# group turns about. Computed 2026-09-25 by intersecting the blades' centre
+# lines through their own transforms (bin\lta_rotor_hub.py), and written into
+# a7.svg's animateTransform; tests/test_icons.py checks the two agree.
+ROTOR_HUB = (100.798, 84.112)
+
+
+def type_icon(type_code: str | None) -> str | None:
+    """The silhouette the table gives a type code, or None if it does not know it."""
+    return _BY_TYPE.get((type_code or "").strip().upper())
 
 # --- what must NOT be turned ---------------------------------------------
 # ! An icon is unrotatable when turning it says nothing or breaks the
@@ -203,21 +238,27 @@ _BY_NAME: tuple[tuple["re.Pattern[str]", str], ...] = tuple(
 
 def pick(emitter_category: str | None, type_code: str | None,
          icon_category: str | None = None, name: str | None = None) -> str:
-    """Which silhouette to draw. Type, then name, then category; never None."""
+    """Which silhouette to draw. Type, then rotorcraft, then name, then category.
+
+    ! THE HELICOPTER IS DECIDED BY airframe.is_rotorcraft(), the one function
+    the tone, icon_category and map_layer also call, so the picture cannot
+    disagree with them. Imported here, not at the top: airframe imports this
+    module for the type table.
+    """
+    from .airframe import is_rotorcraft
+
     t = (type_code or "").strip().upper()
     if t in _BY_TYPE:
         return _BY_TYPE[t]
+    if is_rotorcraft(emitter_category, t):
+        return ROTOR_KEY
     if name:
         for rx, key in _BY_NAME:
             if rx.search(name):
                 return key
     cat = (emitter_category or "").strip().upper()
-    if cat in _BY_CATEGORY:
+    if cat in _BY_CATEGORY and _BY_CATEGORY[cat] != ROTOR_KEY:
         return _BY_CATEGORY[cat]
-    # No category and an unknown type: fall back to the shape family the
-    # type-prefix rule worked out.
-    if icon_category == "rotorcraft":
-        return "a7"
     if icon_category == "balloon":
         return "b2"
     if icon_category == "uav":
@@ -472,3 +513,37 @@ def icon_path(key: str) -> str | None:
         return None
     p = os.path.join(icon_dir(), key + ".svg")
     return p if os.path.exists(p) else None
+
+
+# --------------------------------------------------------------------------
+# The entity_picture URL. Here rather than in web.py so it can be tested
+# without Home Assistant; web.py serves what this names.
+# --------------------------------------------------------------------------
+
+URL_BASE = "/api/live_track_aircraft/icon"
+
+# ! BUMPED WHEN THE ARTWORK CHANGES. The view answers with a day-long
+# immutable cache header, so a browser that fetched the static a7 keeps it
+# for a day under the same URL. 2: the rotor spins (2026-09-25).
+ART_REV = 2
+
+
+def picture_url(key: str, tone: str = "default",
+                weight: float | None = None) -> str:
+    """The entity_picture: one silhouette, UNROTATED, with no disc.
+
+    ! NO ANGLE AND NO BADGE ARGUMENT, on purpose (Lee, 2026-09-25). The card
+    turns the marker from icon_rotation_deg; a rotated picture as well would
+    double the turn. b=0 keeps the view from drawing its disc.
+    ! TONE AND WEIGHT RIDE AS QUERY PARAMETERS, and the query is part of the
+    cache key - a government aircraft and an airliner on the same silhouette
+    are two different cached images, as they should be.
+    """
+    extra = []
+    if tone and tone != "default":
+        extra.append("t=%s" % tone)
+    if weight is not None:
+        extra.append("w=%.2f" % weight)
+    extra.append("b=0")
+    extra.append("a=%d" % ART_REV)
+    return "%s/%s/fixed.svg?%s" % (URL_BASE, key, "&".join(extra))

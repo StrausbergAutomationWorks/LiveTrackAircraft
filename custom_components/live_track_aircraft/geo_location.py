@@ -38,11 +38,16 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ATTRIBUTION, DOMAIN, Z_INDEX_OFFSET
+from .const import ATTRIBUTION, DOMAIN
 from .coordinator import AircraftCoordinator
 
 # Attributes copied straight through when present. Absent keys are OMITTED.
 _PASSTHROUGH = (
+    # --- the shared map (06_MAP_CONTRACT.md D10, D11) ---
+    # map_layer: air, or air_low for a rotorcraft; the CARD owns the offsets.
+    # object_ids: icao24, and registration where the FAA registry states it.
+    "map_layer",
+    "object_ids",
     "identity",
     "marker_label",
     "callsign",
@@ -193,7 +198,10 @@ class Aircraft(GeolocationEvent):
         rec = self._rec()
         if not rec:
             return {}
-        attrs: dict[str, Any] = {"z_index_offset": Z_INDEX_OFFSET}
+        # ! No stacking number any more: map_layer names the layer and the
+        # card maps it to an offset (D10). The old attribute was read by
+        # nothing - LiveTrackMapCard reads that key from its dashboard config.
+        attrs: dict[str, Any] = {}
         for key in _PASSTHROUGH:
             if key in rec:
                 attrs[key] = rec[key]

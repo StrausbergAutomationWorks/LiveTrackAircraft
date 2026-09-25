@@ -58,16 +58,22 @@ MIN_MAX_AIRCRAFT = 1
 MAX_MAX_AIRCRAFT = 1000
 
 # --- sources ------------------------------------------------------------
-# Tried in order; any non-200 is that source failing and the next is tried.
-# ! A rate-limited adsb.lol falls through to adsb.fi SILENTLY, which is why
+# Tried in order; any non-200, or a short 200 (sources/adsb.py), is that
+# source failing and the next is tried.
+# ! A source that falls through to the next does so SILENTLY, which is why
 # the count sensor publishes which source answered.
+# ! adsb.fi FIRST since 2026-09-25 (Lee). Measured that evening: adsb.lol
+# took about four requests a minute and then refused with 429 and no
+# Retry-After, on a ~135 s cycle, and on the edges of it answered 200 with a
+# SHORT list (38, then 0, against ~200 overhead) - the map stopped and
+# jumped. adsb.fi answered 12 of 12 reads of the same circle in full.
 SOURCE_URLS: tuple[tuple[str, str], ...] = (
-    ("adsb.lol", "https://api.adsb.lol/v2/point/{lat}/{lon}/{nm}"),
     # ! v3, NOT v2: adsb.fi's README (updated 2026-05-17) calls v2/lat/lon/dist
     # DEPRECATED and asks new integrations to use v3. Measured 2026-09-22: v3
     # answers in adsb.lol's shape ("ac", `now` in MILLISECONDS) where v2 used
     # "aircraft" and seconds. The parser reads both; see the `now` sniff.
     ("adsb.fi", "https://opendata.adsb.fi/api/v3/lat/{lat}/lon/{lon}/dist/{nm}"),
+    ("adsb.lol", "https://api.adsb.lol/v2/point/{lat}/{lon}/{nm}"),
 )
 
 REQUEST_TIMEOUT = 20
@@ -100,36 +106,16 @@ MAX_SEGMENT_S = 300
 # below any approach speed and above hover jitter.
 SLOW_GROUND_SPEED_KMH = 30.0
 
-# ! WHO ROTATES THE ICON. Off, the integration serves an
-# already-rotated silhouette and the marker is correct on any map
-# card - that is the shipped behaviour and it depends on nothing.
-# On, the icon is served unrotated and the card is expected to turn
-# it from icon_rotation_deg, which is the only way the rotation can
-# SLIDE rather than snap: two images cannot be interpolated, one
-# CSS transform can.
-#
-# ! DEFAULT OFF ON PURPOSE. On, every marker points north wherever
-# the card cannot rotate.
-CONF_CARD_ROTATION = "card_rotation"
-DEFAULT_CARD_ROTATION = False
-
-# ! WHETHER THE ICON CARRIES ITS OWN DISC. Off, each silhouette sits on an
-# opaque dark badge drawn inside our SVG, which reads on any card and any
-# theme - that is what ships. On, the silhouette is drawn alone with a dark
-# edge, for a card that paints picture markers on a transparent background
-# (LiveTrackMapCard with color: transparent). Only then does the size ramp
-# show: a full-size disc behind a small Cessna reads as a rendering fault.
-#
-# ! DEFAULT OFF ON PURPOSE, as card_rotation. On a card that fills the
-# marker itself, the badge is what keeps the silhouette readable.
-CONF_SILHOUETTE_ONLY = "silhouette_only"
-DEFAULT_SILHOUETTE_ONLY = False
+# ! NO ICON OPTIONS since 2026-09-25 (Lee). The icon is always served
+# unrotated, the card turns it, and it never carries a disc - see icons.py.
+# The two options that chose otherwise are gone from the flow; values a
+# user saved before are ignored, and the next save of the form drops them.
 
 # Below this the aircraft is not meaningfully moving and a bearing between
 # two fixes is noise. Also the threshold that keeps ground clutter honest.
 STATIONARY_KT = 40.0
 
 # --- display ------------------------------------------------------------
-# Stacking on the shared map: ships 20, South Shore trains 25, aircraft
-# above both so something overhead is not hidden under something on water.
-Z_INDEX_OFFSET = 30
+# Stacking on the shared map is the CARD's job since 2026-09-25: each entity
+# names its map_layer (air, or air_low for a rotorcraft - airframe.py) and
+# LiveTrackMapCard owns the offsets. 06_MAP_CONTRACT.md D10.
