@@ -24,7 +24,7 @@ class LowWing(unittest.TestCase):
                 self.assertEqual(airframe.map_layer("A1", code), "air")
 
     def test_high_wings_twins_and_unsure_stay(self):
-        for code in ("C172", "C182", "C208", "PA18", "J3", "C340", "PAY4", "C421", "PC24", "VEZE"):
+        for code in ("C172", "C182", "C208", "PA18", "J3", "C340", "PAY4", "C421", "PC24", "VEZE", "GLST", "JUNR"):
             with self.subTest(code=code):
                 self.assertNotEqual(icons.pick("A1", code), "lowwing")
 
@@ -32,7 +32,7 @@ class LowWing(unittest.TestCase):
         # nothing of his other lines was moved: a low-wing code is one he filed as cessna
         cessna = set(c.strip().upper() for c in icons._AUTHOR_LISTS["cessna"].split(","))
         self.assertTrue(set(icons._LOWWING) <= cessna)
-        self.assertEqual(len(set(icons._LOWWING)), 138)  # 139 on his line; TBM7 is there twice
+        self.assertEqual(len(set(icons._LOWWING)), 158)  # 138 of round 1 (TBM7 is on his line twice) + 20 of round 3
 
     def test_the_gap_is_a_hole_in_the_wing(self):
         # evenodd, one path for the body: the fuselage-over-wing gap
@@ -93,8 +93,8 @@ class Props(unittest.TestCase):
                 self.assertTrue(all(a.get("values", "").startswith("1 1;") for a in an))
 
     def test_his_icons_are_not_animated(self):
-        # his props are fused into one outline; nothing of his moves
-        for key in ("cessna", "beechcraft", "dh8a", "c130"):
+        # dh8a and c130 draw no propeller; cessna and beechcraft: test_260r3
+        for key in ("dh8a", "c130"):
             with self.subTest(key=key):
                 self.assertNotIn("animate", src(key))
 

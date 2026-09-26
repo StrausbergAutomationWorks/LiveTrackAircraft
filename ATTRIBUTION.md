@@ -19,7 +19,7 @@ adsb.fi and link to its home page. This file, the Data sources section of
 
 ## Aircraft marker icons
 
-38 of the 42 SVG files in `custom_components/live_track_aircraft/icons/` are by
+38 of the 52 SVG files in `custom_components/live_track_aircraft/icons/` are by
 **ADS-B Radar** — https://adsb-radar.com
 
 Source: https://adsb-radar.com/help/icons.html
@@ -36,7 +36,12 @@ The exceptions are drawn for this project in the style of the set and are
 covered by the MIT licence with the code: `kingair.svg` (offered to the set's
 author), `lowwing.svg` (a low-wing single), and `tiltrotor.svg` /
 `tiltrotorfwd.svg` (a tiltrotor hovering and in cruise, after an AgustaWestland
-AW609 three-view). Their propellers and rotors are animated.
+AW609 three-view), and, added 26 September 2026: `tandem.svg` (CH-47 Chinook),
+`coaxial.svg` (Kamov), `kmax.svg` (Kaman K-MAX), `gyro.svg` (autogyro),
+`flyingwing.svg` (B-2), `fighter.svg` (F-16 planform), `biplane.svg` (Stearman),
+`canard.svg` (Rutan Long-EZ), `p180.svg` (Piaggio P.180 Avanti) and `cheyenne.svg`
+(Piper PA-42 Cheyenne 400), each drawn to the type's published dimensions.
+Their propellers and rotors are animated.
 
 ### Which icon each aircraft type gets
 
@@ -50,13 +55,18 @@ longer used by the table.
 
 ### Changes made by this integration
 
-The files ship as downloaded except `a7.svg` (the helicopter), whose two
+The files ship as downloaded except three. `a7.svg` (the helicopter): its two
 rotor blades are grouped and animated so the rotor spins; the shapes are
-unchanged. The type list is followed except where `icons.py` overrides it: EN28
+unchanged. `cessna.svg` and `beechcraft.svg`: his outline is kept byte for
+byte, a clip hides the propeller band beside each spinner, and the propeller
+is redrawn from his own outline in a group that animates it (26 September
+2026). A note in each file says so. The type list is followed except where `icons.py` overrides it: EN28
 (Enstrom 280), CH7A/CH7B (Helisport CH-7) and MM24 (Magni M24 gyrocopter)
 are drawn as helicopters rather than light aircraft; V22 and B609 use the
 tiltrotor; the low-wing singles on the Cessna line use `lowwing.svg`; P68,
-listed under two icons, uses the twin. At
+listed under two icons, uses the twin; and the types in `_ROUND3` in `icons.py`
+(twins, canards, biplanes, fighters, gyroplanes, the Chinook, the Kamovs,
+the K-MAX, the B-2, the Avanti and the Cheyenne 400) use the icons above. At
 runtime the integration serves altered copies: editor metadata is removed
 so browsers parse them strictly, the hardcoded fill is replaced, a dark
 outline is drawn round the silhouette, and each icon is scaled by aircraft

@@ -46,15 +46,18 @@ class Rule1TypeTableWins(unittest.TestCase):
         self.assertTrue(airframe.is_rotorcraft("A1", "R22"))
 
     def test_overrides_beat_the_author(self):
-        for code, key in icons._OVERRIDES.items():
+        for code, key in list(icons._OVERRIDES.items()) + list(icons._ROUND3.items()):
             self.assertEqual(icons._BY_TYPE[code], key)
 
     def test_2026_09_25_overrides(self):
         # helicopters / a gyro on his cessna, by his own descriptions
-        for code in ("EN28", "CH7A", "CH7B", "MM24"):
+        for code in ("EN28", "CH7A", "CH7B"):
             with self.subTest(code=code):
                 self.assertEqual(icons.pick("A1", code), "a7")
                 self.assertTrue(airframe.is_rotorcraft("A1", code))
+        # MM24, a gyroplane: its own icon since round 3, still a rotorcraft
+        self.assertEqual(icons.pick("A1", "MM24"), "gyro")
+        self.assertTrue(airframe.is_rotorcraft("A1", "MM24"))
         # V22: its own tiltrotor icon since backlog 260, still a rotorcraft
         self.assertEqual(icons.pick(None, "V22"), "tiltrotor")
         self.assertEqual(airframe.map_layer("A2", "V22"), "air_low")
@@ -66,10 +69,12 @@ class Rule1TypeTableWins(unittest.TestCase):
         for code, key in (("BE20", "beechcraft"), ("B350", "beechcraft"),
                           ("B190", "beechcraft"), ("SF34", "beechcraft"),
                           ("B727", "md11"), ("GLF6", "fa7x"), ("A19N", "a320"),
-                          ("GYRO", "a7"), ("C172", "cessna")):
+                          ("R44", "a7"), ("C172", "cessna")):
             with self.subTest(code=code):
                 self.assertEqual(icons._BY_TYPE[code], key)
         self.assertGreaterEqual(len(icons._BY_TYPE), 909)
+        # round 3 overrode GYRO (his a7) with the gyroplane icon
+        self.assertEqual(icons._BY_TYPE["GYRO"], "gyro")
         self.assertIsNotNone(icons.icon_path("beechcraft"))
 
     def test_type_codes_are_case_insensitive(self):

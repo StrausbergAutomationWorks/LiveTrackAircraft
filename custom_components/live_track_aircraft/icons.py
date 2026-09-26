@@ -203,7 +203,9 @@ _OVERRIDES = {
     # Helicopter", CH7B "CH7 Helisport Charlie Ultralight Sports Kit
     # Helicopter" (CH7A its sibling; a CH7B was overhead on 2026-09-25 drawn as
     # an aeroplane), MM24 "Magni M24 Orion Enclosed Gyrocopter".
-    "EN28": "a7", "CH7A": "a7", "CH7B": "a7", "MM24": "a7",
+    # MM24 was pinned to a7 here too; since round 3 (2026-09-26) it is a
+    # gyroplane on the `gyro` icon, with every ICAO class-G type (_ROUND3).
+    "EN28": "a7", "CH7A": "a7", "CH7B": "a7",
     # ! V22 (Osprey) is a TILTROTOR; his list puts it on `beechcraft`. It gets
     # its own tiltrotor icon later (Lee, 2026-09-25); until then the
     # helicopter, so it stays a rotorcraft in colour and on the air_low layer.
@@ -246,14 +248,66 @@ _LOWWING = (
     "TAMP", "TB20", "TB21", "TB30", "TBM7", "TBM8", "TBM9", "TL20", "TL200",
     "TL22", "TOBA", "TUCA", "TWEN", "VL3", "WA40", "WT9", "WT91", "Y18T",
     "YK52", "Z37P", "Z42",
+    # round 3 (2026-09-26), from the unsure list, types checked against ICAO:
+    "AS02", "B209", "BREZ", "BT36", "BX2", "CORO", "CRES", "D250", "DAL4", "DV1",
+    "EUPA", "KL07", "LXR", "PRIM", "SAKO", "SD4", "SUBA", "TIPB", "TOUR", "V252",
 )
 _BY_TYPE.update({c: "lowwing" for c in _LOWWING})
+# ! BACKLOG 260 ROUND 3 (Lee, 2026-09-26). Every type from ICAO Doc 8643
+# (doc8643.icao.int), which records the type but NOT the wing position; high,
+# low or mid wing is from knowledge of each design. Placement document: Claude
+# Docs "Live Track Aircraft - backlog 260 icon placements".
+_ROUND3 = {
+    # twins on his cessna (a single): the twin. C425 Conquest I, C421 Golden
+    # Eagle, C340, VTOR the AP68TP Viator (as P68 above).
+    "C421": "beechcraft", "C425": "beechcraft", "C340": "beechcraft", "VTOR": "beechcraft",
+    # PAY4 is the PA-42 Cheyenne 400: low wing, TIP TANKS, T-TAIL (SKYbrary).
+    # Lee: "Draw it correctly" - its own icon.
+    "PAY4": "cheyenne",
+    # PC24, the Pilatus PC-24, is a rear-engined twin JET.
+    "PC24": "learjet",
+    # canard pushers; Lee identified all four with three-views
+    "VEZE": "canard", "LGEZ": "canard", "COZY": "canard", "VELO": "canard",
+    # biplanes (SA75, the Acroduster Too, was on the unsure list)
+    "SA75": "biplane", "ST75": "biplane", "BU31": "biplane", "EAGL": "biplane", "FK12": "biplane",
+    "SA30": "biplane", "WACF": "biplane", "CB1": "biplane", "PTS2": "biplane",
+    # ! FIGHTERS. F15 and F5 are ALSO the names of two of his FLARM icons, and
+    # his list files them there: an F-15 drew his three-bladed propeller.
+    "T38": "fighter", "F16": "fighter", "F18H": "fighter", "F18S": "fighter", "F22": "fighter", "F35": "fighter",
+    "F15": "fighter", "F14": "fighter", "F5": "fighter", "F4": "fighter", "F86": "fighter", "EUFI": "fighter",
+    "RFAL": "fighter", "MIR2": "fighter", "MIRA": "fighter", "MRF1": "fighter", "SU27": "fighter", "SU57": "fighter",
+    "MG21": "fighter", "MG23": "fighter", "MG25": "fighter", "MG29": "fighter", "MG31": "fighter", "J10": "fighter",
+    "J20": "fighter", "FC1": "fighter", "KF21": "fighter", "KFIR": "fighter", "LCA": "fighter", "SGCD": "fighter",
+    "SGEF": "fighter", "SB37": "fighter", "TOR": "fighter", "HAR": "fighter",
+    # rotorcraft of their own shape: the four keys are in ROTOR_KEYS below, so
+    # rule 1 of airframe.is_rotorcraft() keeps them on the low layer.
+    "H47": "tandem", "H46": "tandem",
+    "KA26": "coaxial", "KA27": "coaxial", "KA32": "coaxial", "KA50": "coaxial", "KA52": "coaxial",
+    "KMAX": "kmax",
+    # every ICAO class-G designator (gyroplane) plus the generic GYRO. MM24
+    # supersedes its a7 pin in _OVERRIDES.
+    "A002": "gyro", "A205": "gyro", "AC10": "gyro", "ADEL": "gyro", "AG1": "gyro", "AR1": "gyro",
+    "BR54": "gyro", "CDUS": "gyro", "CHSY": "gyro", "CLD2": "gyro", "CLON": "gyro", "CMD1": "gyro",
+    "CMDE": "gyro", "CMDT": "gyro", "DEAG": "gyro", "EL10": "gyro", "ELA7": "gyro", "GOBU": "gyro",
+    "GYRO": "gyro", "HA2": "gyro", "HAW3": "gyro", "HW4P": "gyro", "HW4T": "gyro", "J4B2": "gyro",
+    "JE2": "gyro", "JRO": "gyro", "MM14": "gyro", "MM16": "gyro", "MM19": "gyro", "MM21": "gyro",
+    "MM22": "gyro", "MM24": "gyro", "MMAX": "gyro", "MT": "gyro", "OKHO": "gyro", "PAV4": "gyro",
+    "PCA2": "gyro", "PHIX": "gyro", "RAF2": "gyro", "REV6": "gyro", "RPUP": "gyro", "SCII": "gyro",
+    "SNAD": "gyro", "SPGY": "gyro", "SPHA": "gyro", "SSC": "gyro", "TSTR": "gyro", "UFHT": "gyro",
+    "UM18": "gyro", "XNON": "gyro",
+    # the B-2: his list puts B2 on b2, his AIRSHIP ellipse
+    "B2": "flyingwing",
+    # the Avanti: his list puts it on dh8a
+    "P180": "p180",
+}
 _BY_TYPE.update(_OVERRIDES)
+_BY_TYPE.update(_ROUND3)
 
 # The helicopter silhouette. airframe.is_rotorcraft() treats "the table draws
 # one of ROTOR_KEYS" as the answer for any type the table knows.
 ROTOR_KEY = "a7"
-ROTOR_KEYS = frozenset((ROTOR_KEY, "tiltrotor", "tiltrotorfwd"))
+ROTOR_KEYS = frozenset((ROTOR_KEY, "tiltrotor", "tiltrotorfwd",
+                        "tandem", "coaxial", "kmax", "gyro"))
 
 # ! A TILTROTOR HAS TWO PICTURES (Lee, 2026-09-25): nacelles up (hovering) and
 # nacelles forward (cruise). ADS-B carries no nacelle angle, so GROUND SPEED
@@ -656,8 +710,10 @@ URL_BASE = "/api/live_track_aircraft/icon"
 # ! BUMPED WHEN THE ARTWORK CHANGES. The view answers with a day-long
 # immutable cache header, so a browser that fetched the static a7 keeps it
 # for a day under the same URL. 2: the rotor spins; 3: the rotor turns over
-# the cabin with its own edge; 4: the King Air's props spin (all 2026-09-25).
-ART_REV = 4
+# the cabin with its own edge; 4: the King Air's props spin (all 2026-09-25);
+# 5: backlog 260 round 3 - ten new icons, and his cessna and beechcraft
+# props cut out and spinning (2026-09-26).
+ART_REV = 5
 
 
 def picture_url(key: str, tone: str = "default",

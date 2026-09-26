@@ -93,7 +93,10 @@ class Rotor(unittest.TestCase):
     def test_nothing_else_animates(self):
         for f in sorted(os.listdir(os.path.join(COMP, "icons"))):
             key = f[:-4]
-            if key in ("a7", "lowwing", "kingair", "tiltrotor", "tiltrotorfwd") or not f.endswith(".svg"):
+            if key in ("a7", "lowwing", "kingair", "tiltrotor", "tiltrotorfwd",
+                       # backlog 260 round 3 (2026-09-26); cessna/beechcraft: his props, cut out
+                       "tandem", "coaxial", "kmax", "gyro", "biplane", "canard", "p180", "cheyenne",
+                       "cessna", "beechcraft") or not f.endswith(".svg"):
                 continue
             with self.subTest(key=key):
                 self.assertNotIn("animate", rendered(key))
