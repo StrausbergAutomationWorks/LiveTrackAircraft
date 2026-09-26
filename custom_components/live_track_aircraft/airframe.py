@@ -20,7 +20,7 @@ icon_category (aircraft.classify) and map_layer all call is_rotorcraft().
 
 from __future__ import annotations
 
-from .icons import ROTOR_KEY, type_icon
+from .icons import ROTOR_KEYS, type_icon
 
 # ! EXACT DESIGNATORS FIRST, PREFIXES ONLY WHERE THEY CANNOT COLLIDE.
 # The first version of this was prefixes alone, and "A19" matched A19N, the
@@ -81,7 +81,7 @@ def is_rotorcraft(emitter_category: str | None, type_code: str | None) -> bool:
     if t:
         key = type_icon(t)
         if key is not None:
-            return key == ROTOR_KEY
+            return key in ROTOR_KEYS
         if t in _ROTOR_TYPES or t.startswith(_ROTOR_PREFIXES):
             return True
     return _norm(emitter_category) == "A7"

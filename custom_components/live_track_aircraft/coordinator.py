@@ -108,6 +108,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # How many aircraft the last good poll carried, before any filter:
         # what the short-answer guard in sources/adsb.py compares against.
         self._last_obs_count: int | None = None
+        # Tiltrotor picture per aircraft (cruise or hover), for the speed gap.
+        self._tilt_forward: dict[str, bool] = {}
 
         # The shared route artifact. Absent or stale means no route fields
         # and nothing else changes - see routes.py.
@@ -179,6 +181,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             self._prev_fix.pop(gone, None)
             self._angle.pop(gone, None)
             self._last_rec.pop(gone, None)
+            self._tilt_forward.pop(gone, None)
 
         result = {
             "aircraft": aircraft,
@@ -400,6 +403,12 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # - which is exactly what D2 calls the documented fallback.
         key = icons.pick(obs.emitter_category, obs.type_code, icon_category,
                          out.get("aircraft_name"))
+        if key == "tiltrotor":
+            fwd = icons.tiltrotor_forward(
+                self._tilt_forward.get(obs.identity), obs.speed_kmh)
+            self._tilt_forward[obs.identity] = fwd
+            if fwd:
+                key = "tiltrotorfwd"
         bearing = obs.heading_deg if obs.heading_deg is not None else obs.course_deg
         basis = "heading" if obs.heading_deg is not None else "course"
 

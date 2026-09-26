@@ -34,7 +34,7 @@ class Rule1TypeTableWins(unittest.TestCase):
         for code, key in icons._BY_TYPE.items():
             for cat in CATS:
                 with self.subTest(code=code, cat=cat):
-                    self.assertEqual(airframe.is_rotorcraft(cat, code), key == "a7")
+                    self.assertEqual(airframe.is_rotorcraft(cat, code), key in icons.ROTOR_KEYS)
 
     def test_category_does_not_override_a_known_type(self):
         self.assertFalse(airframe.is_rotorcraft("A7", "A320"))
@@ -55,8 +55,8 @@ class Rule1TypeTableWins(unittest.TestCase):
             with self.subTest(code=code):
                 self.assertEqual(icons.pick("A1", code), "a7")
                 self.assertTrue(airframe.is_rotorcraft("A1", code))
-        # V22: a rotorcraft until its tiltrotor icon exists
-        self.assertEqual(icons.pick(None, "V22"), "a7")
+        # V22: its own tiltrotor icon since backlog 260, still a rotorcraft
+        self.assertEqual(icons.pick(None, "V22"), "tiltrotor")
         self.assertEqual(airframe.map_layer("A2", "V22"), "air_low")
         # P68 is on two of his lines: the twin, fixed here
         self.assertEqual(icons.pick("A1", "P68"), "beechcraft")
@@ -66,7 +66,7 @@ class Rule1TypeTableWins(unittest.TestCase):
         for code, key in (("BE20", "beechcraft"), ("B350", "beechcraft"),
                           ("B190", "beechcraft"), ("SF34", "beechcraft"),
                           ("B727", "md11"), ("GLF6", "fa7x"), ("A19N", "a320"),
-                          ("B609", "a7"), ("GYRO", "a7"), ("TOBA", "cessna")):
+                          ("GYRO", "a7"), ("C172", "cessna")):
             with self.subTest(code=code):
                 self.assertEqual(icons._BY_TYPE[code], key)
         self.assertGreaterEqual(len(icons._BY_TYPE), 909)
@@ -92,7 +92,7 @@ class Rule2RotorTable(unittest.TestCase):
 
     def test_no_prefix_matches_any_non_helicopter_the_table_knows(self):
         for code, key in icons._BY_TYPE.items():
-            if key == "a7":
+            if key in icons.ROTOR_KEYS:
                 continue
             with self.subTest(code=code):
                 self.assertFalse(code.startswith(airframe._ROTOR_PREFIXES))
@@ -124,7 +124,7 @@ class EverythingAgrees(unittest.TestCase):
                 rotor = airframe.is_rotorcraft(cat, code)
                 ic = aircraft.classify(cat, code)[0]
                 self.assertEqual(ic == "rotorcraft", rotor)
-                self.assertEqual(icons.pick(cat, code, ic) == "a7", rotor)
+                self.assertEqual(icons.pick(cat, code, ic) in icons.ROTOR_KEYS, rotor)
                 self.assertEqual(airframe.map_layer(cat, code),
                                  "air_low" if rotor else "air")
                 self.assertEqual(icons.tone_for(False, ic) == "rotor", rotor)

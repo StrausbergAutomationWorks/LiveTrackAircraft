@@ -93,7 +93,7 @@ class Rotor(unittest.TestCase):
     def test_nothing_else_animates(self):
         for f in sorted(os.listdir(os.path.join(COMP, "icons"))):
             key = f[:-4]
-            if key == "a7" or not f.endswith(".svg"):
+            if key in ("a7", "lowwing", "kingair", "tiltrotor", "tiltrotorfwd") or not f.endswith(".svg"):
                 continue
             with self.subTest(key=key):
                 self.assertNotIn("animate", rendered(key))
@@ -120,7 +120,7 @@ class Pictures(unittest.TestCase):
         self.assertEqual(q.get("w"), "0.78")
         # the art revision busts browsers' day-long cache of the static a7
         self.assertEqual(q.get("a"), str(icons.ART_REV))
-        self.assertGreaterEqual(icons.ART_REV, 3)
+        self.assertGreaterEqual(icons.ART_REV, 4)
 
     def test_picture_url_takes_no_angle_and_no_badge(self):
         import inspect

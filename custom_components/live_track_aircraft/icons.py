@@ -208,6 +208,10 @@ _OVERRIDES = {
     # its own tiltrotor icon later (Lee, 2026-09-25); until then the
     # helicopter, so it stays a rotorcraft in colour and on the air_low layer.
     "V22": "a7",
+    # ! TILTROTORS get their own two icons (backlog 260, Lee 2026-09-25): V22
+    # was a7 until they existed; B609 (AW609) is on his a7. `tiltrotor` is
+    # hovering, `tiltrotorfwd` in cruise; tiltrotor_forward() below picks.
+    "V22": "tiltrotor", "B609": "tiltrotor",
     # ! P68 (Partenavia, a light twin) is on TWO of his lines, cessna and
     # beechcraft. His app resolves it by his case order; we set it here so it
     # does not depend on dictionary order. The twin.
@@ -221,11 +225,54 @@ _BY_TYPE: dict[str, str] = {
 }
 for _code, _key in _OURS.items():
     _BY_TYPE.setdefault(_code, _key)
+# ! LOW-WING SINGLES, taken off his `cessna` (a high wing) onto our `lowwing`
+# (backlog 260, Lee 2026-09-25). By type knowledge, NOT measured: only types
+# that are certainly low-wing singles are here; the unsure ones stay on his
+# cessna and are listed in backlog 260 for Lee.
+_LOWWING = (
+    "A210", "AA1", "AA5", "AAT3", "AC11", "ALIG", "AT5T", "AT8T", "BE19",
+    "BE23", "BE24", "BE33", "BE35", "BE36", "BL17", "BR23", "BR24", "BW60",
+    "C240", "CH200", "CH60", "CH65", "CH650", "COL4", "CP10", "CRUZ", "D11",
+    "D140", "DA20", "DA40", "DA50", "DR10", "DR22", "DR30", "DR40", "DV20",
+    "E300", "EPIC", "ERCO", "EV97", "EVSS", "EXNG", "F260", "FK14", "G115",
+    "G120", "G12T", "G36", "GC1", "GY80", "HR20", "HURI", "LEG2", "LNC2",
+    "LNP4", "M20", "M20J", "M20K", "M20P", "M20T", "M600", "M700", "MCR1",
+    "MCR4", "NG5", "P28A", "P28B", "P28R", "P28S", "P28T", "P28U", "P32R",
+    "P32T", "P46T", "P51", "P96G", "PA24", "PA25", "PA28", "PA32", "PA38",
+    "PA46", "PC12", "PC21", "PC7", "PC9", "PNR2", "PNR3", "PNR4", "PP3",
+    "PUP", "R90R", "RALL", "RF6", "RV10", "RV12", "RV14", "RV4", "RV6",
+    "RV7", "RV8", "RV9", "S22T", "SAH1", "SHRK", "SIRA", "SLG2", "SLG4",
+    "SLG5", "SONX", "SPIT", "SR20", "SR22", "SS2T", "T34P", "T6", "TA15",
+    "TAMP", "TB20", "TB21", "TB30", "TBM7", "TBM8", "TBM9", "TL20", "TL200",
+    "TL22", "TOBA", "TUCA", "TWEN", "VL3", "WA40", "WT9", "WT91", "Y18T",
+    "YK52", "Z37P", "Z42",
+)
+_BY_TYPE.update({c: "lowwing" for c in _LOWWING})
 _BY_TYPE.update(_OVERRIDES)
 
 # The helicopter silhouette. airframe.is_rotorcraft() treats "the table draws
-# this" as the answer for any type the table knows.
+# one of ROTOR_KEYS" as the answer for any type the table knows.
 ROTOR_KEY = "a7"
+ROTOR_KEYS = frozenset((ROTOR_KEY, "tiltrotor", "tiltrotorfwd"))
+
+# ! A TILTROTOR HAS TWO PICTURES (Lee, 2026-09-25): nacelles up (hovering) and
+# nacelles forward (cruise). ADS-B carries no nacelle angle, so GROUND SPEED
+# decides, with a gap so it cannot flicker between them. The speeds are
+# Lee's (200 / 170 km/h), from typical conversion speeds - an inference, not a
+# measurement. Unknown speed keeps the last picture; first sight hovers.
+TILT_FORWARD_KMH = 200.0
+TILT_HOVER_KMH = 170.0
+
+
+def tiltrotor_forward(was_forward: bool | None, speed_kmh: float | None) -> bool:
+    """True for the cruise picture."""
+    if speed_kmh is None:
+        return bool(was_forward)
+    if speed_kmh >= TILT_FORWARD_KMH:
+        return True
+    if speed_kmh <= TILT_HOVER_KMH:
+        return False
+    return bool(was_forward)
 
 # Where a7's rotor turns, in its 200-unit viewBox: the CABIN's area centroid
 # (bin\lta_rotor_cabin.py), with both blades moved there and the
@@ -538,7 +585,7 @@ def render(path: str, degrees: int | None, size: int = 64,
     body, w, h = _inner(src)
     body = decolour(strip_foreign(body))
     cx, cy = w / 2.0, h / 2.0
-    rotor = 'id="rotor"' in body
+    rotor = re.search(r'<g id="rotor\d*"', body) is not None
     if rotor:
         weight = min(weight, ROTOR_MAX_WEIGHT)
 
@@ -579,7 +626,8 @@ def render(path: str, degrees: int | None, size: int = 64,
         # a blade that swings above y=0.
         rr = ROTOR_EDGE_PX * max(w, h) / float(size) / k
         defs += _ROTOR_FILTER % (rr, BADGE)
-        art = art.replace('<g id="rotor">', '<g id="rotor" filter="url(#r)">', 1)
+        # EVERY rotor group (a tiltrotor has two: rotor, rotor2).
+        art = re.sub(r'<g id="(rotor\d*)">', r'<g id="\1" filter="url(#r)">', art)
     return (head + defs + '<g filter="url(#e)">' + art + '</g></svg>')
 
 
@@ -608,8 +656,8 @@ URL_BASE = "/api/live_track_aircraft/icon"
 # ! BUMPED WHEN THE ARTWORK CHANGES. The view answers with a day-long
 # immutable cache header, so a browser that fetched the static a7 keeps it
 # for a day under the same URL. 2: the rotor spins; 3: the rotor turns over
-# the cabin with its own edge (both 2026-09-25).
-ART_REV = 3
+# the cabin with its own edge; 4: the King Air's props spin (all 2026-09-25).
+ART_REV = 4
 
 
 def picture_url(key: str, tone: str = "default",

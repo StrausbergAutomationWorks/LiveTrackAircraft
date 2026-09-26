@@ -19,7 +19,7 @@ adsb.fi and link to its home page. This file, the Data sources section of
 
 ## Aircraft marker icons
 
-38 of the 39 SVG files in `custom_components/live_track_aircraft/icons/` are by
+38 of the 42 SVG files in `custom_components/live_track_aircraft/icons/` are by
 **ADS-B Radar** — https://adsb-radar.com
 
 Source: https://adsb-radar.com/help/icons.html
@@ -32,9 +32,11 @@ file, and the Icons section of `README.md`, are that backlink.
 The icons belong to their author. They are not covered by the MIT licence
 in `LICENSE`, which applies to the code in this repository.
 
-The exception is `kingair.svg`, drawn for this project in the style of the set
-(ADS-B Radar had no King Air icon) and offered to its author for his set. It is
-covered by the MIT licence with the code.
+The exceptions are drawn for this project in the style of the set and are
+covered by the MIT licence with the code: `kingair.svg` (offered to the set's
+author), `lowwing.svg` (a low-wing single), and `tiltrotor.svg` /
+`tiltrotorfwd.svg` (a tiltrotor hovering and in cruise, after an AgustaWestland
+AW609 three-view). Their propellers and rotors are animated.
 
 ### Which icon each aircraft type gets
 
@@ -52,9 +54,9 @@ The files ship as downloaded except `a7.svg` (the helicopter), whose two
 rotor blades are grouped and animated so the rotor spins; the shapes are
 unchanged. The type list is followed except where `icons.py` overrides it: EN28
 (Enstrom 280), CH7A/CH7B (Helisport CH-7) and MM24 (Magni M24 gyrocopter)
-are drawn as helicopters rather than light aircraft; V22 (Osprey) is drawn as
-a helicopter until it has a tiltrotor icon of its own; P68, listed under two
-icons, uses the twin. At
+are drawn as helicopters rather than light aircraft; V22 and B609 use the
+tiltrotor; the low-wing singles on the Cessna line use `lowwing.svg`; P68,
+listed under two icons, uses the twin. At
 runtime the integration serves altered copies: editor metadata is removed
 so browsers parse them strictly, the hardcoded fill is replaced, a dark
 outline is drawn round the silhouette, and each icon is scaled by aircraft
