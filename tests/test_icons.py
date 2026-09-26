@@ -34,8 +34,51 @@ class Rotor(unittest.TestCase):
         self.assertAlmostEqual(f[1], icons.ROTOR_HUB[0], places=1)
         self.assertAlmostEqual(f[2], icons.ROTOR_HUB[1], places=1)
         self.assertEqual(f[1:], t[1:])
+        # over the CABIN (its area centroid), not the fuselage waist (84.1)
         self.assertAlmostEqual(icons.ROTOR_HUB[0], 100.8, delta=0.5)
-        self.assertAlmostEqual(icons.ROTOR_HUB[1], 84.1, delta=0.5)
+        self.assertAlmostEqual(icons.ROTOR_HUB[1], 57.8, delta=0.5)
+
+    def test_blades_cross_at_the_hub(self):
+        # the two blade centre lines, through their own matrices, meet at the hub
+        import re
+        src = open(icons.icon_path("a7"), encoding="utf-8").read()
+        lines = []
+        for d, m in re.findall(r'<path style="[^"]*" d="([^"]+)" transform="matrix\(([^)]+)\)"/>', src):
+            n = [float(x) for x in re.findall(r"-?\d+\.?\d*", d)]
+            cx = (min(n[0::2]) + max(n[0::2])) / 2
+            a, b, c, dd, e, f = [float(x) for x in m.split(",")]
+            tr = lambda x, y: (a * x + c * y + e, b * x + dd * y + f)
+            lines.append((tr(cx, min(n[1::2])), tr(cx, max(n[1::2]))))
+        (x1, y1), (x2, y2) = lines[0]
+        (x3, y3), (x4, y4) = lines[1]
+        den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+        px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / den
+        py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / den
+        self.assertAlmostEqual(px, icons.ROTOR_HUB[0], delta=0.05)
+        self.assertAlmostEqual(py, icons.ROTOR_HUB[1], delta=0.05)
+        for (sx, sy), (ex, ey) in lines:
+            for x, y in ((sx, sy), (ex, ey)):
+                self.assertAlmostEqual(((x - px) ** 2 + (y - py) ** 2) ** 0.5,
+                                       icons.ROTOR_RADIUS, delta=0.5)
+
+    def test_every_tip_stays_inside_the_round_marker_at_any_weight(self):
+        # the card clips a picture marker to a circle of the picture's own box
+        import math
+        for w in (0.5, 0.62, 0.78, 0.85, 1.0, 5.0):
+            k = icons._FIT * max(0.1, min(1.0, min(w, icons.ROTOR_MAX_WEIGHT)))
+            hx = 100 + (icons.ROTOR_HUB[0] - 100) * k
+            hy = 100 + (icons.ROTOR_HUB[1] - 100) * k
+            reach = math.hypot(hx - 100, hy - 100) + icons.ROTOR_RADIUS * k
+            with self.subTest(weight=w):
+                self.assertLess(reach, 99.0)
+                self.assertGreater(hy - icons.ROTOR_RADIUS * k, 0.0)
+
+    def test_the_rotor_has_its_own_edge(self):
+        root = ET.fromstring(rendered("a7", "rotor", 0.78))
+        g = [x for x in root.iter("%sg" % SVG) if x.get("id") == "rotor"][0]
+        self.assertEqual(g.get("filter"), "url(#r)")
+        self.assertEqual(len([f for f in root.iter("%sfilter" % SVG) if f.get("id") == "r"]), 1)
+        self.assertNotIn('filter id="r"', rendered("a320"))
 
     def test_rotor_group_holds_the_two_blades_and_nothing_else(self):
         root = ET.fromstring(rendered("a7"))
@@ -77,7 +120,7 @@ class Pictures(unittest.TestCase):
         self.assertEqual(q.get("w"), "0.78")
         # the art revision busts browsers' day-long cache of the static a7
         self.assertEqual(q.get("a"), str(icons.ART_REV))
-        self.assertGreaterEqual(icons.ART_REV, 2)
+        self.assertGreaterEqual(icons.ART_REV, 3)
 
     def test_picture_url_takes_no_angle_and_no_badge(self):
         import inspect

@@ -181,11 +181,27 @@ _BY_TYPE.update(_OVERRIDES)
 # this" as the answer for any type the table knows.
 ROTOR_KEY = "a7"
 
-# Where a7's two blades cross, in its 200-unit viewBox: the centre its rotor
-# group turns about. Computed 2026-09-25 by intersecting the blades' centre
-# lines through their own transforms (bin\lta_rotor_hub.py), and written into
-# a7.svg's animateTransform; tests/test_icons.py checks the two agree.
-ROTOR_HUB = (100.798, 84.112)
+# Where a7's rotor turns, in its 200-unit viewBox: the CABIN's area centroid
+# (bin\lta_rotor_cabin.py), with both blades moved there and the
+# animateTransform centred on it; tests/test_icons.py checks the two agree.
+# ! MOVED 2026-09-25 (Lee: "the rotors are spinning under the helicopter body
+# and get shorter when they rotate to the front"). The first port turned the
+# rotor where Jos's static X happened to cross, (100.798, 84.112), the WAIST of
+# the fuselage: frozen at 8 angles in the card's own marker CSS
+# (bin\lta_rotor_frames.png) the front blade showed only as a stub above the
+# nose and the rear one vanished into the tail boom. Blade length never changed.
+ROTOR_HUB = (100.798, 57.790)
+# Blade reach from the hub, measured from the two blade paths (116.2-116.3).
+ROTOR_RADIUS = 116.3
+# ! A spinning rotor sweeps a full circle, so a big helicopter would push the
+# front tip out of the SVG box and out of the card's round marker. Weight is
+# capped for a picture with a rotor; the test proves every tip stays inside.
+ROTOR_MAX_WEIGHT = 0.85
+# The rotor's own dark edge, in marker pixels, so it reads ON TOP of a body
+# the same colour. Chosen by eye 2026-09-25 from 0, 0.5, 0.75 and 1.0 at 48 and
+# 96 px (bin\lta_rotor_edges.png): at 0.75 and up the edge chops the body into
+# pieces at marker size; at 0 the rotor merges into it again.
+ROTOR_EDGE_PX = 0.5
 
 
 def type_icon(type_code: str | None) -> str | None:
@@ -457,6 +473,16 @@ _OUTLINE_FILTER = (
     '</filter></defs>')
 
 
+_ROTOR_FILTER = (
+    '<defs><filter id="r" x="-20%%" y="-20%%" width="140%%" height="140%%" '
+    'color-interpolation-filters="sRGB">'
+    '<feMorphology in="SourceAlpha" operator="dilate" radius="%.4f" result="d"/>'
+    '<feFlood flood-color="%s" result="c"/>'
+    '<feComposite in="c" in2="d" operator="in" result="edge"/>'
+    '<feMerge><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge>'
+    '</filter></defs>')
+
+
 def render(path: str, degrees: int | None, size: int = 64,
            tone: str = "default", weight: float = DEFAULT_WEIGHT,
            badge: bool = True) -> str:
@@ -466,6 +492,9 @@ def render(path: str, degrees: int | None, size: int = 64,
     body, w, h = _inner(src)
     body = decolour(strip_foreign(body))
     cx, cy = w / 2.0, h / 2.0
+    rotor = 'id="rotor"' in body
+    if rotor:
+        weight = min(weight, ROTOR_MAX_WEIGHT)
 
     # ! The rotation fit and the weight ramp COMPOSE. 1/sqrt(2) is what keeps
     # a square inside its own box at 45 degrees; the weight is how big this
@@ -496,8 +525,16 @@ def render(path: str, degrees: int | None, size: int = 64,
     # viewBox units: the visible edge converted by the one scale that maps
     # the viewBox onto `size` pixels (by the longer side, as SVG fits it).
     radius = OUTLINE_PX * max(w, h) / float(size)
-    return (head + _OUTLINE_FILTER % (_fmt(w), _fmt(h), radius, BADGE)
-            + '<g filter="url(#e)">' + art + '</g></svg>')
+    defs = _OUTLINE_FILTER % (_fmt(w), _fmt(h), radius, BADGE)
+    if rotor:
+        # ! The rotor group sits INSIDE the scaled art, so its edge radius is
+        # divided by that scale. Default (bounding-box) filter region: the
+        # group's own box turns with it, and a root-sized region would clip
+        # a blade that swings above y=0.
+        rr = ROTOR_EDGE_PX * max(w, h) / float(size) / k
+        defs += _ROTOR_FILTER % (rr, BADGE)
+        art = art.replace('<g id="rotor">', '<g id="rotor" filter="url(#r)">', 1)
+    return (head + defs + '<g filter="url(#e)">' + art + '</g></svg>')
 
 
 def _fmt(v: float) -> str:
@@ -524,8 +561,9 @@ URL_BASE = "/api/live_track_aircraft/icon"
 
 # ! BUMPED WHEN THE ARTWORK CHANGES. The view answers with a day-long
 # immutable cache header, so a browser that fetched the static a7 keeps it
-# for a day under the same URL. 2: the rotor spins (2026-09-25).
-ART_REV = 2
+# for a day under the same URL. 2: the rotor spins; 3: the rotor turns over
+# the cabin with its own edge (both 2026-09-25).
+ART_REV = 3
 
 
 def picture_url(key: str, tone: str = "default",
