@@ -19,7 +19,7 @@ adsb.fi and link to its home page. This file, the Data sources section of
 
 ## Aircraft marker icons
 
-38 of the 52 SVG files in `custom_components/live_track_aircraft/icons/` are by
+38 of the 58 SVG files in `custom_components/live_track_aircraft/icons/` are by
 **ADS-B Radar** — https://adsb-radar.com
 
 Source: https://adsb-radar.com/help/icons.html
@@ -40,7 +40,10 @@ AW609 three-view), and, added 26 September 2026: `tandem.svg` (CH-47 Chinook),
 `coaxial.svg` (Kamov), `kmax.svg` (Kaman K-MAX), `gyro.svg` (autogyro),
 `flyingwing.svg` (B-2), `fighter.svg` (F-16 planform), `biplane.svg` (Stearman),
 `canard.svg` (Rutan Long-EZ), `p180.svg` (Piaggio P.180 Avanti) and `cheyenne.svg`
-(Piper PA-42 Cheyenne 400), each drawn to the type's published dimensions.
+(Piper PA-42 Cheyenne 400), each drawn to the type's published dimensions; and
+`pc6.svg`, `pc7.svg`, `pc9.svg`, `pc12.svg`, `pc21.svg` and `pc24.svg`, whose
+outlines are traced from the top views in Pilatus Aircraft Ltd's model building
+plans (https://www.pilatus-aircraft.com) and scaled to Pilatus's published spans.
 Their propellers and rotors are animated.
 
 ### Which icon each aircraft type gets
@@ -66,7 +69,8 @@ are drawn as helicopters rather than light aircraft; V22 and B609 use the
 tiltrotor; the low-wing singles on the Cessna line use `lowwing.svg`; P68,
 listed under two icons, uses the twin; and the types in `_ROUND3` in `icons.py`
 (twins, canards, biplanes, fighters, gyroplanes, the Chinook, the Kamovs,
-the K-MAX, the B-2, the Avanti and the Cheyenne 400) use the icons above. At
+the K-MAX, the B-2, the Avanti and the Cheyenne 400) and in `_PILATUS` (the
+Pilatus types) use the icons above. At
 runtime the integration serves altered copies: editor metadata is removed
 so browsers parse them strictly, the hardcoded fill is replaced, a dark
 outline is drawn round the silhouette, and each icon is scaled by aircraft

@@ -264,8 +264,7 @@ _ROUND3 = {
     # PAY4 is the PA-42 Cheyenne 400: low wing, TIP TANKS, T-TAIL (SKYbrary).
     # Lee: "Draw it correctly" - its own icon.
     "PAY4": "cheyenne",
-    # PC24, the Pilatus PC-24, is a rear-engined twin JET.
-    "PC24": "learjet",
+    # PC24 (the Pilatus PC-24 jet) has its own icon: _PILATUS below.
     # canard pushers; Lee identified all four with three-views
     "VEZE": "canard", "LGEZ": "canard", "COZY": "canard", "VELO": "canard",
     # biplanes (SA75, the Acroduster Too, was on the unsure list)
@@ -302,6 +301,16 @@ _ROUND3 = {
 }
 _BY_TYPE.update(_OVERRIDES)
 _BY_TYPE.update(_ROUND3)
+
+# ! PILATUS, each its own icon (Lee, 2026-09-26): outlines traced from the top
+# views in Pilatus Aircraft Ltd's model building plans (1:25), scaled to the
+# published span; drawn length within 2% of the published length. Codes from
+# ICAO Doc 8643. PC-7 is drawn from the MkX plan; PC24 was on learjet.
+_PILATUS = {
+    "PC6P": "pc6", "PC6T": "pc6", "PC7": "pc7", "PC9": "pc9",
+    "PC12": "pc12", "PC21": "pc21", "PC24": "pc24",
+}
+_BY_TYPE.update(_PILATUS)
 
 # The helicopter silhouette. airframe.is_rotorcraft() treats "the table draws
 # one of ROTOR_KEYS" as the answer for any type the table knows.
@@ -712,8 +721,9 @@ URL_BASE = "/api/live_track_aircraft/icon"
 # for a day under the same URL. 2: the rotor spins; 3: the rotor turns over
 # the cabin with its own edge; 4: the King Air's props spin (all 2026-09-25);
 # 5: backlog 260 round 3 - ten new icons, and his cessna and beechcraft
-# props cut out and spinning (2026-09-26).
-ART_REV = 5
+# props cut out and spinning (2026-09-26); 6: the six Pilatus icons
+# (2026-09-26).
+ART_REV = 6
 
 
 def picture_url(key: str, tone: str = "default",

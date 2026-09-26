@@ -18,7 +18,7 @@ def src(key):
 
 class LowWing(unittest.TestCase):
     def test_sure_types_draw_the_low_wing(self):
-        for code in ("P28A", "PA28", "SR22", "BE36", "M20P", "DA40", "TOBA", "PA46", "RV10", "PC12"):
+        for code in ("P28A", "PA28", "SR22", "BE36", "M20P", "DA40", "TOBA", "PA46", "RV10", "TB20"):
             with self.subTest(code=code):
                 self.assertEqual(icons.pick("A1", code), "lowwing")
                 self.assertEqual(airframe.map_layer("A1", code), "air")

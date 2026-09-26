@@ -46,7 +46,7 @@ class Rule1TypeTableWins(unittest.TestCase):
         self.assertTrue(airframe.is_rotorcraft("A1", "R22"))
 
     def test_overrides_beat_the_author(self):
-        for code, key in list(icons._OVERRIDES.items()) + list(icons._ROUND3.items()):
+        for code, key in list(icons._OVERRIDES.items()) + list(icons._ROUND3.items()) + list(icons._PILATUS.items()):
             self.assertEqual(icons._BY_TYPE[code], key)
 
     def test_2026_09_25_overrides(self):

@@ -96,7 +96,7 @@ class Rotor(unittest.TestCase):
             if key in ("a7", "lowwing", "kingair", "tiltrotor", "tiltrotorfwd",
                        # backlog 260 round 3 (2026-09-26); cessna/beechcraft: his props, cut out
                        "tandem", "coaxial", "kmax", "gyro", "biplane", "canard", "p180", "cheyenne",
-                       "cessna", "beechcraft") or not f.endswith(".svg"):
+                       "cessna", "beechcraft", "pc6", "pc7", "pc9", "pc12", "pc21") or not f.endswith(".svg"):
                 continue
             with self.subTest(key=key):
                 self.assertNotIn("animate", rendered(key))

@@ -25,7 +25,6 @@ class Placement(unittest.TestCase):
         "cessna": ("ALSL", "C82S", "GLST", "JFOX", "JUNR", "MC01", "NNJA", "RS21", "VR7", "WILT"),
         "beechcraft": ("C421", "C425", "C340", "VTOR"),
         "cheyenne": ("PAY4",),
-        "learjet": ("PC24",),
         "canard": ("VEZE", "LGEZ", "COZY", "VELO"),
         "biplane": ("SA75", "ST75", "PTS2", "BU31", "EAGL", "WACF"),
         "fighter": ("T38", "F16", "F15", "F5", "F18H", "EUFI", "MG29"),
