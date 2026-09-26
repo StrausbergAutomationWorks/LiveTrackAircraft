@@ -57,7 +57,14 @@ _BY_CATEGORY = {
 # --- ICAO type designator -> a specific silhouette ------------------------
 # Checked before the category, because "a Boeing 737" beats "a large aircraft".
 #
-# ! THE BASE IS THE ICON AUTHOR'S OWN TABLE. Jos Nutbroek (ADS-B Radar) sent the
+# ! THE BASE IS THE ICON AUTHOR'S OWN TABLE, AS HE SENT IT ON 2026-09-25 (Lee:
+# "adopt his new list with our overrides"). 909 codes against the 539 before,
+# with his new `beechcraft` icon (a low-wing light twin, his file
+# beachcraft.svg, installed byte-exact as icons/beechcraft.svg) for the King
+# Airs, Barons, Senecas and their kind; our kingair.svg is no longer used by his
+# list and stays shipped. Verbatim below, lower case, his order. His earlier
+# lists, and the corrections we sent him:
+# ! (history) THE BASE WAS THE ICON AUTHOR'S OWN TABLE. Jos Nutbroek (ADS-B Radar) sent the
 # app's full default type -> icon lists on 2026-09-22; we corrected them and sent
 # the corrections back on 2026-09-23 (20 codes filed under two icons, 737-600/800
 # on the 767, A350 on the A340, the Falcon 2000 on the Dash 8, CRJs on the F100,
@@ -70,70 +77,96 @@ _BY_CATEGORY = {
 # ! It includes his non-ICAO keys (FLARM f-codes, emitter categories as codes).
 # The emitter category itself is still resolved by _BY_CATEGORY, below the type.
 _AUTHOR_LISTS: dict[str, str] = {
-    "a320": "a320,a20n,a318,a21n,a319,a321,bcs1,bcs3,c919",
-    "a330": "a330,a300,a30b,a310,a332,a333,a338,a306,a339,a350,a359,a35k",
-    "a340": "a340,a342,a343,a345,a346",
+    "a320": "a320,a20n,a318,a21n,a319,a321,bcs1,bcs3,c919,a19n,e390",
+    "a330": ("a330,a300,a310,a332,a333,a338,a306,a339,a350,a359,a35k,a30b,a337,"
+             "su95,a3st"),
+    "a340": "a340,a343,a346,a342,a345,vc10,il76,il96,a50,a124,a225",
     "a380": "a380,a388",
-    "b737": ("b737,b727,b721,b722,b38m,b733,b734,b731,b732,b735,b736,b738,"
-             "b739,b37m,b39m,b3xm"),
+    "b737": ("b737,b38m,b733,b734,b731,b732,b735,b739,b39m,b738,b736,b37m,b3xm,"
+             "b721,b722,b73q"),
     "b747": "b741,b742,b743,b747,b744,b748,b74d,b74s,b74r,blcf,bsca",
-    "b767": "b757,b753,b752,b767,b707,b703,b763,b762,b764",
-    "b777": "b777,b772,b77l,b773,b77w,b778,b779",
+    "b767": "b757,b753,b752,b767,b707,b763,b762,b764,b703,e3cf,e3tf",
+    "b777": "b777,b772,b77l,b773,b77w,b779,b778",
     "b787": "b787,b788,b789,b78x",
-    "c130": ("c130,c130h,c130j,c130j30,c135,c135b,c135c,k35r,c30j,c27j,c17,"
-             "c160,a400"),
-    "cessna": ("b209,c172,c172r,c172s,c152,c182,cruz,m20,m20j,m20k,m20p,"
-               "m20t,c208,pc12,pc24,be33,c206,c340,sira,jfox,p46t,r22,fk9,"
-               "f260,pc6t,dr40,slg2,slg4,slgp,slg5,vl3,br23,br24,ct2k,ctsw,"
-               "ctls,fk14,icp2,icp3,ev97,evss,wt9,wt91,rans,tl20,tl22,tl200,"
-               "tl300,p96g,tec2,tec4,stin,skyr,ch60,ch70,ch80,ch200,ch650,"
-               "p68,p68t,vtor,fdct,pa11,pa12,pa14,pa15,pa16,pa17,pa18,pa20,"
-               "pa22,pa24,pa25,p28a,p28b,p28r,p28s,p28t,p28u,pa32,pa38,twen,"
-               "pc21,da40"),
-    "kingair": "be20,b350,be30,be9l,be9t,be10",
-    "crjx": ("crjx,crj,crj1,crj2,crj7,crj9,crj100,crj200,crj440,crj700,"
-             "crj705,crj900,crj900er,crj1000,crj1000er"),
-    "dh8a": "dh8a,dh8b,dh8c,dh8d,at43,at45,at46,at72,at75,at76,da42,da62",
-    "e195": "e195,e190,e290,e295,e170,e75l,e75s,e175",
-    "erj": "erj,erj135,erj140,erj145,e135,e145,e45x,e35l",
-    "f100": ("f100,f70,md81,md82,md83,md87,md88,md90,md95,b712,ba146,at146,"
-             "b461,b462,b463,avro,rj,rj70,rj85,rj1h,avrorj70,avrorj85,"
-             "avrorj100"),
-    "fa7x": ("fa7x,fa8x,fa50,fa900,f900,fa2000,fa2000lx,fa2000s,fa2000ex,"
-             "f2th,gl7t"),
-    "glf5": ("glf3,glf4,glf4e,glf5,glf6,glf7,g650,be40,e50p,e55p,e500,e550,"
-             "g450,cl60,cl65"),
-    "learjet": ("c25a,c25b,c25c,c525,c525a,c525b,c525c,c510,c510a,c510b,"
-                "c56x,c560,c560xl,c56,cl35,cl30,c680,c680a,c68a,c650,c650er,"
-                "c750,c750er,lj35,lj35a,lj35a3,lj45,lj45ea,lj45xr,lj60,"
-                "lj60xr,phenom100,phenom300,hawk100,hawk125"),
-    "md11": "md11",
+    "c130": ("c130,c130h,c130j,c130j30,c135,c135b,c135c,c30j,c27j,c17,c160,a400,"
+             "k35r,an12,c5m,an26,an24,an32,r135,c295"),
+    "cessna": ("b209,c172,c172r,c172s,c152,c182,cruz,m20,m20j,m20k,m20p,m20t,c208,"
+             "pc12,pc24,be33,c206,c340,sira,jfox,p46t,fk9,f260,pc6t,dr40,slg2,"
+             "slg4,slgp,slg5,vl3,br23,br24,ct2k,ctsw,ctls,fk14,icp2,icp3,ev97,"
+             "evss,wt9,wt91,rans,tl20,tl22,tl200,tl300,p96g,tec2,tec4,stin,skyr,"
+             "ch60,ch70,ch80,ch200,ch650,p68,p68t,vtor,fdct,pa11,pa12,pa14,pa15,"
+             "pa16,pa17,pa18,pa20,pa22,pa24,pa25,p28a,p28b,p28r,p28s,p28t,p28u,"
+             "pa32,pa38,twen,pc21,da40,dv20,pc9,tb20,da50,g36,c42,sr22,tbm8,"
+             "c421,c82s,l5,tbm9,dr10,s22t,pivi,suba,hr20,p208,toba,rv6,rv7,pc7,"
+             "lnc2,t206,echo,cres,tb30,ng5,bt36,wa40,col4,shrk,veze,g115,g120,"
+             "m700,p210,aa5,st75,bx2,rv12,alsl,tipb,bu31,e300,r90r,z42,p32r,"
+             "as02,efox,v252,exng,dv1,tamp,dr30,svnh,z37p,junr,mcr4,aa1,glst,"
+             "d140,kl07,gy80,dal4,c77r,ap32,eupa,dr22,velo,brez,coro,rall,k100,"
+             "ap22,pnr2,sako,c72r,c150,c82t,be36,be35,wilt,tbm7,ac11,c425,c162,"
+             "c177,c185,c210,sr20,pa28,da20,pnr3,m600,tbm7,a210,c425,bw60,sd4,"
+             "bl8,rv4,rv10,lxr,c82r,rv8,tl30,c10t,d250,pnr4,leg2,d11,nnja,pa46,"
+             "husk,coy2,bl17,rv9,rf6,j3,sah1,g12t,crer,c195,y18t,cp10,aat3,mp02,"
+             "sa75,mm24,spit,huri,t6,l8,pup,ch7a,yk52,eagl,fk12,c180,waix,tour,"
+             "c175,mcr1,at8t,sonx,at5t,p51,vr7,lgez,lnp4,s108,c207,epic,be24,"
+             "prim,c240,be23,pay4,rs21,en28,ta15,be19,avid,tb21,ch7b,t34p,cozy,"
+             "p32t,m7,cc11,fa24,cb1,gx,c170,gc1,t210,sa30,t38,ss2t,rv14,alig,"
+             "erco,a660,wacf,ch65,pp3,la4,tuca,mc01"),
+    "beechcraft": ("be20,b350,be30,be9l,be9t,be10,sw4,sf34,c408,b190,be58,e120,pa44,"
+             "l410,p06t,pay1,be76,d28d,e121,pa30,c402,f406,pa34,piat,pa23,pa31,"
+             "c310,be55,be95,c320,l90,e110,p212,pa27,p337,c414,c441,ac50,c337,"
+             "expr,be18,aest,be50,mu2,v22,pat4,a748,ac68,ac90,be99,bn2p,c212,"
+             "p68"),
+    "crjx": ("crjx,crj,crj100,crj440,crj700,crj705,crj900,crj900er,crj1000,"
+             "crj1000er,crj9,crj1,crj2,crj7"),
+    "dh8a": ("dh8a,dh8b,dh8c,dh8d,at75,da42,da62,at76,at43,at45,at46,at72,340a,"
+             "atr72,d328,j328,sb20,d228,m28,dhc6,p180,f50,f27,dhc7,sc7,dh89,"
+             "cl2p,dc3,at73,atp,belf,cn35,cvlp,cvlt,dhc4,dhc5,g159,i114,il18,"
+             "js31,js32,js41,l188,n262,noma,sh33,sh36,tris,ys11,ber2,cl2t,g21,"
+             "g73t"),
+    "e195": "e195,e190,e290,e295,e170,e75s,e175,e75l,e275",
+    "erj": "erj,erj135,erj140,e135,e145,e45x,e35l,erd,er4",
+    "f100": ("f100,md81,md82,md83,md87,md88,md90,md95,ba146,at146,avro,rj,"
+             "avrorj70,avrorj100,f70,b712,b461,b462,b463,rj70,rj85,rj1h,aj27,"
+             "f28,ba11,dc91,dc92,dc93,dc94,dc95,b720,il62,il86,t134,t154,t204,"
+             "yk40,yk42"),
+    "fa7x": ("fa7x,fa8x,fa50,fa2000,fa2000lx,fa2000s,fa2000ex,glf6,glf7,gl7t,"
+             "f2th,f900,25m,fa6x"),
+    "glf5": ("glf3,glf4,glf4e,glf5,g650,be40,e50p,e55p,e500,e550,g450,cl60,cl65,"
+             "ga6c,gl5t,e545,g280,ea50,galx,ga5c,ms76,glex,ga7c,ga8c"),
+    "learjet": ("c25a,c25b,c25c,c525,c525a,c525b,c525c,c510,c510a,c510b,c56x,c560,"
+             "c560xl,c56,cl35,cl30,c680,c680a,c68a,c650,c650er,c750,c750er,lj35,"
+             "lj35a,lj35a3,lj45,lj45ea,lj45xr,lj60,lj60xr,phenom100,phenom300,"
+             "hawk100,hawk125,prm1,c700,hdjt,m345,sf50,ajet,l39,lj55,h25b,c55b,"
+             "lj75,c500,c550,fa10,fa20,c25m,astr,lj31,ha4t,lj40"),
+    "md11": "md11,b727,dc10",
     "a7": ("a7,f3,f03,ec20,ec25,ec30,ec35,ec35e,ec135,ec135t2,ec145,ec145t,"
-           "ec145t2,ec145t2m,ec155,ec155b,ec155b1,ec175,as32,as350,as355,"
-           "as365,as365n,as365n2,a129,a129d,a139,bk117,bk117a,bk117b,bk117c,"
-           "bk117d,bk117c1,bk117c2,bk117c3,bk117c4,bk117c5,h60,h60m,h145,"
-           "h145m,h47,h64,h65,s76,mi8,mi17,mi24,mi28,mi35,mi26,ka27,ka32,"
-           "ka50,ka52,ec45,b429,a109,bk17,ec75,ec55,expl,as50,as55,as65,"
-           "h160"),
+             "ec145t2,ec145t2m,ec155,ec155b,ec155b1,ec175,as32,as350,as355,"
+             "as365,as365n,as365n2,a129,a129d,a139,bk117,bk117a,bk117b,bk117c,"
+             "bk117d,bk117c1,bk117c2,bk117c3,bk117c4,bk117c5,h60,h60m,h145,"
+             "h145m,h47,h64,h65,s76,mi8,mi17,mi24,mi28,mi35,mi26,ka27,ka32,ka50,"
+             "ka52,ec45,b429,a109,bk17,ec75,ec55,expl,as50,as55,as65,h160,a169,"
+             "b06,r44,ac10,h500,g2ca,mm16,gyro,r66,h269,sh09,mt,gazl,kmax,as3b,"
+             "b407,b505,r22,b206,puma,lynx,nh90,a119,b212,b412,b609,s58t,s92"),
     "b0": "b0,b5,b6,b7,f13,vfhc",
     "b1": ("a21c,arcp,arcus,arcusm,arcust,ask13,ask18,ask21,ask23,as15,as17,"
-           "as19,as20,as22,as24,as27,as28,as29,as30,asti,twinasti,b1,"
-           "califa21,dg1000,dg1000t,dg300,dg40,dg400,dg505,dg600,dg808,"
-           "discus,discus2,disc,duod,f01,f1,f02,f2,fox,glid,hph304,hph304e,"
-           "hph304s,janm,janusc,janc,jans,js1,js3,js5,js7,js8,ka6,ka6cr,k6,"
-           "la12,la17,la19,l13,l23,libe,ls01,ls03,ls04,ls06,ls07,ls08,ls09,"
-           "ls10,ls11,mini-nimbus,mistralc,perkoz,phoe,phoebus,pik20,pik20b,"
-           "pik20d,pik20e,swift,s1,sz30,sz36,sz48,sz50,taurus,ultraligh,"
-           "ven2,ventus2,ven3,ventus3,venb,ventusb,venc,ventusc,vent"),
+             "as19,as20,as22,as24,as27,as28,as29,as30,asti,twinasti,b1,califa21,"
+             "dg1000,dg1000t,dg300,dg40,dg400,dg505,dg600,dg808,discus,discus2,"
+             "disc,duod,f01,f1,f02,f2,fox,glid,hph304,hph304e,hph304s,janm,"
+             "janusc,janc,jans,js1,js3,js5,js7,js8,ka6,ka6cr,k6,la12,la17,la19,"
+             "l13,l23,libe,ls01,ls03,ls04,ls06,ls07,ls08,ls09,ls10,ls11,"
+             "mini-nimbus,mistralc,perkoz,phoe,phoebus,pik20,pik20b,pik20d,"
+             "pik20e,swift,s1,sz30,sz36,sz48,sz50,taurus,ultraligh,ven2,ventus2,"
+             "ven3,ventus3,venb,ventusb,venc,ventusc,vent,dimo,sf25,rf3,clon,"
+             "g109,ball,cdus,rf10,as16,glim,skra,cp30,f8l,pts2,sc01"),
     "b2": "b2,f12",
     "b3": "b3,f4,f04",
     "b4": ("b4,f6,f7,f06,f07,paraglide,ulac,b4208,foka4,foka5,foka6,foka7,"
-           "szd56,diana2,szd59,szd54,szd48,szd42,szd41,ls4,ls6,ls8,ls9,"
-           "discus3,asw20,asw22,asw24,asw27,asw28,asw29,asw30"),
+             "szd56,diana2,szd59,szd54,szd48,szd42,szd41,ls4,ls6,ls8,ls9,"
+             "discus3,asw20,asw22,asw24,asw27,asw28,asw29,asw30,ship,aura"),
     "c0": "c0,c1,c2,c3",
     "f5": "f5,f05",
     "f11": "f11",
-    "f15": "f15",
+    "f15": "f15,twr",
 }
 
 # ! OURS, where his lists are SILENT - never over an author entry. Designators
@@ -161,11 +194,24 @@ _OURS = {
 # 2026-09-25: "We can override Jos's table when necessary." Every entry here
 # says why, and each is worth sending back to him for his set.
 _OVERRIDES = {
-    # The Robinson R22 is a two-seat HELICOPTER; his list files it under the
-    # cessna. Found 2026-09-25 when the rotorcraft rule moved to the type
-    # table first (airframe.py), which would otherwise have made it an
-    # aeroplane in colour and map layer too.
+    # The Robinson R22 is a two-seat HELICOPTER. His lists before 2026-09-25
+    # filed it under the cessna; his list of 2026-09-25 moved it to a7
+    # himself, so this now agrees with him and is kept as the pin.
     "R22": "a7",
+    # ! HELICOPTERS AND A GYRO ON HIS `cessna` (2026-09-25 list), by his own
+    # descriptions table: EN28 "Enstrom F-28 / 280 Light Piston Civilian
+    # Helicopter", CH7B "CH7 Helisport Charlie Ultralight Sports Kit
+    # Helicopter" (CH7A its sibling; a CH7B was overhead on 2026-09-25 drawn as
+    # an aeroplane), MM24 "Magni M24 Orion Enclosed Gyrocopter".
+    "EN28": "a7", "CH7A": "a7", "CH7B": "a7", "MM24": "a7",
+    # ! V22 (Osprey) is a TILTROTOR; his list puts it on `beechcraft`. It gets
+    # its own tiltrotor icon later (Lee, 2026-09-25); until then the
+    # helicopter, so it stays a rotorcraft in colour and on the air_low layer.
+    "V22": "a7",
+    # ! P68 (Partenavia, a light twin) is on TWO of his lines, cessna and
+    # beechcraft. His app resolves it by his case order; we set it here so it
+    # does not depend on dictionary order. The twin.
+    "P68": "beechcraft",
 }
 
 _BY_TYPE: dict[str, str] = {

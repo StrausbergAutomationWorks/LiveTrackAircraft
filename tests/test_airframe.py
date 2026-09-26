@@ -15,7 +15,11 @@ airframe = load("airframe")
 aircraft = load("aircraft")
 
 CATS = (None, "", "A1", "A2", "A3", "A7", "B1")
-ROTOR_ONLY_IN_TABLE = ("B06", "B407", "R44", "R66", "H125", "S92", "EC130")
+# Rotor types the ICON table does not know, so rule 2 decides them. Derived:
+# a fixed list went stale the day Jos's 2026-09-25 list added B06, B407, R44...
+ROTOR_ONLY_IN_TABLE = tuple(sorted(
+    c for c in airframe._ROTOR_TYPES if c not in icons._BY_TYPE)) + ("EC130",)
+assert len(ROTOR_ONLY_IN_TABLE) >= 10, ROTOR_ONLY_IN_TABLE
 GLIDERS = ("KA6", "KA6CR", "MINI-NIMBUS", "MISTRALC", "AS30", "B4208", "ASK21")
 
 
@@ -44,6 +48,29 @@ class Rule1TypeTableWins(unittest.TestCase):
     def test_overrides_beat_the_author(self):
         for code, key in icons._OVERRIDES.items():
             self.assertEqual(icons._BY_TYPE[code], key)
+
+    def test_2026_09_25_overrides(self):
+        # helicopters / a gyro on his cessna, by his own descriptions
+        for code in ("EN28", "CH7A", "CH7B", "MM24"):
+            with self.subTest(code=code):
+                self.assertEqual(icons.pick("A1", code), "a7")
+                self.assertTrue(airframe.is_rotorcraft("A1", code))
+        # V22: a rotorcraft until its tiltrotor icon exists
+        self.assertEqual(icons.pick(None, "V22"), "a7")
+        self.assertEqual(airframe.map_layer("A2", "V22"), "air_low")
+        # P68 is on two of his lines: the twin, fixed here
+        self.assertEqual(icons.pick("A1", "P68"), "beechcraft")
+
+    def test_his_2026_09_25_list_is_the_base(self):
+        # a sample of what his new list decides, override-free
+        for code, key in (("BE20", "beechcraft"), ("B350", "beechcraft"),
+                          ("B190", "beechcraft"), ("SF34", "beechcraft"),
+                          ("B727", "md11"), ("GLF6", "fa7x"), ("A19N", "a320"),
+                          ("B609", "a7"), ("GYRO", "a7"), ("TOBA", "cessna")):
+            with self.subTest(code=code):
+                self.assertEqual(icons._BY_TYPE[code], key)
+        self.assertGreaterEqual(len(icons._BY_TYPE), 909)
+        self.assertIsNotNone(icons.icon_path("beechcraft"))
 
     def test_type_codes_are_case_insensitive(self):
         self.assertTrue(airframe.is_rotorcraft(None, " bk117 "))

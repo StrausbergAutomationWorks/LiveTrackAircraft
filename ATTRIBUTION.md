@@ -19,7 +19,7 @@ adsb.fi and link to its home page. This file, the Data sources section of
 
 ## Aircraft marker icons
 
-37 of the 38 SVG files in `custom_components/live_track_aircraft/icons/` are by
+38 of the 39 SVG files in `custom_components/live_track_aircraft/icons/` are by
 **ADS-B Radar** — https://adsb-radar.com
 
 Source: https://adsb-radar.com/help/icons.html
@@ -38,17 +38,23 @@ covered by the MIT licence with the code.
 
 ### Which icon each aircraft type gets
 
-The type-to-icon table in `icons.py` is based on the default lists from the
-ADS-B Radar app, shared by its author, Jos Nutbroek, in September 2026, with
-corrections this project sent back to him.
+The type-to-icon table in `icons.py` is the default lists from the ADS-B
+Radar app, shared by its author, Jos Nutbroek, in September 2026, in the
+version he sent on 25 September 2026. `beechcraft.svg` (a light twin, used
+for the King Airs, Barons and their kind) is his, sent the same week; the file
+he sent is named `beachcraft.svg` and ships unchanged under the name its list
+key uses. Since his list files the King Airs under it, `kingair.svg` is no
+longer used by the table.
 
 ### Changes made by this integration
 
 The files ship as downloaded except `a7.svg` (the helicopter), whose two
 rotor blades are grouped and animated so the rotor spins; the shapes are
-unchanged. The type list is followed except where `icons.py` overrides it:
-`R22`, the Robinson helicopter, is drawn as a helicopter, not the light
-aircraft the list gives it. At
+unchanged. The type list is followed except where `icons.py` overrides it: EN28
+(Enstrom 280), CH7A/CH7B (Helisport CH-7) and MM24 (Magni M24 gyrocopter)
+are drawn as helicopters rather than light aircraft; V22 (Osprey) is drawn as
+a helicopter until it has a tiltrotor icon of its own; P68, listed under two
+icons, uses the twin. At
 runtime the integration serves altered copies: editor metadata is removed
 so browsers parse them strictly, the hardcoded fill is replaced, a dark
 outline is drawn round the silhouette, and each icon is scaled by aircraft
