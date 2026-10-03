@@ -41,6 +41,7 @@ from .registrations import lookup_government, lookup_owner, prettify_owner
 from .routes import RouteStore
 from .airports import AirportStore
 from .route_check import FILED, choose_leg
+from .eta import estimated_arrival
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -335,6 +336,13 @@ class AircraftCoordinator(DataUpdateCoordinator):
             for key in ("origin_tz", "destination_tz"):
                 if leg.get(key):
                     rec[key] = leg[key]
+            # Lee 2026-10-03: an ETA by Flights Above's method (eta.py),
+            # published for every chosen leg, implausible ones included: the
+            # card marks those "?" rather than hiding them.
+            eta = estimated_arrival(leg, here[0], here[1], obs.speed_kmh,
+                                    obs.emitter_category, latest[2])
+            if eta is not None:
+                rec["arrival_estimated_at"] = _iso(round(eta))
 
         # ! previous_* let the map INTERPOLATE between two MEASURED fixes.
         # There is no max_extrapolation_s here and that is deliberate: this

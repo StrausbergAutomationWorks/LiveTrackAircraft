@@ -89,6 +89,8 @@ _PASSTHROUGH = (
     "route_candidates",
     "origin_tz",
     "destination_tz",
+    # estimated arrival at the leg's destination (eta.py), D0 instant, D4b
+    "arrival_estimated_at",
     # --- freshness and motion ---
     "last_seen",
     "observed_at",
