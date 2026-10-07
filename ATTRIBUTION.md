@@ -19,7 +19,7 @@ adsb.fi and link to its home page. This file, the Data sources section of
 
 ## Aircraft marker icons
 
-38 of the 58 SVG files in `custom_components/live_track_aircraft/icons/` are by
+40 of the 63 SVG files in `custom_components/live_track_aircraft/icons/` are by
 **ADS-B Radar** — https://adsb-radar.com
 
 Source: https://adsb-radar.com/help/icons.html
@@ -44,6 +44,8 @@ AW609 three-view), and, added 26 September 2026: `tandem.svg` (CH-47 Chinook),
 `pc6.svg`, `pc7.svg`, `pc9.svg`, `pc12.svg`, `pc21.svg` and `pc24.svg`, whose
 outlines are traced from the top views in Pilatus Aircraft Ltd's model building
 plans (https://www.pilatus-aircraft.com) and scaled to Pilatus's published spans.
+Added 6 October 2026, drawn to each type's published dimensions: `be12.svg`
+(Beriev Be-12), `be200.svg` (Beriev Be-200) and `us2.svg` (ShinMaywa US-2).
 Their propellers and rotors are animated.
 
 ### Which icon each aircraft type gets
@@ -54,7 +56,9 @@ version he sent on 25 September 2026. `beechcraft.svg` (a light twin, used
 for the King Airs, Barons and their kind) is his, sent the same week; the file
 he sent is named `beachcraft.svg` and ships unchanged under the name its list
 key uses. Since his list files the King Airs under it, `kingair.svg` is no
-longer used by the table.
+longer used by the table. On 28 September 2026 he sent two more icons and
+their lists: `heavytransport.svg` (his file `heavyfreighter.svg`, shipped
+unchanged under the name its list key uses) and `amphibian.svg`.
 
 ### Changes made by this integration
 
@@ -69,8 +73,9 @@ are drawn as helicopters rather than light aircraft; V22 and B609 use the
 tiltrotor; the low-wing singles on the Cessna line use `lowwing.svg`; P68,
 listed under two icons, uses the twin; and the types in `_ROUND3` in `icons.py`
 (twins, canards, biplanes, fighters, gyroplanes, the Chinook, the Kamovs,
-the K-MAX, the B-2, the Avanti and the Cheyenne 400) and in `_PILATUS` (the
-Pilatus types) use the icons above. At
+the K-MAX, the B-2, the Avanti and the Cheyenne 400), in `_PILATUS` (the
+Pilatus types) and in `_ROUND4` (the amphibians and the Beriev A-50) use the
+icons above. At
 runtime the integration serves altered copies: editor metadata is removed
 so browsers parse them strictly, the hardcoded fill is replaced, a dark
 outline is drawn round the silhouette, and each icon is scaled by aircraft

@@ -167,6 +167,15 @@ _AUTHOR_LISTS: dict[str, str] = {
     "f5": "f5,f05",
     "f11": "f11",
     "f15": "f15,twr",
+    # ! HIS LINES OF 2026-09-28, verbatim, with two new icons of his (his files
+    # heavyfreighter.svg and amphibian.svg; the first ships as heavytransport.svg,
+    # the name its line uses, unchanged). Placed LAST so they win over his older
+    # lines for the codes they move: A124, IL76 off a340; C5M, C17, A400 off c130;
+    # CL2P, CL2T off dh8a. ! A225 is no longer an ICAO designator, and CL4T, CL215,
+    # CL415, CANSO and PBY are model names a feed never sends: harmless, kept as
+    # his list; the designators sit in _ROUND4 below.
+    "heavytransport": "a124,a225,il76,c5m,c17,a400,an22",
+    "amphibian": "cl2p,cl2t,cl4t,cl215,cl415,dhc2,dhc3,canso,pby",
 }
 
 # ! OURS, where his lists are SILENT - never over an author entry. Designators
@@ -311,6 +320,28 @@ _PILATUS = {
     "PC12": "pc12", "PC21": "pc21", "PC24": "pc24",
 }
 _BY_TYPE.update(_PILATUS)
+
+# ! ROUND 4 (Lee, 2026-10-06). Codes from ICAO Doc 8643, where the class code
+# starting "A" means amphibian. A new icon only where the type is NOT
+# substantially like his amphibian (a CL-415 planform, span/length 1.455):
+# be12, be200 and us2 are drawn to published dimensions (bin\new_icons\gen_amph.py).
+_ROUND4 = {
+    # the ICAO designators for the families his model names mean: CAT is the
+    # Canso/Catalina (his CANSO, PBY); DH2T and DH3T the Turbo Beaver and Otter
+    "CAT": "amphibian", "DH2T": "amphibian", "DH3T": "amphibian",
+    # straight-wing twins with floats and a conventional tail, like his icon:
+    # the Goose (G21 1.27; G21T, G21M conversions), the Mallard (G73T 1.38; G73)
+    # and the HU-16 Albatross. G21 and G73T were on his dh8a.
+    "G21": "amphibian", "G21T": "amphibian", "G21M": "amphibian",
+    "G73": "amphibian", "G73T": "amphibian", "U16": "amphibian",
+    # the Beriev A-50 is an Il-76 airframe; his list puts it on a340
+    "A50": "heavytransport",
+    # their own icons: Be-12 (as long as its span, H-tail), Be-200 (swept jet,
+    # pods above the wing roots, T-tail; BER2 was on his dh8a) and the A-40,
+    # the same layout larger; US-2 (four turboprops, T-tail)
+    "BE12": "be12", "BER2": "be200", "BER4": "be200", "US2": "us2",
+}
+_BY_TYPE.update(_ROUND4)
 
 # The helicopter silhouette. airframe.is_rotorcraft() treats "the table draws
 # one of ROTOR_KEYS" as the answer for any type the table knows.
@@ -722,8 +753,9 @@ URL_BASE = "/api/live_track_aircraft/icon"
 # the cabin with its own edge; 4: the King Air's props spin (all 2026-09-25);
 # 5: backlog 260 round 3 - ten new icons, and his cessna and beechcraft
 # props cut out and spinning (2026-09-26); 6: the six Pilatus icons
-# (2026-09-26).
-ART_REV = 6
+# (2026-09-26); 7: round 4 - Jos's heavytransport and amphibian, our be12,
+# be200 and us2 (2026-10-06).
+ART_REV = 7
 
 
 def picture_url(key: str, tone: str = "default",
