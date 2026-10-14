@@ -115,6 +115,16 @@ class RouteStore:
             self._con.close()
             self._con = None
 
+    def reopen(self) -> None:
+        """Forget the open file so the next lookup opens THE PATH again.
+
+        ! Called after route_download.py moves a new file over the old one.
+        On Linux an open connection keeps reading the replaced file until it
+        is closed; without this the switch would wait up to an hour."""
+        self.close()
+        self._checked = None
+        self._has_times = None
+
     def _ensure(self) -> sqlite3.Connection | None:
         now = dt.datetime.now(dt.UTC)
 
@@ -147,7 +157,10 @@ class RouteStore:
             return None
 
         self._con, self._meta, self._checked = con, meta, now
-        self.status = "ok (ladd %s, expires %s)" % (
+        # "public" = installed by route_download.py from the published file
+        # (it writes source_sha256); anything else is a locally built file.
+        self.status = "ok (%s, ladd %s, expires %s)" % (
+            "public" if meta.get("source_sha256") else "local",
             meta.get("ladd_applied"), (meta.get("expires") or "")[:10])
         return con
 
@@ -197,17 +210,22 @@ class RouteStore:
         return [(d, a, n) for d, a, n in rows if d and a]
 
     def leg_times(self, callsign: str | None) -> dict[tuple[str, str], dict[str, Any]]:
-        """Typical times per leg, {(dep, arr): {...}}, or {} when there are none.
+        """Published time windows per leg, {(dep, arr): {k: [start, len, src, n]}},
+        or {} when there are none.
 
-        Added 2026-09-23 (Lee: leg selection uses departure and arrival times).
-        Table leg_times: dep_min / arr_min are clock minutes after local
-        midnight at the ORIGIN and DESTINATION respectively, dep_spread_min
-        their spread, arr_basis says where the arrival came from. Written
-        today by the local stand-in builder only for COMMERCIAL and CARGO
-        (the 2026-09-19 publication scope); the published shape is not
-        decided. ! OPTIONAL: an artifact without the table, or without an
-        arrival column value, is normal - route_check degrades to departures
-        only, then to no times.
+        Since 2026-10-13 the windows are FiledRoutesDB's own, as published
+        (field `t`, installed by route_download.py into table leg_windows):
+        k is d (departure, ORIGIN's local clock), a (arrival, DESTINATION's),
+        dw / aw (weekend, Saturday-Sunday at the origin, present only where
+        the weekend differs; d / a are then weekdays only). start is minutes
+        after local midnight and already includes the lead; len is minutes.
+        COMMERCIAL and CARGO legs only.
+
+        ! The stand-in table `leg_times` of 2026-09-23 is NOT read any more.
+        A locally built file that has only that table gives no times, and
+        route_check treats that as no time evidence.
+        ! OPTIONAL: a file without leg_windows, or a leg without a window, is
+        normal - route_check then ranks on position alone.
         """
         if not callsign:
             return {}
@@ -217,7 +235,7 @@ class RouteStore:
         if self._has_times is None or self._has_times[0] is not con:
             try:
                 ok = con.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
-                                 "AND name='leg_times'").fetchone() is not None
+                                 "AND name='leg_windows'").fetchone() is not None
             except sqlite3.Error:
                 ok = False
             self._has_times = (con, ok)
@@ -225,9 +243,12 @@ class RouteStore:
             return {}
         try:
             rows = con.execute(
-                "SELECT dep, arr, dep_min, dep_spread_min, arr_min, arr_basis "
-                "FROM leg_times WHERE acid=?", (callsign.strip().upper(),)).fetchall()
+                "SELECT dep, arr, k, start, len, src, n FROM leg_windows WHERE acid=?",
+                (callsign.strip().upper(),)).fetchall()
         except sqlite3.Error:
             return {}
-        return {(d, a): {"dep_min": m, "dep_spread_min": s, "arr_min": am, "arr_basis": b}
-                for d, a, m, s, am, b in rows if d and a and m is not None}
+        out: dict[tuple[str, str], dict[str, Any]] = {}
+        for d, a, k, start, length, src, n in rows:
+            if d and a and k and start is not None and length is not None:
+                out.setdefault((d, a), {})[k] = [start, length, src, n]
+        return out

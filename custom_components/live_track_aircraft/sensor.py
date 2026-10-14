@@ -91,6 +91,9 @@ class AircraftInRange(SensorEntity):
             # Low cardinality: a handful of distinct strings, so it
             # de-duplicates in the recorder like the rest.
             "route_artifact": self._coordinator.routes.status,
+            # The last download check (route_download.py): current, installed,
+            # or failed with the reason. Changes at most a few times a day.
+            "route_download": getattr(self._coordinator.route_download, "status", None),
             # Same, for the shared airport table (airports.py).
             "airport_table": self._coordinator.airports.status,
         }

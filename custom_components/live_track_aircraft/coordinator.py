@@ -115,6 +115,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # The shared route artifact. Absent or stale means no route fields
         # and nothing else changes - see routes.py.
         self.routes = RouteStore(hass)
+        # The instance's RouteDownloader (route_download.py), set by
+        # __init__.py; read only for the count sensor's status attribute.
+        self.route_download = None
         # The shared airport table: coordinates and time zones per airport.
         # Absent means every route reports route_check "unchecked" and
         # nothing else changes - see airports.py.

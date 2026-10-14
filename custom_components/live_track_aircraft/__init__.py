@@ -12,9 +12,19 @@ from homeassistant.helpers.event import async_track_time_interval
 from .const import CONF_LATITUDE, CONF_LONGITUDE, DOMAIN
 from .coordinator import AircraftCoordinator
 from .registrations import async_load_registry, async_refresh_registry
+from .route_download import TICK as ROUTE_TICK, RouteDownloader
 from .web import register as register_views
 
 PLATFORMS: list[Platform] = [Platform.GEO_LOCATION, Platform.SENSOR]
+_DL_KEY = f"{DOMAIN}_route_download"
+
+
+def _routes_reopen(hass: HomeAssistant) -> None:
+    """After a new route file is installed: every coordinator opens it now."""
+    for coordinator in hass.data.get(DOMAIN, {}).values():
+        routes = getattr(coordinator, "routes", None)
+        if routes is not None:
+            routes.reopen()
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -58,6 +68,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
+
+    # The route artifact, downloaded from FiledRoutesDB's public release
+    # (route_download.py). ONE downloader per instance, kept outside
+    # hass.data[DOMAIN], which holds coordinators only; every entry's timer
+    # asks it, and its own due() and lock keep that to one download.
+    # Startup check in the background so setup is not held up by 4.6 MB.
+    downloader = hass.data.get(_DL_KEY)
+    if downloader is None:
+        downloader = hass.data[_DL_KEY] = RouteDownloader(
+            hass, lambda: _routes_reopen(hass))
+    coordinator.route_download = downloader
+    hass.async_create_background_task(
+        downloader.async_check(startup=True), "live_track_aircraft_route_download")
+
+    async def _check_routes(_now=None) -> None:
+        await downloader.async_check()
+
+    entry.async_on_unload(
+        async_track_time_interval(hass, _check_routes, ROUTE_TICK))
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_reload))
     return True

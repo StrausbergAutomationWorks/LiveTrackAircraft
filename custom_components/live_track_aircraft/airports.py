@@ -37,6 +37,37 @@ from typing import Any
 
 _LOGGER = logging.getLogger(__name__)
 
+# ! THE ZONE COMES FROM THE COORDINATES, since 2026-10-13. FiledRoutesDB's
+# published time windows are minutes after local midnight, and the builder
+# finds each airport's zone with saw_livetrack.zones.zone_at on the airport's
+# coordinates (the same OurAirports coordinates as this table). Calling the
+# same function here means builder and client cannot disagree about a zone.
+# The table's own tz column (timezonefinder, 2026-09-22) is used only if the
+# zones extra is not installed - the manifest requires it, so that is a
+# broken install, logged once.
+try:
+    from saw_livetrack.zones import zone_at as _zone_at
+except ImportError:          # pragma: no cover - the manifest requires it
+    _zone_at = None
+
+_ZONE_WARNED = False
+
+
+def _zone(lat, lon) -> str | None:
+    """IANA zone at a coordinate by zone_at, or None (then the table's tz)."""
+    global _ZONE_WARNED  # noqa: PLW0603 - one warning per process
+    if _zone_at is None:
+        return None
+    try:
+        return _zone_at(lat, lon)
+    except ImportError as err:   # saw_livetrack present, tzfpy not
+        if not _ZONE_WARNED:
+            _ZONE_WARNED = True
+            _LOGGER.warning("saw_livetrack zones unavailable (%s); using the airport "
+                            "table's own zones, which may differ from FiledRoutesDB's", err)
+        return None
+
+
 AIRPORTS_FILENAME = "saw_airport_zones.sqlite"
 RECHECK_S = 3600
 
@@ -119,7 +150,8 @@ class AirportStore:
                     "SELECT z.ident, z.tz, z.lat, z.lon FROM aliases a JOIN zones z ON z.ident=a.ident "
                     "WHERE a.code=?", (code,)).fetchone()
             if row is not None:
-                out = {"ident": row[0], "tz": row[1], "lat": row[2], "lon": row[3]}
+                out = {"ident": row[0], "tz": _zone(row[2], row[3]) or row[1],
+                       "lat": row[2], "lon": row[3]}
         except sqlite3.Error:
             return None                                   # do not cache a failure
         self._cache[code] = out

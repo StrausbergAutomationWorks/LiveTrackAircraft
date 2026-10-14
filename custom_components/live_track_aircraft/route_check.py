@@ -278,11 +278,13 @@ def _angle_diff(a, b):
 #     flight cruising low between two distant fields has every leg ranked the
 #     same, so nothing changes for it.
 #
-#   TIME - a leg whose typical departure-to-arrival window contains "now" (with
-#     slack for early departure and delay) beats a leg with no times, which
-#     beats a leg whose window does not. Arrival is used when present; with a
-#     departure only, arrival is estimated from distance; with no times at all
-#     this key ties and the ranking is the one used before. Among legs in their
+#   TIME - a leg whose departure-to-arrival window contains "now" beats a leg
+#     with no times. ! SINCE 2026-10-13 the windows are the PUBLISHED ones,
+#     used without padding, and a leg OUTSIDE its window ranks the same as one
+#     with no times - see THE PUBLISHED WINDOWS below; the 2026-09-23 slack
+#     and the OUT_OF_WINDOW penalty are gone. With one end's window only, the
+#     other is estimated from distance; with no times at all this key ties
+#     and the ranking is the one used before. Among legs in their
 #     window, the one whose expected PROGRESS (fraction of the time window
 #     elapsed) best matches the aircraft's actual progress along the leg wins.
 #
@@ -293,11 +295,41 @@ def _angle_diff(a, b):
 
 VERY_LOW_FT = 5000.0
 CLIMB_MS = 2.5                  # ~500 ft/min; below this "level" (turbulence, GA)
-TIME_EARLY_MIN = 30.0           # before typical departure
-TIME_LATE_MIN = 90.0            # after typical arrival - a delay shifts the whole flight
-EST_FIXED_MIN, EST_KMH = 15.0, 780.0    # departure-only: arrival = dep + this
-IN_WINDOW, NO_TIMES, OUT_OF_WINDOW = "in_window", "no_times", "out_of_window"
-_TIME_RANK = {IN_WINDOW: 0, NO_TIMES: 1, OUT_OF_WINDOW: 2}
+
+# --------------------------------------------------------------------------
+# THE PUBLISHED WINDOWS - since 2026-10-13 (Lee: the box uses the public file).
+#
+# FiledRoutesDB publishes, per COMMERCIAL or CARGO leg, a departure window on
+# the ORIGIN's clock and an arrival window on the DESTINATION's:
+# [start, length, source, flights]. start ALREADY includes the lead - the
+# earliest scheduled time less 30 min (departure) or 40 min (arrival) - and
+# the end is the time by which 90% of the flights are scheduled. So:
+#
+#   ! NO PADDING HERE. The 2026-09-23 slack (30 min early + spread, 90 min
+#     late + spread) was for the stand-in's single typical time. The windows
+#     are used as published.
+#   ! LATE OR OUTSIDE IS NOT EVIDENCE AGAINST A LEG. Lee: "We shouldn't miss a
+#     flight because it left on-time." A flight later than its window falls
+#     back to the position rule: OUTSIDE_WINDOW ranks exactly like NO_TIMES.
+#     (Until 2026-10-13, OUT_OF_WINDOW ranked BELOW no times.)
+#   ! WEEKEND by the ORIGIN's local day of the departure: dw / aw where
+#     published, else d / a (which are then all days).
+#
+# The aircraft can be in the air on the leg from the start of the departure
+# window to the end of the arrival window: that is the test. Measured by the
+# route service (hold-out, 2026-10-13): 90.5% of on-time-or-early departures
+# and 89.3% of arrivals fall inside their windows; late departures 31%, by
+# design.
+#
+# Zones come from each airport's COORDINATES (airports.py, saw_livetrack.zones
+# .zone_at) - the call the builder makes, so the two cannot disagree.
+# --------------------------------------------------------------------------
+DEP_LEAD_MIN, ARR_LEAD_MIN = 30, 40     # the builder's leads (the file's keys.t)
+EST_FIXED_MIN, EST_KMH = 15.0, 780.0    # one end missing: block = this
+MIN_BLOCK = dt.timedelta(minutes=5)
+MAX_BLOCK = dt.timedelta(hours=20)
+IN_WINDOW, NO_TIMES, OUTSIDE_WINDOW = "in_window", "no_times", "outside_window"
+_TIME_RANK = {IN_WINDOW: 0, NO_TIMES: 1, OUTSIDE_WINDOW: 1}
 # The sort order. Named so an offline replay can test alternatives with the
 # same code; the integration never changes it.
 ORDER = ("verdict", "phase", "time", "behind", "progress", "history")
@@ -317,42 +349,110 @@ def _local(day, minute, zone):
     return dt.datetime(day.year, day.month, day.day, minute // 60, minute % 60, tzinfo=zone)
 
 
-def leg_time(times, leg, now):
-    """(IN_WINDOW | NO_TIMES | OUT_OF_WINDOW, expected progress 0..1 or None).
+def _win(times, key, weekend):
+    """(start, length) of the d or a window for this day, or None.
+    Weekend: the weekend window where one is published, else the plain one."""
+    w = (times.get(key + "w") if weekend else None) or times.get(key)
+    if not w or len(w) < 2:
+        return None
+    try:
+        start, length = int(w[0]), int(w[1])
+    except (TypeError, ValueError):
+        return None
+    if not (0 <= start <= 1439 and 1 <= length <= 1440):
+        return None
+    return start, length
 
-    times : {'dep_min', 'dep_spread_min', 'arr_min', ...} or None
-    leg   : the leg dict, with origin/destination tz and coordinates
-    now   : epoch seconds
+
+def _block(leg):
+    """Estimated block time from distance, for a leg with one end's window."""
+    if None in (leg.get("origin_lat"), leg.get("origin_lon"),
+                leg.get("destination_lat"), leg.get("destination_lon")):
+        return None
+    km = _hav_km(leg["origin_lat"], leg["origin_lon"], leg["destination_lat"], leg["destination_lon"])
+    return dt.timedelta(minutes=EST_FIXED_MIN + km / EST_KMH * 60.0)
+
+
+def _flights(times, leg, now_dt):
+    """The leg's possible flights near now: (lo, hi, dep_ref, arr_ref).
+
+    lo = start of the departure window, hi = end of the arrival window,
+    dep_ref / arr_ref = the earliest scheduled times (window start + lead),
+    used only for expected progress. One flight per ORIGIN day, yesterday and
+    today; a flight leaving tomorrow cannot be in the air now.
     """
-    if not times or now is None or times.get("dep_min") is None:
-        return NO_TIMES, None
     oz, dz = _zone(leg.get("origin_tz")), _zone(leg.get("destination_tz"))
     if oz is None:
-        return NO_TIMES, None
-    dep_min, arr_min = int(times["dep_min"]) % 1440, times.get("arr_min")
-    spread = float(times.get("dep_spread_min") or 0)
-    early = dt.timedelta(minutes=TIME_EARLY_MIN + spread)
-    late = dt.timedelta(minutes=TIME_LATE_MIN + spread)
-    now_dt = dt.datetime.fromtimestamp(now, dt.UTC)
+        return
     base = now_dt.astimezone(oz).date()
-    for off in (-1, 0, 1):
-        dep = _local(base + dt.timedelta(days=off), dep_min, oz)
-        arr = None
-        if arr_min is not None and dz is not None:
-            dday = dep.astimezone(dz).date()
-            cands = [_local(dday + dt.timedelta(days=k), int(arr_min) % 1440, dz) for k in (-1, 0, 1, 2)]
-            cands = [a for a in cands if dt.timedelta(minutes=5) < a - dep <= dt.timedelta(hours=20)]
-            arr = min(cands) if cands else None
-        if arr is None:
-            if None in (leg.get("origin_lat"), leg.get("destination_lat")):
-                return NO_TIMES, None
-            km = _hav_km(leg["origin_lat"], leg["origin_lon"], leg["destination_lat"], leg["destination_lon"])
-            arr = dep + dt.timedelta(minutes=EST_FIXED_MIN + km / EST_KMH * 60.0)
-        if dep - early <= now_dt <= arr + late:
-            span = (arr - dep).total_seconds()
-            prog = min(1.0, max(0.0, (now_dt - dep).total_seconds() / span)) if span > 0 else None
+    for off in (-1, 0):
+        day = base + dt.timedelta(days=off)
+        weekend = day.weekday() >= 5
+        dwin, awin = _win(times, "d", weekend), _win(times, "a", weekend)
+        if dwin is None and awin is None:
+            continue
+        d_lo = d_ref = d_hi = None
+        if dwin is not None:
+            d_lo = _local(day, dwin[0], oz)
+            d_ref = d_lo + dt.timedelta(minutes=min(DEP_LEAD_MIN, dwin[1]))
+            d_hi = d_lo + dt.timedelta(minutes=dwin[1])
+        block = None
+        if awin is not None and dz is not None:
+            a_lo = a_ref = None
+            if d_ref is None:
+                block = _block(leg)
+                if block is None:
+                    continue
+            # Arrival instances around this departure day on the destination's
+            # clock; the first one a plausible block time after departure.
+            anchor = (d_ref or _local(day, 720, oz)).astimezone(dz).date()
+            for k in (-2, -1, 0, 1, 2):
+                lo = _local(anchor + dt.timedelta(days=k), awin[0], dz)
+                ref = lo + dt.timedelta(minutes=min(ARR_LEAD_MIN, awin[1]))
+                if d_ref is not None:
+                    ok = MIN_BLOCK < ref - d_ref <= MAX_BLOCK
+                else:
+                    ok = (ref - block).astimezone(oz).date() == day
+                if ok and (a_ref is None or ref < a_ref):
+                    a_lo, a_ref = lo, ref
+            if a_ref is None:
+                continue
+            a_hi = a_lo + dt.timedelta(minutes=awin[1])
+            if d_ref is None:                       # arrival only: departure estimated
+                d_ref = a_ref - block
+                d_lo = d_ref - dt.timedelta(minutes=DEP_LEAD_MIN)
+        else:
+            if d_ref is None:
+                continue
+            block = _block(leg)
+            if block is None:
+                continue
+            a_ref, a_hi = d_ref + block, d_hi + block   # departure only: arrival estimated
+        yield d_lo, a_hi, d_ref, a_ref
+
+
+def leg_time(times, leg, now):
+    """(IN_WINDOW | NO_TIMES | OUTSIDE_WINDOW, expected progress 0..1 or None).
+
+    times : {'d': [start, len, src, n], 'a': [...], 'dw': ..., 'aw': ...} or None
+            - the published windows, routes.RouteStore.leg_times
+    leg   : the leg dict, with origin/destination tz and coordinates
+    now   : epoch seconds
+    In the window = between the start of a departure window and the end of
+    the arrival window that follows it. Outside is NOT evidence against the
+    leg (see THE PUBLISHED WINDOWS above).
+    """
+    if not times or now is None:
+        return NO_TIMES, None
+    now_dt = dt.datetime.fromtimestamp(now, dt.UTC)
+    seen = False
+    for lo, hi, d_ref, a_ref in _flights(times, leg, now_dt):
+        seen = True
+        if lo <= now_dt <= hi:
+            span = (a_ref - d_ref).total_seconds()
+            prog = min(1.0, max(0.0, (now_dt - d_ref).total_seconds() / span)) if span > 0 else None
             return IN_WINDOW, prog
-    return OUT_OF_WINDOW, None
+    return (OUTSIDE_WINDOW if seen else NO_TIMES), None
 
 
 def leg_phase(leg, lat, lon, altitude_ft, vertical_rate_ms):
@@ -386,7 +486,7 @@ def choose_leg(legs, resolve, lat, lon, altitude_ft=None, course_deg=None, profi
     Returns (leg dict or None, verdict, number of legs considered). The leg
     dict carries the endpoint coordinates and zones when known,
     'route_check_rule' - the test that decided the verdict - and
-    'route_time_check' - in_window | no_times | out_of_window.
+    'route_time_check' - in_window | no_times | outside_window.
     """
     if not legs:
         return None, None, 0
