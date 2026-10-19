@@ -9,6 +9,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_time_interval
 
+from .adsbdb import AdsbdbRoutes
 from .airport_download import TICK as AIRPORT_TICK, AirportDownloader
 from .const import CONF_LATITUDE, CONF_LONGITUDE, DOMAIN
 from .coordinator import AircraftCoordinator
@@ -19,6 +20,7 @@ from .web import register as register_views
 PLATFORMS: list[Platform] = [Platform.GEO_LOCATION, Platform.SENSOR]
 _DL_KEY = f"{DOMAIN}_route_download"
 _AIR_KEY = f"{DOMAIN}_airport_download"
+_ADSBDB_KEY = f"{DOMAIN}_adsbdb"
 
 
 def _airports_recheck(hass: HomeAssistant) -> None:
@@ -44,6 +46,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     register_views(hass)
 
     coordinator = AircraftCoordinator(hass, entry)
+    # adsbdb routes for callsigns FiledRoutesDB does not hold (adsbdb.py,
+    # backlog 292). ONE client per instance, outside hass.data[DOMAIN] like
+    # the downloaders: adsbdb limits by address, so every entry shares one
+    # budget and one in-memory cache. Set before the first poll.
+    coordinator.adsbdb = hass.data.setdefault(_ADSBDB_KEY, AdsbdbRoutes())
     await coordinator.async_config_entry_first_refresh()
 
     # The government-aircraft table and the owner database. Load whatever

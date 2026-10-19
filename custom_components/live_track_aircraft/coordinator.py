@@ -41,6 +41,7 @@ from .registrations import lookup_government, lookup_owner, prettify_owner
 from .routes import RouteStore
 from .airports import AirportStore
 from .route_check import FILED, choose_leg
+from .adsbdb import choose as adsbdb_choose
 from .eta import estimated_arrival
 
 _LOGGER = logging.getLogger(__name__)
@@ -121,6 +122,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # The instance's AirportDownloader (airport_download.py), set by
         # __init__.py; only its status is read here.
         self.airport_download = None
+        # The instance's adsbdb client (adsbdb.py, backlog 292), set by
+        # __init__.py: routes for callsigns FiledRoutesDB does not hold.
+        # None means filed routes only.
+        self.adsbdb = None
         # The shared airport table: coordinates and time zones per airport.
         # Absent means every route reports route_check "unchecked" and
         # nothing else changes - see airports.py.
@@ -161,6 +166,14 @@ class AircraftCoordinator(DataUpdateCoordinator):
             rec = self._record(obs)
             if rec is not None:
                 aircraft[obs.identity] = rec
+
+        # adsbdb lookups queued by _record for FiledRoutesDB misses (backlog
+        # 292) are worked in the BACKGROUND, so a slow answer never holds a
+        # poll up; the next poll reads them from the cache. One drain at a
+        # time: a second start returns at once.
+        if self.adsbdb is not None and self.adsbdb.pending:
+            self.hass.async_create_background_task(
+                self.adsbdb.async_drain(self._session), "live_track_aircraft_adsbdb")
 
         # The TRUE number in radius, before any cap. A capped count cannot
         # distinguish a quiet sky from a clipped list.
@@ -330,11 +343,30 @@ class AircraftCoordinator(DataUpdateCoordinator):
             vertical_rate_ms=obs.vertical_rate_ms,
             now=latest[2],
             times=self.routes.leg_times(obs.callsign))
+        source = "saw_filed_routes"
+        # ! ADSBDB ONLY WHEN FiledRoutesDB HAS NO ROUTE AT ALL (backlog 292).
+        # FiledRoutesDB is US-filed flights only, so abroad it is always a
+        # miss. Lee 2026-10-19: every miss falls through, in the US too. A
+        # filed leg judged implausible does NOT fall through: filed carries
+        # more weight. The answer comes from the in-memory cache; a callsign
+        # not asked yet is queued and gets its route on a later poll. Judged
+        # with the strict SCHEDULE profile and published only when PLAUSIBLE
+        # (adsbdb.choose) - unlike a filed route, which is flagged.
+        if not leg and self.adsbdb is not None:
+            leg, verdict, considered = adsbdb_choose(
+                self.adsbdb.route(obs.callsign, latest[2]), self.airports.lookup,
+                here[0], here[1],
+                None if obs.altitude_m is None else obs.altitude_m * 3.28084,
+                obs.course_deg, vertical_rate_ms=obs.vertical_rate_ms, now=latest[2])
+            source = "adsbdb"
         if leg:
             rec["origin_icao"] = leg["origin_icao"]
             rec["destination_icao"] = leg["destination_icao"]
-            rec["route_observations"] = leg["route_observations"]
-            rec["route_source"] = "saw_filed_routes"
+            # How often FiledRoutesDB saw the leg; adsbdb has no such count,
+            # and an absent value is omitted, never a sentinel (D0).
+            if leg.get("route_observations") is not None:
+                rec["route_observations"] = leg["route_observations"]
+            rec["route_source"] = source
             rec["route_check"] = verdict
             rec["route_check_rule"] = leg["route_check_rule"]
             rec["route_time_check"] = leg["route_time_check"]

@@ -17,6 +17,20 @@ not be licensed, sold, rented or leased; it is provided as-is; users must cite
 adsb.fi and link to its home page. This file, the Data sources section of
 `README.md`, and the attribution shown on every entity are that citation.
 
+## Flight routes outside FiledRoutesDB
+
+When FiledRoutesDB, which holds US-filed flights only, has no route for a
+callsign, the integration asks **adsbdb** - https://www.adsbdb.com - for that
+callsign at runtime. Nothing from adsbdb is shipped in this repository, and
+nothing it returns is written to a file: answers are held in memory and
+forgotten at restart.
+
+adsbdb's README (https://github.com/mrjackwills/adsbdb, read 19 October 2026)
+says its flight route data was compiled by David Taylor (Edinburgh) and Jim
+Mason (Glasgow), and that copying it, publishing it or adding it to another
+database needs David Taylor's explicit permission. Every aircraft showing an
+adsbdb route credits adsbdb and both compilers in its attribution.
+
 ## Aircraft marker icons
 
 40 of the 63 SVG files in `custom_components/live_track_aircraft/icons/` are by

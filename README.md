@@ -50,6 +50,14 @@ you. Both are volunteer-run; if you can, support them by feeding a receiver.
 Each configured area polls at most once every 15 seconds, and the integration
 backs off when a service answers HTTP 429. See [`ATTRIBUTION.md`](ATTRIBUTION.md).
 
+Routes come from FiledRoutesDB, which holds US-filed flight plans only. When it
+has no route for a callsign, the integration asks
+**[adsbdb](https://www.adsbdb.com)**, once per callsign, and shows the answer
+only if it fits where the aircraft actually is. adsbdb's route data is credited
+to David Taylor and Jim Mason and may not be copied or republished without
+permission, so answers are kept in memory only and never written to a file. A
+route's source is in each aircraft's `route_source` attribute.
+
 ## Icons
 
 The aircraft marker icons are by [ADS-B Radar](https://adsb-radar.com),

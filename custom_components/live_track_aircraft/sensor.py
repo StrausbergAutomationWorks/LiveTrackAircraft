@@ -98,6 +98,10 @@ class AircraftInRange(SensorEntity):
             "airport_table": self._coordinator.airports.status,
             # The last airport-table download check (airport_download.py).
             "airport_download": getattr(self._coordinator.airport_download, "status", None),
+            # adsbdb lookups for FiledRoutesDB misses (adsbdb.py, backlog 292):
+            # idle, ok, the last failure, or a pause with the time it ends.
+            # Changes only on a change of state, never with a count.
+            "route_lookup": getattr(self._coordinator.adsbdb, "status", None),
         }
 
     async def async_added_to_hass(self) -> None:

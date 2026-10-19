@@ -38,6 +38,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .adsbdb import ATTRIBUTION as ADSBDB_ATTRIBUTION
 from .const import ATTRIBUTION, DOMAIN
 from .coordinator import AircraftCoordinator
 
@@ -135,9 +136,19 @@ async def async_setup_entry(
 class Aircraft(GeolocationEvent):
     """One aircraft on the shared map."""
 
-    _attr_attribution = ATTRIBUTION
     _attr_should_poll = False
     _attr_unit_of_measurement = "km"
+
+    # ! adsbdb's route data is David Taylor's and Jim Mason's (adsbdb.py,
+    # backlog 292), so an aircraft showing an adsbdb route credits them and
+    # adsbdb. Two values only, so the attribute stays low-cardinality.
+    @property
+    def attribution(self) -> str:
+        rec = self._rec()
+        if (rec or {}).get("route_source") == "adsbdb":
+            return ATTRIBUTION + "; " + ADSBDB_ATTRIBUTION
+        return ATTRIBUTION
+
     # The discriminator the shared map's auto-entities card filters on.
     _attr_source = DOMAIN
 
