@@ -9,9 +9,12 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers.selector import LocationSelector, LocationSelectorConfig
 
+from .centre import from_form, to_form
 from .const import (
     CONF_LATITUDE,
+    CONF_LOCATION,
     CONF_LONGITUDE,
     CONF_MAX_AIRCRAFT,
     CONF_RADIUS_KM,
@@ -48,16 +51,20 @@ def _schema(defaults: dict[str, Any], hass) -> vol.Schema:
     # Germany may well want to watch O'Hare, and an integration that reads
     # hass.config and never asks makes that impossible. Added 2026-09-11
     # after exactly that was pointed out.
+    #
+    # ! A MAP MARKER, NOT TWO NUMBER FIELDS (backlog 192, option A, Lee
+    # 2026-10-18). No radius circle: the radius stays a number in km below,
+    # so it is exact and its limits are visible. The marker is converted back
+    # to CONF_LATITUDE and CONF_LONGITUDE by centre.from_form before anything
+    # is stored, and the range check lives there (the selector has none).
     return vol.Schema(
         {
             vol.Required(
-                CONF_LATITUDE,
-                default=defaults.get(CONF_LATITUDE, hass.config.latitude),
-            ): vol.All(vol.Coerce(float), vol.Range(min=-90, max=90)),
-            vol.Required(
-                CONF_LONGITUDE,
-                default=defaults.get(CONF_LONGITUDE, hass.config.longitude),
-            ): vol.All(vol.Coerce(float), vol.Range(min=-180, max=180)),
+                CONF_LOCATION,
+                default=to_form(defaults, hass.config.latitude,
+                                hass.config.longitude),
+            ): LocationSelector(
+                LocationSelectorConfig(radius=False, icon="mdi:airplane")),
             vol.Required(
                 CONF_RADIUS_KM, default=defaults.get(CONF_RADIUS_KM, DEFAULT_RADIUS_KM)
             ): vol.All(vol.Coerce(float), vol.Range(min=MIN_RADIUS_KM, max=MAX_RADIUS_KM)),
@@ -93,25 +100,29 @@ class LiveTrackAircraftConfigFlow(ConfigFlow, domain=DOMAIN):
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
+        errors: dict[str, str] = {}
         if user_input is not None:
-            # One entry per centre and radius.
-            await self.async_set_unique_id(
-                "%.4f_%.4f_%s" % (user_input[CONF_LATITUDE],
-                                  user_input[CONF_LONGITUDE],
-                                  user_input[CONF_RADIUS_KM])
-            )
-            self._abort_if_unique_id_configured()
-            return self.async_create_entry(
-                # ! The title IS the integration card. It carries the three
-                # things that distinguish one entry from another - where,
-                # how far, and therefore what you are watching. "Aircraft
-                # within 56 km" said nothing about WHERE, which matters now
-                # that the centre is a free choice anywhere on earth.
-                title=_title(user_input),
-                data=user_input,
-            )
+            values, error = from_form(user_input)
+            if error is None:
+                # One entry per centre and radius.
+                await self.async_set_unique_id(
+                    "%.4f_%.4f_%s" % (values[CONF_LATITUDE],
+                                      values[CONF_LONGITUDE],
+                                      values[CONF_RADIUS_KM])
+                )
+                self._abort_if_unique_id_configured()
+                return self.async_create_entry(
+                    # ! The title IS the integration card. It carries the three
+                    # things that distinguish one entry from another - where,
+                    # how far, and therefore what you are watching. "Aircraft
+                    # within 56 km" said nothing about WHERE, which matters now
+                    # that the centre is a free choice anywhere on earth.
+                    title=_title(values),
+                    data=values,
+                )
+            errors[CONF_LOCATION] = error
         return self.async_show_form(
-            step_id="user", data_schema=_schema({}, self.hass))
+            step_id="user", data_schema=_schema({}, self.hass), errors=errors)
 
     @staticmethod
     @callback
@@ -128,6 +139,12 @@ class LiveTrackAircraftOptionsFlow(OptionsFlow):
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            values, error = from_form(user_input)
+            if error is not None:
+                errors[CONF_LOCATION] = error
+                user_input = None
         if user_input is not None:
             # ! Keep the card honest. Changing the centre or the radius
             # changes what this entry IS, so the title has to follow - a card
@@ -147,11 +164,14 @@ class LiveTrackAircraftOptionsFlow(OptionsFlow):
             # with the new options in place; the options write Home Assistant
             # makes when this flow finishes then changes nothing and fires
             # nothing.
+            #
+            # ! STORED AS BEFORE: latitude and longitude as two keys (centre.py).
             self.hass.config_entries.async_update_entry(
-                self._entry, title=_title(user_input), options=user_input)
-            return self.async_create_entry(title="", data=user_input)
+                self._entry, title=_title(values), options=values)
+            return self.async_create_entry(title="", data=values)
         return self.async_show_form(
             step_id="init",
             data_schema=_schema({**self._entry.data, **self._entry.options},
                                 self.hass),
+            errors=errors,
         )

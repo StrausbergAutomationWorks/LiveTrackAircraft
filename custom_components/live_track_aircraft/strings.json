@@ -5,20 +5,21 @@
         "title": "Live Track Aircraft",
         "description": "Aircraft within the radius appear on the map as they arrive and depart on their own. Point it anywhere \u2014 it defaults to your Home Assistant location, but you can watch any airspace in the world.",
         "data": {
-          "latitude": "Latitude",
-          "longitude": "Longitude",
+          "location": "Centre",
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
           "max_aircraft": "Maximum aircraft published"
         },
         "data_description": {
-          "latitude": "Centre of the area to watch.",
-          "longitude": "Centre of the area to watch.",
+          "location": "Drag the marker to the middle of the area to watch.",
           "radius_km": "How far out counts as overhead.",
           "scan_interval": "The sources rate-limit below 15 seconds.",
           "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer."
         }
       }
+    },
+    "error": {
+      "invalid_location": "That point is not on the globe. Drag the marker onto the map."
     },
     "abort": {
       "already_configured": "Aircraft are already tracked for this location and radius."
@@ -29,13 +30,21 @@
       "init": {
         "title": "Live Track Aircraft",
         "data": {
-          "latitude": "Latitude",
-          "longitude": "Longitude",
+          "location": "Centre",
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
           "max_aircraft": "Maximum aircraft published"
+        },
+        "data_description": {
+          "location": "Drag the marker to the middle of the area to watch.",
+          "radius_km": "How far out counts as overhead.",
+          "scan_interval": "The sources rate-limit below 15 seconds.",
+          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer."
         }
       }
+    },
+    "error": {
+      "invalid_location": "That point is not on the globe. Drag the marker onto the map."
     }
   }
 }

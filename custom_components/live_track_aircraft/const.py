@@ -24,6 +24,10 @@ CONF_LONGITUDE = "longitude"
 CONF_RADIUS_KM = "radius_km"
 CONF_SCAN_INTERVAL = "scan_interval"
 CONF_MAX_AIRCRAFT = "max_aircraft"
+# ! A DIALOG FIELD, NEVER STORED (backlog 192). The setup and options dialogs
+# show the centre as one map marker under this key; centre.py turns it back
+# into CONF_LATITUDE and CONF_LONGITUDE before anything is saved.
+CONF_LOCATION = "location"
 
 # --- radius -------------------------------------------------------------
 # 56 km matches the flights_above entry already running, so the first

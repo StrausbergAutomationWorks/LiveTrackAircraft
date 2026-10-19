@@ -32,11 +32,13 @@ class OptionsAndZIndexGone(unittest.TestCase):
                 with self.subTest(file=rel, word=word):
                     self.assertNotIn(word, text)
 
-    def test_strings_offer_only_the_five_fields(self):
+    def test_strings_offer_only_the_dialog_fields(self):
+        # Five fields until 2026-10-18; latitude and longitude became one map
+        # marker, `location`, with backlog 192. Still no icon option.
         s = json.loads(source("strings.json"))
         for step in (s["config"]["step"]["user"], s["options"]["step"]["init"]):
             self.assertEqual(set(step["data"]),
-                             {"latitude", "longitude", "radius_km",
+                             {"location", "radius_km",
                               "scan_interval", "max_aircraft"})
 
 
