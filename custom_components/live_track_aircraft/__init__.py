@@ -9,6 +9,7 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_time_interval
 
+from .airport_download import TICK as AIRPORT_TICK, AirportDownloader
 from .const import CONF_LATITUDE, CONF_LONGITUDE, DOMAIN
 from .coordinator import AircraftCoordinator
 from .registrations import async_load_registry, async_refresh_registry
@@ -17,6 +18,15 @@ from .web import register as register_views
 
 PLATFORMS: list[Platform] = [Platform.GEO_LOCATION, Platform.SENSOR]
 _DL_KEY = f"{DOMAIN}_route_download"
+_AIR_KEY = f"{DOMAIN}_airport_download"
+
+
+def _airports_recheck(hass: HomeAssistant) -> None:
+    """After a new airport table is installed: every coordinator looks at it now."""
+    for coordinator in hass.data.get(DOMAIN, {}).values():
+        airports = getattr(coordinator, "airports", None)
+        if airports is not None:
+            airports.recheck()
 
 
 def _routes_reopen(hass: HomeAssistant) -> None:
@@ -87,6 +97,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     entry.async_on_unload(
         async_track_time_interval(hass, _check_routes, ROUTE_TICK))
+
+    # The airport table, downloaded from AirportZones' public release
+    # (airport_download.py, backlog 245). Same shape as the routes: one
+    # downloader per instance, every entry's timer asks it, startup check in
+    # the background.
+    air = hass.data.get(_AIR_KEY)
+    if air is None:
+        air = hass.data[_AIR_KEY] = AirportDownloader(
+            hass, lambda: _airports_recheck(hass))
+    coordinator.airport_download = air
+    hass.async_create_background_task(
+        air.async_check(), "live_track_aircraft_airport_download")
+
+    async def _check_airports(_now=None) -> None:
+        await air.async_check()
+
+    entry.async_on_unload(
+        async_track_time_interval(hass, _check_airports, AIRPORT_TICK))
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_reload))

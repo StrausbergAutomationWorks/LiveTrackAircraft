@@ -95,6 +95,11 @@ class AirportStore:
                 pass
         self._con = None
 
+    def recheck(self) -> None:
+        """Look at the file on the next lookup instead of within the hour.
+        Called after airport_download.py installs a new table (backlog 245)."""
+        self._checked = None
+
     def _ensure(self) -> sqlite3.Connection | None:
         now = dt.datetime.now(dt.UTC)
         if self._checked is not None and (now - self._checked).total_seconds() < RECHECK_S:

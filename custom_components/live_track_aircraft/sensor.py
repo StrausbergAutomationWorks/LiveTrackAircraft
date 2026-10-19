@@ -96,6 +96,8 @@ class AircraftInRange(SensorEntity):
             "route_download": getattr(self._coordinator.route_download, "status", None),
             # Same, for the shared airport table (airports.py).
             "airport_table": self._coordinator.airports.status,
+            # The last airport-table download check (airport_download.py).
+            "airport_download": getattr(self._coordinator.airport_download, "status", None),
         }
 
     async def async_added_to_hass(self) -> None:

@@ -118,6 +118,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # The instance's RouteDownloader (route_download.py), set by
         # __init__.py; read only for the count sensor's status attribute.
         self.route_download = None
+        # The instance's AirportDownloader (airport_download.py), set by
+        # __init__.py; only its status is read here.
+        self.airport_download = None
         # The shared airport table: coordinates and time zones per airport.
         # Absent means every route reports route_check "unchecked" and
         # nothing else changes - see airports.py.
