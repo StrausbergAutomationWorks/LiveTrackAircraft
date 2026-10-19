@@ -84,6 +84,7 @@ class AirportStore:
         self._checked: dt.datetime | None = None
         self._cache: dict[str, dict[str, Any] | None] = {}
         self._aliases = False
+        self._names = False
         self.meta: dict[str, str] = {}
         self.status = "not loaded"
 
@@ -130,15 +131,19 @@ class AirportStore:
             return None
         has_aliases = bool(con.execute(
             "SELECT 1 FROM sqlite_master WHERE type='table' AND name='aliases'").fetchone())
+        # Names arrived with the published table (backlog 245); an older
+        # table without the column still serves coordinates and zones.
+        has_names = "name" in {r[1] for r in con.execute("PRAGMA table_info(zones)")}
         self._con, self._stamp, self.meta = con, stamp, meta
-        self._aliases = has_aliases
+        self._aliases, self._names = has_aliases, has_names
         self.status = "ok (built %s, %s airports%s)" % (
             (meta.get("built") or "")[:10], meta.get("rows", "?"), "" if has_aliases else ", no aliases")
         _LOGGER.debug("Airport table loaded: %s", self.status)
         return con
 
     def lookup(self, code: str | None) -> dict[str, Any] | None:
-        """{'lat', 'lon', 'tz', 'ident'} for one of our airport codes, or None."""
+        """{'lat', 'lon', 'tz', 'ident', 'name'} for one of our airport codes,
+        or None. 'name' is None when the table carries no names."""
         if not code:
             return None
         con = self._ensure()
@@ -148,15 +153,16 @@ class AirportStore:
         if code in self._cache:
             return self._cache[code]
         out = None
+        cols = "z.ident, z.tz, z.lat, z.lon, %s" % ("z.name" if self._names else "NULL")
         try:
-            row = con.execute("SELECT ident, tz, lat, lon FROM zones WHERE ident=?", (code,)).fetchone()
+            row = con.execute("SELECT %s FROM zones z WHERE z.ident=?" % cols, (code,)).fetchone()
             if row is None and self._aliases:
                 row = con.execute(
-                    "SELECT z.ident, z.tz, z.lat, z.lon FROM aliases a JOIN zones z ON z.ident=a.ident "
-                    "WHERE a.code=?", (code,)).fetchone()
+                    "SELECT %s FROM aliases a JOIN zones z ON z.ident=a.ident "
+                    "WHERE a.code=?" % cols, (code,)).fetchone()
             if row is not None:
                 out = {"ident": row[0], "tz": _zone(row[2], row[3]) or row[1],
-                       "lat": row[2], "lon": row[3]}
+                       "lat": row[2], "lon": row[3], "name": row[4]}
         except sqlite3.Error:
             return None                                   # do not cache a failure
         self._cache[code] = out

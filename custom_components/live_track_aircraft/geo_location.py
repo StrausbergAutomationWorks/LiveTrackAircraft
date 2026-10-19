@@ -81,6 +81,10 @@ _PASSTHROUGH = (
     # --- route, from the shared artifact; absent when it is not installed ---
     "origin_icao",
     "destination_icao",
+    # airport names from the airport table (airports.py), as shown
+    # (airport_display.py); absent when the table has none
+    "origin_name",
+    "destination_name",
     "route_observations",
     "route_source",
     # route verification (route_check.choose_leg) and the airport table's zones

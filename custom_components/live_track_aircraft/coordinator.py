@@ -42,6 +42,7 @@ from .routes import RouteStore
 from .airports import AirportStore
 from .route_check import FILED, choose_leg
 from .adsbdb import choose as adsbdb_choose
+from .airport_display import shown_code, shown_name
 from .eta import estimated_arrival
 
 _LOGGER = logging.getLogger(__name__)
@@ -360,8 +361,17 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 obs.course_deg, vertical_rate_ms=obs.vertical_rate_ms, now=latest[2])
             source = "adsbdb"
         if leg:
-            rec["origin_icao"] = leg["origin_icao"]
-            rec["destination_icao"] = leg["destination_icao"]
+            # ! The codes and names are what is SHOWN (airport_display.py,
+            # Lee 2026-10-19: KDJT/DJT published as KPBI/PBI, named Palm Beach
+            # International Airport). Everything above used the codes as
+            # reported; this changes only what is published.
+            for end in ("origin", "destination"):
+                reported = leg[end + "_icao"]
+                rec[end + "_icao"] = shown_code(reported)
+                found = self.airports.lookup(reported)
+                name = shown_name(reported, (found or {}).get("ident"), (found or {}).get("name"))
+                if name:
+                    rec[end + "_name"] = name
             # How often FiledRoutesDB saw the leg; adsbdb has no such count,
             # and an absent value is omitted, never a sentinel (D0).
             if leg.get("route_observations") is not None:
