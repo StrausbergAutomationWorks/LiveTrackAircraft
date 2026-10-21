@@ -634,7 +634,32 @@ def decolour(body: str) -> str:
 # pixels of the rendered icon at `size`. 2.0 chosen by eye 2026-09-21 from
 # 2, 3 and 4 on light, water and dark: at 3 and above a light aircraft turns
 # to a blob, and a fixed edge inflates small icons most, fighting the ramp.
-OUTLINE_PX = 2.0
+# ! 1.0 SINCE 2026-10-21 (Lee: "reduce the thickness so they look more
+# delicate"), with the card's ground shadow under every aircraft. Chosen by
+# eye from 2.0 / 1.25 / 1.0 / 0.75 at the live 60 px marker on OSM Standard
+# streets, lakefront and forest preserve (20_Research/icons_depth_20261021/
+# depth_sheet3_*): at 0.75 the small white ones dissolve on light tiles.
+OUTLINE_PX = 1.0
+
+# ! GENTLE SHADING (Lee 2026-10-21). Two gradients laid over the silhouette
+# and masked to it: spanwise, darker at the tips with a soft highlight down
+# the spine; fore and aft, a touch lighter at the nose. Both are in the
+# icon's OWN frame (nose up), so they turn with the aircraft and the card
+# needs no angle. SHADE scales every stop: 1.0 greyed the white airliners on
+# light tiles, 0.6 kept them white (depth_sheet2_48px.png, depth_sheet3_*).
+# A bevel (specular lighting) was tried and dropped: invisible at 48 px.
+SHADE = 0.6
+_SPINE = ((0, "#000", .42), (.32, "#000", .10), (.47, "#fff", .28), (.50, "#fff", .40),
+          (.53, "#fff", .28), (.68, "#000", .10), (1, "#000", .42))
+_FORE_AFT = ((0, "#fff", .10), (1, "#000", .18))
+
+
+def _gradient(gid: str, x1: float, y1: float, x2: float, y2: float, stops) -> str:
+    return ('<linearGradient id="%s" gradientUnits="userSpaceOnUse" '
+            'x1="%.3f" y1="%.3f" x2="%.3f" y2="%.3f">' % (gid, x1, y1, x2, y2)
+            + "".join('<stop offset="%g" stop-color="%s" stop-opacity="%.3f"/>'
+                      % (o, c, a * SHADE) for o, c, a in stops)
+            + "</linearGradient>")
 
 # ! THE EDGE IS A FILTER, NOT A STROKE. Two stroke designs failed on the
 # artwork, measured 2026-09-21:
@@ -722,7 +747,28 @@ def render(path: str, degrees: int | None, size: int = 64,
         defs += _ROTOR_FILTER % (rr, BADGE)
         # EVERY rotor group (a tiltrotor has two: rotor, rotor2).
         art = re.sub(r'<g id="(rotor\d*)">', r'<g id="\1" filter="url(#r)">', art)
-    return (head + defs + '<g filter="url(#e)">' + art + '</g></svg>')
+    if degrees:
+        # A turned picture (the view still answers the old per-angle URLs)
+        # gets no shading: its gradients are laid out nose up.
+        return (head + defs + '<g filter="url(#e)">' + art + '</g></svg>')
+    # ! The art is DEFINED once and drawn twice through <use>: once in the
+    # tone, once white inside the mask that keeps the gradients on the
+    # silhouette. Its fill comes from the <use>, which is why the defined
+    # group carries none. A <use> clone runs its SMIL animations (rotor,
+    # props) as the original does - looked at in the card's marker CSS.
+    art_def = art.replace(' fill="%s">' % fill, ' id="art">', 1)
+    x0, x1 = cx - w * k / 2.0, cx + w * k / 2.0
+    y0, y1 = cy - h * k / 2.0, cy + h * k / 2.0
+    W, H = _fmt(w), _fmt(h)
+    defs += ('<defs>' + art_def
+             + '<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="%s" height="%s">'
+               '<use href="#art" fill="#fff"/></mask>' % (W, H)
+             + _gradient("sp", x0, 0, x1, 0, _SPINE)
+             + _gradient("fa", 0, y0, 0, y1, _FORE_AFT) + '</defs>')
+    lit = ('<use href="#art" fill="%s"/>' % fill
+           + '<rect x="0" y="0" width="%s" height="%s" fill="url(#sp)" mask="url(#m)"/>' % (W, H)
+           + '<rect x="0" y="0" width="%s" height="%s" fill="url(#fa)" mask="url(#m)"/>' % (W, H))
+    return (head + defs + '<g filter="url(#e)">' + lit + '</g></svg>')
 
 
 def _fmt(v: float) -> str:
@@ -755,7 +801,7 @@ URL_BASE = "/api/live_track_aircraft/icon"
 # props cut out and spinning (2026-09-26); 6: the six Pilatus icons
 # (2026-09-26); 7: round 4 - Jos's heavytransport and amphibian, our be12,
 # be200 and us2 (2026-10-06).
-ART_REV = 7
+ART_REV = 8
 
 
 def picture_url(key: str, tone: str = "default",
