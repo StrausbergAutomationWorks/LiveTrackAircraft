@@ -70,6 +70,8 @@ _PASSTHROUGH = (
     "icon_rotatable",
     "icon_rotation_deg",
     "icon_rotation_basis",
+    # "override" when the user's own picture is drawn (pictures.py)
+    "picture_source",
     "squawk",
     # --- kinematics, in contract units (D0) ---
     "altitude_m",

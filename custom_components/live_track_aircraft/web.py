@@ -22,7 +22,7 @@ from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
 
-from . import icons
+from . import icons, pictures
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -90,5 +90,41 @@ class AircraftIconView(HomeAssistantView):
         )
 
 
+class AircraftPictureView(HomeAssistantView):
+    """Return the user's own picture for one aircraft (pictures.py)."""
+
+    url = pictures.URL_BASE + "/{name}"
+    name = "api:live_track_aircraft:picture"
+    # ! As the icons: a picture URL cannot carry a token. What is in the
+    # folder is the user's choice to show; pictures.py says so.
+    requires_auth = False
+
+    async def get(self, request: web.Request, name: str) -> web.Response:
+        hass = request.app["hass"]
+        folder = hass.config.path(pictures.DIR_NAME)
+        found = await hass.async_add_executor_job(pictures.resolve, folder, name)
+        if found is None:
+            return web.Response(status=404, text="no picture")
+        path, content_type = found
+        body = await hass.async_add_executor_job(_read, path)
+        return web.Response(
+            body=body,
+            content_type=content_type,
+            headers={
+                # ?v= is the file's mtime, so a replaced file is a new URL.
+                "Cache-Control": "public, max-age=86400",
+                "X-Content-Type-Options": "nosniff",
+                # A user's SVG must not run script if opened directly.
+                "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:",
+            },
+        )
+
+
+def _read(path: str) -> bytes:
+    with open(path, "rb") as fh:
+        return fh.read(pictures.MAX_BYTES + 1)[: pictures.MAX_BYTES]
+
+
 def register(hass: HomeAssistant) -> None:
     hass.http.register_view(AircraftIconView())
+    hass.http.register_view(AircraftPictureView())

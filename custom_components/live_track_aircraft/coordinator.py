@@ -34,6 +34,7 @@ from .sources.adsb import BACKOFF, fetch, short_floor
 from .sources.base import Observation, SourceError
 from . import icons
 from .aircraft import classify, describe_aircraft, lookup_manufacturer
+from .pictures import DIR_NAME as PICTURES_DIR, Overrides, apply as apply_picture
 from .airframe import map_layer
 from .map_keys import object_ids, registry_registration
 from .airlines import lookup_operator
@@ -131,6 +132,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # Absent means every route reports route_check "unchecked" and
         # nothing else changes - see airports.py.
         self.airports = AirportStore(hass)
+        # The user's own pictures, by hex (pictures.py, Lee 2026-10-21).
+        self.pictures = Overrides(hass.config.path(PICTURES_DIR))
 
     async def _async_update_data(self) -> dict[str, Any]:
         now = time.time()
@@ -161,6 +164,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
             ) from err
         self._consecutive_failures = 0
         self._last_obs_count = len(observations)
+
+        # The pictures folder, listed at most once a minute, off the loop.
+        if self.pictures.due(now):
+            await self.hass.async_add_executor_job(self.pictures.scan)
 
         aircraft: dict[str, dict[str, Any]] = {}
         for obs in observations:
@@ -512,6 +519,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         out["entity_picture"] = icons.picture_url(
             key, icons.tone_for(gov_now, icon_category),
             icons.weight_for(obs.emitter_category))
+        # ! The user's own picture for this hex wins, drawn upright.
+        own = getattr(self, "pictures", None)
+        apply_picture(out, own.url(obs.identity) if own is not None else None)
 
         # --- operator ---------------------------------------------------
         # ("UAL", "United Airlines") a known airline
