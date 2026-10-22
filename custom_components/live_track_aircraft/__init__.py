@@ -56,14 +56,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # The government-aircraft table and the owner database. Load whatever
     # exists, then refresh in the background if it is stale.
     #
-    # ! THE CACHE IS SHARED WITH flights_above, DELIBERATELY.
-    # registrations.py is lifted VERBATIM and its paths are
-    # .storage/flights_above_gov_rotorcraft.json and
-    # .storage/flights_above_owners.sqlite. Measured 2026-09-11: both already
-    # exist, 322 KB and 10.9 MB, built 2026-09-07. Sharing them costs nothing
-    # and saves a second 73 MB download plus a second 10.9 MB database of
-    # identical public data on the same machine. Renaming the paths would
-    # fork a module we want to keep byte-identical to its origin.
+    # ! NOT SHARED WITH flights_above (corrected 2026-10-22). This read that
+    # these were flights_above's own files, lifted verbatim. Since the
+    # 2026-09-11 divergence the paths are SAW-neutral and ours -
+    # .storage/saw_faa_gov_aircraft.json (saw_faa_gov_rotorcraft.json until
+    # 2026-10-22) and .storage/saw_faa_owners.sqlite - while flights_above
+    # keeps its own flights_above_gov_rotorcraft.json. Measured 2026-10-22:
+    # no other component on the box names either SAW file.
     #
     # ! Dormant outside the US, and every failure path leaves tracking
     # untouched - the module degrades to None rather than raising.

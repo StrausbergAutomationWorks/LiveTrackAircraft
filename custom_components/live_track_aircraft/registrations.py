@@ -12,8 +12,10 @@ N-number as their callsign and appear in no commercial aircraft database -
 adsbdb.com and hexdb.io both 404 on them.
 
 The FAA Releasable Aircraft Database does list them, keyed by the Mode S hex
-that ADS-B transmits. This module ships a snapshot of the crewed, government-
-registered rotorcraft from it and refreshes itself periodically.
+that ADS-B transmits. This module builds a table of EVERY government-
+registered aircraft from it - every aircraft type, drones excluded - and
+refreshes it periodically. (Until 2026-10-22 this docstring said "crewed
+rotorcraft"; the table had held every type since the fork's local change.)
 
 SCOPE - this is deliberately inert outside the US:
   * The table only loads when the configured location is in US territory.
@@ -46,7 +48,7 @@ _LOGGER = logging.getLogger(__name__)
 #     the moment an operator enrolled. Shipping the FAA's own download instead
 #     of a copy of it means every install has data as fresh as its last
 #     refresh, obtained directly from the source under no agreement.
-DATA_FILE = os.path.join(os.path.dirname(__file__), "data", "gov_rotorcraft.json")
+DATA_FILE = os.path.join(os.path.dirname(__file__), "data", "gov_aircraft.json")
 
 # US ICAO 24-bit allocation. Exact, not heuristic.
 US_HEX_MIN = 0xA00000
@@ -519,7 +521,7 @@ _DRONE_MFR_PREFIXES = (
 
 
 def parse_faa_archive(raw: bytes) -> dict[str, list[str]]:
-    """Extract crewed government rotorcraft from the FAA zip.
+    """Extract every government-registered aircraft, drones excluded.
 
     Streams row by row: MASTER.txt is 194 MB uncompressed and must never be
     materialised. Peak memory is a few MB, so this is safe on a Pi.
@@ -547,10 +549,12 @@ def parse_faa_archive(raw: bytes) -> dict[str, list[str]]:
         # FIXED-WING aircraft, so a government Gulfstream fell through to
         # lookup_operator and displayed as "Private". Measured: rotorcraft
         # only 1,595 entries; all government aircraft 5,730.
+        # ! A blank or unreadable seat count is UNKNOWN, not zero: only a
+        # stated 0 marks a drone below.
         try:
-            seats = int(r.get("NO-SEATS") or 0)
+            seats = int(r.get("NO-SEATS") or "")
         except ValueError:
-            seats = 0
+            seats = None
         types[r.get("CODE", "")] = ((r.get("MFR") or "").upper(), seats)
 
     table: dict[str, list[str]] = {}
@@ -563,10 +567,20 @@ def parse_faa_archive(raw: bytes) -> dict[str, list[str]]:
         if not t:
             continue
         mfr, seats = t
-        # The FAA classes drones as rotorcraft; they never appear on ADS-B.
-        # LOCAL CHANGE: drones kept. A government UAS that does broadcast is
-        # worth naming, and the cost is ~1,186 entries.
-        del seats, mfr
+        # ! DRONES OUT (Lee, 2026-10-22). This read "drones kept", and
+        # _DRONE_MFR_PREFIXES was defined and never used. Measured on the
+        # FAA archive of 2026-10-21: 1,136 of 5,743 government rows had
+        # ACFTREF NO-SEATS 0, every one an unmanned aircraft by make and model
+        # (DJI, Skydio, Autel, Hylio, ScanEagle, MQ-9...); all 700 drone-maker
+        # rows have 0 seats too, and a word search of make and model found
+        # none the seat count missed. ONE seat is a real aircraft (ER-2,
+        # F-16A, Air Tractor, gliders) and is kept: the fork's PR branch
+        # dropped seats < 2, which was right for rotorcraft only.
+        # ! The cost, measured: 10 GENERAL ATOMICS MQ-9 BLOCK 1 go with them,
+        # and a large UAS can transmit ADS-B. One that does still gets its
+        # owner from the owner table; it is just not drawn as government.
+        if seats == 0 or any(mfr.startswith(p) for p in _DRONE_MFR_PREFIXES):
+            continue
         hx = (r.get("MODE S CODE HEX") or "").strip().upper()
         if hx:
             table[hx] = [
@@ -582,8 +596,25 @@ def cache_path(hass) -> str:
 
     ! SAW-neutral name. See owner_db_path for why: every module must work
     on its own, so a path may not assume another integration is installed.
+    ! RENAMED 2026-10-22 from saw_faa_gov_rotorcraft.json: the table had held
+    every aircraft type for weeks and the name made the project's own record
+    say "rotorcraft only". Measured that day: no other component on the box,
+    and no branch of any SAW clone, names the old file.
     """
-    return hass.config.path(".storage", "saw_faa_gov_rotorcraft.json")
+    return hass.config.path(".storage", CACHE_NAME)
+
+
+CACHE_NAME = "saw_faa_gov_aircraft.json"
+# Read only while the new file does not exist yet, so the first start after
+# the rename keeps its government tones until the refresh lands; deleted after
+# the first successful write.
+LEGACY_CACHE_NAME = "saw_faa_gov_rotorcraft.json"
+SCHEMA = 2
+EXCLUDES = "drones: ACFTREF NO-SEATS 0, or a drone maker"
+
+
+def legacy_cache_path(hass) -> str:
+    return hass.config.path(".storage", LEGACY_CACHE_NAME)
 
 
 def _needs_refresh(path: str) -> bool:
@@ -621,7 +652,9 @@ async def async_load_registry(hass, latitude=None, longitude=None) -> int:
     # question the gate should have been asking. It is not worth another
     # geographic guess.
     cache = cache_path(hass)
-    target = cache if os.path.exists(cache) else DATA_FILE
+    legacy = legacy_cache_path(hass)
+    target = (cache if os.path.exists(cache)
+              else legacy if os.path.exists(legacy) else DATA_FILE)
     n = await hass.async_add_executor_job(REGISTRY.load, target)
     # Opened here so a restart picks up an existing database without waiting
     # for the next refresh.
@@ -685,8 +718,8 @@ async def async_refresh_registry(hass, latitude=None, longitude=None,
         _LOGGER.debug("FAA registry parsed to an empty table; keeping the old one")
         return False
 
-    payload = {"schema": 1, "source": "FAA Releasable Aircraft Database",
-               "count": len(table), "aircraft": table}
+    payload = {"schema": SCHEMA, "source": "FAA Releasable Aircraft Database",
+               "excludes": EXCLUDES, "count": len(table), "aircraft": table}
 
     def _write() -> None:
         os.makedirs(os.path.dirname(cache), exist_ok=True)
@@ -694,6 +727,10 @@ async def async_refresh_registry(hass, latitude=None, longitude=None,
         with open(tmp, "w", encoding="utf-8") as fh:
             json.dump(payload, fh, separators=(",", ":"))
         os.replace(tmp, cache)           # atomic; never a half-written cache
+        try:
+            os.unlink(legacy_cache_path(hass))   # the pre-rename name
+        except OSError:
+            pass
 
     try:
         await hass.async_add_executor_job(_write)
