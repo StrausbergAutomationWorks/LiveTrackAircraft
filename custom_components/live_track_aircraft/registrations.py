@@ -329,6 +329,7 @@ class GovRegistry:
         self._loaded = False
         self._warned_unloaded = False
         self._law: list[str] | None = None
+        self.schema = 0
 
     def load(self, path: str | None = None) -> int:
         """Load the table from disk. Returns how many entries were read.
@@ -346,6 +347,7 @@ class GovRegistry:
                 raise ValueError("no 'aircraft' mapping in payload")
             self._table = table
             self._law = None
+            self.schema = payload.get("schema", 0) if isinstance(payload.get("schema"), int) else 0
             self._loaded = True
             _LOGGER.debug("Loaded %s government aircraft from %s",
                           len(table), target)
@@ -755,10 +757,14 @@ def parse_faa_archive(raw: bytes) -> dict[str, list[str]]:
         # is turbine-powered (TYPE-ENG 2-5) and not weight class 4 (UAS under
         # 55 lb). Measured: 18 rows - 12 MQ-9, 4 Global Hawk, 2 Scion Weasel;
         # a turbine model jet (class 4) and a DJI coded turbofan stay out.
-        large_uas = engine in _TURBINE_ENGINES and weight != "CLASS 4"
-        if ((seats == 0 and not large_uas)
-                or any(mfr.startswith(p) for p in _DRONE_MFR_PREFIXES)):
-            continue
+        # ! DRONES ARE IN THE TABLE (Lee 2026-10-22 02:31: leaving them out
+        # was "the opposite of what I want"). From ed51866 to this commit
+        # they were left out (0 seats or a drone maker), MQ-9 class kept
+        # from 9fd867b; measured, that dropped 1,118 of 5,743 rows. A
+        # government drone that broadcasts is drawn as government, with
+        # lights if police. _DRONE_MFR_PREFIXES and _TURBINE_ENGINES are no
+        # longer used here.
+        del mfr, seats, engine, weight
         hx = (r.get("MODE S CODE HEX") or "").strip().upper()
         if hx:
             table[hx] = [
@@ -787,12 +793,19 @@ CACHE_NAME = "saw_faa_gov_aircraft.json"
 # the rename keeps its government tones until the refresh lands; deleted after
 # the first successful write.
 LEGACY_CACHE_NAME = "saw_faa_gov_rotorcraft.json"
-SCHEMA = 2
-EXCLUDES = "drones: ACFTREF NO-SEATS 0, or a drone maker"
+# 3 since 2026-10-22 02:3x: drones back in. A cache of an older schema is
+# rebuilt at the next start (needs_refresh), not after REFRESH_DAYS.
+SCHEMA = 3
+EXCLUDES = "nothing: every government registrant, drones included"
 
 
 def legacy_cache_path(hass) -> str:
     return hass.config.path(".storage", LEGACY_CACHE_NAME)
+
+
+def needs_refresh(path: str, loaded_schema: int) -> bool:
+    """Stale by age, or built by an older rule (SCHEMA)."""
+    return _needs_refresh(path) or loaded_schema < SCHEMA
 
 
 def _needs_refresh(path: str) -> bool:
@@ -855,7 +868,7 @@ async def async_refresh_registry(hass, latitude=None, longitude=None,
     # still a correct answer to "is this point in the US", which a future
     # traffic-based deferral may want.
     cache = cache_path(hass)
-    if not force and not _needs_refresh(cache):
+    if not force and not needs_refresh(cache, REGISTRY.schema):
         return False
     import aiohttp
     from homeassistant.helpers.aiohttp_client import async_get_clientsession

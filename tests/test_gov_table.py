@@ -69,15 +69,10 @@ class Table(unittest.TestCase):
         self.assertIn("A00002", self.t)            # rotorcraft
         self.assertIn("A00005", self.t)            # one seat is an aircraft
 
-    def test_drones_out(self):
-        self.assertNotIn("A00009", self.t)         # 0 seats, electric
-        self.assertNotIn("A00010", self.t)         # turbine but under 55 lb
-        self.assertNotIn("A00011", self.t)         # a drone maker, whatever it says
-        self.assertNotIn("A00004", self.t)         # a drone maker
-        self.assertNotIn("A00012", self.t)         # unmanned, piston: not MQ-9 class
-
-    def test_mq9_class_kept(self):
-        self.assertIn("A00003", self.t)            # 0 seats, turbine, not class 4
+    def test_drones_kept(self):
+        # Lee 2026-10-22 02:31: government drones are in the table.
+        for h in ("A00003", "A00004", "A00009", "A00010", "A00011", "A00012"):
+            self.assertIn(h, self.t, h)
 
     def test_registrant(self):
         self.assertNotIn("A00006", self.t)         # an individual
@@ -87,7 +82,7 @@ class Table(unittest.TestCase):
         self.assertIn("A00008", self.t)
 
     def test_exactly(self):
-        self.assertEqual(sorted(self.t), ["A00001", "A00002", "A00003", "A00005", "A00007", "A00008"])
+        self.assertEqual(sorted(self.t), ["A000%02d" % i for i in range(1, 13) if i != 6])
 
 
 class Names(unittest.TestCase):
@@ -101,7 +96,17 @@ class Names(unittest.TestCase):
         h = self._Hass()
         self.assertEqual(reg.cache_path(h), ".storage/saw_faa_gov_aircraft.json")
         self.assertEqual(reg.legacy_cache_path(h), ".storage/saw_faa_gov_rotorcraft.json")
-        self.assertEqual(reg.SCHEMA, 2)
+        self.assertEqual(reg.SCHEMA, 3)
+
+    def test_an_older_schema_is_rebuilt_now(self):
+        import os, tempfile
+        fd, p = tempfile.mkstemp(); os.close(fd)
+        try:
+            self.assertFalse(reg.needs_refresh(p, 3))          # fresh file, this rule
+            self.assertTrue(reg.needs_refresh(p, 2))           # fresh file, the drones-out rule
+        finally:
+            os.unlink(p)
+        self.assertTrue(reg.needs_refresh(p, 3))               # no file
 
 
 if __name__ == "__main__":

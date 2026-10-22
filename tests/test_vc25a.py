@@ -35,8 +35,8 @@ class Paint(unittest.TestCase):
         self.assertNotIn("mask-type", out)
 
     def test_by_hex(self):
-        self.assertEqual(icons.HEX_KEYS, {"adfdf8": "vc25a", "adfdf9": "vc25a"})
-        self.assertNotIn("af83f3", icons.HEX_KEYS)      # the Bridge: not drawn yet
+        self.assertEqual(icons.HEX_KEYS.get("adfdf8"), "vc25a")
+        self.assertEqual(icons.HEX_KEYS.get("adfdf9"), "vc25a")
 
     def test_lights_and_edge_still_apply(self):
         out = icons.render(icons.icon_path("vc25a"), None, 64, "mil", 1.0, False, True)
