@@ -545,7 +545,20 @@ _TONES = {
     "default": "#EDEAE2",
     "gov": "#EF9F27",      # government, law enforcement, air ambulance
     "rotor": "#9FE1CB",    # rotorcraft, which are not an edge case here
+    # 2026-10-22, chosen by render on OSM Standard streets, water, a forest
+    # preserve and the Loop at the live 60 px (20_Research/le_tones_20261022/
+    # tones_60px_part*.png): olive drab #4B5320 went near black under the
+    # shading; #859556 read khaki. Navy #1E3A8A read black; #5B8BDC sat on
+    # OSM's own water and label blue.
+    "mil": "#5C6B32",      # army green: the military, and the Coast Guard
+    "law": "#2F5DB8",      # law enforcement that is not military
 }
+
+# Owner categories (registrations.categorise) that decide the fill and the
+# lights. tests/test_law.py holds these level with registrations.py.
+MILITARY_CATEGORIES = frozenset(("Military", "Coast Guard"))
+LAW_CATEGORIES = frozenset(("Law enforcement", "Federal law enforcement"))
+LIGHT_CATEGORIES = LAW_CATEGORIES | {"Coast Guard"}
 
 # ! SIZE FROM emitter_category, NOT FROM THE ARTWORK. The ADS-B Radar site
 # says their icons vary in size to separate light aircraft from heavy ones.
@@ -560,13 +573,28 @@ _WEIGHT = {
 DEFAULT_WEIGHT = 0.80
 
 
-def tone_for(is_government: bool, icon_category: str | None) -> str:
-    """Which colour the silhouette is drawn in."""
+def tone_for(is_government: bool, icon_category: str | None,
+             operator_category: str | None = None, military: bool = False) -> str:
+    """Which colour the silhouette is drawn in.
+
+    ! FILL = OWNER CLASS (Lee 2026-10-21): cream civil, orange government,
+    army green military, blue law enforcement that is not military. The
+    lights say law enforcement on top of whatever the fill is.
+    """
+    if military or operator_category in MILITARY_CATEGORIES:
+        return "mil"
+    if operator_category in LAW_CATEGORIES:
+        return "law"
     if is_government:
         return "gov"
     if icon_category == "rotorcraft":
         return "rotor"
     return "default"
+
+
+def lights_for(operator_category: str | None) -> bool:
+    """Whether the silhouette carries flashing police lights."""
+    return operator_category in LIGHT_CATEGORIES
 
 
 def weight_for(emitter_category: str | None) -> float:
@@ -695,9 +723,39 @@ _ROTOR_FILTER = (
     '</filter></defs>')
 
 
+# ! POLICE LIGHTS (Lee 2026-10-21; look chosen 2026-10-22 by render, 20_Research/
+# le_tones_20261022/lights*_60px_part*.png). A red glow round the silhouette,
+# then a blue one, alternating. Three looks were drawn on OSM tiles at 60 px:
+# a thin halo (1.6 px) vanished into the ground shadow, and blue on the blue
+# law fill; a split wig-wag halo was no better; a light bar of two dots on
+# the fuselage was readable but small. A strong glow (3 px grown, 2.2 px
+# blur, drawn twice) read as police lights on every background. 0.6 s each
+# colour: under one change a second per colour, well below the 3 flashes a
+# second that photosensitivity guidance warns about.
+LIGHT_RED = "#FF2020"
+LIGHT_BLUE = "#2060FF"
+LIGHT_PERIOD_S = 1.2
+_LIGHT_GROW_PX = 3.0
+_LIGHT_BLUR_PX = 2.2
+
+
+def _halo(fid: str, colour: str, w: float, h: float, px: float) -> str:
+    return ('<filter id="%s" filterUnits="userSpaceOnUse" x="0" y="0" width="%s" height="%s">'
+            '<feMorphology in="SourceAlpha" operator="dilate" radius="%.4f"/>'
+            '<feGaussianBlur stdDeviation="%.4f" result="g"/>'
+            '<feFlood flood-color="%s"/><feComposite in2="g" operator="in"/></filter>'
+            % (fid, _fmt(w), _fmt(h), _LIGHT_GROW_PX * px, _LIGHT_BLUR_PX * px, colour))
+
+
+def _flash(fid: str, values: str) -> str:
+    return ('<g opacity="%s"><use href="#art" filter="url(#%s)"/><use href="#art" filter="url(#%s)"/>'
+            '<animate attributeName="opacity" values="%s" dur="%gs" calcMode="discrete" '
+            'repeatCount="indefinite"/></g>' % (values[0], fid, fid, values, LIGHT_PERIOD_S))
+
+
 def render(path: str, degrees: int | None, size: int = 64,
            tone: str = "default", weight: float = DEFAULT_WEIGHT,
-           badge: bool = True) -> str:
+           badge: bool = True, lights: bool = False) -> str:
     """One icon: coloured, sized and rotated, on our badge or outlined."""
     with open(path, "r", encoding="utf-8", errors="replace") as fh:
         src = fh.read()
@@ -768,7 +826,15 @@ def render(path: str, degrees: int | None, size: int = 64,
     lit = ('<use href="#art" fill="%s"/>' % fill
            + '<rect x="0" y="0" width="%s" height="%s" fill="url(#sp)" mask="url(#m)"/>' % (W, H)
            + '<rect x="0" y="0" width="%s" height="%s" fill="url(#fa)" mask="url(#m)"/>' % (W, H))
-    return (head + defs + '<g filter="url(#e)">' + lit + '</g></svg>')
+    glow = ""
+    if lights:
+        # UNDER the outlined art, so the black edge still separates the
+        # fill from the glow. Only on this path: the live, unrotated picture.
+        px = max(w, h) / float(size)
+        defs += ('<defs>' + _halo("lr", LIGHT_RED, w, h, px)
+                 + _halo("lb", LIGHT_BLUE, w, h, px) + '</defs>')
+        glow = _flash("lr", "1;0") + _flash("lb", "0;1")
+    return (head + defs + glow + '<g filter="url(#e)">' + lit + '</g></svg>')
 
 
 def _fmt(v: float) -> str:
@@ -805,7 +871,7 @@ ART_REV = 8
 
 
 def picture_url(key: str, tone: str = "default",
-                weight: float | None = None) -> str:
+                weight: float | None = None, lights: bool = False) -> str:
     """The entity_picture: one silhouette, UNROTATED, with no disc.
 
     ! NO ANGLE AND NO BADGE ARGUMENT, on purpose (Lee, 2026-09-25). The card
@@ -820,6 +886,8 @@ def picture_url(key: str, tone: str = "default",
         extra.append("t=%s" % tone)
     if weight is not None:
         extra.append("w=%.2f" % weight)
+    if lights:
+        extra.append("l=1")
     extra.append("b=0")
     extra.append("a=%d" % ART_REV)
     return "%s/%s/fixed.svg?%s" % (URL_BASE, key, "&".join(extra))

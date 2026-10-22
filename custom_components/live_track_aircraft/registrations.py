@@ -135,13 +135,16 @@ _CATEGORY_RULES = (
     # Not police, though they carry the words.
     ("Fire / EMS", r"\bFIRE MARSHALL?S?\b"),
     ("Government", r"\bPOLICE JURY\b"),
+    # ! COAST GUARD IS ITS OWN CATEGORY (Lee 2026-10-21: "army green with
+    # police lights"): military fill, law-enforcement lights.
+    ("Coast Guard", r"\bCOAST GUARD\b"),
     # Federal first, so the US Marshals are federal, not local.
     ("Federal law enforcement",
      r"\b(?:DEPT|DEPARTMENT|DEPARMENT) OF HOMELAND SECURITY\b"
      r"|\bCUSTOMS\b|\bBORDER (?:PROTECTION|PATROL)\b|\bCBP\b"
      r"|\bIMMIGRATION\b|\bDRUG ENFORCEMENT\b|\bDEA\b"
      r"|\bBUREAU OF INVESTIGATION\b|\bFBI\b|\bATF\b|\bSECRET SERVICE\b"
-     r"|\bU ?S MARSHALL?S?\b|\bMARSHALS? SERVICE\b|\bJPATS\b|\bCOAST GUARD\b"
+     r"|\bU ?S MARSHALL?S?\b|\bMARSHALS? SERVICE\b|\bJPATS\b"
      r"|\bDEPARTMENT OF JUSTICE\b|\bHOMELAND AVIATION\b"),
     ("Law enforcement",
      r"\bSHER+IF+'?S?\b|\bPOLICE\b|\bMARSHALS?\b|\bCONSTABLES?\b"
@@ -162,8 +165,115 @@ _CATEGORY_RULES = (
 )
 _CATEGORY_RES = tuple((label, re.compile(rx)) for label, rx in _CATEGORY_RULES)
 
-# The two categories that draw police lights (icons.py).
-LAW_ENFORCEMENT = frozenset(("Law enforcement", "Federal law enforcement"))
+# The categories that draw police lights (icons.py). Coast Guard since
+# 2026-10-22: its fill is military green (icons.MILITARY_CATEGORIES).
+LAW_ENFORCEMENT = frozenset(("Law enforcement", "Federal law enforcement",
+                             "Coast Guard"))
+_FEDERAL_LABELLED = frozenset(("Federal law enforcement", "Coast Guard"))
+
+# ! SHORT AGENCY CODES ON THE MARKER (Lee 2026-10-21): "DHS, CBP, FBI, USMS,
+# ICE" instead of a truncated name. Tried in order, on the raw owner, and
+# only for the federal categories: ICE before CBP because its name carries
+# CUSTOMS; DHS last, for a DHS registration that names no component.
+_AGENCY_CODES = tuple((code, re.compile(rx)) for code, rx in (
+    ("ICE", r"\bIMMIGRATION\b"),
+    ("CBP", r"\bCUSTOMS\b|\bBORDER (?:PROTECTION|PATROL)\b|\bCBP\b"),
+    ("USCG", r"\bCOAST GUARD\b"),
+    ("FBI", r"\bBUREAU OF INVESTIGATION\b|\bFBI\b"),
+    ("USMS", r"\bMARSHALS? SERV|\bU ?S MARSHALL?S?\b|\bJPATS\b"),
+    ("DEA", r"\bDRUG ENFORCEMENT\b|\bDEA\b"),
+    ("ATF", r"\bATF\b|\bALCOHOL,? TOBACCO\b"),
+    ("USSS", r"\bSECRET SERVICE\b"),
+    ("DHS", r"\b(?:DEPT|DEPARTMENT|DEPARMENT) OF HOMELAND SECURITY\b"),
+    ("DOJ", r"\bDEPARTMENT OF JUSTICE\b"),
+))
+
+_STATES = {
+    "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR",
+    "California": "CA", "Colorado": "CO", "Connecticut": "CT", "Delaware": "DE",
+    "Florida": "FL", "Georgia": "GA", "Hawaii": "HI", "Idaho": "ID",
+    "Illinois": "IL", "Indiana": "IN", "Iowa": "IA", "Kansas": "KS",
+    "Kentucky": "KY", "Louisiana": "LA", "Maine": "ME", "Maryland": "MD",
+    "Massachusetts": "MA", "Michigan": "MI", "Minnesota": "MN",
+    "Mississippi": "MS", "Missouri": "MO", "Montana": "MT", "Nebraska": "NE",
+    "Nevada": "NV", "New Hampshire": "NH", "New Jersey": "NJ",
+    "New Mexico": "NM", "New York": "NY", "North Carolina": "NC",
+    "North Dakota": "ND", "Ohio": "OH", "Oklahoma": "OK", "Oregon": "OR",
+    "Pennsylvania": "PA", "Rhode Island": "RI", "South Carolina": "SC",
+    "South Dakota": "SD", "Tennessee": "TN", "Texas": "TX", "Utah": "UT",
+    "Vermont": "VT", "Virginia": "VA", "Washington": "WA",
+    "West Virginia": "WV", "Wisconsin": "WI", "Wyoming": "WY",
+    "Puerto Rico": "PR",
+}
+_STATE_CODES = frozenset(_STATES.values())
+# A state's name is shortened to its code only as the FORCE's name: "Utah
+# County", "Mississippi County", "New York City" and "Washington DC" are
+# places inside a state, and keep their names.
+_STATE_RES = tuple((re.compile(r"^(?:State of |Commonwealth of )?%s\b(?! (?:County|Co|City|Parish|Dc)\b)"
+                               % re.escape(n)), c)
+                   for n, c in sorted(_STATES.items(), key=lambda kv: -len(kv[0])))
+_STATE_TAIL = re.compile(r"\s+(?:%s)$" % "|".join(re.escape(n) for n in _STATES))
+# Tried in order. Before the state codes: whole names with a known short form.
+_FIRST = tuple((re.compile(rx), to) for rx, to in (
+    (r"^(?:City of New York|New York City) Police\b.*$", "NYPD"),
+    (r"^(?:City of )?Los Angeles Police\b.*$", "LAPD"),
+    (r"^Washington DC\b", "DC"),
+    (r"^(?:Department|Dept) of Public Safety of the State of (.+)$", r"\1 Department of Public Safety"),
+    (r"^County of (.+?) (Sher+if+|Police)", r"\1 County \2"),
+    (r"\s*\([^)]*\)", ""),
+))
+_WORDS = (
+    (r"\b(?:Department|Dept) of Public Safety\b", "DPS"),
+    (r"\b(?:Department|Dept) of State Police\b", "State Police"),
+    (r"\b(Patrol) (?:Department|Dept) of Safety$", r"\1"),
+    (r"\b(?:Department|Dept) of Safety(?: (?:&|and) Homeland Security)?\b", "DOS"),
+    (r"\bHighway Patrol\b", "Hwy Patrol"),
+    (r"\bSher+if+'?s? (?:Of+f?ice|Department|Dept|Depart)\b", "Sheriff"),
+    (r"\bSher+if+'?s?\b", "Sheriff"),
+    (r"\bPolice (?:Department|Dept)\b", "Police"),
+    (r"\bMetropolitan\b", "Metro"),
+    (r"\bCounty\b", "Co"),
+    (r"\bDepartment\b", "Dept"),
+    (r"\s+(?:Field Supp(?:ort)? )?(?:Office of )?(?:Aviation|Air Support|Air Operations|Air|Aerial|Aircraft|Headquarters)"
+     r"(?: (?:Command|Unit|Section|Division|Div|Operations|Bureau))?$", ""),
+)
+_WORD_RES = tuple((re.compile(rx), to) for rx, to in _WORDS)
+
+
+def operator_short(owner: str, category: str | None) -> str | None:
+    """What a law-enforcement marker says: an agency code for a federal
+    agency, else the operator's name with its state and stock words
+    shortened. None for any other category. Rules read against every
+    law-enforcement owner in the table (bin/lta_le_labels.txt)."""
+    if category not in LAW_ENFORCEMENT or not owner:
+        return None
+    up = " ".join(owner.upper().replace("&", " AND ").split())
+    if category in _FEDERAL_LABELLED:
+        for code, rx in _AGENCY_CODES:
+            if rx.search(up):
+                return code
+    name = prettify_owner(owner)
+    name = re.sub(r"-([a-z])", lambda m: "-" + m.group(1).upper(), name)
+    name = re.sub(r"^City of ", "", name)
+    words = name.split()
+    if words and words[0].upper() in _STATE_CODES:
+        words[0] = words[0].upper()
+    name = " ".join("DNR" if w == "Dnr" else "DC" if w == "Dc" else w for w in words)
+    for rx, to in _FIRST:
+        name = rx.sub(to, name)
+    for rx, code in _STATE_RES:
+        if rx.search(name):
+            name = rx.sub(code, name, count=1)
+            break
+    name = _STATE_TAIL.sub("", name)
+    for rx, to in _WORD_RES:
+        name = rx.sub(to, name)
+    name = " ".join(name.split())
+    # The label is 22 characters (coordinator.MAX_LABEL_CHARS); "San
+    # Bernardino Sheriff" fits where "San Bernardino Co Sheriff" would not.
+    if len(name) > 22:
+        name = name.replace(" Co ", " ")
+    return name or None
 
 
 def categorise(owner: str) -> str:
@@ -238,12 +348,22 @@ class GovRegistry:
         if not row:
             return None
         registration, owner, state = (row + ["", "", ""])[:3]
-        return {
+        category = categorise(owner) if owner else None
+        out = {
             "registration": registration or None,
             "operator": prettify_owner(owner) if owner else None,
-            "operator_category": categorise(owner) if owner else None,
+            "operator_category": category,
             "operator_state": state or None,
+            # HOW it was identified (Lee 2026-10-21: the hover box says so).
+            # A code; the words are the card's (06 D4b).
+            "identified_by": ("faa_federal_list"
+                              if owner.strip().upper() in _FEDERAL_OPERATOR_ALLOWLIST
+                              else "faa_government"),
         }
+        short = operator_short(owner, category)
+        if short:
+            out["operator_short"] = short
+        return out
 
     @property
     def size(self) -> int:

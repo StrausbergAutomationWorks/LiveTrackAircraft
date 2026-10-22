@@ -62,6 +62,11 @@ _PASSTHROUGH = (
     "operator_category",
     "operator_state",
     "operator_name_source",
+    # law enforcement: an agency code or a shortened name (registrations.py)
+    "operator_short",
+    # how a government aircraft was identified: faa_government,
+    # faa_federal_list (registrations.py)
+    "identified_by",
     "is_government",
     "emitter_category",
     # D4 display helpers: a consumer MAY use these and MUST NOT require them.

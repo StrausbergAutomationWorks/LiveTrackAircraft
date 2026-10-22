@@ -71,10 +71,12 @@ class AircraftIconView(HomeAssistantView):
             weight = icons.DEFAULT_WEIGHT
         # Anything but "0" keeps the badge, so a mangled value fails safe.
         badge = request.query.get("b") != "0"
+        # Only "1" turns the lights on, so a mangled value fails safe.
+        lights = request.query.get("l") == "1"
 
         try:
             svg = await request.app["hass"].async_add_executor_job(
-                icons.render, path, degrees, 64, tone, weight, badge)
+                icons.render, path, degrees, 64, tone, weight, badge, lights)
         except Exception:  # noqa: BLE001
             _LOGGER.exception("Could not render %s at %s", key, angle)
             return web.Response(status=500, text="render failed")

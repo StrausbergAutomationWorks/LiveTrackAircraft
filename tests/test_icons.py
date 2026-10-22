@@ -130,7 +130,7 @@ class Pictures(unittest.TestCase):
     def test_picture_url_takes_no_angle_and_no_badge(self):
         import inspect
         params = inspect.signature(icons.picture_url).parameters
-        self.assertEqual(list(params), ["key", "tone", "weight"])
+        self.assertEqual(list(params), ["key", "tone", "weight", "lights"])
 
     def test_default_tone_is_not_written(self):
         self.assertNotIn("t=", icons.picture_url("a320", "default", 0.85))

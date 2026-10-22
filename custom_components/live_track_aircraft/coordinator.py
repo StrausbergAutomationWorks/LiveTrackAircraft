@@ -512,13 +512,16 @@ class AircraftCoordinator(DataUpdateCoordinator):
         #
         # ! is_government is resolved BELOW this point in the original
         # order, so it is looked up here rather than read from `out`.
-        gov_now = lookup_government(obs.identity) is not None
+        gov_row = lookup_government(obs.identity)
+        gov_now = gov_row is not None
+        gov_cat = (gov_row or {}).get("operator_category")
         # ! THE PICTURE IS NEVER ROTATED AND NEVER ON A DISC (Lee,
         # 2026-09-25): the card turns the marker from icon_rotation_deg, and
         # an angle in the image as well would double the turn.
         out["entity_picture"] = icons.picture_url(
-            key, icons.tone_for(gov_now, icon_category),
-            icons.weight_for(obs.emitter_category))
+            key, icons.tone_for(gov_now, icon_category, gov_cat),
+            icons.weight_for(obs.emitter_category),
+            lights=icons.lights_for(gov_cat))
         # ! The user's own picture for this hex wins, drawn upright.
         own = getattr(self, "pictures", None)
         apply_picture(out, own.url(obs.identity) if own is not None else None)
@@ -555,6 +558,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 out["operator_category"] = gov["operator_category"]
             if gov.get("operator_state"):
                 out["operator_state"] = gov["operator_state"]
+            for k in ("operator_short", "identified_by"):
+                if gov.get(k):
+                    out[k] = gov[k]
             if gov.get("registration") and not out.get("registration"):
                 out["registration"] = gov["registration"]
         else:
@@ -632,6 +638,13 @@ def _marker_label(obs: Observation, rec: dict[str, Any]) -> str:
     if callsign and not _LOOKS_LIKE_REGISTRATION.match(callsign.upper()):
         # An airline or military callsign. This is the identity.
         return callsign
+
+    # ! LAW ENFORCEMENT BY AGENCY (Lee 2026-10-21): DHS, CBP, FBI, USMS, ICE
+    # rather than a truncated name; a state or local force by its shortened
+    # name (registrations.operator_short).
+    short = rec.get("operator_short")
+    if short:
+        return _shorten(short)
 
     # A registration, or nothing at all. Say something a watcher can use.
     operator = rec.get("operator")

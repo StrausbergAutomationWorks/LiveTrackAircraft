@@ -14,7 +14,7 @@ CASES = [
     ("UNITED STATES CUSTOMS AND BORDER PROTECTION", FED), ("US CUSTOMS & BORDER PROTECTION", FED),
     ("CBP AIR LOGISTICS LLC", FED), ("HOMELAND AVIATION LLC", FED),
     ("U S MARSHALS SERVICE", FED), ("U S MARSHALL SERV JUSTICE & ALIEN TRANS SYS(JPATS)", FED),
-    ("US DEPARTMENT OF JUSTICE", FED), ("UNITED STATES COAST GUARD", FED),
+    ("US DEPARTMENT OF JUSTICE", FED), ("UNITED STATES COAST GUARD", "Coast Guard"),
     ("CALIFORNIA HIGHWAY PATROL", LAW), ("ORANGE COUNTY SHERIFFS OFFICE", LAW),
     ("MIAMI-DADE SHERIFF'S OFFICE", LAW), ("CHARLOTTE COUNTY SHERRIFS DEPARTMENT", LAW),
     ("SAN DIEGO COUNTY SHERRIFFS DEPARTMENT", LAW), ("LAPD AIR SUPPORT DIVISION", LAW),
@@ -44,7 +44,7 @@ class Categorise(unittest.TestCase):
             self.assertNotIn("law enforcement", reg.categorise(owner).lower(), owner)
 
     def test_law_enforcement_set(self):
-        self.assertEqual(reg.LAW_ENFORCEMENT, frozenset((LAW, FED)))
+        self.assertEqual(reg.LAW_ENFORCEMENT, frozenset((LAW, FED, "Coast Guard")))
 
 
 if __name__ == "__main__":
