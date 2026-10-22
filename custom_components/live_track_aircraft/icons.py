@@ -763,6 +763,7 @@ _PAINT_KEEP = re.compile(r'<svg\b[^>]*\bdata-paint="keep"', re.I)
 HEX_KEYS = {
     "adfdf8": "vc25a",     # VC-25A 82-8000
     "adfdf9": "vc25a",     # VC-25A 92-9000
+    "af83f3": "af83f3",    # VC-25B 25-3300
 }
 
 
