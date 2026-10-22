@@ -117,6 +117,18 @@ class Label(unittest.TestCase):
         self.assertEqual(c["identified_by"], "faa_government")
         self.assertNotIn("operator_short", c)
 
+    def test_watch_list_hexes(self):
+        r = reg.GovRegistry()
+        r._table = {"A00002": ["N2", "ILLINOIS STATE POLICE", "IL"],
+                    "A00001": ["N1", "UNITED STATES COAST GUARD", ""],
+                    "A00003": ["N3", "NASA", "CA"]}
+        r._loaded = True
+        self.assertEqual(r.law_enforcement_hexes(), ["a00001", "a00002"])
+        r._table = {}
+        self.assertEqual(r.law_enforcement_hexes(), ["a00001", "a00002"])   # cached per table
+        r._law = None
+        self.assertEqual(r.law_enforcement_hexes(), [])
+
 
 if __name__ == "__main__":
     unittest.main()

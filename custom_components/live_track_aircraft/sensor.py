@@ -102,6 +102,10 @@ class AircraftInRange(SensorEntity):
             # idle, ok, the last failure, or a pause with the time it ends.
             # Changes only on a change of state, never with a count.
             "route_lookup": getattr(self._coordinator.adsbdb, "status", None),
+            # The worldwide watch list (watch.py): how many watched aircraft
+            # are outside the circle, and its last round.
+            "watched_count": data.get("watched", 0),
+            "watch_list": data.get("watch_status"),
         }
 
     async def async_added_to_hass(self) -> None:

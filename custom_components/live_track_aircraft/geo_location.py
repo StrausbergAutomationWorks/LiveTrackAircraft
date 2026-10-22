@@ -71,6 +71,11 @@ _PASSTHROUGH = (
     # the feed's flags (dbFlags): military; a Privacy ICAO Address
     "is_military",
     "identity_hidden",
+    # the worldwide watch list (watch.py): why it is watched, whether it is
+    # outside the circle, and a presidential airframe's name by hex
+    "watch",
+    "outside_radius",
+    "presidential_airframe",
     "emitter_category",
     # D4 display helpers: a consumer MAY use these and MUST NOT require them.
     "icon_category",

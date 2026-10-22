@@ -328,6 +328,7 @@ class GovRegistry:
         self._table: dict[str, list[str]] = {}
         self._loaded = False
         self._warned_unloaded = False
+        self._law: list[str] | None = None
 
     def load(self, path: str | None = None) -> int:
         """Load the table from disk. Returns how many entries were read.
@@ -344,6 +345,7 @@ class GovRegistry:
             if not isinstance(table, dict):
                 raise ValueError("no 'aircraft' mapping in payload")
             self._table = table
+            self._law = None
             self._loaded = True
             _LOGGER.debug("Loaded %s government aircraft from %s",
                           len(table), target)
@@ -405,6 +407,15 @@ class GovRegistry:
     @property
     def size(self) -> int:
         return len(self._table)
+
+    def law_enforcement_hexes(self) -> list[str]:
+        """Every hex whose owner is law enforcement (watch.py's list).
+        Worked out once per table, not per poll."""
+        if self._law is None:
+            self._law = sorted(h.lower() for h, row in self._table.items()
+                               if row and len(row) > 1
+                               and categorise(row[1]) in LAW_ENFORCEMENT)
+        return self._law
 
 
 REGISTRY = GovRegistry()

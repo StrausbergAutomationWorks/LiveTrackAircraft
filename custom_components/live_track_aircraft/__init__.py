@@ -10,6 +10,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_time_interval
 
 from .adsbdb import AdsbdbRoutes
+from .registrations import REGISTRY
+from .watch import WatchList
 from .airport_download import TICK as AIRPORT_TICK, AirportDownloader
 from .const import CONF_LATITUDE, CONF_LONGITUDE, DOMAIN
 from .coordinator import AircraftCoordinator
@@ -21,6 +23,9 @@ PLATFORMS: list[Platform] = [Platform.GEO_LOCATION, Platform.SENSOR]
 _DL_KEY = f"{DOMAIN}_route_download"
 _AIR_KEY = f"{DOMAIN}_airport_download"
 _ADSBDB_KEY = f"{DOMAIN}_adsbdb"
+# The worldwide watch list (watch.py): one per instance, like adsbdb, since
+# adsb.fi limits per address and every entry reads the same answer.
+_WATCH_KEY = f"{DOMAIN}_watch"
 
 
 def _airports_recheck(hass: HomeAssistant) -> None:
@@ -51,6 +56,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # the downloaders: adsbdb limits by address, so every entry shares one
     # budget and one in-memory cache. Set before the first poll.
     coordinator.adsbdb = hass.data.setdefault(_ADSBDB_KEY, AdsbdbRoutes())
+    coordinator.watch = hass.data.setdefault(
+        _WATCH_KEY, WatchList(REGISTRY.law_enforcement_hexes))
     await coordinator.async_config_entry_first_refresh()
 
     # The government-aircraft table and the owner database. Load whatever

@@ -45,6 +45,7 @@ from .route_check import FILED, choose_leg
 from .adsbdb import choose as adsbdb_choose
 from .airport_display import shown_code, shown_name
 from .eta import estimated_arrival
+from .watch import PRESIDENTIAL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -134,6 +135,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         self.airports = AirportStore(hass)
         # The user's own pictures, by hex (pictures.py, Lee 2026-10-21).
         self.pictures = Overrides(hass.config.path(PICTURES_DIR))
+        # The worldwide watch list (watch.py), set by __init__.py; None
+        # means the circle only.
+        self.watch = None
 
     async def _async_update_data(self) -> dict[str, Any]:
         now = time.time()
@@ -201,6 +205,28 @@ class AircraftCoordinator(DataUpdateCoordinator):
             nearest = sorted(aircraft.values(), key=lambda r: r["distance_km"])
             aircraft = {r["identity"]: r for r in nearest[: self.max_aircraft]}
 
+        # ! THE WATCH LIST, ADDED AFTER THE CAP (watch.py, Lee 2026-10-21):
+        # the presidential airframes and every law-enforcement aircraft in
+        # the government table, wherever they are. One adsb.fi request a
+        # minute, shared by every entry. An aircraft already in the circle is
+        # only tagged, never built twice; the cap never drops a watched one.
+        watched = 0
+        if self.watch is not None:
+            if self.watch.due():
+                await self.watch.async_fetch(self._session, now)
+            for obs in self.watch.observations():
+                why = self.watch.why(obs.identity)
+                if obs.identity in aircraft:
+                    aircraft[obs.identity]["watch"] = why
+                    continue
+                rec = self._record(obs)
+                if rec is None:
+                    continue
+                rec["watch"] = why
+                rec["outside_radius"] = True
+                aircraft[obs.identity] = rec
+                watched += 1
+
         # Forget fixes for aircraft no longer in the feed, so one returning
         # tomorrow starts a fresh segment rather than interpolating across a
         # gap of hours.
@@ -221,6 +247,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
             # empty when none is. Backlog item 244.
             "source_backoff": BACKOFF.status(),
             "radius_km": self.radius_km,
+            # Watched aircraft outside the circle (watch.py), and the watch
+            # list's last round: idle, ok, waiting, or the failure.
+            "watched": watched,
+            "watch_status": getattr(self.watch, "status", None),
         }
         self._last_good = result
         return result
@@ -313,6 +343,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 rec[key] = value
 
         rec.update(self._describe(obs))
+        # The presidential airframes are named by hex (watch.PRESIDENTIAL),
+        # never by callsign: a callsign proves nothing about who is aboard.
+        if obs.identity in PRESIDENTIAL:
+            rec["presidential_airframe"] = PRESIDENTIAL[obs.identity]
 
         # ! THE MARKER LABEL IS DECIDED LAST, because it depends on what the
         # lookups returned. The map renders this attribute and nothing else.
@@ -647,6 +681,9 @@ def _marker_label(obs: Observation, rec: dict[str, Any]) -> str:
     if callsign and not _LOOKS_LIKE_REGISTRATION.match(callsign.upper()):
         # An airline or military callsign. This is the identity.
         return callsign
+
+    if rec.get("presidential_airframe"):
+        return rec["presidential_airframe"]
 
     # ! A PRIVACY ICAO ADDRESS (PIA) is a temporary hex; the operator chose
     # not to be identified (Lee 2026-10-21: shown as "identity hidden").
