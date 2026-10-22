@@ -551,13 +551,17 @@ _TONES = {
     # shading; #859556 read khaki. Navy #1E3A8A read black; #5B8BDC sat on
     # OSM's own water and label blue.
     "mil": "#5C6B32",      # army green: the military, and the Coast Guard
-    "law": "#2F5DB8",      # law enforcement that is not military
+    "law": "#2F5DB8",      # federal law enforcement
+    # ! STATE AND LOCAL POLICE: WHITE, with flashing blue lights (Lee
+    # 2026-10-22 02:48), as Live Track Ships draws a police boat.
+    "police": "#FFFFFF",
 }
 
 # Owner categories (registrations.categorise) that decide the fill and the
 # lights. tests/test_law.py holds these level with registrations.py.
 MILITARY_CATEGORIES = frozenset(("Military", "Coast Guard"))
 LAW_CATEGORIES = frozenset(("Law enforcement", "Federal law enforcement"))
+POLICE_CATEGORIES = frozenset(("Law enforcement",))   # state and local
 LIGHT_CATEGORIES = LAW_CATEGORIES | {"Coast Guard"}
 
 # ! SIZE FROM emitter_category, NOT FROM THE ARTWORK. The ADS-B Radar site
@@ -583,6 +587,8 @@ def tone_for(is_government: bool, icon_category: str | None,
     """
     if military or operator_category in MILITARY_CATEGORIES:
         return "mil"
+    if operator_category in POLICE_CATEGORIES:
+        return "police"
     if operator_category in LAW_CATEGORIES:
         return "law"
     if is_government:
@@ -767,6 +773,61 @@ HEX_KEYS = {
 }
 
 
+# ! THE POLICE FLASH, PORTED FROM LIVE TRACK SHIPS (icons.py _police_flash,
+# Lee 2026-09-28 for police boats; for police aircraft 2026-10-22). Drawn in
+# Ships' 200-unit space, scaled by the art's k and fitted to this icon's box:
+# two lamps either side of the centre in wig-wag, each a blue burst with a
+# hot centre reaching past the silhouette on its side, radius capped so the
+# burst never reaches past 94 of 100 from the centre at any heading. OUTSIDE
+# the outline filter, so the glow stays soft.
+POLICE_FLASH_R = 108.0
+REACH_LIMIT = 94.0
+_LY = 101
+POLICE_BLUE, POLICE_HOT = "#3D8BFF", "#EEF6FF"
+_FLASH_CACHE: dict[float, float] = {}
+
+
+def _flash_reach(r: float) -> float:
+    cx = 85 - 0.25 * r
+    return max(math.hypot(cx + r * math.cos(a) - 100, _LY + 0.72 * r * math.sin(a) - 100)
+               for a in (i * math.pi / 360 for i in range(720)))
+
+
+def police_flash_r(k: float) -> float:
+    k = round(max(0.1, min(1.0, k)), 2)
+    if k not in _FLASH_CACHE:
+        if k * _flash_reach(POLICE_FLASH_R) <= REACH_LIMIT:
+            _FLASH_CACHE[k] = POLICE_FLASH_R
+        else:
+            lo, hi = 0.0, POLICE_FLASH_R
+            for _ in range(40):
+                mid = (lo + hi) / 2
+                lo, hi = (mid, hi) if k * _flash_reach(mid) <= REACH_LIMIT else (lo, mid)
+            _FLASH_CACHE[k] = math.floor(lo * 10) / 10
+    return _FLASH_CACHE[k]
+
+
+def _police_flash(k: float, w: float, h: float) -> str:
+    r = police_flash_r(k)
+    kt = 'keyTimes="0;0.06;0.38;0.48;1"'
+    out = []
+    for x, begin, g in ((85, "0s", "pfa"), (115, "-0.4s", "pfb")):
+        cx = x + (-1 if x < 100 else 1) * r * 0.25
+        out.append(
+            '<defs><radialGradient id="%s"><stop offset="0" stop-color="%s"/>'
+            '<stop offset="0.22" stop-color="%s" stop-opacity="0.95"/>'
+            '<stop offset="0.6" stop-color="%s" stop-opacity="0.55"/>'
+            '<stop offset="1" stop-color="%s" stop-opacity="0"/></radialGradient></defs>'
+            '<ellipse cx="%.1f" cy="%d" rx="%.1f" ry="%.1f" fill="url(#%s)" opacity="0">'
+            '<animate attributeName="opacity" values="0;1;1;0;0" %s dur="0.8s" '
+            'begin="%s" repeatCount="indefinite"/></ellipse>'
+            % (g, POLICE_HOT, POLICE_BLUE, POLICE_BLUE, POLICE_BLUE,
+               cx, _LY, r, 0.72 * r, g, kt, begin))
+    s = min(w, h) / 200.0 * k
+    return ('<g transform="translate(%.4f %.4f) scale(%.6f)">%s</g>'
+            % (w / 2 - 100 * s, h / 2 - 100 * s, s, "".join(out)))
+
+
 def render(path: str, degrees: int | None, size: int = 64,
            tone: str = "default", weight: float = DEFAULT_WEIGHT,
            badge: bool = True, lights: bool = False) -> str:
@@ -847,6 +908,10 @@ def render(path: str, degrees: int | None, size: int = 64,
            + '<rect x="0" y="0" width="%s" height="%s" fill="url(#sp)" mask="url(#m)"/>' % (W, H)
            + '<rect x="0" y="0" width="%s" height="%s" fill="url(#fa)" mask="url(#m)"/>' % (W, H))
     glow = ""
+    if lights and tone == "police":
+        # State and local police: Ships' blue wig-wag, on top, unfiltered.
+        return (head + defs + '<g filter="url(#e)">' + lit + '</g>'
+                + _police_flash(k, w, h) + '</svg>')
     if lights:
         # UNDER the outlined art, so the black edge still separates the
         # fill from the glow. Only on this path: the live, unrotated picture.

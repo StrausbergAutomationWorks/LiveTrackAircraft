@@ -15,7 +15,7 @@ class Fill(unittest.TestCase):
     def test_owner_class(self):
         self.assertEqual(icons.tone_for(True, None, MIL), "mil")
         self.assertEqual(icons.tone_for(True, None, CG), "mil")
-        self.assertEqual(icons.tone_for(True, "rotorcraft", LAW), "law")
+        self.assertEqual(icons.tone_for(True, "rotorcraft", LAW), "police")
         self.assertEqual(icons.tone_for(True, None, FED), "law")
         self.assertEqual(icons.tone_for(True, "rotorcraft", "Fire / EMS"), "gov")
         self.assertEqual(icons.tone_for(False, "rotorcraft"), "rotor")
@@ -24,6 +24,7 @@ class Fill(unittest.TestCase):
     def test_colours(self):
         self.assertEqual(icons._TONES["mil"], "#5C6B32")
         self.assertEqual(icons._TONES["law"], "#2F5DB8")
+        self.assertEqual(icons._TONES["police"], "#FFFFFF")
 
     def test_lights(self):
         for cat in (LAW, FED, CG):
@@ -72,6 +73,36 @@ class Lights(unittest.TestCase):
     def test_url(self):
         self.assertIn("l=1", icons.picture_url("a7", "law", 0.66, lights=True))
         self.assertNotIn("l=", icons.picture_url("a7", "law", 0.66))
+
+
+class PoliceFlash(unittest.TestCase):
+    """State and local police: white, Ships' blue wig-wag (2026-10-22)."""
+
+    def test_blue_wig_wag_on_top(self):
+        out = icons.render(icons.icon_path("a7"), None, 64, "police", 0.66, False, True)
+        root = ET.fromstring(out)
+        self.assertNotIn('id="lr"', out)
+        ells = list(root.iter("%sellipse" % SVG))
+        self.assertEqual(len(ells), 2)
+        begins = [e.find("%sanimate" % SVG).get("begin") for e in ells]
+        self.assertEqual(begins, ["0s", "-0.4s"])
+        for e in ells:
+            self.assertEqual(e.find("%sanimate" % SVG).get("dur"), "0.8s")
+        stops = {s.get("stop-color") for s in root.iter("%sstop" % SVG)}
+        self.assertTrue({icons.POLICE_BLUE, icons.POLICE_HOT} <= stops)
+        self.assertNotIn(icons.LIGHT_RED, stops)
+        top = [c for c in root][-1]
+        self.assertNotEqual(top.get("filter"), "url(#e)")      # outside the edge filter
+
+    def test_the_flash_stays_inside_the_image(self):
+        for k in (0.30, 0.44, 0.60, 0.71):
+            self.assertLessEqual(k * icons._flash_reach(icons.police_flash_r(k)), icons.REACH_LIMIT + 1e-6)
+
+    def test_federal_keeps_the_red_and_blue_glow(self):
+        self.assertEqual(icons.tone_for(True, None, FED), "law")
+        out = icons.render(icons.icon_path("a7"), None, 64, "law", 0.66, False, True)
+        self.assertIn('id="lr"', out)
+        self.assertNotIn("<ellipse", out)
 
 
 class Label(unittest.TestCase):
