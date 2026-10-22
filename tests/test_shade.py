@@ -21,7 +21,10 @@ def rendered(key, tone="default", weight=0.8, degrees=None):
 
 
 def keys():
-    return sorted(f[:-4] for f in os.listdir(icons.icon_dir()) if f.endswith(".svg"))
+    # ! A file named for a hex (af83f3.svg, Lee 2026-10-21, 5a26fc0) is a
+    # PICTURE for one aircraft, not type artwork: it is not rendered and shaded.
+    return sorted(f[:-4] for f in os.listdir(icons.icon_dir())
+                  if f.endswith(".svg") and not re.match(r"^[0-9a-f]{6}\.svg$", f))
 
 
 class Edge(unittest.TestCase):
