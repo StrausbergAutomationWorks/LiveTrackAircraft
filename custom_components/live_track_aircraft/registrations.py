@@ -26,6 +26,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from typing import Any
 
 _LOGGER = logging.getLogger(__name__)
@@ -119,30 +120,54 @@ def prettify_owner(owner: str) -> str:
     return out
 
 
-_CATEGORIES = (
-    # Acronyms are listed explicitly: LAPD and NYPD contain no literal
-    # "POLICE", and CHP no "HIGHWAY PATROL".
-    ("Law enforcement", ("SHERIFF", "POLICE", "MARSHAL", "CONSTABLE",
-                         "PUBLIC SAFETY", "STATE PATROL", "HIGHWAY PATROL",
-                         "DEPARTMENT OF CORRECTION", "LAPD", "NYPD", "CHP",
-                         "DPS", "TROOPER")),
-    ("Fire / EMS", ("FIRE", "RESCUE", "EMS", "MEDICAL", "AMBULANCE",
-                    "MEDEVAC", "LIFE FLIGHT", "AIR CARE")),
-    ("Federal law enforcement", ("HOMELAND", "CUSTOMS", "BORDER", "CBP",
-                                 "DEA", "FBI", "ICE ", "ATF")),
-    ("Military", ("NAVAL", "ARMY", "AIR FORCE", "MARINE CORPS",
-                  "NATIONAL GUARD", "DEFENSE", "DOD")),
-    ("Natural resources", ("FOREST", "APHIS", "WILDLIFE", "NATURAL RESOURCE",
-                           "PARK", "FISH AND GAME", "CONSERVATION")),
-    ("Research / academic", ("UNIVERSITY", "COLLEGE", "INSTITUTE", "NASA",
-                             "RESEARCH", "NOAA")),
+# ! BY WORD, NOT BY SUBSTRING (2026-10-21). The keys were substrings, and
+# measured on the 5,725-row table that put 108 USDA Forest Service and a
+# Minnesota wild-rice council under "Federal law enforcement" ("ICE " inside
+# servICE, offICE, rICE), Marshall University under "Law enforcement", a
+# Louisiana POLICE JURY (parish government) as police and a state FIRE
+# MARSHAL as police. Law enforcement now draws police lights on the map
+# (Lee, 2026-10-21), so a false hit is visible. Rules are tried in order;
+# the first that matches wins. bin\lta_categorise_compare.py has the before
+# and after.
+_CATEGORY_RULES = (
+    # Not police, though they carry the words.
+    ("Fire / EMS", r"\bFIRE MARSHALL?S?\b"),
+    ("Government", r"\bPOLICE JURY\b"),
+    # Federal first, so the US Marshals are federal, not local.
+    ("Federal law enforcement",
+     r"\b(?:DEPT|DEPARTMENT|DEPARMENT) OF HOMELAND SECURITY\b"
+     r"|\bCUSTOMS\b|\bBORDER (?:PROTECTION|PATROL)\b|\bCBP\b"
+     r"|\bIMMIGRATION\b|\bDRUG ENFORCEMENT\b|\bDEA\b"
+     r"|\bBUREAU OF INVESTIGATION\b|\bFBI\b|\bATF\b|\bSECRET SERVICE\b"
+     r"|\bU ?S MARSHALL?S?\b|\bMARSHALS? SERVICE\b|\bJPATS\b|\bCOAST GUARD\b"
+     r"|\bDEPARTMENT OF JUSTICE\b|\bHOMELAND AVIATION\b"),
+    ("Law enforcement",
+     r"\bSHER+IF+'?S?\b|\bPOLICE\b|\bMARSHALS?\b|\bCONSTABLES?\b"
+     r"|\bPUBLIC SAFETY\b|\b(?:DEPT|DEPARTMENT) OF SAFETY\b"
+     r"|\bSTATE PATROL\b|\bHIGHWAY PATROL\b|\bDEPARTMENT OF CORRECTIONS?\b"
+     r"|\bLAPD\b|\bNYPD\b|\bCHP\b|\bDPS\b|\bTROOPERS?\b"),
+    ("Fire / EMS",
+     r"\bFIRE\b|\bRESCUE\b|\bEMS\b|\bMEDICAL\b|\bAMBULANCE\b|\bMEDEVAC\b"
+     r"|\bLIFE FLIGHT\b|\bAIR CARE\b"),
+    ("Military",
+     r"\bNAVAL\b|\bNAVY\b|\bARMY\b|AIR FORCE\b|\bMARINE CORPS\b"
+     r"|\bNATIONAL GUARD\b|\bDEFENSE\b|\bDOD\b"),
+    ("Natural resources",
+     r"\bFOREST(?:RY|S)?\b|\bAPHIS\b|\bWILDLIFE\b|\bNATURAL RESOURCES?\b|\bPARKS?\b"
+     r"|\bFISH AND GAME\b|\bCONSERVATION\b"),
+    ("Research / academic",
+     r"\bUNIVERSITY\b|\bCOLLEGE\b|\bINSTITUTE\b|\bNASA\b|\bRESEARCH\b|\bNOAA\b"),
 )
+_CATEGORY_RES = tuple((label, re.compile(rx)) for label, rx in _CATEGORY_RULES)
+
+# The two categories that draw police lights (icons.py).
+LAW_ENFORCEMENT = frozenset(("Law enforcement", "Federal law enforcement"))
 
 
 def categorise(owner: str) -> str:
-    up = owner.upper()
-    for label, keys in _CATEGORIES:
-        if any(k in up for k in keys):
+    up = " ".join(owner.upper().replace("&", " AND ").split())
+    for label, rx in _CATEGORY_RES:
+        if rx.search(up):
             return label
     return "Government"
 
