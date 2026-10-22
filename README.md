@@ -64,7 +64,8 @@ The aircraft marker icons are by [ADS-B Radar](https://adsb-radar.com),
 from its [SVG aircraft icon set](https://adsb-radar.com/help/icons.html).
 They are used under the author's terms, which ask for a backlink to
 ADS-B Radar, and are not covered by this repository's MIT licence. See
-[`ATTRIBUTION.md`](ATTRIBUTION.md).
+[`ATTRIBUTION.md`](ATTRIBUTION.md). Some marker icons were by StrausbergAutomationWorks, 
+but have been donated to ADS-B Radar and are therefore subject to its license. 
 
 ## Licence
 
