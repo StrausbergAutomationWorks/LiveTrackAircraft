@@ -61,6 +61,11 @@ plans (https://www.pilatus-aircraft.com) and scaled to Pilatus's published spans
 Added 6 October 2026, drawn to each type's published dimensions: `be12.svg`
 (Beriev Be-12), `be200.svg` (Beriev Be-200) and `us2.svg` (ShinMaywa US-2).
 Their propellers and rotors are animated.
+Added 22 October 2026: `vc25a.svg` (Boeing VC-25A, a 747-200B), drawn to the
+type's published span and length in its own light blue and white; chords and
+engine stations are estimated. It is the one icon drawn in its own colours
+rather than a single tone, and it is used for the two VC-25As by Mode S
+address.
 
 ### Which icon each aircraft type gets
 

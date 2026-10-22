@@ -500,6 +500,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # - which is exactly what D2 calls the documented fallback.
         key = icons.pick(obs.emitter_category, obs.type_code, icon_category,
                          out.get("aircraft_name"))
+        # One airframe's own icon, by hex (icons.HEX_KEYS: the VC-25As).
+        key = icons.HEX_KEYS.get(obs.identity, key)
         if key == "tiltrotor":
             fwd = icons.tiltrotor_forward(
                 self._tilt_forward.get(obs.identity), obs.speed_kmh)

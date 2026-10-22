@@ -753,14 +753,30 @@ def _flash(fid: str, values: str) -> str:
             'repeatCount="indefinite"/></g>' % (values[0], fid, fid, values, LIGHT_PERIOD_S))
 
 
+# ! PAINTED ICONS (2026-10-22). An icon whose root <svg> carries
+# data-paint="keep" is drawn in its OWN colours: the VC-25A in its livery
+# (Lee 2026-10-21, draft A). decolour() would strip it to one tone. The tone
+# still reaches the <use>, but every painted path's own fill wins.
+_PAINT_KEEP = re.compile(r'<svg\b[^>]*\bdata-paint="keep"', re.I)
+
+# ! ONE AIRFRAME, ITS OWN ICON, BY MODE S HEX - never by callsign.
+HEX_KEYS = {
+    "adfdf8": "vc25a",     # VC-25A 82-8000
+    "adfdf9": "vc25a",     # VC-25A 92-9000
+}
+
+
 def render(path: str, degrees: int | None, size: int = 64,
            tone: str = "default", weight: float = DEFAULT_WEIGHT,
            badge: bool = True, lights: bool = False) -> str:
     """One icon: coloured, sized and rotated, on our badge or outlined."""
     with open(path, "r", encoding="utf-8", errors="replace") as fh:
         src = fh.read()
+    painted = _PAINT_KEEP.search(src) is not None
     body, w, h = _inner(src)
-    body = decolour(strip_foreign(body))
+    body = strip_foreign(body)
+    if not painted:
+        body = decolour(body)
     cx, cy = w / 2.0, h / 2.0
     rotor = re.search(r'<g id="rotor\d*"', body) is not None
     if rotor:
@@ -819,8 +835,11 @@ def render(path: str, degrees: int | None, size: int = 64,
     y0, y1 = cy - h * k / 2.0, cy + h * k / 2.0
     W, H = _fmt(w), _fmt(h)
     defs += ('<defs>' + art_def
-             + '<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="%s" height="%s">'
-               '<use href="#art" fill="#fff"/></mask>' % (W, H)
+             + '<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="%s" height="%s"%s>'
+               '<use href="#art" fill="#fff"/></mask>'
+             # A painted icon's mask would read its colours as luminance and
+             # shade the dark parts less; alpha is the silhouette.
+             % (W, H, ' style="mask-type:alpha"' if painted else '')
              + _gradient("sp", x0, 0, x1, 0, _SPINE)
              + _gradient("fa", 0, y0, 0, y1, _FORE_AFT) + '</defs>')
     lit = ('<use href="#art" fill="%s"/>' % fill
