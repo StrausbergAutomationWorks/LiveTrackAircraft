@@ -681,6 +681,8 @@ _FEDERAL_OPERATOR_ALLOWLIST = {
     "CBP AIR LOGISTICS LLC",
     "HOMELAND AVIATION LLC",
 }
+# ACFTREF TYPE-ENG: 2 turbo-prop, 3 turbo-shaft, 4 turbo-jet, 5 turbo-fan.
+_TURBINE_ENGINES = frozenset(("2", "3", "4", "5"))
 _DRONE_MFR_PREFIXES = (
     "DJI", "AUTEL", "YUNEEC", "3D ROBOTICS", "PARROT", "SKYDIO", "FREEFLY",
     "AGEAGLE", "INSPIRED FLIGHT", "WINGTRA", "QUANTUM SYSTEMS", "ENYU LUO",
@@ -723,7 +725,9 @@ def parse_faa_archive(raw: bytes) -> dict[str, list[str]]:
             seats = int(r.get("NO-SEATS") or "")
         except ValueError:
             seats = None
-        types[r.get("CODE", "")] = ((r.get("MFR") or "").upper(), seats)
+        types[r.get("CODE", "")] = ((r.get("MFR") or "").upper(), seats,
+                                    (r.get("TYPE-ENG") or "").strip(),
+                                    (r.get("AC-WEIGHT") or "").strip().upper())
 
     table: dict[str, list[str]] = {}
     for r in rows("MASTER.txt"):
@@ -734,7 +738,7 @@ def parse_faa_archive(raw: bytes) -> dict[str, list[str]]:
         t = types.get(r.get("MFR MDL CODE", ""))
         if not t:
             continue
-        mfr, seats = t
+        mfr, seats, engine, weight = t
         # ! DRONES OUT (Lee, 2026-10-22). This read "drones kept", and
         # _DRONE_MFR_PREFIXES was defined and never used. Measured on the
         # FAA archive of 2026-10-21: 1,136 of 5,743 government rows had
@@ -747,7 +751,13 @@ def parse_faa_archive(raw: bytes) -> dict[str, list[str]]:
         # ! The cost, measured: 10 GENERAL ATOMICS MQ-9 BLOCK 1 go with them,
         # and a large UAS can transmit ADS-B. One that does still gets its
         # owner from the owner table; it is just not drawn as government.
-        if seats == 0 or any(mfr.startswith(p) for p in _DRONE_MFR_PREFIXES):
+        # ! MQ-9 CLASS KEPT (Lee 2026-10-22 01:27): an unmanned airframe that
+        # is turbine-powered (TYPE-ENG 2-5) and not weight class 4 (UAS under
+        # 55 lb). Measured: 18 rows - 12 MQ-9, 4 Global Hawk, 2 Scion Weasel;
+        # a turbine model jet (class 4) and a DJI coded turbofan stay out.
+        large_uas = engine in _TURBINE_ENGINES and weight != "CLASS 4"
+        if ((seats == 0 and not large_uas)
+                or any(mfr.startswith(p) for p in _DRONE_MFR_PREFIXES)):
             continue
         hx = (r.get("MODE S CODE HEX") or "").strip().upper()
         if hx:
