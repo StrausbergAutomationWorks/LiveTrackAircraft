@@ -240,6 +240,43 @@ _WORDS = (
 _WORD_RES = tuple((re.compile(rx), to) for rx, to in _WORDS)
 
 
+# The feed's database flags (readsb dbFlags). Lee 2026-10-21, step 2.
+DBF_MILITARY, DBF_INTERESTING, DBF_PIA, DBF_LADD = 1, 2, 4, 8
+
+
+def from_feed_flags(db_flags, own_op: str | None, gov: dict | None):
+    """What the feed's flags add: (military, category, attributes).
+
+    ! Every aircraft the feed flags military is drawn army green on its own
+    type icon (icons.tone_for's military argument). A military aircraft is
+    in no FAA table, so its category comes from the feed's owner text: a
+    Coast Guard or law-enforcement owner keeps its lights, anything else is
+    "Military". A government-table row keeps its own category.
+    ! PIA (a Privacy ICAO Address) is a temporary hex: nothing can be looked
+    up and the marker says so.
+    """
+    flags = db_flags if isinstance(db_flags, int) and not isinstance(db_flags, bool) and db_flags > 0 else 0
+    military = bool(flags & DBF_MILITARY)
+    category = (gov or {}).get("operator_category")
+    extra: dict = {}
+    if military:
+        extra["is_military"] = True
+        if gov is None:
+            found = categorise(own_op) if own_op else None
+            category = found if found in LAW_ENFORCEMENT else "Military"
+            extra["operator_category"] = category
+            extra["identified_by"] = "feed_military"
+            if own_op:
+                extra["operator"] = prettify_owner(own_op)
+                extra["operator_name_source"] = "feed"
+            short = operator_short(own_op or "", category)
+            if short:
+                extra["operator_short"] = short
+    if flags & DBF_PIA:
+        extra["identity_hidden"] = True
+    return military, category, extra
+
+
 def operator_short(owner: str, category: str | None) -> str | None:
     """What a law-enforcement marker says: an agency code for a federal
     agency, else the operator's name with its state and stock words

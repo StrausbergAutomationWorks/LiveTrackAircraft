@@ -38,7 +38,7 @@ from .pictures import DIR_NAME as PICTURES_DIR, Overrides, apply as apply_pictur
 from .airframe import map_layer
 from .map_keys import object_ids, registry_registration
 from .airlines import lookup_operator
-from .registrations import lookup_government, lookup_owner, prettify_owner
+from .registrations import from_feed_flags, lookup_government, lookup_owner, prettify_owner
 from .routes import RouteStore
 from .airports import AirportStore
 from .route_check import FILED, choose_leg
@@ -514,12 +514,14 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # order, so it is looked up here rather than read from `out`.
         gov_row = lookup_government(obs.identity)
         gov_now = gov_row is not None
-        gov_cat = (gov_row or {}).get("operator_category")
+        # The feed's flags (dbFlags): military, and PIA. registrations.py.
+        military, gov_cat, feed_extra = from_feed_flags(
+            obs.db_flags, obs.own_op, gov_row)
         # ! THE PICTURE IS NEVER ROTATED AND NEVER ON A DISC (Lee,
         # 2026-09-25): the card turns the marker from icon_rotation_deg, and
         # an angle in the image as well would double the turn.
         out["entity_picture"] = icons.picture_url(
-            key, icons.tone_for(gov_now, icon_category, gov_cat),
+            key, icons.tone_for(gov_now, icon_category, gov_cat, military),
             icons.weight_for(obs.emitter_category),
             lights=icons.lights_for(gov_cat))
         # ! The user's own picture for this hex wins, drawn upright.
@@ -565,6 +567,13 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 out["registration"] = gov["registration"]
         else:
             out["is_government"] = False
+
+        # --- the feed's own flags (dbFlags) -----------------------------
+        # A real airline designator still wins over the feed's owner text.
+        for k, v in feed_extra.items():
+            if k in ("operator", "operator_name_source") and out.get("operator") not in (None, "Private"):
+                continue
+            out[k] = v
 
         # --- identifiers for the shared map (D11) -----------------------
         # ! icao24 is our identity; registration ONLY as the FAA registry
@@ -638,6 +647,11 @@ def _marker_label(obs: Observation, rec: dict[str, Any]) -> str:
     if callsign and not _LOOKS_LIKE_REGISTRATION.match(callsign.upper()):
         # An airline or military callsign. This is the identity.
         return callsign
+
+    # ! A PRIVACY ICAO ADDRESS (PIA) is a temporary hex; the operator chose
+    # not to be identified (Lee 2026-10-21: shown as "identity hidden").
+    if rec.get("identity_hidden"):
+        return "Identity hidden"
 
     # ! LAW ENFORCEMENT BY AGENCY (Lee 2026-10-21): DHS, CBP, FBI, USMS, ICE
     # rather than a truncated name; a state or local force by its shortened

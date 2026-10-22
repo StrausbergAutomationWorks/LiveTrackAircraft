@@ -57,6 +57,11 @@ class Observation:
 
     # How stale the source itself says this position is, in seconds.
     seen_pos_s: float | None = None
+    # The feed's own database flags (readsb dbFlags: military 1, interesting
+    # 2, PIA 4, LADD 8) and its owner/operator text, both from the
+    # aggregator's aircraft database, not from the aircraft. Absent = None.
+    db_flags: int | None = None
+    own_op: str | None = None
 
     extra: dict[str, Any] = field(default_factory=dict)
 

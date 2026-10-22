@@ -108,6 +108,13 @@ def _parse(record: dict[str, Any], now: float) -> Observation | None:
         squawk=(record.get("squawk") or "").strip() or None,
         registration=(record.get("r") or "").strip() or None,
         seen_pos_s=seen_pos,
+        # ! dbFlags is OMITTED when 0 (measured 2026-10-22, adsb.fi v3 round
+        # Andrews: 2 of 19 records carried it, both 1). An int only: a
+        # string or a bool is not a flag word.
+        db_flags=(record.get("dbFlags")
+                  if isinstance(record.get("dbFlags"), int)
+                  and not isinstance(record.get("dbFlags"), bool) else None),
+        own_op=(str(record.get("ownOp") or "").strip() or None),
     )
 
 

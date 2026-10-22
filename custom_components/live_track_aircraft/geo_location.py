@@ -68,6 +68,9 @@ _PASSTHROUGH = (
     # faa_federal_list (registrations.py)
     "identified_by",
     "is_government",
+    # the feed's flags (dbFlags): military; a Privacy ICAO Address
+    "is_military",
+    "identity_hidden",
     "emitter_category",
     # D4 display helpers: a consumer MAY use these and MUST NOT require them.
     "icon_category",
