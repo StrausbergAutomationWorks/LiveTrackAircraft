@@ -27,6 +27,8 @@ the adsbdb client: a second entry reads the same answer.
 from __future__ import annotations
 
 import logging
+import math
+import re
 import time
 from collections.abc import Callable
 from typing import Any
@@ -55,6 +57,55 @@ PRESIDENTIAL = {
 }
 WHY_PRESIDENTIAL = "presidential"
 WHY_LAW = "law_enforcement"
+WHY_89AW = "89aw"
+WHY_ESCORT = "escort"
+
+# ! THE 89th AIRLIFT WING, ALWAYS (Lee 2026-10-22 01:27): its SAM and VENUS
+# callsigns, from adsb.fi's military list, once a minute. A callsign alone
+# is not enough - measured 2026-10-21: "SAMB2" on /v2/mil was a RAAF PC-21
+# (7cf9e7) - so it must be SAM or VENUS plus digits AND a hex in the US
+# military block (ADF7C8-AFFFFF). That the wing's aircraft carry the
+# military flag is inferred from that block, not yet seen at night.
+MIL_URL = "https://opendata.adsb.fi/api/v2/mil"
+_WING_CALLSIGN = re.compile(r"^(?:SAM|VENUS)\d{1,5}$")
+US_MIL_MIN, US_MIL_MAX = 0xADF7C8, 0xAFFFFF
+
+# ! ESCORTS: any military-flagged aircraft within ESCORT_KM of a presidential
+# airframe while one is in view (Lee 2026-10-21, option b; distance 2026-10-22:
+# "cover the distance they usually maintain from AF1"). No source gives a
+# standard; accounts of escorts describe close formation, a fighter "about
+# two miles back" and spacing of about 4 miles on approach (an F-106 pilot's
+# account, Homestead). 10 nm covers those with margin without sweeping in
+# unrelated traffic: a judgement, not a measurement. The E-4B airframes stay
+# off until their hexes are measured (none airborne 2026-10-22 01:4x).
+ESCORT_KM = 18.52
+
+
+def _is_us_mil(hex_id: str) -> bool:
+    try:
+        return US_MIL_MIN <= int(hex_id, 16) <= US_MIL_MAX
+    except (TypeError, ValueError):
+        return False
+
+
+def _km(a: Observation, b: Observation) -> float:
+    p1, p2 = math.radians(a.latitude), math.radians(b.latitude)
+    dp, dl = p2 - p1, math.radians(b.longitude - a.longitude)
+    h = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * 6371.0 * math.asin(math.sqrt(min(1.0, h)))
+
+
+def from_military(mil: dict[str, Observation], presidential: list[Observation]) -> dict[str, str]:
+    """{hex: why} for the wing's callsigns and escorts in /v2/mil's answer."""
+    out: dict[str, str] = {}
+    for hx, o in mil.items():
+        if hx in PRESIDENTIAL:
+            continue
+        if _is_us_mil(hx) and _WING_CALLSIGN.match((o.callsign or "").upper()):
+            out[hx] = WHY_89AW
+        elif any(_km(o, p) <= ESCORT_KM for p in presidential):
+            out[hx] = WHY_ESCORT
+    return out
 
 
 def chunks(hexes: list[str], size: int = MAX_PER_REQUEST) -> list[list[str]]:
@@ -73,15 +124,17 @@ class WatchList:
         self._next = 0.0
         self._at: float | None = None
         self._obs: list[Observation] = []
+        self._why: dict[str, str] = {}
         self.status = "idle"
 
     def hexes(self) -> list[str]:
         law = [h.lower() for h in (self._law_hexes() or [])]
         return list(PRESIDENTIAL) + sorted(set(law) - set(PRESIDENTIAL))
 
-    @staticmethod
-    def why(hex_id: str) -> str:
-        return WHY_PRESIDENTIAL if hex_id in PRESIDENTIAL else WHY_LAW
+    def why(self, hex_id: str) -> str:
+        if hex_id in PRESIDENTIAL:
+            return WHY_PRESIDENTIAL
+        return self._why.get(hex_id, WHY_LAW)
 
     def due(self) -> bool:
         return self._clock() >= self._next
@@ -125,9 +178,34 @@ class WatchList:
                 self._done(f"failed: {type(err).__name__}")
                 return
             found.update(parse(payload, now))
+        # The military list: the wing and escorts. Its failure keeps what the
+        # hex request found and says so.
+        why: dict[str, str] = {}
+        status = "ok"
+        await _sleep(CHUNK_GAP_S)
+        try:
+            async with session.get(
+                    MIL_URL, headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
+                if resp.status == 200:
+                    mil = parse(await resp.json(content_type=None), now)
+                    pres = [o for h, o in {**mil, **found}.items() if h in PRESIDENTIAL]
+                    why = from_military(mil, pres)
+                    # A presidential airframe the hex request missed (a
+                    # second earlier) is still one.
+                    for hx in list(why) + [h for h in PRESIDENTIAL if h in mil]:
+                        found.setdefault(hx, mil[hx])
+                else:
+                    if resp.status == 429:
+                        self._backoff.refused(SOURCE, _retry_after_s(
+                            resp.headers.get("Retry-After"), time.time()))
+                    status = f"military list HTTP {resp.status}"
+        except (aiohttp.ClientError, TimeoutError, ValueError) as err:
+            status = f"military list failed: {type(err).__name__}"
         self._obs = list(found.values())
+        self._why = why
         self._at = self._clock()
-        self._done("ok")
+        self._done(status)
 
 
 def parse(payload: dict[str, Any], now: float) -> dict[str, Observation]:
