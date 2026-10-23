@@ -94,6 +94,11 @@ class PoliceFlash(unittest.TestCase):
         top = [c for c in root][-1]
         self.assertNotEqual(top.get("filter"), "url(#e)")      # outside the edge filter
 
+    def test_the_lamps_are_forward(self):
+        out = icons.render(icons.icon_path("a7"), None, 64, "police", 0.78, False, True)
+        cys = {e.get("cy") for e in ET.fromstring(out).iter("%sellipse" % SVG)}
+        self.assertEqual(cys, {"40"})          # Ships' 200-unit frame; 100 is the centre
+
     def test_the_flash_stays_inside_the_image(self):
         for k in (0.30, 0.44, 0.60, 0.71):
             self.assertLessEqual(k * icons._flash_reach(icons.police_flash_r(k)), icons.REACH_LIMIT + 1e-6)

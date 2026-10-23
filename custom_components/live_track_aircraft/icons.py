@@ -782,7 +782,13 @@ HEX_KEYS = {
 # the outline filter, so the glow stays soft.
 POLICE_FLASH_R = 108.0
 REACH_LIMIT = 94.0
-_LY = 101
+# ! FORWARD (Lee 2026-10-23 16:59: at Ships' 101, the image centre, the
+# lamps sat at the back of a helicopter's body and behind an aircraft's
+# wings). 40 chosen by render at 90 px on OSM tiles against 80, 65 and 50
+# (20_Research/le_tones_20261022/police_fwd_t*.png): forward cabin of the
+# helicopter, cockpit and ahead of the wing on fixed-wing. The reach cap
+# shrinks the burst a little this far out.
+_LY = 40
 POLICE_BLUE, POLICE_HOT = "#3D8BFF", "#EEF6FF"
 _FLASH_CACHE: dict[float, float] = {}
 

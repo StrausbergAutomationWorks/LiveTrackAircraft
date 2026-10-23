@@ -24,7 +24,7 @@ def payload(**over):
     p = {
         "format": "filedroutesdb/1",
         "built": "2026-10-14T01:13:02+00:00",
-        "expires": "2026-10-24T01:13:02+00:00",
+        "expires": "2036-10-24T01:13:02+00:00",   # far out: a real date expires
         "ladd_applied": "2026-10-13",
         "ladd_entries": 74022,
         "attribution": "Derived from data obtained through the FAA SWIM Cloud Distribution Service.",
@@ -149,7 +149,7 @@ class Reader(Storage):
         con = sqlite3.connect(self.path)
         con.execute("CREATE TABLE meta (k TEXT PRIMARY KEY, v TEXT)")
         con.executemany("INSERT INTO meta VALUES (?,?)", [("built", "2026-10-13T18:33:27+00:00"),
-                        ("expires", "2026-10-23T18:33:27+00:00"), ("ladd_applied", "2026-10-13")])
+                        ("expires", "2036-10-23T18:33:27+00:00"), ("ladd_applied", "2026-10-13")])
         con.execute("CREATE TABLE routes (acid TEXT, dep TEXT, arr TEXT, n INTEGER, user_cat TEXT, "
                     "ac_cat TEXT, last_seen INTEGER)")
         con.execute("INSERT INTO routes VALUES ('AAL1','KORD','KLAX',3,'COMMERCIAL','JET',1)")
