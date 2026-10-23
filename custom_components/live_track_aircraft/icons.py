@@ -957,8 +957,10 @@ URL_BASE = "/api/live_track_aircraft/icon"
 # 5: backlog 260 round 3 - ten new icons, and his cessna and beechcraft
 # props cut out and spinning (2026-09-26); 6: the six Pilatus icons
 # (2026-09-26); 7: round 4 - Jos's heavytransport and amphibian, our be12,
-# be200 and us2 (2026-10-06).
-ART_REV = 8
+# be200 and us2 (2026-10-06); 8: the 1 px edge and shading (2026-10-21);
+# 9: the police lamps moved forward (2026-10-23) - 1440d16 shipped without
+# this bump and browsers kept the old picture.
+ART_REV = 9
 
 
 def picture_url(key: str, tone: str = "default",
