@@ -29,6 +29,16 @@ removes that layer.
 Part of the Live Track family, which shares one map vocabulary so several
 integrations can render on a single map.
 
+## Live Track Enforcement Aircraft
+
+Its companion, [Live Track Enforcement Aircraft](https://github.com/StrausbergAutomationWorks/LiveTrackEnforcementAircraft)
+(in development), draws immigration and federal law-enforcement aircraft from a
+public, sourced list wherever they fly, not only around your home, and every
+aircraft in a focus area of your own. Install both and each keeps to what it
+does best: this integration draws every aircraft inside its own area, the
+listed ones included, and the companion draws the listed aircraft everywhere
+else. One shared poll serves both, and no aircraft is drawn twice.
+
 ## Not a fork
 
 Written from scratch. An earlier tracking fork of another project exists
