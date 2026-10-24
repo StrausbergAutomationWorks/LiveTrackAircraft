@@ -145,7 +145,7 @@ _CATEGORY_RULES = (
      r"|\bIMMIGRATION\b|\bDRUG ENFORCEMENT\b|\bDEA\b"
      r"|\bBUREAU OF INVESTIGATION\b|\bFBI\b|\bATF\b|\bSECRET SERVICE\b"
      r"|\bU ?S MARSHALL?S?\b|\bMARSHALS? SERVICE\b|\bJPATS\b"
-     r"|\bDEPARTMENT OF JUSTICE\b|\bHOMELAND AVIATION\b"),
+     r"|\bDEPARTMENT OF JUSTICE\b"),
     ("Law enforcement",
      r"\bSHER+IF+'?S?\b|\bPOLICE\b|\bMARSHALS?\b|\bCONSTABLES?\b"
      r"|\bPUBLIC SAFETY\b|\b(?:DEPT|DEPARTMENT) OF SAFETY\b"
@@ -679,10 +679,14 @@ _TYPE_REGISTRANT_GOVERNMENT = "5"
 # keyword matching was measured and rejected: "MARSHAL" gives 248 hits and 4
 # real ones (people surnamed Marshall, Marshall University, Marshall Soaring
 # Club); "ICE" gives 14 and ZERO real ones (Ice Man Holdings, Two Bag Ice).
-_FEDERAL_OPERATOR_ALLOWLIST = {
-    "CBP AIR LOGISTICS LLC",
-    "HOMELAND AVIATION LLC",
-}
+# ! EMPTY SINCE 2026-10-23 (Lee): both names it held were PRIVATE owners.
+# HOMELAND AVIATION LLC is a Shreveport, LA owner of light piston aircraft
+# (N462WC, an Aviat Husky, FAA registry); CBP AIR LOGISTICS LLC is "managed
+# and wholly owned by" a private individual by its own court filing (D. Kan.
+# 2:25-cv-02514). A private registrant gets an agency label only when a cited
+# document backs it or Lee has reviewed it (an EnforcementAircraft entry),
+# never from its name.
+_FEDERAL_OPERATOR_ALLOWLIST: frozenset[str] = frozenset()
 # ACFTREF TYPE-ENG: 2 turbo-prop, 3 turbo-shaft, 4 turbo-jet, 5 turbo-fan.
 _TURBINE_ENGINES = frozenset(("2", "3", "4", "5"))
 _DRONE_MFR_PREFIXES = (
@@ -795,7 +799,8 @@ CACHE_NAME = "saw_faa_gov_aircraft.json"
 LEGACY_CACHE_NAME = "saw_faa_gov_rotorcraft.json"
 # 3 since 2026-10-22 02:3x: drones back in. A cache of an older schema is
 # rebuilt at the next start (needs_refresh), not after REFRESH_DAYS.
-SCHEMA = 3
+# 4 since 2026-10-23: the two private LLCs out of the allowlist.
+SCHEMA = 4
 EXCLUDES = "nothing: every government registrant, drones included"
 
 

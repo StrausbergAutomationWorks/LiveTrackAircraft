@@ -117,7 +117,6 @@ class Label(unittest.TestCase):
         ("U S IMMIGRATION AND CUSTOMS ENFORCEMENT", FED, "ICE"),
         ("FEDERAL BUREAU OF INVESTIGATION", FED, "FBI"),
         ("U S MARSHALS SERVICE", FED, "USMS"),
-        ("CBP AIR LOGISTICS LLC", FED, "CBP"),
         ("UNITED STATES COAST GUARD", CG, "USCG"),
         ("TEXAS DEPARTMENT OF PUBLIC SAFETY", LAW, "TX DPS"),
         ("CALIFORNIA HIGHWAY PATROL", LAW, "CA Hwy Patrol"),
@@ -143,12 +142,12 @@ class Label(unittest.TestCase):
 
     def test_lookup(self):
         r = reg.GovRegistry()
-        r._table = {"A00001": ["N1", "CBP AIR LOGISTICS LLC", "TX"],
+        r._table = {"A00001": ["N1", "U S CUSTOMS & BORDER PROTECTION", "TX"],
                     "A00002": ["N2", "ILLINOIS STATE POLICE", "IL"],
                     "A00003": ["N3", "NASA", "CA"]}
         r._loaded = True
         a, b, c = (r.lookup(h) for h in ("A00001", "A00002", "A00003"))
-        self.assertEqual((a["identified_by"], a["operator_short"]), ("faa_federal_list", "CBP"))
+        self.assertEqual((a["identified_by"], a["operator_short"]), ("faa_government", "CBP"))
         self.assertEqual((b["identified_by"], b["operator_short"]), ("faa_government", "IL State Police"))
         self.assertEqual(c["identified_by"], "faa_government")
         self.assertNotIn("operator_short", c)

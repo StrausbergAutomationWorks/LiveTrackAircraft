@@ -76,13 +76,15 @@ class Table(unittest.TestCase):
 
     def test_registrant(self):
         self.assertNotIn("A00006", self.t)         # an individual
-        self.assertIn("A00007", self.t)            # the federal allowlist
+        # a PRIVATE LLC with CBP in its name, out since 2026-10-23 (Lee)
+        self.assertNotIn("A00007", self.t)
+        self.assertEqual(reg._FEDERAL_OPERATOR_ALLOWLIST, frozenset())
 
     def test_unknown_seats_kept(self):
         self.assertIn("A00008", self.t)
 
     def test_exactly(self):
-        self.assertEqual(sorted(self.t), ["A000%02d" % i for i in range(1, 13) if i != 6])
+        self.assertEqual(sorted(self.t), ["A000%02d" % i for i in range(1, 13) if i not in (6, 7)])
 
 
 class Names(unittest.TestCase):
@@ -96,17 +98,18 @@ class Names(unittest.TestCase):
         h = self._Hass()
         self.assertEqual(reg.cache_path(h), ".storage/saw_faa_gov_aircraft.json")
         self.assertEqual(reg.legacy_cache_path(h), ".storage/saw_faa_gov_rotorcraft.json")
-        self.assertEqual(reg.SCHEMA, 3)
+        self.assertEqual(reg.SCHEMA, 4)
 
     def test_an_older_schema_is_rebuilt_now(self):
         import os, tempfile
         fd, p = tempfile.mkstemp(); os.close(fd)
         try:
-            self.assertFalse(reg.needs_refresh(p, 3))          # fresh file, this rule
+            self.assertFalse(reg.needs_refresh(p, 4))          # fresh file, this rule
+            self.assertTrue(reg.needs_refresh(p, 3))           # fresh file, the LLCs still in
             self.assertTrue(reg.needs_refresh(p, 2))           # fresh file, the drones-out rule
         finally:
             os.unlink(p)
-        self.assertTrue(reg.needs_refresh(p, 3))               # no file
+        self.assertTrue(reg.needs_refresh(p, 4))               # no file
 
 
 if __name__ == "__main__":
