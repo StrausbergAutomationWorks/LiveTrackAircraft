@@ -322,7 +322,6 @@ class RouteDownloader:
             if not due(now, meta, self._checked_at, self._attempted_at, startup):
                 return
             self._attempted_at = now
-            session = None
             try:
                 session = release_session(hass)
                 sums = await self._get(session, SUMS, MAX_SUMS_BYTES)
@@ -351,9 +350,6 @@ class RouteDownloader:
                 self.status = "failed: %s" % (err.__class__.__name__)
                 _LOGGER.warning("Route download failed, installed file unchanged: %r", err)
                 return
-            finally:
-                if session is not None:
-                    await session.close()
             self._checked_at = now
             self.status = "installed (built %s, sha %s)" % (summary["built"][:16], summary["sha256"][:8])
             _LOGGER.info("Route artifact installed from %s: %s", ASSET, summary)
