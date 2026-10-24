@@ -83,9 +83,12 @@ class CoordinatorWiring(unittest.TestCase):
 
 class OneDecider(unittest.TestCase):
     def test_classify_and_pick_both_call_is_rotorcraft(self):
-        for rel in ("aircraft.py", "icons.py"):
+        # icons.pick() is in saw_livetrack.aircraft_icons since backlog 298.
+        from saw_livetrack import aircraft_icons
+        lib = open(aircraft_icons.__file__, encoding="utf-8").read()
+        for rel, text in (("aircraft.py", source("aircraft.py")), ("aircraft_icons", lib)):
             with self.subTest(file=rel):
-                self.assertIn("is_rotorcraft(", source(rel))
+                self.assertIn("is_rotorcraft(", text)
 
 
 if __name__ == "__main__":

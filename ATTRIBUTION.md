@@ -33,7 +33,9 @@ adsbdb route credits adsbdb and both compilers in its attribution.
 
 ## Aircraft marker icons
 
-40 of the 63 SVG files in `custom_components/live_track_aircraft/icons/` are by
+The marker icons ship in the shared library saw-livetrack, in
+`saw_livetrack/aircraft_icons/icons/` (since 24 October 2026, backlog 298),
+with this attribution beside them. 40 of its 64 SVG files are by
 **ADS-B Radar** — https://adsb-radar.com
 
 Source: https://adsb-radar.com/help/icons.html
@@ -46,8 +48,9 @@ file, and the Icons section of `README.md`, are that backlink.
 The icons belong to their author. They are not covered by the MIT licence
 in `LICENSE`, which applies to the code in this repository.
 
-The exceptions are drawn for this project in the style of the set and are
-covered by the MIT licence with the code: `kingair.svg` (offered to the set's
+The exceptions were drawn for this project in the style of the set and
+donated to ADS-B Radar, so they are under its terms too; the MIT licence
+covers the code only: `kingair.svg` (offered to the set's
 author), `lowwing.svg` (a low-wing single), and `tiltrotor.svg` /
 `tiltrotorfwd.svg` (a tiltrotor hovering and in cruise, after an AgustaWestland
 AW609 three-view), and, added 26 September 2026: `tandem.svg` (CH-47 Chinook),
@@ -65,7 +68,8 @@ Added 22 October 2026: `vc25a.svg` (Boeing VC-25A, a 747-200B), drawn to the
 type's published span and length in its own light blue and white; chords and
 engine stations are estimated. It is the one icon drawn in its own colours
 rather than a single tone, and it is used for the two VC-25As by Mode S
-address.
+address. It stays in this integration's own
+`custom_components/live_track_aircraft/icons/` folder, with `af83f3.svg`.
 Added 24 October 2026: `kingair350.svg` (Beechcraft King Air 350), drawn to
 the type's published span, length, tailplane and propeller diameter, with its
 shapes read from NASA photograph ED08-0141-21 (public domain, via Wikimedia
@@ -75,7 +79,7 @@ window band. The table sends B350 to it; the other King Airs stay on his
 
 ### Which icon each aircraft type gets
 
-The type-to-icon table in `icons.py` is the default lists from the ADS-B
+The type-to-icon table in the library's `aircraft_icons/__init__.py` is the default lists from the ADS-B
 Radar app, shared by its author, Jos Nutbroek, in September 2026, in the
 version he sent on 25 September 2026. `beechcraft.svg` (a light twin, used
 for the King Airs, Barons and their kind) is his, sent the same week; the file
@@ -92,11 +96,11 @@ rotor blades are grouped and animated so the rotor spins; the shapes are
 unchanged. `cessna.svg` and `beechcraft.svg`: his outline is kept byte for
 byte, a clip hides the propeller band beside each spinner, and the propeller
 is redrawn from his own outline in a group that animates it (26 September
-2026). A note in each file says so. The type list is followed except where `icons.py` overrides it: EN28
+2026). A note in each file says so. The type list is followed except where the library's `aircraft_icons/__init__.py` overrides it: EN28
 (Enstrom 280), CH7A/CH7B (Helisport CH-7) and MM24 (Magni M24 gyrocopter)
 are drawn as helicopters rather than light aircraft; V22 and B609 use the
 tiltrotor; the low-wing singles on the Cessna line use `lowwing.svg`; P68,
-listed under two icons, uses the twin; and the types in `_ROUND3` in `icons.py`
+listed under two icons, uses the twin; and the types in `_ROUND3` in the library's `aircraft_icons/__init__.py`
 (twins, canards, biplanes, fighters, gyroplanes, the Chinook, the Kamovs,
 the K-MAX, the B-2, the Avanti and the Cheyenne 400), in `_PILATUS` (the
 Pilatus types) and in `_ROUND4` (the amphibians and the Beriev A-50) use the

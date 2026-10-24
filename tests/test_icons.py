@@ -91,7 +91,7 @@ class Rotor(unittest.TestCase):
         self.assertIsNone(groups[0].get("transform"))
 
     def test_nothing_else_animates(self):
-        for f in sorted(os.listdir(os.path.join(COMP, "icons"))):
+        for f in sorted(os.listdir(icons.icon_dir()) + os.listdir(icons.local_icon_dir())):  # library + ours (backlog 298)
             key = f[:-4]
             if key in ("a7", "lowwing", "kingair", "tiltrotor", "tiltrotorfwd",
                        # backlog 260 round 3 (2026-09-26); cessna/beechcraft: his props, cut out
@@ -108,7 +108,7 @@ class Rotor(unittest.TestCase):
 
 class Pictures(unittest.TestCase):
     def test_every_icon_renders_as_strict_xml(self):
-        keys = [f[:-4] for f in os.listdir(os.path.join(COMP, "icons")) if f.endswith(".svg")]
+        keys = [f[:-4] for f in os.listdir(icons.icon_dir()) + os.listdir(icons.local_icon_dir()) if f.endswith(".svg")]  # library + ours (backlog 298)
         self.assertGreaterEqual(len(keys), 38)
         for key in keys:
             with self.subTest(key=key):

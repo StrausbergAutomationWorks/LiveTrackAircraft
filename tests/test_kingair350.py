@@ -21,7 +21,7 @@ class KingAir350(unittest.TestCase):
                 self.assertEqual(icons.pick("A1", code), "beechcraft")
 
     def test_file_keeps_its_paint_and_has_two_props(self):
-        with open(os.path.join(COMP, "icons", "kingair350.svg"), "rb") as fh:
+        with open(icons.icon_path("kingair350"), "rb") as fh:  # in the library since backlog 298
             raw = fh.read()
         self.assertFalse(raw.startswith(b"\xef\xbb\xbf"))
         self.assertIn(b'data-paint="keep"', raw)
