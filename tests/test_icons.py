@@ -98,7 +98,9 @@ class Rotor(unittest.TestCase):
                        "tandem", "coaxial", "kmax", "gyro", "biplane", "canard", "p180", "cheyenne",
                        "cessna", "beechcraft", "pc6", "pc7", "pc9", "pc12", "pc21",
                        # round 4 (2026-10-06): their props
-                       "be12", "us2") or not f.endswith(".svg"):
+                       "be12", "us2",
+                       # 2026-10-24: the King Air 350's props
+                       "kingair350") or not f.endswith(".svg"):
                 continue
             with self.subTest(key=key):
                 self.assertNotIn("animate", rendered(key))

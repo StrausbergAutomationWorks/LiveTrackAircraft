@@ -66,7 +66,7 @@ class Rule1TypeTableWins(unittest.TestCase):
 
     def test_his_2026_09_25_list_is_the_base(self):
         # a sample of what his new list decides, override-free
-        for code, key in (("BE20", "beechcraft"), ("B350", "beechcraft"),
+        for code, key in (("BE20", "beechcraft"), ("BE30", "beechcraft"),
                           ("B190", "beechcraft"), ("SF34", "beechcraft"),
                           ("B727", "md11"), ("GLF6", "fa7x"), ("A19N", "a320"),
                           ("R44", "a7"), ("C172", "cessna")):

@@ -66,6 +66,12 @@ type's published span and length in its own light blue and white; chords and
 engine stations are estimated. It is the one icon drawn in its own colours
 rather than a single tone, and it is used for the two VC-25As by Mode S
 address.
+Added 24 October 2026: `kingair350.svg` (Beechcraft King Air 350), drawn to
+the type's published span, length, tailplane and propeller diameter, with its
+shapes read from NASA photograph ED08-0141-21 (public domain, via Wikimedia
+Commons). It takes the aircraft's tone and keeps its own black windscreen and
+window band. The table sends B350 to it; the other King Airs stay on his
+`beechcraft.svg`.
 
 ### Which icon each aircraft type gets
 

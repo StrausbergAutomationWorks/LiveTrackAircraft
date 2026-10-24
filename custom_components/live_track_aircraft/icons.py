@@ -207,6 +207,11 @@ _OVERRIDES = {
     # filed it under the cessna; his list of 2026-09-25 moved it to a7
     # himself, so this now agrees with him and is kept as the pin.
     "R22": "a7",
+    # ! THE KING AIR 350 HAS ITS OWN ICON (Lee 2026-10-24, draft D of
+    # 20_Research/kingair_20261024/): ours, drawn to published dimensions,
+    # data-paint="keep" for its black windscreen and window band, lit toward
+    # the spine. His list files B350 under beechcraft; BE20/BE30 stay there.
+    "B350": "kingair350",
     # ! HELICOPTERS AND A GYRO ON HIS `cessna` (2026-09-25 list), by his own
     # descriptions table: EN28 "Enstrom F-28 / 280 Light Piston Civilian
     # Helicopter", CH7B "CH7 Helisport Charlie Ultralight Sports Kit
@@ -959,8 +964,9 @@ URL_BASE = "/api/live_track_aircraft/icon"
 # (2026-09-26); 7: round 4 - Jos's heavytransport and amphibian, our be12,
 # be200 and us2 (2026-10-06); 8: the 1 px edge and shading (2026-10-21);
 # 9: the police lamps moved forward (2026-10-23) - 1440d16 shipped without
-# this bump and browsers kept the old picture.
-ART_REV = 9
+# this bump and browsers kept the old picture; 10: the King Air 350's own
+# icon, kingair350.svg (2026-10-24).
+ART_REV = 10
 
 
 def picture_url(key: str, tone: str = "default",
