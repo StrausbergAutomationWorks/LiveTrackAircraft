@@ -106,6 +106,10 @@ class AircraftInRange(SensorEntity):
             # are outside the circle, and its last round.
             "watched_count": data.get("watched", 0),
             "watch_list": data.get("watch_status"),
+            # The EnforcementAircraft list (enforcement.py): how many sourced
+            # entries, its build time, and the last failure if the last check
+            # failed. Changes with the list, never with the clock.
+            "enforcement_list": getattr(self._coordinator.enforcement_list, "summary", None),
         }
 
     async def async_added_to_hass(self) -> None:

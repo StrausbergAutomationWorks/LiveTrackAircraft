@@ -122,6 +122,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # The instance's RouteDownloader (route_download.py), set by
         # __init__.py; read only for the count sensor's status attribute.
         self.route_download = None
+        # The instance's EnforcementAircraft reader (enforcement.py, backlog
+        # 299), set by __init__.py before the first poll.
+        self.enforcement_list = None
         # The instance's AirportDownloader (airport_download.py), set by
         # __init__.py; only its status is read here.
         self.airport_download = None
@@ -556,10 +559,19 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # ! THE PICTURE IS NEVER ROTATED AND NEVER ON A DISC (Lee,
         # 2026-09-25): the card turns the marker from icon_rotation_deg, and
         # an angle in the image as well would double the turn.
+        lights = icons.lights_for(gov_cat)
+        # ! EVERY SOURCED LISTED AIRCRAFT FLASHES RED/BLUE (backlog 299, Lee
+        # 2026-10-24 02:13): the glow over the owner-class fill, so a listed
+        # state or local police aircraft loses the wig-wag. Police not on the
+        # list keep it; a detected_unconfirmed entry is left to the owner
+        # rules (Lee 17:00).
+        elist = self.enforcement_list
+        if elist is not None and elist.is_sourced(obs.identity):
+            lights = icons.LIGHTS_GLOW
         out["entity_picture"] = icons.picture_url(
             key, icons.tone_for(gov_now, icon_category, gov_cat, military),
             icons.weight_for(obs.emitter_category),
-            lights=icons.lights_for(gov_cat))
+            lights=lights)
         # ! The user's own picture for this hex wins, drawn upright.
         own = getattr(self, "pictures", None)
         apply_picture(out, own.url(obs.identity) if own is not None else None)

@@ -15,6 +15,7 @@ from .watch import WatchList
 from .airport_download import TICK as AIRPORT_TICK, AirportDownloader
 from .const import CONF_LATITUDE, CONF_LONGITUDE, DOMAIN
 from .coordinator import AircraftCoordinator
+from .enforcement import TICK as LIST_TICK, async_refresh_list, async_setup_list
 from .registrations import async_load_registry, async_refresh_registry
 from .route_download import TICK as ROUTE_TICK, RouteDownloader
 from .web import register as register_views
@@ -58,7 +59,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     coordinator.adsbdb = hass.data.setdefault(_ADSBDB_KEY, AdsbdbRoutes())
     coordinator.watch = hass.data.setdefault(
         _WATCH_KEY, WatchList(REGISTRY.law_enforcement_hexes))
+    # The EnforcementAircraft list (enforcement.py, backlog 299): the cached
+    # copy before the first poll, the release checked in the background, then
+    # every hour (the reader holds a good check for 6 h).
+    elist = coordinator.enforcement_list = await async_setup_list(hass)
     await coordinator.async_config_entry_first_refresh()
+    hass.async_create_background_task(
+        async_refresh_list(hass, elist), "live_track_aircraft_enforcement_list")
+
+    async def _check_list(_now=None) -> None:
+        await async_refresh_list(hass, elist)
+
+    entry.async_on_unload(async_track_time_interval(hass, _check_list, LIST_TICK))
 
     # The government-aircraft table and the owner database. Load whatever
     # exists, then refresh in the background if it is stale.

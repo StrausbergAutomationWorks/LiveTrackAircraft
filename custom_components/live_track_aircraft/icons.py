@@ -63,7 +63,7 @@ ART_REV = _lib.ART_REV + LOCAL_ART_REV
 
 
 def picture_url(key: str, tone: str = "default",
-                weight: float | None = None, lights: bool = False) -> str:
+                weight: float | None = None, lights=False) -> str:
     """The entity_picture: one silhouette, UNROTATED, with no disc.
 
     ! NO ANGLE AND NO BADGE ARGUMENT, on purpose (Lee, 2026-09-25). The card
@@ -72,5 +72,7 @@ def picture_url(key: str, tone: str = "default",
     ! TONE AND WEIGHT RIDE AS QUERY PARAMETERS, and the query is part of the
     cache key - a government aircraft and an airliner on the same silhouette
     are two different cached images, as they should be.
+    lights: False, True (paired with the tone), LIGHTS_GLOW or LIGHTS_WIGWAG;
+    the URL carries it as l=g or l=w (saw-livetrack 0.2.12).
     """
     return "%s/%s/fixed.svg?%s" % (URL_BASE, key, _lib.picture_query(tone, weight, lights, ART_REV))

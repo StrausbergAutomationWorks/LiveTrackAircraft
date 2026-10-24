@@ -71,7 +71,9 @@ class Lights(unittest.TestCase):
         self.assertNotIn('id="lr"', rendered(badge=True))
 
     def test_url(self):
-        self.assertIn("l=1", icons.picture_url("a7", "law", 0.66, lights=True))
+        self.assertIn("l=g", icons.picture_url("a7", "law", 0.66, lights=True))
+        self.assertIn("l=w", icons.picture_url("a7", "police", 0.66, lights=True))
+        self.assertIn("l=g", icons.picture_url("a7", "police", 0.66, lights=icons.LIGHTS_GLOW))
         self.assertNotIn("l=", icons.picture_url("a7", "law", 0.66))
 
 

@@ -71,8 +71,9 @@ class AircraftIconView(HomeAssistantView):
             weight = icons.DEFAULT_WEIGHT
         # Anything but "0" keeps the badge, so a mangled value fails safe.
         badge = request.query.get("b") != "0"
-        # Only "1" turns the lights on, so a mangled value fails safe.
-        lights = request.query.get("l") == "1"
+        # l=g glow, l=w wig-wag, the old l=1 paired with the tone; anything
+        # else is unlit, so a mangled value fails safe (lights_from_query).
+        lights = icons.lights_from_query(request.query.get("l"))
 
         try:
             svg = await request.app["hass"].async_add_executor_job(

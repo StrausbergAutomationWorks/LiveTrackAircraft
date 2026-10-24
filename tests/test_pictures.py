@@ -136,7 +136,7 @@ class Wired(unittest.TestCase):
         self.assertIn("async_add_executor_job(self.pictures.scan)", src)
         self.assertIn("apply_picture(out, own.url(obs.identity)", src)
         # after the icon picture is chosen, so the user's wins
-        self.assertLess(src.index("lights=icons.lights_for(gov_cat))"), src.index("apply_picture(out"))
+        self.assertLess(src.index("lights=lights)"), src.index("apply_picture(out"))
 
     def test_entity_exposes_picture_source(self):
         self.assertIn('"picture_source",', self.read("geo_location.py"))
