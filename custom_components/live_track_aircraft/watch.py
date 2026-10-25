@@ -1,57 +1,41 @@
-"""The worldwide watch list: aircraft shown WHEREVER THEY ARE, not only in
-the circle (Lee, 2026-10-21 02:59 and 22:09).
+"""The worldwide watch: the aircraft this integration shows WHEREVER THEY ARE, not only in the circle.
 
-Who is on it:
-  * the presidential airframes, by Mode S hex, never by callsign (a callsign
-    proves nothing about who is aboard): adfdf8 and adfdf9, the VC-25As, and
-    af83f3, the VC-25B "Bridge". The 747-8 trainer stays off until its hex is
-    measured;
-  * since 2026-10-24 (Lee 20:55), the EnforcementAircraft list's sourced and
-    detected entries and every FEDERAL law-enforcement registrant in the FAA
-    table (enforcement.watched_hexes). State and local police not on the list
-    are drawn only inside the circle. It read: every law-enforcement aircraft
-    in the FAA government table (registrations.LAW_ENFORCEMENT: DHS, CBP, ICE,
-    FBI, USMS, state and local police, the Coast Guard).
+Who is on it (Lee, 2026-10-21 02:59 and 22:09; 2026-10-24):
+  * the presidential airframes, by Mode S hex, never by callsign (a callsign proves nothing about
+    who is aboard): adfdf8 and adfdf9, the VC-25As, and af83f3, the VC-25B "Bridge". The 747-8
+    trainer stays off until its hex is measured;
+  * the 89th Airlift Wing (its SAM and VENUS callsigns) and military escorts near a presidential
+    airframe, from adsb.fi's military list.
 
-! ONE REQUEST A MINUTE ANSWERS ALL OF IT. Measured 2026-10-22 00:3x CDT:
-adsb.fi's /v2/icao/<hex>,<hex>,... took all 994 hexes (3 + 991) in one
-request - a 6,994-character URL, HTTP 200 in 1.3 s, 6.4 kB back, 11 aircraft
-airborne at that hour - and returned only hexes it was asked for.
-adsb.fi's README documents the comma-separated form and a public limit of 1
-request a second; it gives no per-request hex limit, so requests are cut at
-MAX_PER_REQUEST, the size measured to work. Never adsb.lol for this
-(05_SHARED_LESSONS.md B16).
+! THE NATIONWIDE ENFORCEMENT WATCH MOVED TO LIVE TRACK ENFORCEMENT AIRCRAFT (backlog 297, Lee
+2026-10-23 23:01 and 2026-10-24 01:29): the EnforcementAircraft list's sourced and detected entries
+and every federal law-enforcement registrant. This integration publishes the registrants it finds in
+its FAA table for it (enforcement.publish_federal), and with it installed alone shows listed aircraft
+only inside its circle (decision G). It read: the list, the federal registrants and the presidential
+airframes, 305 hexes, one request a minute (62064b6).
 
-! THE CIRCLE IS THE SAME SOURCE. adsb.fi limits per address, so a 429 here is
-recorded in the circle's own BACKOFF (sources/adsb.py) and the watch waits
-while adsb.fi is backing off. One WatchList per instance (hass.data), like
-the adsbdb client: a second entry reads the same answer.
+! ONE SHARED POLL (saw_livetrack.adsb_poll): the presidential hexes join the instance's union hex
+round, once a minute, with whatever Live Track Enforcement Aircraft asks; the military list goes
+through the same pacing and the same 429 backoff, because adsb.fi limits per address. One WatchList
+per instance (hass.data). Never adsb.lol for this (05_SHARED_LESSONS.md B16).
 """
 from __future__ import annotations
 
-import logging
-import math
 import re
 import time
 from collections.abc import Callable
-from typing import Any
 
-import aiohttp
+from saw_livetrack import adsb_poll as ap
 
-from .const import REQUEST_TIMEOUT, USER_AGENT
-from .sources.adsb import BACKOFF, Backoff, _f, _parse, _retry_after_s
+from .const import DOMAIN
 from .sources.base import Observation
 
-_LOGGER = logging.getLogger(__name__)
-
-URL = "https://opendata.adsb.fi/api/v2/icao/"
-SOURCE = "adsb.fi"
-INTERVAL_S = 60
-# The answer is dropped after this long without a fresh one, so a failing
-# watch does not freeze aircraft on the map.
-STALE_S = 3 * INTERVAL_S
-MAX_PER_REQUEST = 994
-CHUNK_GAP_S = 1.1          # adsb.fi: 1 request a second
+CONSUMER = DOMAIN
+SOURCE = ap.FI
+MIL_URL = "https://opendata.adsb.fi/api/v2/mil"
+INTERVAL_S = ap.HEX_INTERVAL_S
+# The military answer is dropped after this long without a fresh one, as the hex answer is.
+STALE_S = ap.HEX_STALE_S
 
 PRESIDENTIAL = {
     "adfdf8": "VC-25A 82-8000",
@@ -59,28 +43,16 @@ PRESIDENTIAL = {
     "af83f3": "VC-25B 25-3300",
 }
 WHY_PRESIDENTIAL = "presidential"
-WHY_LAW = "law_enforcement"
 WHY_89AW = "89aw"
 WHY_ESCORT = "escort"
 
-# ! THE 89th AIRLIFT WING, ALWAYS (Lee 2026-10-22 01:27): its SAM and VENUS
-# callsigns, from adsb.fi's military list, once a minute. A callsign alone
-# is not enough - measured 2026-10-21: "SAMB2" on /v2/mil was a RAAF PC-21
-# (7cf9e7) - so it must be SAM or VENUS plus digits AND a hex in the US
-# military block (ADF7C8-AFFFFF). That the wing's aircraft carry the
-# military flag is inferred from that block, not yet seen at night.
-MIL_URL = "https://opendata.adsb.fi/api/v2/mil"
+# ! THE 89th AIRLIFT WING, ALWAYS (Lee 2026-10-22 01:27): SAM or VENUS plus digits AND a hex in the US
+# military block (ADF7C8-AFFFFF). Measured 2026-10-21: "SAMB2" on /v2/mil was a RAAF PC-21 (7cf9e7).
 _WING_CALLSIGN = re.compile(r"^(?:SAM|VENUS)\d{1,5}$")
 US_MIL_MIN, US_MIL_MAX = 0xADF7C8, 0xAFFFFF
 
-# ! ESCORTS: any military-flagged aircraft within ESCORT_KM of a presidential
-# airframe while one is in view (Lee 2026-10-21, option b; distance 2026-10-22:
-# "cover the distance they usually maintain from AF1"). No source gives a
-# standard; accounts of escorts describe close formation, a fighter "about
-# two miles back" and spacing of about 4 miles on approach (an F-106 pilot's
-# account, Homestead). 10 nm covers those with margin without sweeping in
-# unrelated traffic: a judgement, not a measurement. The E-4B airframes stay
-# off until their hexes are measured (none airborne 2026-10-22 01:4x).
+# ! ESCORTS: any military-flagged aircraft within ESCORT_KM of a presidential airframe while one is in
+# view (Lee 2026-10-21, option b; 10 nm on 2026-10-22): a judgement, not a measurement.
 ESCORT_KM = 18.52
 
 
@@ -92,10 +64,7 @@ def _is_us_mil(hex_id: str) -> bool:
 
 
 def _km(a: Observation, b: Observation) -> float:
-    p1, p2 = math.radians(a.latitude), math.radians(b.latitude)
-    dp, dl = p2 - p1, math.radians(b.longitude - a.longitude)
-    h = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
-    return 2 * 6371.0 * math.asin(math.sqrt(min(1.0, h)))
+    return ap.km_between(a.latitude, a.longitude, b.latitude, b.longitude)
 
 
 def from_military(mil: dict[str, Observation], presidential: list[Observation]) -> dict[str, str]:
@@ -111,121 +80,69 @@ def from_military(mil: dict[str, Observation], presidential: list[Observation]) 
     return out
 
 
-def chunks(hexes: list[str], size: int = MAX_PER_REQUEST) -> list[list[str]]:
-    return [hexes[i:i + size] for i in range(0, len(hexes), size)]
-
-
 class WatchList:
-    """Asks adsb.fi for every watched hex once a minute and keeps the answer."""
+    """The presidential airframes through the shared hex round, and the military list once a minute."""
 
-    def __init__(self, law_hexes: Callable[[], list[str]],
-                 backoff: Backoff | None = None,
-                 clock: Callable[[], float] = time.monotonic) -> None:
-        self._law_hexes = law_hexes
-        self._backoff = BACKOFF if backoff is None else backoff
+    def __init__(self, poll: ap.Poll, clock: Callable[[], float] = time.monotonic) -> None:
+        self._poll = poll
         self._clock = clock
         self._next = 0.0
-        self._at: float | None = None
-        self._obs: list[Observation] = []
+        self._mil_at: float | None = None
+        self._mil: list[Observation] = []
         self._why: dict[str, str] = {}
         self.status = "idle"
+        poll.set_hexes(CONSUMER, PRESIDENTIAL)
 
     def hexes(self) -> list[str]:
-        law = [h.lower() for h in (self._law_hexes() or [])]
-        return list(PRESIDENTIAL) + sorted(set(law) - set(PRESIDENTIAL))
+        return list(PRESIDENTIAL)
 
     def why(self, hex_id: str) -> str:
         if hex_id in PRESIDENTIAL:
             return WHY_PRESIDENTIAL
-        return self._why.get(hex_id, WHY_LAW)
+        return self._why.get(hex_id, "watched")
 
     def due(self) -> bool:
-        return self._clock() >= self._next
+        return self._clock() >= self._next or self._poll.hex_due()
 
     def observations(self) -> list[Observation]:
-        """The last answer, or nothing once it is STALE_S old."""
-        if self._at is None or self._clock() - self._at > STALE_S:
-            return []
-        return list(self._obs)
+        """The presidential airframes from the shared round, plus the wing and escorts while fresh."""
+        found = {o.identity: o for o in self._poll.hex_observations(CONSUMER)}
+        if self._mil_at is not None and self._clock() - self._mil_at <= STALE_S:
+            for o in self._mil:
+                found.setdefault(o.identity, o)
+        return list(found.values())
 
-    def _done(self, status: str) -> None:
-        self.status = status
-        self._next = self._clock() + INTERVAL_S
+    async def async_fetch(self, session, now: float) -> None:
+        """The shared hex round (when due), then the military list (once a minute).
 
-    async def async_fetch(self, session: aiohttp.ClientSession, now: float) -> None:
-        """One round: every chunk, or stop at the first failure."""
-        left = self._backoff.remaining(SOURCE)
-        if left is not None:
-            self._done(f"waiting: {SOURCE} backing off")
+        ! A failed military list keeps what the hex round found and says so; a non-200 is never
+        "none of them is flying".
+        """
+        self._poll.set_hexes(CONSUMER, PRESIDENTIAL)
+        hex_status = await self._poll.hex_round(session, now)
+        if self._clock() < self._next:
+            if hex_status != "ok":
+                self.status = hex_status
             return
-        found: dict[str, Observation] = {}
-        headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
-        parts = chunks([h.upper() for h in self.hexes()])
-        for i, part in enumerate(parts):
-            if i:
-                await _sleep(CHUNK_GAP_S)
-            try:
-                async with session.get(
-                        URL + ",".join(part), headers=headers,
-                        timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
-                    if resp.status != 200:
-                        if resp.status == 429:
-                            self._backoff.refused(SOURCE, _retry_after_s(
-                                resp.headers.get("Retry-After"), time.time()))
-                        # ! A non-200 is never "none of them is flying":
-                        # the last good answer stands until it is stale.
-                        self._done(f"HTTP {resp.status}")
-                        return
-                    payload = await resp.json(content_type=None)
-            except (aiohttp.ClientError, TimeoutError, ValueError) as err:
-                self._done(f"failed: {type(err).__name__}")
-                return
-            found.update(parse(payload, now))
-        # The military list: the wing and escorts. Its failure keeps what the
-        # hex request found and says so.
-        why: dict[str, str] = {}
-        status = "ok"
-        await _sleep(CHUNK_GAP_S)
+        self._next = self._clock() + INTERVAL_S
         try:
-            async with session.get(
-                    MIL_URL, headers=headers,
-                    timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
-                if resp.status == 200:
-                    mil = parse(await resp.json(content_type=None), now)
-                    pres = [o for h, o in {**mil, **found}.items() if h in PRESIDENTIAL]
-                    why = from_military(mil, pres)
-                    # A presidential airframe the hex request missed (a
-                    # second earlier) is still one.
-                    for hx in list(why) + [h for h in PRESIDENTIAL if h in mil]:
-                        found.setdefault(hx, mil[hx])
-                else:
-                    if resp.status == 429:
-                        self._backoff.refused(SOURCE, _retry_after_s(
-                            resp.headers.get("Retry-After"), time.time()))
-                    status = f"military list HTTP {resp.status}"
-        except (aiohttp.ClientError, TimeoutError, ValueError) as err:
-            status = f"military list failed: {type(err).__name__}"
-        self._obs = list(found.values())
-        self._why = why
-        self._at = self._clock()
-        self._done(status)
+            payload = await self._poll.get_json(session, SOURCE, MIL_URL)
+        except ap.SourceError as err:
+            self.status = "military list: %s" % err if hex_status == "ok" else hex_status
+            return
+        mil = ap.parse_payload(payload if isinstance(payload, dict) else {}, now)
+        hexed = {o.identity: o for o in self._poll.hex_observations(CONSUMER)}
+        pres = [o for h, o in {**mil, **hexed}.items() if h in PRESIDENTIAL]
+        why = from_military(mil, pres)
+        # A presidential airframe the hex round missed is still one.
+        keep = [mil[h] for h in list(why) + [h for h in PRESIDENTIAL if h in mil]]
+        self._mil, self._why, self._mil_at = keep, why, self._clock()
+        self.status = hex_status if hex_status != "ok" else "ok"
 
 
-def parse(payload: dict[str, Any], now: float) -> dict[str, Observation]:
-    """The answer's records, on the feed's own clock (sources/adsb.py)."""
-    feed_now = _f(payload.get("now"))
-    if feed_now and feed_now > 1e11:
-        feed_now = feed_now / 1000.0
-    base = feed_now if feed_now else now
-    out: dict[str, Observation] = {}
-    for record in payload.get("ac") or payload.get("aircraft") or []:
-        if isinstance(record, dict):
-            obs = _parse(record, base)
-            if obs is not None:
-                out[obs.identity] = obs
-    return out
+def parse(payload, now: float) -> dict[str, Observation]:
+    """The answer's records, on the feed's own clock (saw_livetrack.adsb_poll)."""
+    return ap.parse_payload(payload, now)
 
 
-async def _sleep(s: float) -> None:
-    import asyncio
-    await asyncio.sleep(s)
+__all__ = ["PRESIDENTIAL", "WatchList", "from_military"]

@@ -52,18 +52,26 @@ async def async_refresh_list(hass, reader: el.EnforcementList) -> str:
     return await reader.refresh(list_session(hass), hass.async_add_executor_job)
 
 
-def watched_hexes(hass) -> list[str]:
-    """What the nationwide watch (watch.py) asks for besides the presidential airframes.
+def federal_registrants() -> dict[str, dict[str, str]]:
+    """{hex: {registration, operator, operator_short}} for every FEDERAL law-enforcement registrant.
 
-    ! POLICE NOT ON THE LIST ARE NOT WATCHED NATIONWIDE (Lee 2026-10-24 20:55;
-    Enforcement SSOT section 3.5 step 2): the list's sourced and detected
-    entries, plus every federal law-enforcement registrant in the FAA table.
-    A state or local police aircraft not on the list is drawn only inside the
-    circle. Measured that evening: 1,160 law-enforcement hexes in the box's
-    table, 871 of them state and local and not on the list.
+    ! THE NATIONWIDE WATCH MOVED TO LIVE TRACK ENFORCEMENT AIRCRAFT (backlog 297). It watched the list's
+    sourced and detected entries plus these registrants (Lee 2026-10-24 20:55, 305 hexes with the
+    presidential airframes), so a registration newer than the list's build stayed watched (measured
+    that evening: 15 DHS registrations on the box's table and not on the list). This integration holds
+    the FAA table and the companion does not, so the registrants are PUBLISHED in hass.data under the
+    library's SAW-neutral key (enforcement_list.FEDERAL_KEY) for whoever draws the list: found, not
+    built. Police not on the list stay inside the circle.
     """
-    hexes = set(REGISTRY.federal_law_enforcement_hexes())
-    reader = hass.data.get(el.STORE_KEY)
-    if reader is not None:
-        hexes |= reader.hexes(el.SOURCED, el.DETECTED)
-    return sorted(hexes)
+    out: dict[str, dict[str, str]] = {}
+    for h in REGISTRY.federal_law_enforcement_hexes():
+        row = REGISTRY.lookup(h) or {}
+        out[h] = {k: row[k] for k in ("registration", "operator", "operator_short") if row.get(k)}
+    return out
+
+
+def publish_federal(hass) -> int:
+    """Put the registrants in hass.data for the companion; called after each load of the table."""
+    found = federal_registrants()
+    hass.data[el.FEDERAL_KEY] = found
+    return len(found)

@@ -30,7 +30,7 @@ from .const import (
     MAX_TRANSIENT_FAILURES,
     SLOW_GROUND_SPEED_KMH,
 )
-from .sources.adsb import BACKOFF, fetch, short_floor
+from .sources.adsb import fetch, short_floor
 from .sources.base import Observation, SourceError
 from . import icons
 from .aircraft import classify, describe_aircraft, lookup_manufacturer
@@ -141,6 +141,17 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # The worldwide watch list (watch.py), set by __init__.py; None
         # means the circle only.
         self.watch = None
+        # The instance's shared adsb.fi poll (saw_livetrack.adsb_poll, backlog
+        # 297), set by __init__.py: the circle is asked through it, and the
+        # hexes drawn here are claimed in it so Live Track Enforcement
+        # Aircraft skips them (decision A: inside this circle every aircraft
+        # is this integration's).
+        self.poll = None
+        # One claim per entry, so two entries' circles do not overwrite each other.
+        self.claim_key = "live_track_aircraft/%s" % entry.entry_id
+
+    def _backoff_status(self) -> dict[str, str]:
+        return self.poll.backoff.status() if self.poll is not None else {}
 
     async def _async_update_data(self) -> dict[str, Any]:
         now = time.time()
@@ -149,7 +160,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             # answer, not an empty sky (measured 2026-09-25, sources/adsb.py).
             source_name, observations = await fetch(
                 self._session, self.latitude, self.longitude, self.radius_km, now,
-                min_expected=short_floor(self._last_obs_count),
+                min_expected=short_floor(self._last_obs_count), poll=self.poll,
             )
         except SourceError as err:
             self._consecutive_failures += 1
@@ -165,7 +176,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
                     "All sources failed (%s consecutive): %s; serving the "
                     "previous result", self._consecutive_failures, err)
                 # The aircraft are the last good ones; the backoff is NOW.
-                return {**self._last_good, "source_backoff": BACKOFF.status()}
+                return {**self._last_good, "source_backoff": self._backoff_status()}
             raise UpdateFailed(
                 f"all sources failed ({self._consecutive_failures} consecutive): {err}"
             ) from err
@@ -209,10 +220,11 @@ class AircraftCoordinator(DataUpdateCoordinator):
             aircraft = {r["identity"]: r for r in nearest[: self.max_aircraft]}
 
         # ! THE WATCH LIST, ADDED AFTER THE CAP (watch.py, Lee 2026-10-21):
-        # the presidential airframes and every law-enforcement aircraft in
-        # the government table, wherever they are. One adsb.fi request a
-        # minute, shared by every entry. An aircraft already in the circle is
-        # only tagged, never built twice; the cap never drops a watched one.
+        # the presidential airframes, the 89th Airlift Wing and escorts,
+        # wherever they are, through the shared poll's hex round. The
+        # nationwide enforcement watch moved to Live Track Enforcement
+        # Aircraft (backlog 297). An aircraft already in the circle is only
+        # tagged, never built twice; the cap never drops a watched one.
         watched = 0
         if self.watch is not None:
             if self.watch.due():
@@ -240,6 +252,12 @@ class AircraftCoordinator(DataUpdateCoordinator):
             self._last_rec.pop(gone, None)
             self._tilt_forward.pop(gone, None)
 
+        # ! WHAT THIS INTEGRATION DRAWS IS CLAIMED in the shared poll, so Live
+        # Track Enforcement Aircraft skips it: one aircraft, one marker
+        # (decision A, Lee 2026-10-24 01:29).
+        if self.poll is not None:
+            self.poll.claim(self.claim_key, aircraft)
+
         result = {
             "aircraft": aircraft,
             "in_range": in_range,
@@ -248,7 +266,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             "source": source_name,
             # {source: resume time} for sources skipped after HTTP 429;
             # empty when none is. Backlog item 244.
-            "source_backoff": BACKOFF.status(),
+            "source_backoff": self._backoff_status(),
             "radius_km": self.radius_km,
             # Watched aircraft outside the circle (watch.py), and the watch
             # list's last round: idle, ok, waiting, or the failure.

@@ -48,29 +48,37 @@ class Reader(unittest.TestCase):
             self.assertIs(hass.data[el.STORE_KEY], a)
 
 
-class Watched(unittest.TestCase):
-    """Police not on the list are not watched nationwide (Lee 2026-10-24 20:55)."""
+class Federal(unittest.TestCase):
+    """The nationwide watch moved to the companion (backlog 297): the federal registrants are published
+    for it under the library's SAW-neutral key, and nothing here watches the list nationwide."""
 
-    def test_list_plus_federal_registrants(self):
+    def test_published_under_the_neutral_key(self):
         class Reg:
             def federal_law_enforcement_hexes(self):
                 return ["a00004", "a1b2c3"]
+
+            def lookup(self, h):
+                return {"a00004": {"registration": "N809EM", "operator": "Department of Homeland Security",
+                                   "operator_short": "DHS", "operator_category": "Federal law enforcement"},
+                        }.get(h)
         old, enf.REGISTRY = enf.REGISTRY, Reg()
         try:
             hass = Hass(tempfile.gettempdir())
-            self.assertEqual(enf.watched_hexes(hass), ["a00004", "a1b2c3"])          # no list yet
-            reader = el.EnforcementList(os.path.join(tempfile.gettempdir(), "x.json"))
-            reader._install(json.dumps({"name": "EnforcementAircraft", "schema": 1, "aircraft": [
-                {"hex": "a1b2c3", "status": "sourced"}, {"hex": "abc123", "status": "detected_unconfirmed"},
-                {"hex": "def456", "status": "cleared"}]}).encode())
-            hass.data[el.STORE_KEY] = reader
-            self.assertEqual(enf.watched_hexes(hass), ["a00004", "a1b2c3", "abc123"])  # cleared stays out
+            self.assertEqual(enf.publish_federal(hass), 2)
+            self.assertEqual(el.FEDERAL_KEY, "saw_federal_law_enforcement")
+            self.assertEqual(hass.data[el.FEDERAL_KEY], {
+                "a00004": {"registration": "N809EM", "operator": "Department of Homeland Security",
+                           "operator_short": "DHS"},
+                "a1b2c3": {}})
         finally:
             enf.REGISTRY = old
 
     def test_wired(self):
-        self.assertIn("WatchList(lambda: watched_hexes(hass))", source("__init__.py"))
-        self.assertNotIn("WatchList(REGISTRY.law_enforcement_hexes)", source("__init__.py"))
+        src = source("__init__.py")
+        self.assertIn("WatchList(coordinator.poll)", src)
+        self.assertIn("publish_federal(hass)", src)
+        self.assertNotIn("watched_hexes", src)
+        self.assertNotIn("watched_hexes", source("enforcement.py"))
 
 
 class Lights(unittest.TestCase):
@@ -119,7 +127,7 @@ class Wiring(unittest.TestCase):
 
     def test_manifest_pin(self):
         req = json.loads(source("manifest.json"))["requirements"]
-        self.assertIn("saw-livetrack[zones]>=0.2.12,<0.3", req)
+        self.assertIn("saw-livetrack[zones]>=0.2.13,<0.3", req)   # adsb_poll, backlog 297
 
 
 if __name__ == "__main__":

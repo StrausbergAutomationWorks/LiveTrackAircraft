@@ -90,6 +90,8 @@ REQUEST_TIMEOUT = 20
 # consecutive refusal up to BACKOFF_MAX_S; one 200 resets it. Retry-After is
 # clamped to RETRY_AFTER_MAX_S so a malformed header cannot park a source
 # for a day.
+# ! SINCE BACKLOG 297 THE BACKOFF IS THE SHARED POLL'S (saw_livetrack.adsb_poll, the same three values):
+# these are no longer read. Kept so the record above keeps its numbers; change the library's.
 BACKOFF_FIRST_S = 60.0
 BACKOFF_MAX_S = 600.0
 RETRY_AFTER_MAX_S = 900.0

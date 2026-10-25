@@ -1,20 +1,13 @@
-"""The worldwide watch list (watch.py), 2026-10-22. Offline: a fake session
-stands in for aiohttp; no hex here is a real aircraft except the three
-presidential airframes, which are published facts."""
+"""The worldwide watch (watch.py) on the shared poll, backlog 297. Offline: a fake session stands in
+for aiohttp; no hex here is a real aircraft except the three presidential airframes, which are
+published facts."""
 import asyncio
 import unittest
 
-from _load import load
+from _load import load, source
 
 watch = load("watch")
-adsb = load("sources.adsb")
-
-
-async def _nosleep(_s):
-    return None
-
-
-watch._sleep = _nosleep
+from saw_livetrack import adsb_poll as ap  # noqa: E402
 
 
 class Clock:
@@ -62,86 +55,85 @@ def mil(*recs):
     return {"ac": list(recs), "now": 1789000000000}
 
 
-NOMIL = Resp(200, mil())
+def wl():
+    c = Clock()
+
+    async def nosleep(s):
+        c.t += s
+
+    poll = ap.Poll(clock=c, sleep=nosleep)
+    return watch.WatchList(poll, clock=c), poll, c
 
 
-def wl(law, clock=None, backoff=None):
-    c = clock or Clock()
-    return watch.WatchList(lambda: law, backoff=backoff or adsb.Backoff(clock=c, wall=c), clock=c), c
+def run(w, session):
+    asyncio.run(w.async_fetch(session, 1789000000.0))
 
 
 class Lists(unittest.TestCase):
-    def test_presidential_first_no_duplicates(self):
-        w, _ = wl(["A00002", "a00001", "AF83F3"])
-        self.assertEqual(w.hexes(), ["adfdf8", "adfdf9", "af83f3", "a00001", "a00002"])
+    def test_presidential_only(self):
+        w, poll, _ = wl()
+        self.assertEqual(w.hexes(), ["adfdf8", "adfdf9", "af83f3"])
+        self.assertEqual(poll.union(), ["adfdf8", "adfdf9", "af83f3"])
         self.assertEqual(w.why("af83f3"), "presidential")
-        self.assertEqual(w.why("a00001"), "law_enforcement")
-
-    def test_chunks_at_the_measured_size(self):
-        self.assertEqual(watch.MAX_PER_REQUEST, 994)
-        parts = watch.chunks([str(i) for i in range(2000)])
-        self.assertEqual([len(p) for p in parts], [994, 994, 12])
-
-    def test_trainer_and_bridge(self):
         self.assertEqual(set(watch.PRESIDENTIAL), {"adfdf8", "adfdf9", "af83f3"})
+
+    def test_the_nationwide_enforcement_watch_moved_out(self):
+        self.assertNotIn("law_enforcement", source("watch.py").split('"""', 2)[2])
+        self.assertNotIn("api.adsb.lol", source("watch.py"))
+
+    def test_the_companions_hexes_join_one_union_round(self):
+        w, poll, _ = wl()
+        poll.set_hexes("live_track_enforcement_aircraft", ["a00808", "adfdf8"])
+        s = Session([Resp(200, answer("a00808", "adfdf8")), Resp(200, mil())])
+        run(w, s)
+        self.assertEqual(len(s.urls), 2)
+        self.assertTrue(s.urls[0].endswith("/v2/icao/A00808,ADFDF8,ADFDF9,AF83F3"))
+        self.assertEqual([o.identity for o in w.observations()], ["adfdf8"])   # its own hexes only
+        self.assertEqual([o.identity for o in poll.hex_observations("live_track_enforcement_aircraft")],
+                         ["a00808", "adfdf8"])
 
 
 class Fetch(unittest.TestCase):
-    def run_(self, w, session):
-        asyncio.run(w.async_fetch(session, 1789000000.0))
-
     def test_one_round(self):
-        w, c = wl(["a00001"])
-        s = Session([Resp(200, answer("a00001", "adfdf8")), Resp(200, mil())])
+        w, poll, c = wl()
+        s = Session([Resp(200, answer("adfdf8")), Resp(200, mil())])
         self.assertTrue(w.due())
-        self.run_(w, s)
-        self.assertEqual(len(s.urls), 2)
+        run(w, s)
         self.assertEqual(s.urls[1], "https://opendata.adsb.fi/api/v2/mil")
-        self.assertTrue(s.urls[0].startswith("https://opendata.adsb.fi/api/v2/icao/ADFDF8,ADFDF9,AF83F3,A00001"))
-        self.assertEqual(sorted(o.identity for o in w.observations()), ["a00001", "adfdf8"])
+        self.assertEqual([o.identity for o in w.observations()], ["adfdf8"])
         self.assertEqual(w.status, "ok")
         self.assertFalse(w.due())
         c.t += watch.INTERVAL_S
         self.assertTrue(w.due())
 
-    def test_two_chunks_both_read(self):
-        law = ["a%05x" % i for i in range(1000)]
-        w, _ = wl(law)
-        s = Session([Resp(200, answer("a00001")), Resp(200, answer("a003e7")), Resp(200, mil())])
-        self.run_(w, s)
-        self.assertEqual(len(s.urls), 3)
-        self.assertEqual(sorted(o.identity for o in w.observations()), ["a00001", "a003e7"])
-
     def test_failure_keeps_the_last_answer_until_stale(self):
-        w, c = wl(["a00001"])
-        self.run_(w, Session([Resp(200, answer("a00001")), Resp(200, mil())]))
+        w, poll, c = wl()
+        run(w, Session([Resp(200, answer("adfdf8")), Resp(200, mil())]))
         c.t += watch.INTERVAL_S
-        self.run_(w, Session([Resp(503)]))
-        self.assertEqual(w.status, "HTTP 503")
+        run(w, Session([Resp(503)]))
+        self.assertTrue(w.status.startswith("failed"))
         self.assertEqual(len(w.observations()), 1)
         c.t += watch.STALE_S
         self.assertEqual(w.observations(), [])
 
     def test_429_backs_the_circle_off_too(self):
-        c = Clock()
-        b = adsb.Backoff(clock=c, wall=c)
-        w, _ = wl(["a00001"], clock=c, backoff=b)
-        self.run_(w, Session([Resp(429, headers={"Retry-After": "300"})]))
-        self.assertIsNotNone(b.remaining("adsb.fi"))
+        w, poll, c = wl()
+        run(w, Session([Resp(429, headers={"Retry-After": "300"})]))
+        self.assertIsNotNone(poll.backoff.remaining("adsb.fi"))
         c.t += watch.INTERVAL_S
         s = Session([])
-        self.run_(w, s)                      # still backing off: not asked
+        run(w, s)                      # still backing off: nothing asked
         self.assertEqual(s.urls, [])
-        self.assertTrue(w.status.startswith("waiting"))
+        self.assertTrue(w.status.startswith("waiting") or w.status.startswith("military"))
 
 
 class Military(unittest.TestCase):
     AF1 = rec("adfdf8", lat=38.80, lon=-76.90, flight="AF1")
 
-    def round_(self, mil_payload, icao=("a00001",), status=200):
-        w, _ = wl(["a00001"])
+    def round_(self, mil_payload, icao=(), status=200):
+        w, _, _ = wl()
         s = Session([Resp(200, answer(*icao)), Resp(status, mil_payload)])
-        asyncio.run(w.async_fetch(s, 1789000000.0))
+        run(w, s)
         return w, {o.identity: w.why(o.identity) for o in w.observations()}
 
     def test_the_wing_always(self):
@@ -167,18 +159,18 @@ class Military(unittest.TestCase):
 
     def test_escort_of_af1_found_by_hex_request(self):
         near = rec("ae1111", lat=38.80, lon=-76.80, flight="BOLT1")
-        w, _ = wl(["a00001"])
+        w, _, _ = wl()
         s = Session([Resp(200, {"ac": [self.AF1], "now": 1789000000000}), Resp(200, mil(near))])
-        asyncio.run(w.async_fetch(s, 1789000000.0))
+        run(w, s)
         self.assertEqual(w.why("ae1111"), "escort")
 
     def test_distance(self):
         self.assertAlmostEqual(watch.ESCORT_KM, 10 * 1.852, places=2)
 
     def test_military_list_failure_keeps_the_hexes(self):
-        w, got = self.round_(None, status=503)
-        self.assertEqual(list(got), ["a00001"])
-        self.assertEqual(w.status, "military list HTTP 503")
+        w, got = self.round_(None, icao=("adfdf8",), status=503)
+        self.assertEqual(list(got), ["adfdf8"])
+        self.assertTrue(w.status.startswith("military list"))
 
 
 if __name__ == "__main__":

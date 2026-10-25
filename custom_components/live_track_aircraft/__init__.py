@@ -15,7 +15,8 @@ from .watch import WatchList
 from .airport_download import TICK as AIRPORT_TICK, AirportDownloader
 from .const import CONF_LATITUDE, CONF_LONGITUDE, DOMAIN
 from .coordinator import AircraftCoordinator
-from .enforcement import TICK as LIST_TICK, async_refresh_list, async_setup_list, watched_hexes
+from .enforcement import TICK as LIST_TICK, async_refresh_list, async_setup_list, publish_federal
+from saw_livetrack import adsb_poll
 from .registrations import async_load_registry, async_refresh_registry
 from .route_download import TICK as ROUTE_TICK, RouteDownloader
 from .web import register as register_views
@@ -57,8 +58,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # the downloaders: adsbdb limits by address, so every entry shares one
     # budget and one in-memory cache. Set before the first poll.
     coordinator.adsbdb = hass.data.setdefault(_ADSBDB_KEY, AdsbdbRoutes())
-    coordinator.watch = hass.data.setdefault(
-        _WATCH_KEY, WatchList(lambda: watched_hexes(hass)))
+    # The instance's ONE adsb.fi poll (saw_livetrack.adsb_poll, backlog 297),
+    # shared with Live Track Enforcement Aircraft under its SAW-neutral key:
+    # one 429 backoff for the house's IP, one union hex round a minute.
+    coordinator.poll = adsb_poll.shared(hass.data)
+    watch = hass.data.get(_WATCH_KEY)
+    if watch is None:
+        watch = hass.data[_WATCH_KEY] = WatchList(coordinator.poll)
+    coordinator.watch = watch
     # The EnforcementAircraft list (enforcement.py, backlog 299): the cached
     # copy before the first poll, the release checked in the background, then
     # every hour (the reader holds a good check for 6 h).
@@ -89,9 +96,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     lat = opts.get(CONF_LATITUDE)
     lon = opts.get(CONF_LONGITUDE)
     await async_load_registry(hass, lat, lon)
+    # The federal law-enforcement registrants, for Live Track Enforcement
+    # Aircraft's nationwide watch (enforcement.publish_federal, backlog 297).
+    publish_federal(hass)
 
     async def _refresh_registry(_now=None) -> None:
-        await async_refresh_registry(hass, lat, lon)
+        if await async_refresh_registry(hass, lat, lon):
+            publish_federal(hass)
 
     # Fire-and-forget at startup so a stale table is replaced without holding
     # setup up, then a daily tick that only checks the cache age - the real
@@ -150,7 +161,11 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unloaded:
-        hass.data[DOMAIN].pop(entry.entry_id, None)
+        coordinator = hass.data[DOMAIN].pop(entry.entry_id, None)
+        # Its claims go, so Live Track Enforcement Aircraft draws those aircraft again.
+        poll = getattr(coordinator, "poll", None)
+        if poll is not None:
+            poll.release(coordinator.claim_key)
     return unloaded
 
 

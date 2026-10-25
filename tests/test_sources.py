@@ -62,6 +62,14 @@ class Order(unittest.TestCase):
     def test_adsb_fi_is_asked_first(self):
         self.assertEqual([n for n, _ in const.SOURCE_URLS], ["adsb.fi", "adsb.lol"])
 
+    def test_the_shared_poll_asks_the_same_urls(self):
+        # backlog 297: the circle goes through saw_livetrack.adsb_poll, which holds the URLs
+        from saw_livetrack import adsb_poll as ap
+        self.assertEqual(dict(const.SOURCE_URLS), {n: ap.CIRCLE_URLS[n] for n, _ in const.SOURCE_URLS})
+        self.assertEqual(adsb.SOURCES, ("adsb.fi", "adsb.lol"))
+        self.assertIs(base.SourceError, ap.SourceError)
+        self.assertIs(base.Observation, ap.Observation)
+
     def test_a_full_first_answer_asks_nobody_else(self):
         s = Session()
         name, obs = fetch(s, min_expected=100)
