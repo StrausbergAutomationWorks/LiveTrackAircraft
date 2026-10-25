@@ -642,6 +642,15 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 continue
             out[k] = v
 
+        # ! THE LIST'S AGENCY WHEN THE REGISTRY GIVES NONE (backlog 300, Lee 2026-10-25 01:42: the agency in
+        # the hover "in either integration"): a sourced listed aircraft whose FAA owner is not law enforcement
+        # (Florida State Guard's 12 and one FHP aircraft, measured 2026-10-25; a front company) still names
+        # its agency, as in Live Track Enforcement Aircraft. The registry's short name wins when it has one.
+        if not out.get("operator_short") and elist is not None and elist.is_sourced(obs.identity):
+            listed = elist.entry(obs.identity)
+            if listed is not None and listed.agency:
+                out["operator_short"] = listed.agency
+
         # --- identifiers for the shared map (D11) -----------------------
         # ! icao24 is our identity; registration ONLY as the FAA registry
         # states it for this Mode S code, never the feed's `r` (map_keys.py).

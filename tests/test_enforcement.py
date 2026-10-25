@@ -127,7 +127,15 @@ class Wiring(unittest.TestCase):
 
     def test_manifest_pin(self):
         req = json.loads(source("manifest.json"))["requirements"]
-        self.assertIn("saw-livetrack[zones]>=0.2.14,<0.3", req)   # covered circles, 0.2.14
+        self.assertIn("saw-livetrack[zones]>=0.2.15,<0.3", req)   # the FAA registry, 0.2.15
+
+    def test_the_lists_agency_when_the_registry_gives_none(self):
+        # backlog 300: the registry's short name first, the list's agency for a sourced aircraft without one
+        src = source("coordinator.py")
+        i = src.index('if not out.get("operator_short") and elist is not None and elist.is_sourced(obs.identity):')
+        self.assertGreater(i, src.index('for k in ("operator_short", "identified_by"):'))
+        self.assertGreater(i, src.index("for k, v in feed_extra.items():"))
+        self.assertIn('out["operator_short"] = listed.agency', src)
 
     def test_the_circle_is_asked_as_this_entry(self):
         # 0.2.14: the answer is kept under this entry's name so a circle inside it costs no request
