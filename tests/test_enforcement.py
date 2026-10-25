@@ -101,10 +101,17 @@ class Wiring(unittest.TestCase):
         self.assertIn("lights = icons.lights_for(gov_cat)", src)
         self.assertIn("if elist is not None and elist.is_sourced(obs.identity):", src)
         self.assertIn("lights = icons.LIGHTS_GLOW", src)
-        # sourced only: no detected status turns lights on or off here (Lee 2026-10-24 17:00)
-        self.assertNotIn("DETECTED", src)
-        self.assertNotIn("elist.status(", src)
-        self.assertNotIn("elist.hexes(", src)
+        # sourced only: no detected status turns lights on or off here (Lee 2026-10-24 17:00).
+        # Scoped to the lights block since 2026-10-25: the cap (cap.py) exempts detected
+        # hexes from being DROPPED, which is not a lights decision.
+        start = src.index("lights = icons.lights_for(gov_cat)")
+        block = src[start:src.index('out["entity_picture"]', start)]
+        self.assertNotIn("DETECTED", block)
+        self.assertNotIn("elist.status(", block)
+        self.assertNotIn("elist.hexes(", block)
+        # and the only other use of a list status is the cap's exemption
+        self.assertEqual(src.count("elist.status("), 1)
+        self.assertIn("elist.status(h) in (SOURCED, DETECTED)", src)
 
     def test_set_before_the_first_poll(self):
         src = source("__init__.py")

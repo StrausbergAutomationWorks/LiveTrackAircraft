@@ -80,6 +80,8 @@ class AircraftInRange(SensorEntity):
             "published_count": data["published"],
             # True when the cap bit and markers are missing from the map.
             "capped": data["capped"],
+            # Listed aircraft kept beyond the cap (cap.py): 0 unless it bites.
+            "listed_over_cap": data.get("listed_over_cap", 0),
             # ! Which source answered. A rate-limited adsb.lol falls through
             # to adsb.fi silently, and without this there is no way to notice
             # you have been running on the backup feed for a week.

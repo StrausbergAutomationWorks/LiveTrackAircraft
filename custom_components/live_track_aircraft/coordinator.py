@@ -46,6 +46,8 @@ from .adsbdb import choose as adsbdb_choose
 from .airport_display import shown_code, shown_name
 from .eta import estimated_arrival
 from .watch import PRESIDENTIAL
+from .cap import apply_cap
+from saw_livetrack.enforcement_list import DETECTED, SOURCED
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -210,15 +212,18 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # bites it says so. Silent truncation is indistinguishable from a
         # dead feed - measured on Live Track Ships, a cap of 50 truncated 36%
         # of samples. Nearest first, so what survives is what is overhead.
-        capped = False
-        if in_range > self.max_aircraft:
-            capped = True
+        # ! Listed aircraft (sourced or detected_unconfirmed) are exempt and
+        # kept wherever they are in the circle (cap.py, Lee 2026-10-25).
+        elist = self.enforcement_list
+        listed = ((lambda h: elist.status(h) in (SOURCED, DETECTED))
+                  if elist is not None else (lambda h: False))
+        aircraft, capped, listed_over_cap = apply_cap(aircraft, self.max_aircraft, listed)
+        if capped:
             _LOGGER.warning(
                 "Live Track Aircraft: %s aircraft in radius, publishing the "
-                "nearest %s. Raise max_aircraft if this is not what you want.",
-                in_range, self.max_aircraft)
-            nearest = sorted(aircraft.values(), key=lambda r: r["distance_km"])
-            aircraft = {r["identity"]: r for r in nearest[: self.max_aircraft]}
+                "nearest %s and %s listed beyond them. Raise max_aircraft if "
+                "this is not what you want.",
+                in_range, self.max_aircraft, listed_over_cap)
 
         # ! THE WATCH LIST, ADDED AFTER THE CAP (watch.py, Lee 2026-10-21):
         # the presidential airframes, the 89th Airlift Wing and escorts,
@@ -264,6 +269,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             "in_range": in_range,
             "published": len(aircraft),
             "capped": capped,
+            "listed_over_cap": listed_over_cap,
             "source": source_name,
             # {source: resume time} for sources skipped after HTTP 429;
             # empty when none is. Backlog item 244.
