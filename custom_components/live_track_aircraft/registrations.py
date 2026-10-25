@@ -329,6 +329,7 @@ class GovRegistry:
         self._loaded = False
         self._warned_unloaded = False
         self._law: list[str] | None = None
+        self._fed: list[str] | None = None
         self.schema = 0
 
     def load(self, path: str | None = None) -> int:
@@ -347,6 +348,7 @@ class GovRegistry:
                 raise ValueError("no 'aircraft' mapping in payload")
             self._table = table
             self._law = None
+            self._fed = None
             self.schema = payload.get("schema", 0) if isinstance(payload.get("schema"), int) else 0
             self._loaded = True
             _LOGGER.debug("Loaded %s government aircraft from %s",
@@ -418,6 +420,18 @@ class GovRegistry:
                                if row and len(row) > 1
                                and categorise(row[1]) in LAW_ENFORCEMENT)
         return self._law
+
+    def federal_law_enforcement_hexes(self) -> list[str]:
+        """Every hex whose owner is FEDERAL law enforcement (watch.py, 2026-10-24).
+
+        The EnforcementAircraft list's federal rule names the same registrants;
+        asking the table as well keeps a registration newer than the list's
+        build watched. Worked out once per table."""
+        if self._fed is None:
+            self._fed = sorted(h.lower() for h, row in self._table.items()
+                               if row and len(row) > 1
+                               and categorise(row[1]) == "Federal law enforcement")
+        return self._fed
 
 
 REGISTRY = GovRegistry()

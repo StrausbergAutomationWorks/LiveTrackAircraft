@@ -23,6 +23,8 @@ from datetime import timedelta
 
 from saw_livetrack import enforcement_list as el
 
+from .registrations import REGISTRY
+
 # Asked every hour; the reader itself holds a good check for 6 h, a failed one for 15 min.
 TICK = timedelta(hours=1)
 
@@ -48,3 +50,20 @@ async def async_setup_list(hass) -> el.EnforcementList:
 
 async def async_refresh_list(hass, reader: el.EnforcementList) -> str:
     return await reader.refresh(list_session(hass), hass.async_add_executor_job)
+
+
+def watched_hexes(hass) -> list[str]:
+    """What the nationwide watch (watch.py) asks for besides the presidential airframes.
+
+    ! POLICE NOT ON THE LIST ARE NOT WATCHED NATIONWIDE (Lee 2026-10-24 20:55;
+    Enforcement SSOT section 3.5 step 2): the list's sourced and detected
+    entries, plus every federal law-enforcement registrant in the FAA table.
+    A state or local police aircraft not on the list is drawn only inside the
+    circle. Measured that evening: 1,160 law-enforcement hexes in the box's
+    table, 871 of them state and local and not on the list.
+    """
+    hexes = set(REGISTRY.federal_law_enforcement_hexes())
+    reader = hass.data.get(el.STORE_KEY)
+    if reader is not None:
+        hexes |= reader.hexes(el.SOURCED, el.DETECTED)
+    return sorted(hexes)

@@ -48,6 +48,31 @@ class Reader(unittest.TestCase):
             self.assertIs(hass.data[el.STORE_KEY], a)
 
 
+class Watched(unittest.TestCase):
+    """Police not on the list are not watched nationwide (Lee 2026-10-24 20:55)."""
+
+    def test_list_plus_federal_registrants(self):
+        class Reg:
+            def federal_law_enforcement_hexes(self):
+                return ["a00004", "a1b2c3"]
+        old, enf.REGISTRY = enf.REGISTRY, Reg()
+        try:
+            hass = Hass(tempfile.gettempdir())
+            self.assertEqual(enf.watched_hexes(hass), ["a00004", "a1b2c3"])          # no list yet
+            reader = el.EnforcementList(os.path.join(tempfile.gettempdir(), "x.json"))
+            reader._install(json.dumps({"name": "EnforcementAircraft", "schema": 1, "aircraft": [
+                {"hex": "a1b2c3", "status": "sourced"}, {"hex": "abc123", "status": "detected_unconfirmed"},
+                {"hex": "def456", "status": "cleared"}]}).encode())
+            hass.data[el.STORE_KEY] = reader
+            self.assertEqual(enf.watched_hexes(hass), ["a00004", "a1b2c3", "abc123"])  # cleared stays out
+        finally:
+            enf.REGISTRY = old
+
+    def test_wired(self):
+        self.assertIn("WatchList(lambda: watched_hexes(hass))", source("__init__.py"))
+        self.assertNotIn("WatchList(REGISTRY.law_enforcement_hexes)", source("__init__.py"))
+
+
 class Lights(unittest.TestCase):
     def test_picture_of_a_listed_police_aircraft(self):
         url = icons.picture_url("a7", "police", 0.78, lights=icons.LIGHTS_GLOW)

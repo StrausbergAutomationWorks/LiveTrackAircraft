@@ -6,9 +6,12 @@ Who is on it:
     proves nothing about who is aboard): adfdf8 and adfdf9, the VC-25As, and
     af83f3, the VC-25B "Bridge". The 747-8 trainer stays off until its hex is
     measured;
-  * every law-enforcement aircraft in the FAA government table
-    (registrations.LAW_ENFORCEMENT: DHS, CBP, ICE, FBI, USMS, state and
-    local police, the Coast Guard).
+  * since 2026-10-24 (Lee 20:55), the EnforcementAircraft list's sourced and
+    detected entries and every FEDERAL law-enforcement registrant in the FAA
+    table (enforcement.watched_hexes). State and local police not on the list
+    are drawn only inside the circle. It read: every law-enforcement aircraft
+    in the FAA government table (registrations.LAW_ENFORCEMENT: DHS, CBP, ICE,
+    FBI, USMS, state and local police, the Coast Guard).
 
 ! ONE REQUEST A MINUTE ANSWERS ALL OF IT. Measured 2026-10-22 00:3x CDT:
 adsb.fi's /v2/icao/<hex>,<hex>,... took all 994 hexes (3 + 991) in one

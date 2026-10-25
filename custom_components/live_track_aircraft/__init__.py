@@ -15,7 +15,7 @@ from .watch import WatchList
 from .airport_download import TICK as AIRPORT_TICK, AirportDownloader
 from .const import CONF_LATITUDE, CONF_LONGITUDE, DOMAIN
 from .coordinator import AircraftCoordinator
-from .enforcement import TICK as LIST_TICK, async_refresh_list, async_setup_list
+from .enforcement import TICK as LIST_TICK, async_refresh_list, async_setup_list, watched_hexes
 from .registrations import async_load_registry, async_refresh_registry
 from .route_download import TICK as ROUTE_TICK, RouteDownloader
 from .web import register as register_views
@@ -58,7 +58,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # budget and one in-memory cache. Set before the first poll.
     coordinator.adsbdb = hass.data.setdefault(_ADSBDB_KEY, AdsbdbRoutes())
     coordinator.watch = hass.data.setdefault(
-        _WATCH_KEY, WatchList(REGISTRY.law_enforcement_hexes))
+        _WATCH_KEY, WatchList(lambda: watched_hexes(hass)))
     # The EnforcementAircraft list (enforcement.py, backlog 299): the cached
     # copy before the first poll, the release checked in the background, then
     # every hour (the reader holds a good check for 6 h).

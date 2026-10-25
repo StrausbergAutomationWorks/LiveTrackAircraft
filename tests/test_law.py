@@ -166,6 +166,15 @@ class Label(unittest.TestCase):
         r._law = None
         self.assertEqual(r.law_enforcement_hexes(), [])
 
+    def test_federal_watch_hexes(self):
+        r = reg.GovRegistry()
+        r._table = {"A00002": ["N2", "ILLINOIS STATE POLICE", "IL"],
+                    "A00001": ["N1", "UNITED STATES COAST GUARD", ""],
+                    "A00004": ["N4", "DEPARTMENT OF HOMELAND SECURITY", "DC"],
+                    "A00003": ["N3", "NASA", "CA"]}
+        r._loaded = True
+        self.assertEqual(r.federal_law_enforcement_hexes(), ["a00004"])
+
 
 if __name__ == "__main__":
     unittest.main()
