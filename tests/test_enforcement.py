@@ -127,7 +127,12 @@ class Wiring(unittest.TestCase):
 
     def test_manifest_pin(self):
         req = json.loads(source("manifest.json"))["requirements"]
-        self.assertIn("saw-livetrack[zones]>=0.2.13,<0.3", req)   # adsb_poll, backlog 297
+        self.assertIn("saw-livetrack[zones]>=0.2.14,<0.3", req)   # covered circles, 0.2.14
+
+    def test_the_circle_is_asked_as_this_entry(self):
+        # 0.2.14: the answer is kept under this entry's name so a circle inside it costs no request
+        self.assertIn("consumer=self.claim_key", source("coordinator.py"))
+        self.assertIn("consumer=consumer)", source("sources/adsb.py"))
 
 
 if __name__ == "__main__":

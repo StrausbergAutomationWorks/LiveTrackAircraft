@@ -161,6 +161,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             source_name, observations = await fetch(
                 self._session, self.latitude, self.longitude, self.radius_km, now,
                 min_expected=short_floor(self._last_obs_count), poll=self.poll,
+                consumer=self.claim_key,
             )
         except SourceError as err:
             self._consecutive_failures += 1

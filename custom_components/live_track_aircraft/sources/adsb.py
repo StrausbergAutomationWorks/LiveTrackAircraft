@@ -39,17 +39,20 @@ SOURCES: tuple[str, ...] = tuple(name for name, _ in SOURCE_URLS)
 
 async def fetch(session, latitude: float, longitude: float, radius_km: float, now: float,
                 backoff: Backoff | None = None, min_expected: int | None = None,
-                poll: _ap.Poll | None = None) -> tuple[str, list[Observation]]:
+                poll: _ap.Poll | None = None,
+                consumer: str | None = None) -> tuple[str, list[Observation]]:
     """Every aircraft in the circle from the first source that answers fully and is not backing off.
 
     Returns the source name and its observations; raises SourceError when every source failed or is
     backing off. poll: the instance's shared poll (the coordinator passes it); without one, a poll of
-    its own around `backoff` (the tests).
+    its own around `backoff` (the tests). consumer: this entry's name in the poll (saw-livetrack
+    0.2.14), so its answer can answer a circle that lies inside it at no cost, and a circle of its own
+    that lies inside another's is answered from that.
     """
     if poll is None:
         poll = _ap.Poll(backoff=backoff) if backoff is not None else _ap.Poll()
     return await poll.circle(session, latitude, longitude, radius_km, now, sources=SOURCES,
-                             min_expected=min_expected, user_agent=USER_AGENT)
+                             min_expected=min_expected, user_agent=USER_AGENT, consumer=consumer)
 
 
 __all__ = ["Backoff", "Observation", "SourceError", "SOURCES", "fetch", "short_floor"]
