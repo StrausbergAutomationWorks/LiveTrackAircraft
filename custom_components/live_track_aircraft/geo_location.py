@@ -27,30 +27,20 @@ cannot occur here at all.
 
 What is given up: renaming, hiding, area assignment and voice exposure, on
 markers that exist for as long as an aircraft is overhead.
-
-! THE PLATFORM WRITES, NOT EACH ENTITY (2026-10-26). Every aircraft's state is
-written from the platform's one coordinator listener, all of them in that
-callback unless a write slice is set (slices.py: a test knob for the map card's
-burst, ALL by default). An entity that also listened would write twice.
 """
 
 from __future__ import annotations
 
-import logging
-from typing import Any, Callable
+from typing import Any
 
 from homeassistant.components.geo_location import GeolocationEvent
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import Event, HomeAssistant, callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.event import async_call_later
 
 from .adsbdb import ATTRIBUTION as ADSBDB_ATTRIBUTION
 from .const import ATTRIBUTION, DOMAIN
 from .coordinator import AircraftCoordinator
-from .slices import ALL, EVENT as SLICE_EVENT, parse_size, plan
-
-_LOGGER = logging.getLogger(__name__)
 
 # Attributes copied straight through when present. Absent keys are OMITTED.
 _PASSTHROUGH = (
@@ -136,41 +126,15 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Create entities as aircraft appear, remove them as they depart, write them."""
+    """Create entities as aircraft appear and remove them as they depart."""
     coordinator: AircraftCoordinator = hass.data[DOMAIN][entry.entry_id]
     live: dict[str, Aircraft] = {}
-    # ! The write slice (slices.py): ALL unless the event sets it; never stored.
-    slicing: dict[str, int | None] = {"size": ALL}
-    pending: list[Callable[[], None]] = []
-
-    @callback
-    def _cancel_pending() -> None:
-        while pending:
-            pending.pop()()
-
-    @callback
-    def _write(part: list[str]) -> None:
-        for identity in part:
-            entity = live.get(identity)
-            # ! Gone since the plan was made, or still being added (an entity
-            # writes its first state itself when its add finishes).
-            if entity is not None and entity.hass is not None:
-                entity.async_write_ha_state()
-
-    def _later(part: list[str]) -> Callable[[Any], None]:
-        @callback
-        def _fire(_now: Any) -> None:
-            _write(part)
-
-        return _fire
 
     @callback
     def _sync() -> None:
-        _cancel_pending()
         current = set((coordinator.data or {}).get("aircraft") or {})
 
         new = [i for i in current if i not in live]
-        fresh = set(new)
         if new:
             entities = [Aircraft(coordinator, i) for i in new]
             live.update(zip(new, entities))
@@ -184,42 +148,8 @@ async def async_setup_entry(
             entity = live.pop(gone)
             entity.hass.async_create_task(entity.async_remove(force_remove=True))
 
-        # ! THE WRITES (slices.py). They were each entity's own coordinator
-        # listener, so every aircraft wrote in this same callback; with the
-        # slice at ALL that is still exactly what happens. An aircraft added
-        # just now is left out: it writes its first state on add. Each write
-        # reads the record then, which is the fix, not the write time.
-        due = [i for i in live if i not in fresh]
-        interval = (coordinator.update_interval.total_seconds()
-                    if coordinator.update_interval else 0.0)
-        for delay, part in plan(due, slicing["size"], interval):
-            if delay <= 0:
-                _write(part)
-            else:
-                pending.append(async_call_later(hass, delay, _later(part)))
-
-    @callback
-    def _set_slice(event: Event) -> None:
-        target = event.data.get("entry_id")
-        if target is not None and target != entry.entry_id:
-            return
-        try:
-            size = parse_size(event.data.get("size", "all"))
-        except ValueError as err:
-            _LOGGER.warning("%s: %s; write slice unchanged", entry.title, err)
-            return
-        slicing["size"] = size
-        # ! WARNING, not info: a knob that changes live behaviour belongs in
-        # the log at the default level.
-        _LOGGER.warning(
-            "%s: write slice set to %s (a test knob; a restart returns it to all)",
-            entry.title, "all" if size is ALL else size,
-        )
-
     _sync()
     entry.async_on_unload(coordinator.async_add_listener(_sync))
-    entry.async_on_unload(hass.bus.async_listen(SLICE_EVENT, _set_slice))
-    entry.async_on_unload(_cancel_pending)
 
 
 class Aircraft(GeolocationEvent):
@@ -309,5 +239,7 @@ class Aircraft(GeolocationEvent):
                 attrs[key] = rec[key]
         return attrs
 
-    # ! No async_added_to_hass listener: the platform writes every aircraft
-    # (async_setup_entry, slices.py). One here too would write each twice.
+    async def async_added_to_hass(self) -> None:
+        self.async_on_remove(
+            self._coordinator.async_add_listener(self.async_write_ha_state)
+        )
