@@ -6,8 +6,10 @@ any glue.
 
 ## Status
 
-**No code yet.** This repository holds its identity and licence while the
-integration is written.
+**Pre-release.** The integration runs live on its development instance:
+positions, enrichment, routes and icons turned to each aircraft's track. It
+has not been released yet, and installation and setup are not documented
+here yet.
 
 ## Why it exists
 
@@ -28,6 +30,24 @@ removes that layer.
 
 Part of the Live Track family, which shares one map vocabulary so several
 integrations can render on a single map.
+
+## Map card
+
+Aircraft are drawn by [LiveTrackMapCard](https://github.com/StrausbergAutomationWorks/LiveTrackMapCard)
+(`custom:live-track-map-card`), the one map every Live Track integration
+renders on. It turns each aircraft's icon to its track, labels it with
+its `marker_label`, and moves it between real fixes.
+
+Give it the aircraft with
+[auto-entities](https://github.com/thomasloven/lovelace-auto-entities),
+filtering on `domain: geo_location` and
+`attributes: {source: live_track_aircraft}`.
+
+The card is not yet installed with this integration; add it to your
+dashboard's resources yourself.
+
+Any other map card that shows `geo_location` entities shows the aircraft too,
+as plain markers.
 
 ## Live Track Enforcement Aircraft
 
