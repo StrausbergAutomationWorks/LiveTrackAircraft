@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from pathlib import Path
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -19,9 +20,11 @@ from .enforcement import TICK as LIST_TICK, async_refresh_list, async_setup_list
 from saw_livetrack import adsb_poll
 from .registrations import async_load_registry, async_refresh_registry
 from .route_download import TICK as ROUTE_TICK, RouteDownloader
+from .shared_map_card import async_offer_map_card, async_withdraw_map_card
 from .web import register as register_views
 
 PLATFORMS: list[Platform] = [Platform.GEO_LOCATION, Platform.SENSOR]
+HERE = Path(__file__).parent
 _DL_KEY = f"{DOMAIN}_route_download"
 _AIR_KEY = f"{DOMAIN}_airport_download"
 _ADSBDB_KEY = f"{DOMAIN}_adsbdb"
@@ -51,6 +54,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Serves the rotated marker silhouettes. Registered once; a second entry
     # re-registering the same view is harmless.
     register_views(hass)
+    # LiveTrackMapCard, shipped in frontend/: served once per run, offered, and
+    # the one dashboard resource row reconciled (backlog 291). Never raises.
+    await async_offer_map_card(hass, DOMAIN, HERE / "frontend")
 
     coordinator = AircraftCoordinator(hass, entry)
     # adsbdb routes for callsigns FiledRoutesDB does not hold (adsbdb.py,
@@ -158,7 +164,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload a config entry."""
+    """Unload a config entry. The map card is NOT withdrawn here: every restart
+    and reload unloads, and that is not an uninstall (card SSOT 67.6);
+    async_remove_entry does it."""
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unloaded:
         coordinator = hass.data[DOMAIN].pop(entry.entry_id, None)
@@ -167,6 +175,13 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if poll is not None:
             poll.release(coordinator.claim_key)
     return unloaded
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """An area was deleted. The domain's LAST entry withdraws the map card."""
+    if not [e for e in hass.config_entries.async_entries(DOMAIN)
+            if e.entry_id != entry.entry_id]:
+        await async_withdraw_map_card(hass, DOMAIN)
 
 
 async def _reload(hass: HomeAssistant, entry: ConfigEntry) -> None:

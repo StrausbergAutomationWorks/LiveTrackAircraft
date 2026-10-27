@@ -1,0 +1,5 @@
+# The vendored LiveTrackMapCard bundle is committed byte for byte as released
+# (tools/vendor_card.py checks its SHA-256). The release carries CRLF pairs; with
+# core.autocrlf=true git would otherwise rewrite them to LF on commit, and the
+# repository (and HACS) would ship a file that is not the release. Backlog 291.
+custom_components/*/frontend/** -text -diff

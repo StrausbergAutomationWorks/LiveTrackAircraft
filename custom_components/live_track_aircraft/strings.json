@@ -46,5 +46,15 @@
     "error": {
       "invalid_location": "That point is not on the globe. Drag the marker onto the map."
     }
+  },
+  "issues": {
+    "map_card_yaml_resource": {
+      "title": "Add the Live Track map card to your resources",
+      "description": "Your dashboards' resources are set in YAML, so the map card cannot be registered automatically. Add this under lovelace: resources: in configuration.yaml, then restart:\n\n- url: {url}\n  type: module"
+    },
+    "map_card_duplicate_resources": {
+      "title": "The Live Track map card is registered more than once",
+      "description": "These dashboard resources also load the map card: {urls}. Only one is used and the others do nothing. Remove them in Settings > Dashboards > Resources."
+    }
   }
 }

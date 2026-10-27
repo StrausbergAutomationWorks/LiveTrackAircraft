@@ -38,13 +38,40 @@ Aircraft are drawn by [LiveTrackMapCard](https://github.com/StrausbergAutomation
 renders on. It turns each aircraft's icon to its track, labels it with
 its `marker_label`, and moves it between real fixes.
 
+**The card is installed with the integration.** This integration carries a
+released copy of the card, serves it, and registers it as a dashboard resource
+when Home Assistant starts; there is nothing to download or copy into `www`.
+Every Live Track integration does the same, and they keep exactly one resource
+row between them: the highest card version any of them carries, never a
+downgrade. A card you installed through HACS is left alone. Removing the last
+area of this integration hands the row to another Live Track integration,
+or removes it if none is left. See the card's README, section
+[Live Track](https://github.com/StrausbergAutomationWorks/LiveTrackMapCard#live-track).
+
+If your dashboards' resources are set in YAML (`lovelace: resource_mode: yaml`),
+nothing can be registered for you. A Repairs issue then gives the exact line to
+add; it looks like this, with the integration's own address in place of the
+placeholders:
+
+```yaml
+lovelace:
+  resource_mode: yaml
+  resources:
+    - url: /live_track_aircraft/map-card/<12 hex>/live-track-map-card.js?v=<version>&h=<12 hex>
+      type: module
+```
+
+If the integration's files are removed (through HACS, say) while its areas
+are still set up, and no other Live Track integration is installed, nothing is
+left to tidy the row: remove it in Settings > Dashboards > Resources. To
+install the card by hand instead, follow the card's README; the resource row
+of a hand-installed copy under `/local/` is pointed at an integration's copy
+only when that copy is a newer release.
+
 Give it the aircraft with
 [auto-entities](https://github.com/thomasloven/lovelace-auto-entities),
 filtering on `domain: geo_location` and
 `attributes: {source: live_track_aircraft}`.
-
-The card is not yet installed with this integration; add it to your
-dashboard's resources yourself.
 
 Any other map card that shows `geo_location` entities shows the aircraft too,
 as plain markers.
