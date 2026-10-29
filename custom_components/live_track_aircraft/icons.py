@@ -72,7 +72,8 @@ def picture_url(key: str, tone: str = "default",
     ! TONE AND WEIGHT RIDE AS QUERY PARAMETERS, and the query is part of the
     cache key - a government aircraft and an airliner on the same silhouette
     are two different cached images, as they should be.
-    lights: False, True (paired with the tone), LIGHTS_GLOW or LIGHTS_WIGWAG;
-    the URL carries it as l=g or l=w (saw-livetrack 0.2.12).
+    lights: False, True (paired with the tone), LIGHTS_GLOW, LIGHTS_WIGWAG or
+    LIGHTS_CHARTER; the URL carries it as l=g, l=w (saw-livetrack 0.2.12) or
+    l=c (0.2.16).
     """
     return "%s/%s/fixed.svg?%s" % (URL_BASE, key, _lib.picture_query(tone, weight, lights, ART_REV))

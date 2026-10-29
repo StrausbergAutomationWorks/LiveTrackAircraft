@@ -91,8 +91,13 @@ class Lights(unittest.TestCase):
 
     def test_view_reads_every_mode(self):
         self.assertIn("icons.lights_from_query(request.query.get(\"l\"))", source("web.py"))
-        self.assertEqual([icons.lights_from_query(v) for v in ("1", "g", "w", "x", None)],
-                         [True, "glow", "wigwag", False, False])
+        self.assertEqual([icons.lights_from_query(v) for v in ("1", "g", "w", "c", "x", None)],
+                         [True, "glow", "wigwag", "charter", False, False])
+
+    def test_picture_of_a_charter(self):
+        url = icons.picture_url("a320", "default", 0.85, lights=icons.LIGHTS_CHARTER)
+        self.assertIn("l=c", url)
+        self.assertNotIn("l=g", url)
 
 
 class Wiring(unittest.TestCase):
@@ -107,11 +112,15 @@ class Wiring(unittest.TestCase):
         start = src.index("lights = icons.lights_for(gov_cat)")
         block = src[start:src.index('out["entity_picture"]', start)]
         self.assertNotIn("DETECTED", block)
-        self.assertNotIn("elist.status(", block)
         self.assertNotIn("elist.hexes(", block)
+        # ! backlog 313 (Lee 2026-10-29): the ONE list status read in the lights block is the charter's.
+        self.assertEqual(block.count("elist.status("), 1)
+        self.assertIn("elif elist is not None and elist.status(obs.identity) == CHARTER:", block)
+        self.assertIn("lights = icons.LIGHTS_CHARTER", block)
+        self.assertLess(block.index("lights = icons.LIGHTS_GLOW"), block.index("lights = icons.LIGHTS_CHARTER"))
         # and the only other use of a list status is the cap's exemption
-        self.assertEqual(src.count("elist.status("), 1)
-        self.assertIn("elist.status(h) in (SOURCED, DETECTED)", src)
+        self.assertEqual(src.count("elist.status("), 2)
+        self.assertIn("elist.status(h) in WATCHED", src)
 
     def test_set_before_the_first_poll(self):
         src = source("__init__.py")
@@ -132,9 +141,29 @@ class Wiring(unittest.TestCase):
         self.assertIn('"enforcement_list": getattr(self._coordinator.enforcement_list, "summary", None)',
                       source("sensor.py"))
 
+    def test_charter_label_comes_first(self):
+        # backlog 313 (Lee 2026-10-29 01:18): _marker_label and its helpers, compiled from the source and called.
+        import ast
+        import re as _re
+        from types import SimpleNamespace
+        from saw_livetrack import enforcement_list as el
+        src = source("coordinator.py")
+        tree = ast.parse(src)
+        keep = [n for n in tree.body if (isinstance(n, ast.FunctionDef) and n.name in ("_marker_label", "_shorten"))
+                or (isinstance(n, ast.Assign) and any(getattr(t, "id", "") in ("_LOOKS_LIKE_REGISTRATION", "MAX_LABEL_CHARS")
+                                                       for t in n.targets))]
+        ns = {"re": _re, "CHARTER": el.CHARTER, "CHARTER_LABEL": el.CHARTER_LABEL, "Any": object, "Observation": object}
+        exec(compile(ast.Module(body=keep, type_ignores=[]), "coordinator.py", "exec"), ns)
+        obs = SimpleNamespace(callsign="GXA301", identity="a2c4e0")
+        self.assertEqual(ns["_marker_label"](obs, {"enforcement_status": "ice_air_charter"}), "ICE Air Charter?")
+        self.assertEqual(ns["_marker_label"](obs, {}), "GXA301")
+        self.assertEqual(ns["_marker_label"](obs, {"enforcement_status": "sourced"}), "GXA301")
+        start = src.index("elif elist is not None and elist.status(obs.identity) == CHARTER:")
+        self.assertIn('out["enforcement_status"] = CHARTER', src[start:src.index('out["entity_picture"]', start)])
+
     def test_manifest_pin(self):
         req = json.loads(source("manifest.json"))["requirements"]
-        self.assertIn("saw-livetrack[zones]>=0.2.15,<0.3", req)   # the FAA registry, 0.2.15
+        self.assertIn("saw-livetrack[zones]>=0.2.16,<0.3", req)   # the ICE Air charter status and glow, 0.2.16
 
     def test_the_lists_agency_when_the_registry_gives_none(self):
         # backlog 300: the registry's short name first, the list's agency for a sourced aircraft without one

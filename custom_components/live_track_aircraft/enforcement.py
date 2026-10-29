@@ -3,7 +3,9 @@
 ! EVERY SOURCED LISTED AIRCRAFT FLASHES RED/BLUE (Lee 2026-10-24 02:13): the
 glow over its owner-class fill, so a listed state or local police aircraft
 loses the blue wig-wag. Police not on the list keep it. A detected_unconfirmed
-entry is left to the owner rules (Lee 17:00). The decision is the
+entry is left to the owner rules (Lee 17:00). An ice_air_charter entry
+(backlog 313, Lee 2026-10-29) takes the library's steady charter glow, not
+the flash: the airframe flies other work too. The decision is the
 coordinator's; this module only holds the reader and its session.
 
 ! THE READER IS saw_livetrack.enforcement_list, ONE PER INSTANCE, shared with

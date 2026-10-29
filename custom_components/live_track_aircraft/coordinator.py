@@ -47,7 +47,7 @@ from .airport_display import shown_code, shown_name
 from .eta import estimated_arrival
 from .watch import PRESIDENTIAL
 from .cap import apply_cap
-from saw_livetrack.enforcement_list import DETECTED, SOURCED
+from saw_livetrack.enforcement_list import CHARTER, CHARTER_LABEL, WATCHED
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -212,10 +212,11 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # bites it says so. Silent truncation is indistinguishable from a
         # dead feed - measured on Live Track Ships, a cap of 50 truncated 36%
         # of samples. Nearest first, so what survives is what is overhead.
-        # ! Listed aircraft (sourced or detected_unconfirmed) are exempt and
-        # kept wherever they are in the circle (cap.py, Lee 2026-10-25).
+        # ! Listed aircraft (sourced, detected_unconfirmed and, since backlog
+        # 313, ice_air_charter: every status but cleared) are exempt and kept
+        # wherever they are in the circle (cap.py, Lee 2026-10-25, 2026-10-29).
         elist = self.enforcement_list
-        listed = ((lambda h: elist.status(h) in (SOURCED, DETECTED))
+        listed = ((lambda h: elist.status(h) in WATCHED)
                   if elist is not None else (lambda h: False))
         aircraft, capped, listed_over_cap = apply_cap(aircraft, self.max_aircraft, listed)
         if capped:
@@ -593,6 +594,12 @@ class AircraftCoordinator(DataUpdateCoordinator):
         elist = self.enforcement_list
         if elist is not None and elist.is_sourced(obs.identity):
             lights = icons.LIGHTS_GLOW
+        # ! AN ICE AIR CHARTER (backlog 313, Lee 2026-10-29 00:37): the steady
+        # charter glow, never the flash; and (01:18) the list's label in place
+        # of the callsign, which _marker_label reads from enforcement_status.
+        elif elist is not None and elist.status(obs.identity) == CHARTER:
+            lights = icons.LIGHTS_CHARTER
+            out["enforcement_status"] = CHARTER
         out["entity_picture"] = icons.picture_url(
             key, icons.tone_for(gov_now, icon_category, gov_cat, military),
             icons.weight_for(obs.emitter_category),
@@ -724,6 +731,11 @@ MAX_LABEL_CHARS = 22
 
 def _marker_label(obs: Observation, rec: dict[str, Any]) -> str:
     """Never blank. Measured 2026-09-10: 9.5% of aircraft carry no callsign."""
+    # ! AN ICE AIR CHARTER (backlog 313, Lee 2026-10-29 01:18): "ICE Air
+    # Charter?" in place of the callsign, as Live Track SALT labels it.
+    if rec.get("enforcement_status") == CHARTER:
+        return CHARTER_LABEL
+
     callsign = (obs.callsign or "").strip()
 
     if callsign and not _LOOKS_LIKE_REGISTRATION.match(callsign.upper()):

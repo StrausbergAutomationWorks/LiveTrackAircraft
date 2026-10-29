@@ -14,6 +14,14 @@ import unittest
 
 from _load import load
 
+# ! THE LADD DATE IS RELATIVE TO TODAY (2026-10-29). routes.py refuses an artifact whose LADD list is over
+# MAX_LADD_AGE_DAYS old by the REAL clock; a fixed 2026-10-13 began failing three Reader tests on 2026-10-28. The
+# list is applied every Tuesday and the old file replaced (Lee 2026-10-29), so a real one is at most a week old.
+# ! Only the Reader tests read by the real clock; install() judges by the fixed NOW below, where a FRESH_LADD after
+# NOW is accepted (measured: those tests pass) and the refusal case keeps a date 16 days before NOW.
+_TODAY = dt.datetime.now(dt.UTC).date()
+FRESH_LADD = (_TODAY - dt.timedelta(days=2)).isoformat()
+
 rd = load("route_download")
 routes = load("routes")
 
@@ -25,7 +33,7 @@ def payload(**over):
         "format": "filedroutesdb/1",
         "built": "2026-10-14T01:13:02+00:00",
         "expires": "2036-10-24T01:13:02+00:00",   # far out: a real date expires
-        "ladd_applied": "2026-10-13",
+        "ladd_applied": FRESH_LADD,
         "ladd_entries": 74022,
         "attribution": "Derived from data obtained through the FAA SWIM Cloud Distribution Service.",
         "licence": "CC-BY-4.0",
@@ -86,7 +94,7 @@ class Install(Storage):
         self.assertEqual(self.tables(), {"meta", "routes", "leg_windows"})   # no owners
         meta = rd.installed_meta(self.path)
         self.assertEqual(meta["format"], "filedroutesdb/1")
-        self.assertEqual(meta["ladd_applied"], "2026-10-13")
+        self.assertEqual(meta["ladd_applied"], FRESH_LADD)
         self.assertEqual(meta["source_sha256"], s["sha256"])
         self.assertFalse(os.path.exists(self.path + rd.TMP_SUFFIX))
 
@@ -109,7 +117,7 @@ class Install(Storage):
         self.refused(payload(expires="2026-10-14T01:00:00+00:00"))
 
     def test_old_ladd_list_refused(self):
-        self.refused(payload(ladd_applied="2026-09-28"))           # 16 days
+        self.refused(payload(ladd_applied="2026-09-28"))           # 16 days before NOW: install() judges by NOW
 
     def test_no_routes_refused(self):
         self.refused(payload(routes={}))
@@ -149,7 +157,7 @@ class Reader(Storage):
         con = sqlite3.connect(self.path)
         con.execute("CREATE TABLE meta (k TEXT PRIMARY KEY, v TEXT)")
         con.executemany("INSERT INTO meta VALUES (?,?)", [("built", "2026-10-13T18:33:27+00:00"),
-                        ("expires", "2036-10-23T18:33:27+00:00"), ("ladd_applied", "2026-10-13")])
+                        ("expires", "2036-10-23T18:33:27+00:00"), ("ladd_applied", FRESH_LADD)])
         con.execute("CREATE TABLE routes (acid TEXT, dep TEXT, arr TEXT, n INTEGER, user_cat TEXT, "
                     "ac_cat TEXT, last_seen INTEGER)")
         con.execute("INSERT INTO routes VALUES ('AAL1','KORD','KLAX',3,'COMMERCIAL','JET',1)")

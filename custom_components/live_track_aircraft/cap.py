@@ -5,8 +5,8 @@ the circle than max_aircraft, the nearest are kept, so what survives is what
 is overhead.
 
 ! LISTED AIRCRAFT ARE NEVER DROPPED (Lee 2026-10-25 14:14: "LTA should not
-drop a listed aircraft"). A hex on the EnforcementAircraft list as sourced or
-detected_unconfirmed survives the cap wherever it is in the circle, the way the
+drop a listed aircraft"). A hex on the EnforcementAircraft list as sourced,
+detected_unconfirmed or ice_air_charter (backlog 313) survives the cap wherever it is in the circle, the way the
 watch list survives it. A cleared entry was found not involved and is capped
 like any other aircraft. Measured that day: 691 aircraft in a 463 km circle
 against a cap of 250, so the cap reached 212 km and a listed aircraft beyond

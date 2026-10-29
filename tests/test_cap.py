@@ -58,7 +58,10 @@ class CoordinatorWiring(unittest.TestCase):
     src = source("coordinator.py")
 
     def test_statuses(self):
-        self.assertIn("elist.status(h) in (SOURCED, DETECTED)", self.src)
+        # sourced, detected and ice_air_charter (backlog 313): the whole lambda, so `in WATCHED[:2]` cannot pass
+        self.assertIn("listed = ((lambda h: elist.status(h) in WATCHED)\n", self.src)
+        from saw_livetrack import enforcement_list as el
+        self.assertIn(el.CHARTER, el.WATCHED)
         self.assertNotIn("CLEARED", self.src)
 
     def test_cap_goes_through_apply_cap(self):
