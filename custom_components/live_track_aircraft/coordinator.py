@@ -37,7 +37,7 @@ from .aircraft import classify, describe_aircraft, lookup_manufacturer
 from .pictures import DIR_NAME as PICTURES_DIR, Overrides, apply as apply_picture
 from .airframe import map_layer
 from .map_keys import object_ids, registry_registration
-from .airlines import lookup_operator
+from .airlines import airline_short, lookup_operator
 from .registrations import from_feed_flags, lookup_government, lookup_owner, prettify_owner
 from .routes import RouteStore
 from .airports import AirportStore
@@ -600,6 +600,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         elif elist is not None and elist.status(obs.identity) == CHARTER:
             lights = icons.LIGHTS_CHARTER
             out["enforcement_status"] = CHARTER
+            # The hover's " · ICE Air Charter?" (Lee 2026-10-29 13:45; D4b rule 12).
+            out["operator_short"] = CHARTER_LABEL
         out["entity_picture"] = icons.picture_url(
             key, icons.tone_for(gov_now, icon_category, gov_cat, military),
             icons.weight_for(obs.emitter_category),
@@ -618,6 +620,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
             out["operator_code"] = operator_code
         if operator:
             out["operator"] = operator
+        # ! The hover's first line (Lee 2026-10-29): "United 1678", not "UAL1678"; the card composes it.
+        short_name = airline_short(obs.callsign)
+        if short_name:
+            out["airline_short"] = short_name
 
         # --- government -------------------------------------------------
         # ! The single strongest reason the table exists: police, fire and

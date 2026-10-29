@@ -163,7 +163,7 @@ class Wiring(unittest.TestCase):
 
     def test_manifest_pin(self):
         req = json.loads(source("manifest.json"))["requirements"]
-        self.assertIn("saw-livetrack[zones]>=0.2.16,<0.3", req)   # the ICE Air charter status and glow, 0.2.16
+        self.assertIn("saw-livetrack[zones]>=0.2.17,<0.3", req)   # the airline table and airline_short, 0.2.17
 
     def test_the_lists_agency_when_the_registry_gives_none(self):
         # backlog 300: the registry's short name first, the list's agency for a sourced aircraft without one

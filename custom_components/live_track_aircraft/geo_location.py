@@ -59,6 +59,8 @@ _PASSTHROUGH = (
     "registration",
     "operator",
     "operator_code",
+    # the hover's first line: "United" in "United 1678" (airlines.py, Lee 2026-10-29)
+    "airline_short",
     "operator_category",
     "operator_state",
     "operator_name_source",
