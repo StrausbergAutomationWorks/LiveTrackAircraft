@@ -64,9 +64,9 @@ class Wiring(unittest.TestCase):
 
     def test_a_charter_says_so_in_the_hover(self):
         coord = self.src("coordinator.py")
-        start = coord.index("elif elist is not None and elist.status(obs.identity) == CHARTER:")
+        start = coord.index("elif listed_status == CHARTER:")
         block = coord[start:coord.index('out["entity_picture"]', start)]
-        self.assertIn('out["operator_short"] = CHARTER_LABEL', block)
+        self.assertIn('out["operator_short"] = CHARTER_FLIGHT_LABEL if flight is not None else CHARTER_LABEL', block)
 
 
 if __name__ == "__main__":

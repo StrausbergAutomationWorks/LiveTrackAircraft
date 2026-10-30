@@ -59,7 +59,8 @@ class CoordinatorWiring(unittest.TestCase):
 
     def test_statuses(self):
         # sourced, detected and ice_air_charter (backlog 313): the whole lambda, so `in WATCHED[:2]` cannot pass
-        self.assertIn("listed = ((lambda h: elist.status(h) in WATCHED)\n", self.src)
+        self.assertIn('listed = ((lambda h: elist.status(h) in WATCHED or bool(before_cap[h].get("ice_air_flight")))\n',
+                      self.src)
         from saw_livetrack import enforcement_list as el
         self.assertIn(el.CHARTER, el.WATCHED)
         self.assertNotIn("CLEARED", self.src)

@@ -115,7 +115,8 @@ class Wiring(unittest.TestCase):
         self.assertNotIn("elist.hexes(", block)
         # ! backlog 313 (Lee 2026-10-29): the ONE list status read in the lights block is the charter's.
         self.assertEqual(block.count("elist.status("), 1)
-        self.assertIn("elif elist is not None and elist.status(obs.identity) == CHARTER:", block)
+        self.assertIn("elif listed_status == CHARTER:", block)
+        self.assertIn("listed_status = elist.status(obs.identity) if elist is not None else None", block)
         self.assertIn("lights = icons.LIGHTS_CHARTER", block)
         self.assertLess(block.index("lights = icons.LIGHTS_GLOW"), block.index("lights = icons.LIGHTS_CHARTER"))
         # and the only other use of a list status is the cap's exemption
@@ -152,18 +153,19 @@ class Wiring(unittest.TestCase):
         keep = [n for n in tree.body if (isinstance(n, ast.FunctionDef) and n.name in ("_marker_label", "_shorten"))
                 or (isinstance(n, ast.Assign) and any(getattr(t, "id", "") in ("_LOOKS_LIKE_REGISTRATION", "MAX_LABEL_CHARS")
                                                        for t in n.targets))]
-        ns = {"re": _re, "CHARTER": el.CHARTER, "CHARTER_LABEL": el.CHARTER_LABEL, "Any": object, "Observation": object}
+        ns = {"re": _re, "CHARTER": el.CHARTER, "CHARTER_LABEL": el.CHARTER_LABEL,
+              "CHARTER_FLIGHT_LABEL": el.CHARTER_FLIGHT_LABEL, "Any": object, "Observation": object}
         exec(compile(ast.Module(body=keep, type_ignores=[]), "coordinator.py", "exec"), ns)
         obs = SimpleNamespace(callsign="GXA301", identity="a2c4e0")
         self.assertEqual(ns["_marker_label"](obs, {"enforcement_status": "ice_air_charter"}), "ICE Air Charter?")
         self.assertEqual(ns["_marker_label"](obs, {}), "GXA301")
         self.assertEqual(ns["_marker_label"](obs, {"enforcement_status": "sourced"}), "GXA301")
-        start = src.index("elif elist is not None and elist.status(obs.identity) == CHARTER:")
+        start = src.index("elif listed_status == CHARTER:")
         self.assertIn('out["enforcement_status"] = CHARTER', src[start:src.index('out["entity_picture"]', start)])
 
     def test_manifest_pin(self):
         req = json.loads(source("manifest.json"))["requirements"]
-        self.assertIn("saw-livetrack[zones]>=0.2.17,<0.3", req)   # the airline table and airline_short, 0.2.17
+        self.assertIn("saw-livetrack[zones]>=0.2.18,<0.3", req)   # ICE Air's call signs (backlog 313), 0.2.18
 
     def test_the_lists_agency_when_the_registry_gives_none(self):
         # backlog 300: the registry's short name first, the list's agency for a sourced aircraft without one
@@ -177,6 +179,64 @@ class Wiring(unittest.TestCase):
         # 0.2.14: the answer is kept under this entry's name so a circle inside it costs no request
         self.assertIn("consumer=self.claim_key", source("coordinator.py"))
         self.assertIn("consumer=consumer)", source("sources/adsb.py"))
+
+
+class IceAirFlight(unittest.TestCase):
+    """Backlog 313 part 2 (Lee 2026-10-29 22:25-23:10): VELUX, TYSON or TYS on a US hex marks THE FLIGHT."""
+    src = source("coordinator.py")
+
+    def block(self):
+        start = self.src.index("lights = icons.lights_for(gov_cat)")
+        return self.src[start:self.src.index('out["entity_picture"]', start)]
+
+    def label(self, rec, callsign="VELUX21"):
+        import ast
+        import re as _re
+        from types import SimpleNamespace
+        from saw_livetrack import enforcement_list as el
+        tree = ast.parse(self.src)
+        keep = [n for n in tree.body if (isinstance(n, ast.FunctionDef) and n.name in ("_marker_label", "_shorten"))
+                or (isinstance(n, ast.Assign) and any(getattr(t, "id", "") in ("_LOOKS_LIKE_REGISTRATION", "MAX_LABEL_CHARS")
+                                                       for t in n.targets))]
+        ns = {"re": _re, "CHARTER": el.CHARTER, "CHARTER_LABEL": el.CHARTER_LABEL,
+              "CHARTER_FLIGHT_LABEL": el.CHARTER_FLIGHT_LABEL, "Any": object, "Observation": object}
+        exec(compile(ast.Module(body=keep, type_ignores=[]), "coordinator.py", "exec"), ns)
+        return ns["_marker_label"](SimpleNamespace(callsign=callsign, identity="a2c4e0"), rec)
+
+    def test_the_label(self):
+        self.assertEqual(self.label({"enforcement_status": "ice_air_charter", "ice_air_flight": "VELUX"}), "ICE Air Charter")
+        self.assertEqual(self.label({"enforcement_status": "ice_air_charter"}, "GXA6276"), "ICE Air Charter?")
+        self.assertEqual(self.label({"ice_air_charter_flight": True, "ice_air_flight": "TYSON"}), "ICE Air Charter")
+        self.assertEqual(self.label({"ice_air_flight": "VELUX", "enforcement_status": "sourced"}), "VELUX21")
+
+    def test_the_flight_is_read_from_the_library(self):
+        self.assertIn("flight = ice_air_callsign(obs.callsign, obs.identity)", self.block())
+        self.assertIn('out["ice_air_flight"] = flight', self.block())
+        self.assertIn("ice_air_callsign)", self.src)              # imported from saw_livetrack.enforcement_list
+        self.assertNotIn("VELUX", self.block().replace("VELUX, TYSON or", ""))   # no pattern of its own
+
+    def test_a_listed_charter_drops_the_question_on_the_flight(self):
+        b = self.block()
+        start = b.index("elif listed_status == CHARTER:")
+        self.assertIn('out["operator_short"] = CHARTER_FLIGHT_LABEL if flight is not None else CHARTER_LABEL', b[start:])
+
+    def test_flight_only_charter_never_for_a_registrant_or_a_sourced_one(self):
+        b = self.block()
+        self.assertIn('elif flight is not None and not gov_now and listed_status in (None, "cleared"):', b)
+        tail = b[b.index("elif flight is not None"):]
+        self.assertIn("lights = icons.LIGHTS_CHARTER", tail)
+        self.assertIn('out["ice_air_charter_flight"] = True', tail)
+        self.assertIn('out["operator_short"] = CHARTER_FLIGHT_LABEL', tail)
+        # after the sourced glow and the listed charter, so neither is overridden
+        self.assertLess(b.index("lights = icons.LIGHTS_GLOW"), b.index("elif flight is not None"))
+        self.assertLess(b.index("elif listed_status == CHARTER:"), b.index("elif flight is not None"))
+
+    def test_kept_past_the_cap(self):
+        self.assertIn('bool(before_cap[h].get("ice_air_flight"))', self.src)
+        self.assertEqual(self.src.count('before_cap[h].get("ice_air_flight")'), 2)   # with and without a list
+
+    def test_nothing_is_remembered_here(self):
+        self.assertNotIn("detections", self.src)
 
 
 if __name__ == "__main__":

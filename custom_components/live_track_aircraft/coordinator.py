@@ -47,7 +47,8 @@ from .airport_display import shown_code, shown_name
 from .eta import estimated_arrival
 from .watch import PRESIDENTIAL
 from .cap import apply_cap
-from saw_livetrack.enforcement_list import CHARTER, CHARTER_LABEL, WATCHED
+from saw_livetrack.enforcement_list import (CHARTER, CHARTER_FLIGHT_LABEL, CHARTER_LABEL, WATCHED,
+                                            ice_air_callsign)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -216,8 +217,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # 313, ice_air_charter: every status but cleared) are exempt and kept
         # wherever they are in the circle (cap.py, Lee 2026-10-25, 2026-10-29).
         elist = self.enforcement_list
-        listed = ((lambda h: elist.status(h) in WATCHED)
-                  if elist is not None else (lambda h: False))
+        # ! An ICE Air flight (its call sign; backlog 313 part 2) is kept past the cap too, listed or not.
+        before_cap = aircraft
+        listed = ((lambda h: elist.status(h) in WATCHED or bool(before_cap[h].get("ice_air_flight")))
+                  if elist is not None else (lambda h: bool(before_cap[h].get("ice_air_flight"))))
         aircraft, capped, listed_over_cap = apply_cap(aircraft, self.max_aircraft, listed)
         if capped:
             _LOGGER.warning(
@@ -592,16 +595,28 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # list keep it; a detected_unconfirmed entry is left to the owner
         # rules (Lee 17:00).
         elist = self.enforcement_list
+        # ! ICE AIR'S CALL SIGN ON THIS FLIGHT (backlog 313 part 2, Lee 2026-10-29 22:25-23:10): VELUX, TYSON or
+        # TYS on a US hex is an ICE Air flight (saw-livetrack 0.2.18). Per flight; nothing is remembered here.
+        flight = ice_air_callsign(obs.callsign, obs.identity)
+        if flight is not None:
+            out["ice_air_flight"] = flight
+        listed_status = elist.status(obs.identity) if elist is not None else None
         if elist is not None and elist.is_sourced(obs.identity):
             lights = icons.LIGHTS_GLOW
         # ! AN ICE AIR CHARTER (backlog 313, Lee 2026-10-29 00:37): the steady
         # charter glow, never the flash; and (01:18) the list's label in place
         # of the callsign, which _marker_label reads from enforcement_status.
-        elif elist is not None and elist.status(obs.identity) == CHARTER:
+        elif listed_status == CHARTER:
             lights = icons.LIGHTS_CHARTER
             out["enforcement_status"] = CHARTER
             # The hover's " · ICE Air Charter?" (Lee 2026-10-29 13:45; D4b rule 12).
-            out["operator_short"] = CHARTER_LABEL
+            out["operator_short"] = CHARTER_FLIGHT_LABEL if flight is not None else CHARTER_LABEL
+        # A tail the list does not draw (unknown, or cleared) and not a government registrant, flying ICE Air's
+        # call sign: a charter for this flight (Lee 22:56: "If it's a charter... charter glow").
+        elif flight is not None and not gov_now and listed_status in (None, "cleared"):
+            lights = icons.LIGHTS_CHARTER
+            out["ice_air_charter_flight"] = True
+            out["operator_short"] = CHARTER_FLIGHT_LABEL
         out["entity_picture"] = icons.picture_url(
             key, icons.tone_for(gov_now, icon_category, gov_cat, military),
             icons.weight_for(obs.emitter_category),
@@ -739,8 +754,8 @@ def _marker_label(obs: Observation, rec: dict[str, Any]) -> str:
     """Never blank. Measured 2026-09-10: 9.5% of aircraft carry no callsign."""
     # ! AN ICE AIR CHARTER (backlog 313, Lee 2026-10-29 01:18): "ICE Air
     # Charter?" in place of the callsign, as Live Track SALT labels it.
-    if rec.get("enforcement_status") == CHARTER:
-        return CHARTER_LABEL
+    if rec.get("enforcement_status") == CHARTER or rec.get("ice_air_charter_flight"):
+        return CHARTER_FLIGHT_LABEL if rec.get("ice_air_flight") else CHARTER_LABEL
 
     callsign = (obs.callsign or "").strip()
 
