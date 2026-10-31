@@ -7,6 +7,7 @@ entities carry (bin\\lta_258_live.py).
 import ast
 import json
 import os
+import re
 import unittest
 
 from _load import COMP, load, source
@@ -56,6 +57,16 @@ class Platform(unittest.TestCase):
         keys = passthrough()
         self.assertIn("map_layer", keys)
         self.assertIn("object_ids", keys)
+
+    def test_the_ice_air_flight_flags_are_published(self):
+        # 2026-10-31 (Lee 02:06): the record held them since 7b0d259 and the entity did not.
+        keys = passthrough()
+        self.assertIn("ice_air_flight", keys)
+        self.assertIn("ice_air_charter_flight", keys)
+        written = re.findall(r'out\["(ice_air_\w+)"\]\s*=', source("coordinator.py"))
+        self.assertTrue(written)
+        for key in written:
+            self.assertIn(key, keys, key)
 
 
 class CoordinatorWiring(unittest.TestCase):

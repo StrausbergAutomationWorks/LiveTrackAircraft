@@ -66,6 +66,11 @@ _PASSTHROUGH = (
     "operator_name_source",
     # law enforcement: an agency code or a shortened name (registrations.py)
     "operator_short",
+    # ICE Air (backlog 313 part 2): the call-sign family while the flight broadcasts it
+    # (VELUX, TYSON or TYS), and True on a tail drawn as a charter for that flight
+    # (coordinator.py). Published only while the record holds them.
+    "ice_air_flight",
+    "ice_air_charter_flight",
     # how a government aircraft was identified: faa_government,
     # faa_federal_list (registrations.py)
     "identified_by",
