@@ -40,7 +40,7 @@ class OptionsAndZIndexGone(unittest.TestCase):
         for step in (s["config"]["step"]["user"], s["options"]["step"]["init"]):
             self.assertEqual(set(step["data"]),
                              {"location", "radius_km",
-                              "scan_interval", "max_aircraft"})
+                              "scan_interval", "max_aircraft", "military_areas"})
 
 
 def passthrough():

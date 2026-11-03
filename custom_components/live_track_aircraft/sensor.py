@@ -108,6 +108,10 @@ class AircraftInRange(SensorEntity):
             # are outside the circle, and its last round.
             "watched_count": data.get("watched", 0),
             "watch_list": data.get("watch_status"),
+            # Military watch areas (watch.py): how many military-flagged aircraft are inside
+            # them now, each once, and how many in each circle, keyed "lat,lon,km".
+            "military_in_areas": data.get("military_in_areas", 0),
+            "military_by_area": data.get("military_by_area", {}),
             # The EnforcementAircraft list (enforcement.py): how many sourced
             # entries, its build time, and the last failure if the last check
             # failed. Changes with the list, never with the clock.

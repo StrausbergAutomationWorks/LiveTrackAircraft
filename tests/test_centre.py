@@ -128,14 +128,15 @@ class Wiring(unittest.TestCase):
         self.assertIsNone(re.search(r"vol\.Required\(\s*CONF_LONGITUDE", self.src))
 
     def test_both_steps_convert_before_storing(self):
-        self.assertEqual(self.src.count("from_form(user_input)"), 2)
+        self.assertEqual(self.src.count("_from_dialog(user_input)"), 2)
+        self.assertEqual(self.src.count("from_form(user_input)"), 1)
         self.assertNotIn("data=user_input", self.src)
         self.assertNotIn("options=user_input", self.src)
         self.assertNotIn("_title(user_input)", self.src)
 
     def test_both_steps_show_errors(self):
         self.assertEqual(self.src.count("errors=errors"), 2)
-        self.assertEqual(self.src.count("errors[CONF_LOCATION] = error"), 2)
+        self.assertEqual(self.src.count("return None, {CONF_LOCATION: error}"), 1)
 
 
 class Labels(unittest.TestCase):
@@ -163,7 +164,7 @@ class Labels(unittest.TestCase):
     def test_every_form_field_is_labelled(self):
         for step in (self.s["config"]["step"]["user"], self.s["options"]["step"]["init"]):
             self.assertEqual(set(step["data"]),
-                             {"location", "radius_km", "scan_interval", "max_aircraft"})
+                             {"location", "radius_km", "scan_interval", "max_aircraft", "military_areas"})
 
     def test_no_bom(self):
         self.assertFalse(self.raw.startswith(b"\xef\xbb\xbf"))

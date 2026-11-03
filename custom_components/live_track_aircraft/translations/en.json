@@ -8,18 +8,21 @@
           "location": "Centre",
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
-          "max_aircraft": "Maximum aircraft published"
+          "max_aircraft": "Maximum aircraft published",
+          "military_areas": "Military watch areas"
         },
         "data_description": {
           "location": "Drag the marker to the middle of the area to watch.",
           "radius_km": "How far out counts as overhead.",
           "scan_interval": "The sources rate-limit below 15 seconds.",
-          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer."
+          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
+          "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463"
         }
       }
     },
     "error": {
-      "invalid_location": "That point is not on the globe. Drag the marker onto the map."
+      "invalid_location": "That point is not on the globe. Drag the marker onto the map.",
+      "invalid_military_areas": "Each circle is latitude,longitude,km with 1 to 2000 km, at most ten, separated by semicolons."
     },
     "abort": {
       "already_configured": "Aircraft are already tracked for this location and radius."
@@ -33,18 +36,21 @@
           "location": "Centre",
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
-          "max_aircraft": "Maximum aircraft published"
+          "max_aircraft": "Maximum aircraft published",
+          "military_areas": "Military watch areas"
         },
         "data_description": {
           "location": "Drag the marker to the middle of the area to watch.",
           "radius_km": "How far out counts as overhead.",
           "scan_interval": "The sources rate-limit below 15 seconds.",
-          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer."
+          "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
+          "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463"
         }
       }
     },
     "error": {
-      "invalid_location": "That point is not on the globe. Drag the marker onto the map."
+      "invalid_location": "That point is not on the globe. Drag the marker onto the map.",
+      "invalid_military_areas": "Each circle is latitude,longitude,km with 1 to 2000 km, at most ten, separated by semicolons."
     }
   },
   "issues": {

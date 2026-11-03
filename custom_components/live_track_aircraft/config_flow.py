@@ -11,12 +11,14 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.selector import LocationSelector, LocationSelectorConfig
 
+from .areas import parse_areas
 from .centre import from_form, to_form
 from .const import (
     CONF_LATITUDE,
     CONF_LOCATION,
     CONF_LONGITUDE,
     CONF_MAX_AIRCRAFT,
+    CONF_MILITARY_AREAS,
     CONF_RADIUS_KM,
     CONF_SCAN_INTERVAL,
     DEFAULT_MAX_AIRCRAFT,
@@ -42,6 +44,20 @@ def _title(cfg: dict[str, Any]) -> str:
     return "%.3f, %.3f - %.0f km" % (
         float(cfg[CONF_LATITUDE]), float(cfg[CONF_LONGITUDE]),
         float(cfg[CONF_RADIUS_KM]))
+
+
+def _from_dialog(user_input: dict[str, Any]) -> tuple[dict[str, Any] | None, dict[str, str]]:
+    """The submitted dialog as stored, or the errors by field. The areas are stored as typed, and "" means none:
+    the merged data-then-options read would otherwise bring back what a cleared field held."""
+    values, error = from_form(user_input)
+    if error is not None:
+        return None, {CONF_LOCATION: error}
+    text = (values.get(CONF_MILITARY_AREAS) or "").strip()
+    error = parse_areas(text)[1]
+    if error is not None:
+        return None, {CONF_MILITARY_AREAS: error}
+    values[CONF_MILITARY_AREAS] = text
+    return values, {}
 
 
 def _schema(defaults: dict[str, Any], hass) -> vol.Schema:
@@ -86,6 +102,12 @@ def _schema(defaults: dict[str, Any], hass) -> vol.Schema:
                 # the card. A ceiling is not a count (A2).
                 vol.Range(min=MIN_MAX_AIRCRAFT, max=MAX_MAX_AIRCRAFT),
             ),
+            # ! suggested_value, NOT default: with a default, clearing the field in the
+            # dialog sends nothing and voluptuous would put the old value back.
+            vol.Optional(
+                CONF_MILITARY_AREAS,
+                description={"suggested_value": defaults.get(CONF_MILITARY_AREAS, "")},
+            ): str,
             # ! NO ICON OPTIONS since 2026-09-25 (Lee): the icon is always
             # unrotated and disc-less, and the card turns it (icons.py).
         }
@@ -102,8 +124,8 @@ class LiveTrackAircraftConfigFlow(ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         errors: dict[str, str] = {}
         if user_input is not None:
-            values, error = from_form(user_input)
-            if error is None:
+            values, errors = _from_dialog(user_input)
+            if not errors:
                 # One entry per centre and radius.
                 await self.async_set_unique_id(
                     "%.4f_%.4f_%s" % (values[CONF_LATITUDE],
@@ -120,7 +142,6 @@ class LiveTrackAircraftConfigFlow(ConfigFlow, domain=DOMAIN):
                     title=_title(values),
                     data=values,
                 )
-            errors[CONF_LOCATION] = error
         return self.async_show_form(
             step_id="user", data_schema=_schema({}, self.hass), errors=errors)
 
@@ -141,9 +162,8 @@ class LiveTrackAircraftOptionsFlow(OptionsFlow):
     ) -> FlowResult:
         errors: dict[str, str] = {}
         if user_input is not None:
-            values, error = from_form(user_input)
-            if error is not None:
-                errors[CONF_LOCATION] = error
+            values, errors = _from_dialog(user_input)
+            if errors:
                 user_input = None
         if user_input is not None:
             # ! Keep the card honest. Changing the centre or the radius

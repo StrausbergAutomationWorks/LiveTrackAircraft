@@ -24,6 +24,8 @@ CONF_LONGITUDE = "longitude"
 CONF_RADIUS_KM = "radius_km"
 CONF_SCAN_INTERVAL = "scan_interval"
 CONF_MAX_AIRCRAFT = "max_aircraft"
+# Military watch areas (areas.py, watch.py): the text the user typed, "lat,lon,km; lat,lon,km".
+CONF_MILITARY_AREAS = "military_areas"
 # ! A DIALOG FIELD, NEVER STORED (backlog 192). The setup and options dialogs
 # show the centre as one map marker under this key; centre.py turns it back
 # into CONF_LATITUDE and CONF_LONGITUDE before anything is saved.

@@ -92,6 +92,19 @@ Written from scratch. An earlier tracking fork of another project exists
 separately and is unaffected by this repository; no code is shared between
 them.
 
+## Military watch areas
+
+Optional. In the integration's options, name up to ten circles as
+`latitude,longitude,km`, separated by semicolons, for example
+`39.81,-84.04,150; 34.0,-117.8,463`. Every aircraft the feed flags as military
+inside them is drawn, wherever your circle is and past its cap, tagged
+`watch: military area`. The sensor counts them in `military_in_areas`, and per
+circle in `military_by_area`. They come from one request a minute that the
+integration makes anyway, so they move once a minute.
+
+It shows only what broadcasts and is flagged: military flights can run with
+their transponder off, and an aircraft on a civil registration is not flagged. Clear the field to turn it off.
+
 ## Data sources
 
 Aircraft positions come from two free community networks, tried in order:

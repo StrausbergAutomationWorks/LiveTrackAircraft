@@ -21,6 +21,7 @@ from .const import (
     CONF_LATITUDE,
     CONF_LONGITUDE,
     CONF_MAX_AIRCRAFT,
+    CONF_MILITARY_AREAS,
     CONF_RADIUS_KM,
     CONF_SCAN_INTERVAL,
     DEFAULT_MAX_AIRCRAFT,
@@ -45,8 +46,10 @@ from .route_check import FILED, choose_leg
 from .adsbdb import choose as adsbdb_choose
 from .airport_display import shown_code, shown_name
 from .eta import estimated_arrival
-from .watch import PRESIDENTIAL
+from .areas import label as area_label, parse_areas
+from .watch import PRESIDENTIAL, WHY_MILITARY_AREA
 from .cap import apply_cap
+from saw_livetrack.adsb_poll import km_between
 from saw_livetrack.enforcement_list import (CHARTER, CHARTER_FLIGHT_LABEL, CHARTER_LABEL, WATCHED,
                                             ice_air_callsign)
 
@@ -74,6 +77,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         self.longitude = float(opts.get(CONF_LONGITUDE, hass.config.longitude))
         self.radius_km = float(opts.get(CONF_RADIUS_KM, DEFAULT_RADIUS_KM))
         self.max_aircraft = int(opts.get(CONF_MAX_AIRCRAFT, DEFAULT_MAX_AIRCRAFT))
+        # Military watch areas (areas.py). The dialog refuses a bad field, so [] here only means none.
+        self.military_areas = parse_areas(opts.get(CONF_MILITARY_AREAS))[0]
 
         super().__init__(
             hass,
@@ -252,6 +257,24 @@ class AircraftCoordinator(DataUpdateCoordinator):
                 aircraft[obs.identity] = rec
                 watched += 1
 
+        # ! MILITARY WATCH AREAS, ALSO AFTER THE CAP (Lee 2026-11-02 22:59): every military-flagged aircraft inside the
+        # circles this entry names, from the watch list's military request, so they cost no request of their own. In
+        # this entry's circle but past the cap is still drawn; already drawn is only tagged, never built twice.
+        military_found, military_counts = (
+            self.watch.in_areas(self.military_areas)
+            if self.watch is not None and self.military_areas else ([], []))
+        for obs in military_found:
+            if obs.identity in aircraft:
+                aircraft[obs.identity].setdefault("watch", WHY_MILITARY_AREA)
+                continue
+            rec = self._record(obs)
+            if rec is None:
+                continue
+            rec["watch"] = WHY_MILITARY_AREA
+            rec["outside_radius"] = km_between(self.latitude, self.longitude, obs.latitude,
+                                               obs.longitude) > self.radius_km
+            aircraft[obs.identity] = rec
+
         # Forget fixes for aircraft no longer in the feed, so one returning
         # tomorrow starts a fresh segment rather than interpolating across a
         # gap of hours.
@@ -283,6 +306,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
             # list's last round: idle, ok, waiting, or the failure.
             "watched": watched,
             "watch_status": getattr(self.watch, "status", None),
+            # Military-flagged aircraft inside this entry's watch areas: all of them, and per circle.
+            "military_in_areas": len(military_found),
+            "military_by_area": {area_label(a): n for a, n in zip(self.military_areas, military_counts)},
         }
         self._last_good = result
         return result
