@@ -118,13 +118,14 @@ class Fetch(unittest.TestCase):
 
     def test_429_backs_the_circle_off_too(self):
         w, poll, c = wl()
-        run(w, Session([Resp(429, headers={"Retry-After": "300"})]))
+        run(w, Session([Resp(429, headers={"Retry-After": "300"}), Resp(200, answer())]))
         self.assertIsNotNone(poll.backoff.remaining("adsb.fi"))
         c.t += watch.INTERVAL_S
-        s = Session([])
-        run(w, s)                      # still backing off: nothing asked
-        self.assertEqual(s.urls, [])
-        self.assertTrue(w.status.startswith("waiting") or w.status.startswith("military"))
+        s = Session([Resp(200, answer("adfdf8"))])
+        run(w, s)                      # still backing off: adsb.fi not asked; saw-livetrack 0.2.24: adsb.lol answers the round
+        self.assertEqual(s.urls, ["https://api.adsb.lol/v2/hex/ADFDF8,ADFDF9,AF83F3"])
+        self.assertEqual([o.identity for o in w.observations()], ["adfdf8"])
+        self.assertEqual(w.status, "ok from adsb.lol: adsb.fi backing off")
 
 
 class Military(unittest.TestCase):
