@@ -84,7 +84,9 @@ class Lists(unittest.TestCase):
         self.assertNotIn("law_enforcement", source("watch.py").split('"""', 2)[2])
         # Lee 2026-11-02 22:59: adsb.lol only for the military list, after adsb.fi (the hex round's is the library's)
         self.assertEqual([n for n, _ in watch.MIL_SOURCES], [ap.FI, ap.LOL])
-        self.assertEqual(source("watch.py").count("api.adsb.lol"), 1)
+        # backlog 332: the call-sign round is the second, also after adsb.fi
+        self.assertEqual([n for n, _ in watch.CALLSIGN_SOURCES], [ap.FI, ap.LOL])
+        self.assertEqual(source("watch.py").count("api.adsb.lol"), 2)
 
     def test_the_companions_hexes_join_one_union_round(self):
         w, poll, _ = wl()

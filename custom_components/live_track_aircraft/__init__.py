@@ -174,6 +174,10 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         poll = getattr(coordinator, "poll", None)
         if poll is not None:
             poll.release(coordinator.claim_key)
+        # Its followed call signs go from the call-sign round (backlog 332); its followed hexes went with the poll's.
+        watch = getattr(coordinator, "watch", None)
+        if watch is not None:
+            watch.release(coordinator.claim_key)
     return unloaded
 
 

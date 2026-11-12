@@ -105,6 +105,28 @@ integration makes anyway, so they move once a minute.
 It shows only what broadcasts and is flagged: military flights can run with
 their transponder off, and an aircraft on a civil registration is not flagged. Clear the field to turn it off.
 
+## Following your own aircraft and flights
+
+Optional, in the integration's options, two fields:
+
+- **Aircraft to follow (hex codes)**: up to 100 six-character Mode S codes,
+  separated by commas. The code is on every aircraft's `identity` attribute.
+  Use this for an airframe or a fleet.
+- **Flights to follow (call signs)**: up to 100 call signs as broadcast,
+  airline code and number, separated by commas, for example `UAL1234, DAL89`.
+  Whatever aircraft broadcasts that call sign is drawn, so this follows a
+  flight (a family member's, say) rather than an airframe.
+
+Each is drawn wherever it is in the world and past the cap, tagged
+`watch: followed`, with `outside_radius` saying whether it is outside your
+circle. The sensor shows `followed_asked` (how many you follow),
+`followed_found` (how many of them are in the air now) and `follow_status`
+(the call-sign lookup's last result). Hex codes ride along in a request the
+integration makes anyway; all call signs together cost one request a minute.
+Both move once a minute. Only what broadcasts ADS-B or MLAT can be found;
+schedules, delays and arrival times by flight number are not part of this.
+Clear a field to stop following.
+
 ## Data sources
 
 Aircraft positions come from two free community networks, tried in order:

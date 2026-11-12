@@ -112,6 +112,11 @@ class AircraftInRange(SensorEntity):
             # them now, each once, and how many in each circle, keyed "lat,lon,km".
             "military_in_areas": data.get("military_in_areas", 0),
             "military_by_area": data.get("military_by_area", {}),
+            # A user's own watch list (follow.py, backlog 332): how many hexes and call signs are followed, how many
+            # of them are in the air now, and the call-sign round's last result (None with no call signs).
+            "followed_asked": data.get("followed_asked", 0),
+            "followed_found": data.get("followed_found", 0),
+            "follow_status": data.get("follow_status"),
             # The EnforcementAircraft list (enforcement.py): how many sourced
             # entries, its build time, and the last failure if the last check
             # failed. Changes with the list, never with the clock.

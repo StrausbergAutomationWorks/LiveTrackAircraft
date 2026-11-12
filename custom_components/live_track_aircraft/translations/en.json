@@ -9,20 +9,26 @@
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
           "max_aircraft": "Maximum aircraft published",
-          "military_areas": "Military watch areas"
+          "military_areas": "Military watch areas",
+          "follow_hexes": "Aircraft to follow (hex codes)",
+          "follow_callsigns": "Flights to follow (call signs)"
         },
         "data_description": {
           "location": "Drag the marker to the middle of the area to watch.",
           "radius_km": "How far out counts as overhead.",
           "scan_interval": "The sources rate-limit below 15 seconds.",
           "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
-          "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463"
+          "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463",
+          "follow_hexes": "Optional. Each aircraft is drawn wherever it flies, past the maximum. Six-character Mode S codes, as on an aircraft's identity attribute, separated by commas. At most 100.",
+          "follow_callsigns": "Optional. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100."
         }
       }
     },
     "error": {
       "invalid_location": "That point is not on the globe. Drag the marker onto the map.",
-      "invalid_military_areas": "Each circle is latitude,longitude,km with 1 to 2000 km, at most ten, separated by semicolons."
+      "invalid_military_areas": "Each circle is latitude,longitude,km with 1 to 2000 km, at most ten, separated by semicolons.",
+      "invalid_follow_hexes": "Each hex code is six characters, 0-9 and a-f, at most 100, separated by commas.",
+      "invalid_follow_callsigns": "Each call sign is 2 to 8 letters and digits, no spaces, at most 100, separated by commas."
     },
     "abort": {
       "already_configured": "Aircraft are already tracked for this location and radius."
@@ -37,20 +43,26 @@
           "radius_km": "Radius (km)",
           "scan_interval": "Update interval (seconds)",
           "max_aircraft": "Maximum aircraft published",
-          "military_areas": "Military watch areas"
+          "military_areas": "Military watch areas",
+          "follow_hexes": "Aircraft to follow (hex codes)",
+          "follow_callsigns": "Flights to follow (call signs)"
         },
         "data_description": {
           "location": "Drag the marker to the middle of the area to watch.",
           "radius_km": "How far out counts as overhead.",
           "scan_interval": "The sources rate-limit below 15 seconds.",
           "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
-          "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463"
+          "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463",
+          "follow_hexes": "Optional. Each aircraft is drawn wherever it flies, past the maximum. Six-character Mode S codes, as on an aircraft's identity attribute, separated by commas. At most 100.",
+          "follow_callsigns": "Optional. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100."
         }
       }
     },
     "error": {
       "invalid_location": "That point is not on the globe. Drag the marker onto the map.",
-      "invalid_military_areas": "Each circle is latitude,longitude,km with 1 to 2000 km, at most ten, separated by semicolons."
+      "invalid_military_areas": "Each circle is latitude,longitude,km with 1 to 2000 km, at most ten, separated by semicolons.",
+      "invalid_follow_hexes": "Each hex code is six characters, 0-9 and a-f, at most 100, separated by commas.",
+      "invalid_follow_callsigns": "Each call sign is 2 to 8 letters and digits, no spaces, at most 100, separated by commas."
     }
   },
   "issues": {

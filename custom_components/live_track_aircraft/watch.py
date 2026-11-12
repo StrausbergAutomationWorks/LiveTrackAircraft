@@ -7,7 +7,9 @@ Who is on it (Lee, 2026-10-21 02:59 and 22:09; 2026-10-24):
   * the 89th Airlift Wing (its SAM and VENUS callsigns) and military escorts near a presidential
     airframe, from the military list;
   * every military-flagged aircraft inside the circles an entry names (Lee 2026-11-02 22:59; areas.py,
-    in_areas), past the cap, from the same request.
+    in_areas), past the cap, from the same request;
+  * the user's own list (backlog 332, follow.py), per entry: hexes in the shared hex round, at no request of
+    their own; call signs in one comma-list request a minute for the instance (_callsign_round).
 
 ! THE NATIONWIDE ENFORCEMENT WATCH MOVED TO LIVE TRACK ENFORCEMENT AIRCRAFT (backlog 297, Lee
 2026-10-23 23:01 and 2026-10-24 01:29): the EnforcementAircraft list's sourced and detected entries
@@ -53,6 +55,15 @@ WHY_PRESIDENTIAL = "presidential"
 WHY_89AW = "89aw"
 WHY_ESCORT = "escort"
 WHY_MILITARY_AREA = "military area"
+# A user's own list (follow.py, backlog 332): hexes through the shared hex round, call signs through the round below.
+WHY_FOLLOWED = "followed"
+
+# ! THE CALL-SIGN ROUND (backlog 332): every entry's followed call signs in ONE comma-list request a minute, adsb.fi
+# then adsb.lol as the military list, through the shared poll's pacing and backoff. Measured 2026-11-11: both
+# endpoints take a comma list (bin\lta332_callsign_probe.txt). Chunked so a long union stays a short URL.
+CALLSIGN_SOURCES = ((ap.FI, "https://opendata.adsb.fi/api/v2/callsign/"),
+                    (ap.LOL, "https://api.adsb.lol/v2/callsign/"))
+CALLSIGNS_PER_REQUEST = 100
 
 # ! THE 89th AIRLIFT WING, ALWAYS (Lee 2026-10-22 01:27): SAM or VENUS plus digits AND a hex in the US
 # military block (ADF7C8-AFFFFF). Measured 2026-10-21: "SAMB2" on /v2/mil was a RAAF PC-21 (7cf9e7).
@@ -101,7 +112,65 @@ class WatchList:
         self._mil_all: dict[str, Observation] = {}
         self._why: dict[str, str] = {}
         self.status = "idle"
+        # Followed call signs (backlog 332): per consumer (one per entry), asked as one union.
+        self._callsigns: dict[str, frozenset[str]] = {}
+        self._cs_at: float | None = None
+        self._cs_obs: dict[str, list[Observation]] = {}
+        self.callsign_status = "idle"
         poll.set_hexes(CONSUMER, PRESIDENTIAL)
+
+    def set_callsigns(self, consumer: str, callsigns) -> None:
+        """The call signs this consumer follows. An empty list removes it."""
+        cs = frozenset((c or "").strip().upper() for c in callsigns or () if (c or "").strip())
+        if cs:
+            self._callsigns[consumer] = cs
+        else:
+            self._callsigns.pop(consumer, None)
+
+    def release(self, consumer: str) -> None:
+        """An entry unloading: its call signs go (its hexes go with the poll's release)."""
+        self._callsigns.pop(consumer, None)
+
+    def callsign_union(self) -> list[str]:
+        out: set[str] = set()
+        for cs in self._callsigns.values():
+            out |= cs
+        return sorted(out)
+
+    def callsign_observations(self, callsigns) -> list[Observation]:
+        """The aircraft broadcasting these call signs on the last answer, or nothing once it is STALE_S old."""
+        if self._cs_at is None or self._clock() - self._cs_at > STALE_S:
+            return []
+        found: dict[str, Observation] = {}
+        for c in callsigns:
+            for o in self._cs_obs.get((c or "").strip().upper(), ()):
+                found.setdefault(o.identity, o)
+        return list(found.values())
+
+    async def _callsign_round(self, session, now: float) -> None:
+        """One request a minute (a chunk per CALLSIGNS_PER_REQUEST) for the union. A failure keeps the last answer
+        until STALE_S, and says so; a non-200 is never "none of them is flying"."""
+        union = self.callsign_union()
+        if not union:
+            self._cs_obs, self._cs_at, self.callsign_status = {}, None, "idle"
+            return
+        why = []
+        for name, url in CALLSIGN_SOURCES:
+            found: dict[str, list[Observation]] = {}
+            try:
+                for part in ap.chunks(union, CALLSIGNS_PER_REQUEST):
+                    payload = await self._poll.get_json(session, name, url + ",".join(part))
+                    for o in ap.parse_payload(payload if isinstance(payload, dict) else {}, now).values():
+                        cs = (o.callsign or "").strip().upper()
+                        if cs in part:
+                            found.setdefault(cs, []).append(o)
+            except ap.SourceError as err:
+                why.append(str(err))
+                continue
+            self._cs_obs, self._cs_at = found, self._clock()
+            self.callsign_status = "ok" if name == SOURCE else "ok from %s: %s" % (name, why[0])
+            return
+        self.callsign_status = "failed: " + "; ".join(why)
 
     def hexes(self) -> list[str]:
         return list(PRESIDENTIAL)
@@ -154,6 +223,11 @@ class WatchList:
                 self.status = hex_status
             return
         self._next = self._clock() + INTERVAL_S
+        await self._military_round(session, now, hex_status)
+        # Followed call signs (backlog 332), in the same minute, whatever the military list did.
+        await self._callsign_round(session, now)
+
+    async def _military_round(self, session, now: float, hex_status: str) -> None:
         payload = source = None
         why = []
         for name, url in MIL_SOURCES:
@@ -186,4 +260,4 @@ def parse(payload, now: float) -> dict[str, Observation]:
     return ap.parse_payload(payload, now)
 
 
-__all__ = ["PRESIDENTIAL", "WatchList", "from_military"]
+__all__ = ["PRESIDENTIAL", "WHY_FOLLOWED", "WatchList", "from_military"]

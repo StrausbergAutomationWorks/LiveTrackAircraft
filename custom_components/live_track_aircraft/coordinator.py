@@ -18,6 +18,8 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util.location import distance as _distance
 
 from .const import (
+    CONF_FOLLOW_CALLSIGNS,
+    CONF_FOLLOW_HEXES,
     CONF_LATITUDE,
     CONF_LONGITUDE,
     CONF_MAX_AIRCRAFT,
@@ -47,7 +49,8 @@ from .adsbdb import choose as adsbdb_choose
 from .airport_display import shown_code, shown_name
 from .eta import estimated_arrival
 from .areas import label as area_label, parse_areas
-from .watch import PRESIDENTIAL, WHY_MILITARY_AREA
+from .follow import parse_callsigns, parse_hexes
+from .watch import PRESIDENTIAL, WHY_FOLLOWED, WHY_MILITARY_AREA
 from .cap import apply_cap
 from saw_livetrack.adsb_poll import km_between
 from saw_livetrack.enforcement_list import (CHARTER, CHARTER_FLIGHT_LABEL, CHARTER_LABEL, WATCHED,
@@ -79,6 +82,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         self.max_aircraft = int(opts.get(CONF_MAX_AIRCRAFT, DEFAULT_MAX_AIRCRAFT))
         # Military watch areas (areas.py). The dialog refuses a bad field, so [] here only means none.
         self.military_areas = parse_areas(opts.get(CONF_MILITARY_AREAS))[0]
+        # A user's own watch list (follow.py, backlog 332). The dialog refuses a bad field, so [] here only means none.
+        self.follow_hexes = parse_hexes(opts.get(CONF_FOLLOW_HEXES))[0]
+        self.follow_callsigns = parse_callsigns(opts.get(CONF_FOLLOW_CALLSIGNS))[0]
 
         super().__init__(
             hass,
@@ -241,6 +247,13 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # Aircraft (backlog 297). An aircraft already in the circle is only
         # tagged, never built twice; the cap never drops a watched one.
         watched = 0
+        # ! A USER'S OWN WATCH LIST (follow.py, backlog 332) is named before the round, per entry: the hexes join the
+        # shared poll's union round under this entry's key (poll.release drops them on unload), the call signs the
+        # watch list's call-sign round. Set every poll, so an options change is in the next round.
+        if self.poll is not None:
+            self.poll.set_hexes(self.claim_key, self.follow_hexes)
+        if self.watch is not None:
+            self.watch.set_callsigns(self.claim_key, self.follow_callsigns)
         if self.watch is not None:
             if self.watch.due():
                 await self.watch.async_fetch(self._session, now)
@@ -271,6 +284,27 @@ class AircraftCoordinator(DataUpdateCoordinator):
             if rec is None:
                 continue
             rec["watch"] = WHY_MILITARY_AREA
+            rec["outside_radius"] = km_between(self.latitude, self.longitude, obs.latitude,
+                                               obs.longitude) > self.radius_km
+            aircraft[obs.identity] = rec
+
+        # ! A USER'S OWN WATCH LIST, ALSO AFTER THE CAP (backlog 332): each followed hex and each aircraft broadcasting
+        # a followed call sign, wherever it is, from requests already made (hex round, call-sign round). In the circle
+        # it is only tagged, keeping any earlier reason (presidential, military area); never built twice.
+        followed: dict[str, Observation] = {}
+        if self.poll is not None and self.follow_hexes:
+            followed.update((o.identity, o) for o in self.poll.hex_observations(self.claim_key))
+        if self.watch is not None and self.follow_callsigns:
+            for o in self.watch.callsign_observations(self.follow_callsigns):
+                followed.setdefault(o.identity, o)
+        for obs in followed.values():
+            if obs.identity in aircraft:
+                aircraft[obs.identity].setdefault("watch", WHY_FOLLOWED)
+                continue
+            rec = self._record(obs)
+            if rec is None:
+                continue
+            rec["watch"] = WHY_FOLLOWED
             rec["outside_radius"] = km_between(self.latitude, self.longitude, obs.latitude,
                                                obs.longitude) > self.radius_km
             aircraft[obs.identity] = rec
@@ -309,6 +343,12 @@ class AircraftCoordinator(DataUpdateCoordinator):
             # Military-flagged aircraft inside this entry's watch areas: all of them, and per circle.
             "military_in_areas": len(military_found),
             "military_by_area": {area_label(a): n for a, n in zip(self.military_areas, military_counts)},
+            # A user's own watch list (backlog 332): how many hexes and call signs this entry follows, how many
+            # aircraft of them are in the air now, and the call-sign round's last result (None with no call signs).
+            "followed_asked": len(self.follow_hexes) + len(self.follow_callsigns),
+            "followed_found": len(followed),
+            "follow_status": (getattr(self.watch, "callsign_status", None)
+                              if self.follow_callsigns else None),
         }
         self._last_good = result
         return result

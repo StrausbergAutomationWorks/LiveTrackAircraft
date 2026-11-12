@@ -13,7 +13,10 @@ from homeassistant.helpers.selector import LocationSelector, LocationSelectorCon
 
 from .areas import parse_areas
 from .centre import from_form, to_form
+from .follow import parse_callsigns, parse_hexes
 from .const import (
+    CONF_FOLLOW_CALLSIGNS,
+    CONF_FOLLOW_HEXES,
     CONF_LATITUDE,
     CONF_LOCATION,
     CONF_LONGITUDE,
@@ -57,6 +60,13 @@ def _from_dialog(user_input: dict[str, Any]) -> tuple[dict[str, Any] | None, dic
     if error is not None:
         return None, {CONF_MILITARY_AREAS: error}
     values[CONF_MILITARY_AREAS] = text
+    # A user's own watch list (follow.py, backlog 332): stored as typed, "" meaning none, as the areas.
+    for key, parse in ((CONF_FOLLOW_HEXES, parse_hexes), (CONF_FOLLOW_CALLSIGNS, parse_callsigns)):
+        text = (values.get(key) or "").strip()
+        error = parse(text)[1]
+        if error is not None:
+            return None, {key: error}
+        values[key] = text
     return values, {}
 
 
@@ -107,6 +117,15 @@ def _schema(defaults: dict[str, Any], hass) -> vol.Schema:
             vol.Optional(
                 CONF_MILITARY_AREAS,
                 description={"suggested_value": defaults.get(CONF_MILITARY_AREAS, "")},
+            ): str,
+            # A user's own watch list (backlog 332): two fields, suggested_value for the same reason.
+            vol.Optional(
+                CONF_FOLLOW_HEXES,
+                description={"suggested_value": defaults.get(CONF_FOLLOW_HEXES, "")},
+            ): str,
+            vol.Optional(
+                CONF_FOLLOW_CALLSIGNS,
+                description={"suggested_value": defaults.get(CONF_FOLLOW_CALLSIGNS, "")},
             ): str,
             # ! NO ICON OPTIONS since 2026-09-25 (Lee): the icon is always
             # unrotated and disc-less, and the card turns it (icons.py).
