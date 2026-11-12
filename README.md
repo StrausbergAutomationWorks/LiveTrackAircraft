@@ -6,10 +6,128 @@ any glue.
 
 ## Status
 
-**Pre-release.** The integration runs live on its development instance:
-positions, enrichment, routes and icons turned to each aircraft's track. It
-has not been released yet, and installation and setup are not documented
-here yet.
+**0.1.0, the first release.** It runs live on its development instance:
+positions, enrichment, routes and icons turned to each aircraft's track.
+
+## Requirements
+
+- Home Assistant 2026.11 or later.
+- No account and no API key.
+- Home Assistant installs the Python packages it needs (`saw-livetrack` and
+  `tzfpy`) the first time the integration loads.
+
+## Installation
+
+### From the Marketplace
+
+Live Track Aircraft is not in the Marketplace catalog yet. Add it by its link:
+
+1. Go to **Settings > Marketplace** and select **Add from link**.
+2. Enter `StrausbergAutomationWorks/LiveTrackAircraft`. If asked for the type,
+   choose **Integration**.
+3. Install **Live Track Aircraft**.
+4. Restart Home Assistant. The Marketplace offers the restart as a repair under
+   **Settings > System > Repairs**.
+
+The Marketplace then offers each new release as an update.
+
+### By hand
+
+1. Download the source code of the
+   [latest release](https://github.com/StrausbergAutomationWorks/LiveTrackAircraft/releases/latest).
+2. Copy its `custom_components/live_track_aircraft` folder into the
+   `custom_components` folder of your Home Assistant configuration directory
+   (create that folder if it is not there), so the path ends in
+   `custom_components/live_track_aircraft/manifest.json`.
+3. Restart Home Assistant.
+
+To update by hand, replace the folder with the new release's and restart.
+
+## Setup
+
+1. Go to **Settings > Devices & services**, select **Add integration**, and
+   search for **Live Track Aircraft**.
+2. Fill in the dialog:
+
+   | Field | Default | Limits | What it does |
+   |---|---|---|---|
+   | Centre | your Home Assistant location | anywhere on earth | the middle of the area to watch; drag the marker |
+   | Radius (km) | 56 | 1 to 463 | how far from the centre aircraft are drawn |
+   | Update interval (seconds) | 15 | 15 to 3600 | how often positions are fetched; the sources rate-limit anything faster than 15 |
+   | Maximum aircraft published | 250 | 1 to 1000 | a safety ceiling, not a display limit; filter the map card to show fewer |
+   | Military watch areas | empty | up to ten circles | optional; see [Military watch areas](#military-watch-areas) |
+   | Aircraft to follow (hex codes) | empty | up to 100 | optional; see [Following your own aircraft and flights](#following-your-own-aircraft-and-flights) |
+   | Flights to follow (call signs) | empty | up to 100 | optional; the same section |
+
+3. Select **Submit**. The integration's card is titled with its centre and
+   radius, for example `39.817, -84.050 - 56 km`.
+
+Every field can be changed later under **Configure** on that card. To watch a
+second area, add the integration again with another centre or radius. The same
+centre and radius twice is refused.
+
+### What it creates
+
+For each area:
+
+- a sensor, **Aircraft in range**: how many aircraft are inside the circle.
+  Its attributes include how many are published, which source answered last,
+  and the state of the route and airport downloads.
+- one `geo_location` entity per aircraft, named from its hex code
+  (`geo_location.aircraft_a1b2c3`), created when the aircraft arrives and
+  removed when it leaves. Each carries `source: live_track_aircraft`.
+
+### Putting the aircraft on a map
+
+The map card comes with the integration (see [Map card](#map-card)). It needs
+[auto-entities](https://github.com/thomasloven/lovelace-auto-entities), which
+you can install from the Marketplace. Then add this card to a dashboard, with
+your own centre in `x` and `y`:
+
+```yaml
+type: custom:auto-entities
+card_param: entities
+card:
+  type: custom:live-track-map-card
+  x: 41.88       # latitude
+  y: -87.63      # longitude
+  zoom: 9
+filter:
+  include:
+    - domain: geo_location
+      attributes:
+        source: live_track_aircraft
+      options:
+        display: attribute
+        attribute: marker_label
+        position_transition: auto
+  exclude:
+    - state: unavailable
+```
+
+### What it downloads
+
+Besides the positions (see [Data sources](#data-sources)), each installation
+fetches four public files on its own and keeps a copy in Home Assistant's
+storage: the [FiledRoutesDB](https://github.com/StrausbergAutomationWorks/FiledRoutesDB)
+route file and the [AirportZones](https://github.com/StrausbergAutomationWorks/AirportZones)
+airport table, both from GitHub; the FAA aircraft registry, which names the
+owners of US-registered aircraft; and the
+[EnforcementAircraft](https://github.com/StrausbergAutomationWorks/EnforcementAircraft)
+list.
+
+### Removing
+
+1. Delete each area under **Settings > Devices & services > Live Track
+   Aircraft**. Deleting the last one withdraws the map card's resource row, or
+   hands it to another Live Track integration.
+2. Remove Live Track Aircraft in the Marketplace, or delete the
+   `custom_components/live_track_aircraft` folder if you installed it by hand.
+3. Restart Home Assistant.
+
+The downloaded files stay in Home Assistant's `.storage` folder, under names
+beginning `saw_`, because other Live Track integrations share them. Delete them
+by hand if nothing else uses them.
 
 ## Why it exists
 
@@ -76,11 +194,12 @@ filtering on `domain: geo_location` and
 Any other map card that shows `geo_location` entities shows the aircraft too,
 as plain markers.
 
-## Live Track Enforcement Aircraft
+## Live Track SALT
 
-Its companion, [Live Track Enforcement Aircraft](https://github.com/StrausbergAutomationWorks/LiveTrackEnforcementAircraft)
-(in development), draws immigration and federal law-enforcement aircraft from a
-public, sourced list wherever they fly, not only around your home, and every
+Its companion, Live Track SALT (in development, not yet released), draws
+immigration and federal law-enforcement aircraft from the public, sourced
+[EnforcementAircraft](https://github.com/StrausbergAutomationWorks/EnforcementAircraft)
+list wherever they fly, not only around your home, and every
 aircraft in a focus area of your own. Install both and each keeps to what it
 does best: this integration draws every aircraft inside its own area, the
 listed ones included, and the companion draws the listed aircraft everywhere

@@ -18,6 +18,9 @@ jobs:
 
   hacs:
     name: HACS
+    # The HACS action cannot validate a private repository ("can only validate public
+    # repositories"), so it runs once the repository is public and is skipped until then.
+    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - uses: hacs/action@main
