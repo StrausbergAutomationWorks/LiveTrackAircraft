@@ -107,25 +107,93 @@ their transponder off, and an aircraft on a civil registration is not flagged. C
 
 ## Following your own aircraft and flights
 
-Optional, in the integration's options, two fields:
+Live Track Aircraft can follow aircraft you choose wherever they are in the
+world, not only inside your circle: your own plane, a club's or a company's
+fleet, or the flight a family member is on.
 
-- **Aircraft to follow (hex codes)**: up to 100 six-character Mode S codes,
-  separated by commas. The code is on every aircraft's `identity` attribute.
-  Use this for an airframe or a fleet.
-- **Flights to follow (call signs)**: up to 100 call signs as broadcast,
-  airline code and number, separated by commas, for example `UAL1234, DAL89`.
-  Whatever aircraft broadcasts that call sign is drawn, so this follows a
-  flight (a family member's, say) rather than an airframe.
+### Setting it up
 
-Each is drawn wherever it is in the world and past the cap, tagged
-`watch: followed`, with `outside_radius` saying whether it is outside your
-circle. The sensor shows `followed_asked` (how many you follow),
-`followed_found` (how many of them are in the air now) and `follow_status`
-(the call-sign lookup's last result). Hex codes ride along in a request the
-integration makes anyway; all call signs together cost one request a minute.
-Both move once a minute. Only what broadcasts ADS-B or MLAT can be found;
-schedules, delays and arrival times by flight number are not part of this.
-Clear a field to stop following.
+1. In Home Assistant, go to **Settings > Devices & services > Live Track
+   Aircraft**.
+2. Open the options (**Configure**) of the area you want them shown with.
+3. Fill in **Aircraft to follow (hex codes)**, **Flights to follow (call
+   signs)**, or both, and select **Submit**.
+
+They appear on the map within about a minute.
+
+### You need only one code per aircraft
+
+Each aircraft needs **either** its hex code **or** its call sign, not both.
+Choose by what you want to follow:
+
+| To follow | Use | Example |
+|---|---|---|
+| One aircraft, whatever flight it flies (your own plane, a fleet) | **hex code** | `a1b2c3` |
+| One flight, whatever aircraft flies it (a family member's trip) | **call sign** | `UAL1234` |
+
+Entering both codes for the same aircraft does no harm (it is drawn once)
+but adds nothing.
+
+### Typing the codes
+
+- **Separate codes with commas:** `a1b2c3, a4b5c6, a7b8c9`. Spaces or
+  semicolons between codes work too.
+- **A hex code** is exactly six characters, the digits 0-9 and the letters
+  a-f. Upper or lower case, either is fine.
+- **A call sign** is 2 to 8 letters and digits, typed as the aircraft
+  broadcasts it, with no space or dash: `UAL1234`, not `UA 1234` or
+  `UAL-1234`.
+- Up to 100 hex codes and 100 call signs. A code typed twice counts once.
+- If one code is wrong, the dialog refuses that field, says what a good code
+  looks like, and saves nothing until it is fixed.
+
+### Finding the codes
+
+**Hex code.** Every aircraft on the map carries its hex code in its
+`identity` attribute. For an aircraft registered in the United States, the
+FAA registry's N-number search shows it as "Mode S Code (Base 16 / Hex)".
+
+**Call sign.** Every aircraft on the map carries it in its `callsign`
+attribute. For an airline flight it is usually the airline's three-letter
+code followed by the flight number, which is not what the ticket shows:
+
+| Ticket | Call sign |
+|---|---|
+| United UA 1234 | `UAL1234` |
+| Delta DL 89 | `DAL89` |
+| American AA 100 | `AAL100` |
+
+Some airlines broadcast a call sign that is not the flight number, with
+letters added. If a flight does not appear, look it up on a live flight map
+and copy the call sign shown there.
+
+A call sign is reused: the same call sign tomorrow is a different trip, and
+may be a different aircraft. It stays followed until you remove it.
+
+### What you see
+
+- Each followed aircraft is drawn with its usual icon and label wherever it
+  is, even when your area already shows its maximum number of aircraft.
+- Its `watch` attribute reads `followed`, and `outside_radius` says whether
+  it is outside your circle.
+- The area's sensor (**Aircraft in range**) shows `followed_asked` (how many
+  codes you follow), `followed_found` (how many of them are in the air now)
+  and `follow_status` (the last call-sign lookup: `ok`, or what went wrong).
+- Outside your circle a followed aircraft moves once a minute; inside it, as
+  often as everything else.
+- An aircraft on the ground, out of receiver coverage, or not broadcasting
+  is not shown, and `followed_found` does not count it.
+
+### Stopping
+
+Remove the code, or clear the field, and select **Submit**.
+
+### Cost and limits
+
+Hex codes ride along in a request the integration makes anyway; all call
+signs together cost one request a minute. Only aircraft that broadcast ADS-B
+or are located by MLAT can be found. Schedules, delays and arrival times by
+flight number are not part of this.
 
 ## Data sources
 
