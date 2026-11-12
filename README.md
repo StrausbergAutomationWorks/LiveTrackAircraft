@@ -6,8 +6,9 @@ any glue.
 
 ## Status
 
-**0.1.0, the first release.** It runs live on its development instance:
-positions, enrichment, routes and icons turned to each aircraft's track.
+**0.1.1.** It runs live on its development instance:
+positions, enrichment, routes and icons turned to each aircraft's track. New in
+0.1.1: an optional adsb.lol API key of your own (see [Data sources](#data-sources)).
 
 ## Requirements
 
