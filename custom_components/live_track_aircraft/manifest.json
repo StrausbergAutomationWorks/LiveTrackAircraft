@@ -2,6 +2,7 @@
   "domain": "live_track_aircraft",
   "name": "Live Track Aircraft",
   "after_dependencies": ["lovelace"],
+  "categories": ["vehicles_transport.flights"],
   "codeowners": ["@LeeS773-prog"],
   "config_flow": true,
   "dependencies": ["http"],

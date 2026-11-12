@@ -199,11 +199,12 @@ flight number are not part of this.
 
 Aircraft positions come from two free community networks, tried in order:
 
-- **[adsb.lol](https://adsb.lol)** - data under the
-  [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/).
 - **[adsb.fi](https://adsb.fi)** - open data for **personal, non-commercial
   use only**, under the terms in its
-  [open data README](https://github.com/adsbfi/opendata).
+  [open data README](https://github.com/adsbfi/opendata). Asked first.
+- **[adsb.lol](https://adsb.lol)** - data under the
+  [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/).
+  Asked when adsb.fi fails or is backing off.
 
 By installing this integration you use both services, and their terms apply to
 you. Both are volunteer-run; if you can, support them by feeding a receiver.
