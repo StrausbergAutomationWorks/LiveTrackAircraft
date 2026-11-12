@@ -18,6 +18,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from homeassistant.util.location import distance as _distance
 
 from .const import (
+    CONF_ADSBLOL_KEY,
     CONF_FOLLOW_CALLSIGNS,
     CONF_FOLLOW_HEXES,
     CONF_LATITUDE,
@@ -85,6 +86,8 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # A user's own watch list (follow.py, backlog 332). The dialog refuses a bad field, so [] here only means none.
         self.follow_hexes = parse_hexes(opts.get(CONF_FOLLOW_HEXES))[0]
         self.follow_callsigns = parse_callsigns(opts.get(CONF_FOLLOW_CALLSIGNS))[0]
+        # The user's own adsb.lol API key (backlog 336); "" means keyless.
+        self.adsblol_key = str(opts.get(CONF_ADSBLOL_KEY) or "").strip()
 
         super().__init__(
             hass,
@@ -169,6 +172,10 @@ class AircraftCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> dict[str, Any]:
         now = time.time()
+        # The user's own adsb.lol API key (backlog 336), given to the shared poll before any request, so the
+        # circle's fallback carries it too; poll.release drops it when the entry unloads.
+        if self.poll is not None:
+            self.poll.set_key(self.claim_key, self.adsblol_key)
         try:
             # ! A 200 carrying under half the last good count is a SHORT
             # answer, not an empty sky (measured 2026-09-25, sources/adsb.py).

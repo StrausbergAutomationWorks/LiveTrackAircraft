@@ -165,7 +165,8 @@ class Labels(unittest.TestCase):
         for step in (self.s["config"]["step"]["user"], self.s["options"]["step"]["init"]):
             self.assertEqual(set(step["data"]),
                              {"location", "radius_km", "scan_interval", "max_aircraft", "military_areas",
-                          "follow_hexes", "follow_callsigns"})    # backlog 332
+                          "follow_hexes", "follow_callsigns",    # backlog 332
+                          "adsblol_api_key"})                    # backlog 336
 
     def test_no_bom(self):
         self.assertFalse(self.raw.startswith(b"\xef\xbb\xbf"))

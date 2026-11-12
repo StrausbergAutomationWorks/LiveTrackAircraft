@@ -29,6 +29,9 @@ CONF_MILITARY_AREAS = "military_areas"
 # A user's own watch list (follow.py, backlog 332): the text typed, hexes in one field, call signs in the other.
 CONF_FOLLOW_HEXES = "follow_hexes"
 CONF_FOLLOW_CALLSIGNS = "follow_callsigns"
+# ! The user's own adsb.lol API key (backlog 336): optional, sent only to adsb.lol (asked while adsb.fi is not
+# answering) by the shared poll, saw-livetrack 0.2.36. Without one adsb.lol allows 500 requests a day per IP.
+CONF_ADSBLOL_KEY = "adsblol_api_key"
 # ! A DIALOG FIELD, NEVER STORED (backlog 192). The setup and options dialogs
 # show the centre as one map marker under this key; centre.py turns it back
 # into CONF_LATITUDE and CONF_LONGITUDE before anything is saved.

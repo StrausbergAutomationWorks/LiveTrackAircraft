@@ -9,12 +9,15 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers.selector import LocationSelector, LocationSelectorConfig
+from homeassistant.helpers.selector import (
+    LocationSelector, LocationSelectorConfig, TextSelector, TextSelectorConfig, TextSelectorType,
+)
 
 from .areas import parse_areas
 from .centre import from_form, to_form
 from .follow import parse_callsigns, parse_hexes
 from .const import (
+    CONF_ADSBLOL_KEY,
     CONF_FOLLOW_CALLSIGNS,
     CONF_FOLLOW_HEXES,
     CONF_LATITUDE,
@@ -67,6 +70,8 @@ def _from_dialog(user_input: dict[str, Any]) -> tuple[dict[str, Any] | None, dic
         if error is not None:
             return None, {key: error}
         values[key] = text
+    # The user's own adsb.lol API key (backlog 336): stored without surrounding spaces, "" meaning none.
+    values[CONF_ADSBLOL_KEY] = (values.get(CONF_ADSBLOL_KEY) or "").strip()
     return values, {}
 
 
@@ -127,6 +132,11 @@ def _schema(defaults: dict[str, Any], hass) -> vol.Schema:
                 CONF_FOLLOW_CALLSIGNS,
                 description={"suggested_value": defaults.get(CONF_FOLLOW_CALLSIGNS, "")},
             ): str,
+            # The user's own adsb.lol API key (backlog 336), masked; suggested_value so clearing it removes it.
+            vol.Optional(
+                CONF_ADSBLOL_KEY,
+                description={"suggested_value": defaults.get(CONF_ADSBLOL_KEY, "")},
+            ): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD)),
             # ! NO ICON OPTIONS since 2026-09-25 (Lee): the icon is always
             # unrotated and disc-less, and the card turns it (icons.py).
         }

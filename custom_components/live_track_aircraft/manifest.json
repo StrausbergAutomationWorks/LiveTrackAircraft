@@ -10,6 +10,6 @@
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/StrausbergAutomationWorks/LiveTrackAircraft/issues",
-  "requirements": ["saw-livetrack[zones]>=0.2.24,<0.3", "tzfpy==2.1.0"],
+  "requirements": ["saw-livetrack[zones]>=0.2.36,<0.3", "tzfpy==2.1.0"],
   "version": "0.1.0"
 }

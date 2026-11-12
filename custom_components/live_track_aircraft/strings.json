@@ -11,7 +11,8 @@
           "max_aircraft": "Maximum aircraft published",
           "military_areas": "Military watch areas",
           "follow_hexes": "Aircraft to follow (hex codes)",
-          "follow_callsigns": "Flights to follow (call signs)"
+          "follow_callsigns": "Flights to follow (call signs)",
+          "adsblol_api_key": "adsb.lol API key"
         },
         "data_description": {
           "location": "Drag the marker to the middle of the area to watch.",
@@ -20,7 +21,8 @@
           "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
           "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463",
           "follow_hexes": "Optional. One code per aircraft is enough. Each aircraft is drawn wherever it flies, past the maximum. Six-character Mode S codes, as on an aircraft's identity attribute, separated by commas. At most 100.",
-          "follow_callsigns": "Optional. One code per aircraft is enough. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100."
+          "follow_callsigns": "Optional. One code per aircraft is enough. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100.",
+          "adsblol_api_key": "Optional. Your own key from adsb.lol, sent only to adsb.lol, which is asked when adsb.fi is not answering. Without one, adsb.lol allows 500 requests a day from your address. Clear the field to stop using it."
         }
       }
     },
@@ -45,7 +47,8 @@
           "max_aircraft": "Maximum aircraft published",
           "military_areas": "Military watch areas",
           "follow_hexes": "Aircraft to follow (hex codes)",
-          "follow_callsigns": "Flights to follow (call signs)"
+          "follow_callsigns": "Flights to follow (call signs)",
+          "adsblol_api_key": "adsb.lol API key"
         },
         "data_description": {
           "location": "Drag the marker to the middle of the area to watch.",
@@ -54,7 +57,8 @@
           "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
           "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463",
           "follow_hexes": "Optional. One code per aircraft is enough. Each aircraft is drawn wherever it flies, past the maximum. Six-character Mode S codes, as on an aircraft's identity attribute, separated by commas. At most 100.",
-          "follow_callsigns": "Optional. One code per aircraft is enough. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100."
+          "follow_callsigns": "Optional. One code per aircraft is enough. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100.",
+          "adsblol_api_key": "Optional. Your own key from adsb.lol, sent only to adsb.lol, which is asked when adsb.fi is not answering. Without one, adsb.lol allows 500 requests a day from your address. Clear the field to stop using it."
         }
       }
     },

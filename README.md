@@ -12,7 +12,8 @@ positions, enrichment, routes and icons turned to each aircraft's track.
 ## Requirements
 
 - Home Assistant 2026.11 or later.
-- No account and no API key.
+- No account and no API key needed. An adsb.lol key of your own is optional (see
+  [Data sources](#data-sources)).
 - Home Assistant installs the Python packages it needs (`saw-livetrack` and
   `tzfpy`) the first time the integration loads.
 
@@ -58,6 +59,7 @@ To update by hand, replace the folder with the new release's and restart.
    | Military watch areas | empty | up to ten circles | optional; see [Military watch areas](#military-watch-areas) |
    | Aircraft to follow (hex codes) | empty | up to 100 | optional; see [Following your own aircraft and flights](#following-your-own-aircraft-and-flights) |
    | Flights to follow (call signs) | empty | up to 100 | optional; the same section |
+   | adsb.lol API key | empty | your own key | optional; see [Data sources](#data-sources) |
 
 3. Select **Submit**. The integration's card is titled with its centre and
    radius, for example `39.817, -84.050 - 56 km`.
@@ -324,6 +326,15 @@ Aircraft positions come from two free community networks, tried in order:
 - **[adsb.lol](https://adsb.lol)** - data under the
   [Open Database License (ODbL) 1.0](https://opendatacommons.org/licenses/odbl/).
   Asked when adsb.fi fails or is backing off.
+
+adsb.lol allows 500 requests a day from one address without a key, which an
+adsb.fi outage can use up in about two hours. A key of your own raises that: a
+free one from [adsb.lol](https://www.adsb.lol/docs/open-data/api), or a feeder's
+key if you feed it a receiver. Enter it as **adsb.lol API key** in the dialog. It
+is sent only to adsb.lol. If adsb.lol refuses it (wrong or expired), the
+integration carries on without it and the **Aircraft in range** sensor's
+`adsblol_key` attribute reads `refused` until you change it; otherwise it reads
+`set`, or `none` with no key.
 
 By installing this integration you use both services, and their terms apply to
 you. Both are volunteer-run; if you can, support them by feeding a receiver.

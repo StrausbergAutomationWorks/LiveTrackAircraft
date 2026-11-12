@@ -117,6 +117,9 @@ class AircraftInRange(SensorEntity):
             "followed_asked": data.get("followed_asked", 0),
             "followed_found": data.get("followed_found", 0),
             "follow_status": data.get("follow_status"),
+            # The adsb.lol API key (backlog 336): "none", "set" or "refused" (wrong or expired: asked without it).
+            # Never the key itself.
+            "adsblol_key": self._coordinator.poll.key_status() if self._coordinator.poll is not None else "none",
             # The EnforcementAircraft list (enforcement.py): how many sourced
             # entries, its build time, and the last failure if the last check
             # failed. Changes with the list, never with the clock.

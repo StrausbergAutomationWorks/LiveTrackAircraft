@@ -42,7 +42,9 @@ class OptionsAndZIndexGone(unittest.TestCase):
                              {"location", "radius_km",
                               "scan_interval", "max_aircraft", "military_areas",
                               # backlog 332, a user's own watch list
-                              "follow_hexes", "follow_callsigns"})
+                              "follow_hexes", "follow_callsigns",
+                              # backlog 336, the user's own adsb.lol key
+                              "adsblol_api_key"})
 
 
 def passthrough():
