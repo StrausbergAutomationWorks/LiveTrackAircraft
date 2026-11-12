@@ -19,8 +19,8 @@
           "scan_interval": "The sources rate-limit below 15 seconds.",
           "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
           "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463",
-          "follow_hexes": "Optional. Each aircraft is drawn wherever it flies, past the maximum. Six-character Mode S codes, as on an aircraft's identity attribute, separated by commas. At most 100.",
-          "follow_callsigns": "Optional. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100."
+          "follow_hexes": "Optional. One code per aircraft is enough. Each aircraft is drawn wherever it flies, past the maximum. Six-character Mode S codes, as on an aircraft's identity attribute, separated by commas. At most 100.",
+          "follow_callsigns": "Optional. One code per aircraft is enough. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100."
         }
       }
     },
@@ -53,8 +53,8 @@
           "scan_interval": "The sources rate-limit below 15 seconds.",
           "max_aircraft": "A safety ceiling, not a display limit. Filter the map card to show fewer.",
           "military_areas": "Optional. Every military-flagged aircraft inside these circles is drawn, past the maximum. latitude,longitude,km separated by semicolons: 39.81,-84.04,150; 34.0,-117.8,463",
-          "follow_hexes": "Optional. Each aircraft is drawn wherever it flies, past the maximum. Six-character Mode S codes, as on an aircraft's identity attribute, separated by commas. At most 100.",
-          "follow_callsigns": "Optional. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100."
+          "follow_hexes": "Optional. One code per aircraft is enough. Each aircraft is drawn wherever it flies, past the maximum. Six-character Mode S codes, as on an aircraft's identity attribute, separated by commas. At most 100.",
+          "follow_callsigns": "Optional. One code per aircraft is enough. Whatever aircraft broadcasts one of these call signs is drawn wherever it flies, past the maximum. As broadcast, airline code and number, separated by commas: UAL1234, DAL89. A call sign names a flight, not an aircraft. At most 100."
         }
       }
     },
