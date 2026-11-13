@@ -199,11 +199,11 @@ as plain markers.
 
 ## Live Track SALT
 
-Its companion, Live Track SALT (in development, not yet released), draws
-immigration and federal law-enforcement aircraft from the public, sourced
+Its companion, [Live Track SALT](https://github.com/StrausbergAutomationWorks/LiveTrackSALT),
+draws immigration and federal law-enforcement aircraft from the public, sourced
 [EnforcementAircraft](https://github.com/StrausbergAutomationWorks/EnforcementAircraft)
-list wherever they fly, not only around your home, and every
-aircraft in a focus area of your own. Install both and each keeps to what it
+list wherever they fly, not only around your home, every aircraft in a focus
+area of your own, and the Coast Guard vessels used in immigration work. Install both and each keeps to what it
 does best: this integration draws every aircraft inside its own area, the
 listed ones included, and the companion draws the listed aircraft everywhere
 else. One shared poll serves both, and no aircraft is drawn twice.
