@@ -1,0 +1,68 @@
+name: "Kalaallisut / Dansk: forslag, fejl eller hjælp"
+description: "Qujanaq! Foreslå noget, meld en fejl, eller tilføj noget med vores hjælp. Felterne er på dansk."
+labels: ["lang: kl"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Qujanaq!** Kalaallisut, qallunaatut imaluunniit tuluttut allagit.
+
+        **Kladde, ikke gennemgået.** Den grønlandske linje er skrevet uden en modersmålstaler. Felterne herunder er på dansk. Du må skrive på grønlandsk, dansk eller et hvilket som helst andet sprog.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "Hvad drejer det sig om?"
+      options:
+        - "Et forslag: et land, en datakilde, en funktion"
+        - "En fejl: noget er forkert, mangler eller er svært at forstå"
+        - "Jeg vil gerne tilføje noget med jeres hjælp"
+        - "Noget andet"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Fortæl os om det"
+      description: "Hvad du gerne vil have, hvad der skete, eller hvad du har i tankerne."
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: "Hvor i verden?"
+      description: "Et land, en region eller en by, hvis det har betydning."
+  - type: textarea
+    id: source
+    attributes:
+      label: "Hvor bliver data offentliggjort? (valgfrit)"
+      description: "Et link til en side med åbne data, et offentligt feed eller en tjenestes hjemmeside, hvis du kender et."
+  - type: input
+    id: ha_version
+    attributes:
+      label: "Home Assistant-version (ved en fejl)"
+      description: "Står under Indstillinger → Om."
+  - type: input
+    id: version
+    attributes:
+      label: "Version af denne integration (ved en fejl)"
+      description: "Marketplace (HACS) viser den ved siden af navnet."
+  - type: input
+    id: language
+    attributes:
+      label: "Sproget i din Home Assistant"
+      description: "Kun hvis fejlen handler om ordlyden eller en oversættelse."
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Fejlmeddelelser (valgfrit)"
+      description: "Indstillinger → System → Logfiler. Kopiér de linjer, der nævner denne integration. Lad feltet stå tomt, hvis du er i tvivl."
+      render: text
+  - type: dropdown
+    id: experience
+    attributes:
+      label: "Har du prøvet noget lignende før? (valgfrit)"
+      description: "Så ved vi, hvor meget vi skal forklare. Alle svar er velkomne."
+      options:
+        - "Nej, det er første gang"
+        - "Lidt"
+        - "Ja"

@@ -1,0 +1,66 @@
+name: "Deutsch: Vorschlag, Problem oder Hilfe"
+description: "Etwas vorschlagen, ein Problem melden oder mit unserer Hilfe etwas beitragen. Ohne Programmierkenntnisse."
+labels: ["lang: de"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Vielen Dank. Beantworten Sie, was Sie können, und lassen Sie den Rest leer. Programmierkenntnisse sind nicht nötig. Sie können auf Deutsch oder in jeder anderen Sprache schreiben.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "Worum geht es?"
+      options:
+        - "Ein Vorschlag: ein Land, eine Datenquelle, eine Funktion"
+        - "Ein Problem: etwas ist falsch, fehlt oder ist schwer zu verstehen"
+        - "Ich möchte mit Ihrer Hilfe etwas beitragen"
+        - "Etwas anderes"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Erzählen Sie uns davon"
+      description: "Was Sie sich wünschen, was passiert ist oder was Sie vorhaben."
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: "Wo auf der Welt?"
+      description: "Ein Land, eine Region oder eine Stadt, falls es darauf ankommt."
+  - type: textarea
+    id: source
+    attributes:
+      label: "Wo werden die Daten veröffentlicht? (optional)"
+      description: "Ein Link zu einer Open-Data-Seite, einem öffentlichen Feed oder der Website eines Dienstes, falls Sie einen kennen."
+  - type: input
+    id: ha_version
+    attributes:
+      label: "Home-Assistant-Version (bei einem Problem)"
+      description: "Zu finden unter Einstellungen → Über."
+  - type: input
+    id: version
+    attributes:
+      label: "Version dieser Integration (bei einem Problem)"
+      description: "Der Marketplace (HACS) zeigt sie neben dem Namen an."
+  - type: input
+    id: language
+    attributes:
+      label: "Ihre Home-Assistant-Sprache"
+      description: "Nur wenn es um die Formulierung oder eine Übersetzung geht."
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Fehlermeldungen (optional)"
+      description: "Einstellungen → System → Protokolle. Kopieren Sie die Zeilen, in denen diese Integration vorkommt. Lassen Sie das Feld leer, wenn Sie unsicher sind."
+      render: text
+  - type: dropdown
+    id: experience
+    attributes:
+      label: "Haben Sie so etwas schon einmal gemacht? (optional)"
+      description: "Damit wir wissen, wie viel wir erklären sollen. Jede Antwort ist willkommen."
+      options:
+        - "Nein, zum ersten Mal"
+        - "Ein wenig"
+        - "Ja"

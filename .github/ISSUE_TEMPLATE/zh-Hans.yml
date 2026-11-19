@@ -1,0 +1,66 @@
+name: "简体中文：建议、问题或帮助"
+description: "提出建议、报告问题，或在我们的帮助下添加内容。无需编程知识。"
+labels: ["lang: zh-Hans"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        谢谢。请回答你能回答的部分，其余留空即可。你不需要懂编程。可以用中文或任何其他语言填写。
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "这是关于什么的？"
+      options:
+        - "建议：一个国家、一个数据来源或一项功能"
+        - "问题：有错误、缺失或难以理解的内容"
+        - "我想在你们的帮助下添加内容"
+        - "其他"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "请告诉我们详情"
+      description: "你希望看到什么、发生了什么，或你的想法。"
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: "在世界上的哪个地方？"
+      description: "国家、地区或城市（如果相关）。"
+  - type: textarea
+    id: source
+    attributes:
+      label: "数据在哪里发布？（可选）"
+      description: "如果你知道，请提供开放数据页面、公开数据源或服务网站的链接。"
+  - type: input
+    id: ha_version
+    attributes:
+      label: "Home Assistant 版本（报告问题时）"
+      description: "可在 设置 → 关于 Home Assistant 中找到。"
+  - type: input
+    id: version
+    attributes:
+      label: "本集成的版本（报告问题时）"
+      description: "Marketplace（HACS）在名称旁边显示。"
+  - type: input
+    id: language
+    attributes:
+      label: "你的 Home Assistant 语言"
+      description: "仅当问题涉及措辞或翻译时填写。"
+  - type: textarea
+    id: logs
+    attributes:
+      label: "错误信息（可选）"
+      description: "设置 → 系统 → 日志。复制提到本集成的行。如果不确定，可以留空。"
+      render: text
+  - type: dropdown
+    id: experience
+    attributes:
+      label: "你以前做过类似的事吗？（可选）"
+      description: "这样我们就知道需要解释多少。任何回答都欢迎。"
+      options:
+        - "没有，这是第一次"
+        - "做过一点"
+        - "做过"

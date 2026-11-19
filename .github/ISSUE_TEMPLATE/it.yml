@@ -1,0 +1,66 @@
+name: "Italiano: suggerimento, problema o aiuto"
+description: "Suggerisci qualcosa, segnala un problema o aggiungi qualcosa con il nostro aiuto. Non serve saper programmare."
+labels: ["lang: it"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie. Rispondi a quello che puoi e lascia vuoto il resto. Non devi sapere nulla di programmazione. Puoi scrivere in italiano o in qualsiasi altra lingua.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "Di cosa si tratta?"
+      options:
+        - "Un suggerimento: un paese, una fonte di dati, una funzione"
+        - "Un problema: qualcosa è sbagliato, manca o è difficile da capire"
+        - "Vorrei aggiungere qualcosa, con il vostro aiuto"
+        - "Altro"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Raccontaci"
+      description: "Cosa vorresti, cosa è successo o cosa hai in mente."
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: "Dove nel mondo?"
+      description: "Un paese, una regione o una città, se è importante."
+  - type: textarea
+    id: source
+    attributes:
+      label: "Dove vengono pubblicati i dati? (facoltativo)"
+      description: "Un link a una pagina di open data, a un feed pubblico o al sito di un servizio, se ne conosci uno."
+  - type: input
+    id: ha_version
+    attributes:
+      label: "Versione di Home Assistant (per un problema)"
+      description: "La trovi in Impostazioni → Informazioni."
+  - type: input
+    id: version
+    attributes:
+      label: "Versione di questa integrazione (per un problema)"
+      description: "Il Marketplace (HACS) la mostra accanto al nome."
+  - type: input
+    id: language
+    attributes:
+      label: "Lingua del tuo Home Assistant"
+      description: "Solo se il problema riguarda il testo o una traduzione."
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Messaggi di errore (facoltativo)"
+      description: "Impostazioni → Sistema → Registri. Copia le righe che citano questa integrazione. Lascia vuoto se hai dubbi."
+      render: text
+  - type: dropdown
+    id: experience
+    attributes:
+      label: "Hai già fatto qualcosa di simile? (facoltativo)"
+      description: "Così sappiamo quanto spiegare. Ogni risposta è benvenuta."
+      options:
+        - "No, è la prima volta"
+        - "Un po'"
+        - "Sì"

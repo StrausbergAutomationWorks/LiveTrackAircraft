@@ -1,0 +1,66 @@
+name: "Français : suggestion, problème ou aide"
+description: "Proposer quelque chose, signaler un problème ou ajouter quelque chose avec notre aide. Aucune connaissance en programmation n'est nécessaire."
+labels: ["lang: fr"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci. Répondez à ce que vous pouvez et laissez le reste vide. Vous n'avez pas besoin de savoir programmer. Vous pouvez écrire en français ou dans n'importe quelle autre langue.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "De quoi s'agit-il ?"
+      options:
+        - "Une suggestion : un pays, une source de données, une fonction"
+        - "Un problème : quelque chose est faux, manque ou est difficile à comprendre"
+        - "Je voudrais ajouter quelque chose, avec votre aide"
+        - "Autre chose"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Racontez-nous"
+      description: "Ce que vous aimeriez, ce qui s'est passé ou ce que vous avez en tête."
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: "Où dans le monde ?"
+      description: "Un pays, une région ou une ville, si cela compte."
+  - type: textarea
+    id: source
+    attributes:
+      label: "Où les données sont-elles publiées ? (facultatif)"
+      description: "Un lien vers une page de données ouvertes, un flux public ou le site d'un service, si vous en connaissez un."
+  - type: input
+    id: ha_version
+    attributes:
+      label: "Version de Home Assistant (pour un problème)"
+      description: "Visible dans Paramètres → À propos."
+  - type: input
+    id: version
+    attributes:
+      label: "Version de cette intégration (pour un problème)"
+      description: "Le Marketplace (HACS) l'affiche à côté du nom."
+  - type: input
+    id: language
+    attributes:
+      label: "Langue de votre Home Assistant"
+      description: "Seulement si le problème concerne la formulation ou une traduction."
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Messages d'erreur (facultatif)"
+      description: "Paramètres → Système → Journaux. Copiez les lignes qui mentionnent cette intégration. Laissez vide en cas de doute."
+      render: text
+  - type: dropdown
+    id: experience
+    attributes:
+      label: "Avez-vous déjà fait quelque chose de semblable ? (facultatif)"
+      description: "Pour que nous sachions combien expliquer. Toutes les réponses sont les bienvenues."
+      options:
+        - "Non, c'est la première fois"
+        - "Un peu"
+        - "Oui"

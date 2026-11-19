@@ -1,0 +1,66 @@
+name: "Español: sugerencia, problema o ayuda"
+description: "Sugiere algo, informa de un problema o añade algo con nuestra ayuda. No hace falta saber programar."
+labels: ["lang: es"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias. Responde lo que puedas y deja el resto vacío. No necesitas saber nada de programación. Puedes escribir en español o en cualquier otro idioma.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "¿De qué se trata?"
+      options:
+        - "Una sugerencia: un país, una fuente de datos, una función"
+        - "Un problema: algo está mal, falta o es difícil de entender"
+        - "Me gustaría añadir algo y necesito ayuda"
+        - "Otra cosa"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Cuéntanos"
+      description: "Lo que te gustaría, lo que ocurrió o lo que tienes en mente."
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: "¿En qué lugar del mundo?"
+      description: "Un país, una región o una ciudad, si importa."
+  - type: textarea
+    id: source
+    attributes:
+      label: "¿Dónde se publican los datos? (opcional)"
+      description: "Un enlace a una página de datos abiertos, un feed público o la web de un servicio, si conoces alguno."
+  - type: input
+    id: ha_version
+    attributes:
+      label: "Versión de Home Assistant (para un problema)"
+      description: "Aparece en Configuración → Acerca de."
+  - type: input
+    id: version
+    attributes:
+      label: "Versión de esta integración (para un problema)"
+      description: "El Marketplace (HACS) la muestra junto al nombre."
+  - type: input
+    id: language
+    attributes:
+      label: "Idioma de tu Home Assistant"
+      description: "Solo si el problema es la redacción o una traducción."
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Mensajes de error (opcional)"
+      description: "Configuración → Sistema → Registros. Copia las líneas que mencionan esta integración. Déjalo vacío si tienes dudas."
+      render: text
+  - type: dropdown
+    id: experience
+    attributes:
+      label: "¿Has hecho algo parecido antes? (opcional)"
+      description: "Así sabremos cuánto explicar. Cualquier respuesta es bienvenida."
+      options:
+        - "No, es la primera vez"
+        - "Un poco"
+        - "Sí"

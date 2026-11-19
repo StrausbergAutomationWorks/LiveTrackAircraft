@@ -1,0 +1,66 @@
+name: "English: suggestion, problem or help"
+description: "Suggest something, report a problem, or add something with our help. No programming needed."
+labels: ["lang: en"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you. Answer what you can and leave the rest empty. You do not need to know anything about programming. You may write in English or in any other language.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "What is this about?"
+      options:
+        - "A suggestion: a country, a data source, a feature"
+        - "A problem: something is wrong, missing or hard to understand"
+        - "I would like to add something, with your help"
+        - "Something else"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Tell us about it"
+      description: "What you would like, what happened, or what you have in mind."
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: "Where in the world?"
+      description: "A country, a region or a city, if it matters."
+  - type: textarea
+    id: source
+    attributes:
+      label: "Where is the data published? (optional)"
+      description: "A link to an open-data page, a public feed or a service's website, if you know one."
+  - type: input
+    id: ha_version
+    attributes:
+      label: "Home Assistant version (for a problem)"
+      description: "Settings → About shows it."
+  - type: input
+    id: version
+    attributes:
+      label: "Version of this integration (for a problem)"
+      description: "The Marketplace (HACS) shows it next to the name."
+  - type: input
+    id: language
+    attributes:
+      label: "Your Home Assistant language"
+      description: "Only if the problem is the wording or a translation."
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Error messages (optional)"
+      description: "Settings → System → Logs. Copy the lines that mention this integration. Leave it empty if you are not sure."
+      render: text
+  - type: dropdown
+    id: experience
+    attributes:
+      label: "Have you done something like this before? (optional)"
+      description: "So we know how much to explain. Every answer is welcome."
+      options:
+        - "No, this is my first time"
+        - "A little"
+        - "Yes"

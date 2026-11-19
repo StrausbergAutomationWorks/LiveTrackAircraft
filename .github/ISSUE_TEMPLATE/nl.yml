@@ -1,0 +1,66 @@
+name: "Nederlands: suggestie, probleem of hulp"
+description: "Stel iets voor, meld een probleem of voeg met onze hulp iets toe. Programmeerkennis is niet nodig."
+labels: ["lang: nl"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bedankt. Beantwoord wat je kunt en laat de rest leeg. Je hoeft niets van programmeren te weten. Je mag in het Nederlands of in elke andere taal schrijven.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "Waar gaat het over?"
+      options:
+        - "Een suggestie: een land, een gegevensbron, een functie"
+        - "Een probleem: iets klopt niet, ontbreekt of is moeilijk te begrijpen"
+        - "Ik wil met jullie hulp iets toevoegen"
+        - "Iets anders"
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: "Vertel het ons"
+      description: "Wat je graag zou willen, wat er gebeurde of wat je van plan bent."
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: "Waar ter wereld?"
+      description: "Een land, een regio of een stad, als het ertoe doet."
+  - type: textarea
+    id: source
+    attributes:
+      label: "Waar worden de gegevens gepubliceerd? (optioneel)"
+      description: "Een link naar een open-datapagina, een openbare feed of de website van een dienst, als je er een kent."
+  - type: input
+    id: ha_version
+    attributes:
+      label: "Home Assistant-versie (bij een probleem)"
+      description: "Te vinden onder Instellingen → Over."
+  - type: input
+    id: version
+    attributes:
+      label: "Versie van deze integratie (bij een probleem)"
+      description: "De Marketplace (HACS) toont die naast de naam."
+  - type: input
+    id: language
+    attributes:
+      label: "Taal van je Home Assistant"
+      description: "Alleen als het probleem de tekst of een vertaling is."
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Foutmeldingen (optioneel)"
+      description: "Instellingen → Systeem → Logboeken. Kopieer de regels waarin deze integratie voorkomt. Laat leeg als je het niet zeker weet."
+      render: text
+  - type: dropdown
+    id: experience
+    attributes:
+      label: "Heb je zoiets al eens gedaan? (optioneel)"
+      description: "Zo weten we hoeveel we moeten uitleggen. Elk antwoord is welkom."
+      options:
+        - "Nee, dit is de eerste keer"
+        - "Een beetje"
+        - "Ja"
