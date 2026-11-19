@@ -731,8 +731,9 @@ Denne README: [English](README.md), [Deutsch](README.de.md),
 [Italiano](README.it.md), **Dansk**. Hver oversat README er komplet.
 
 Opsætningsdialogen og indstillingerne er indtil videre kun på engelsk, uanset
-din Home Assistants sprog. At oversætte dem er en af de nemmeste måder at
-[hjælpe](#tilføj-det-selv-med-vores-hjælp) på.
+hvilket sprog din Home Assistant bruger. Taler du et andet sprog, kan du selv
+oversætte dem: det er en kort liste med sætninger i én fil, og [vi hjælper dig
+med det](#tilføj-det-selv-med-vores-hjælp).
 
 Har du fundet en fejl i en oversættelse, eller har du brug for et andet sprog?
 Fortæl os det på <https://github.com/StrausbergAutomationWorks/LiveTrackAircraft/issues>,
@@ -806,3 +807,9 @@ tracciamento voli · adsb.fi · adsb.lol · adsbdb · FiledRoutesDB ·
 FAA-register · OurAirports · ADS-B Radar · geo_location · kortkort ·
 Lovelace · HACS · Marketplace · Markedsplads · Live Track · LiveTrack ·
 StrausbergAutomationWorks
+
+---
+
+**Anerkendelse.** StrausbergAutomationWorks anerkender de oprindelige folk i
+alle de lande og farvande, dette kort dækker, over hele verden, og viser sin
+respekt for deres ældste, fortidens og nutidens.

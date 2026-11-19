@@ -747,8 +747,9 @@ Questo README: [English](README.md), [Deutsch](README.de.md),
 [Dansk](README.da.md). Ogni README tradotto è completo.
 
 La finestra di configurazione e le opzioni sono per ora solo in inglese,
-qualunque sia la lingua del tuo Home Assistant. Tradurle è uno dei modi più
-facili per [aiutare](#aggiungerlo-tu-con-il-nostro-aiuto).
+qualunque sia la lingua del tuo Home Assistant. Se parli un'altra lingua, puoi
+tradurle tu: è un breve elenco di frasi in un solo file, e [ti aiuteremo a
+farlo](#aggiungerlo-tu-con-il-nostro-aiuto).
 
 Hai trovato un errore in una traduzione, o ti serve un'altra lingua? Diccelo
 su <https://github.com/StrausbergAutomationWorks/LiveTrackAircraft/issues>, o
@@ -828,3 +829,9 @@ seguimiento de vuelos · fly · flysporing · adsb.fi · adsb.lol · adsbdb ·
 FiledRoutesDB · registro della FAA · OurAirports · ADS-B Radar ·
 geo_location · scheda mappa · Lovelace · HACS · Marketplace · Live Track ·
 LiveTrack · StrausbergAutomationWorks
+
+---
+
+**Riconoscimento.** StrausbergAutomationWorks riconosce i popoli indigeni di
+tutte le terre e le acque di questa mappa, in tutto il mondo, e rende omaggio ai
+loro Anziani del passato e del presente.

@@ -468,7 +468,7 @@ Live Track Aircraft 仍在成长。我们发现新的航线来源、数据来源
 
 这份 README：[English](README.md)、[Deutsch](README.de.md)、[Français](README.fr.md)、[Nederlands](README.nl.md)、**简体中文**、[Español](README.es.md)、[Italiano](README.it.md)、[Dansk](README.da.md)。每份翻译的 README 都是完整的。
 
-无论你的 Home Assistant 使用什么语言，设置对话框和选项目前都只有英文。翻译它们是最容易的[帮助](#在我们的帮助下自己添加)方式之一。
+设置对话框和选项目前只有英文，无论你的 Home Assistant 使用什么语言。如果你会说其他语言，可以自己翻译它们：只是一个文件里的一小串短语，[我们会帮你完成](#在我们的帮助下自己添加)。
 
 发现翻译中的错误，或需要其他语言？请在 <https://github.com/StrausbergAutomationWorks/LiveTrackAircraft/issues> 告诉我们，或者[在我们的帮助下翻译](#在我们的帮助下自己添加)。
 
@@ -497,3 +497,7 @@ Live Track Aircraft 仍在成长。我们发现新的航线来源、数据来源
 ## 关键词
 
 Home Assistant 飞机 · Home Assistant 航班跟踪 · ADS-B · ADS-B 地图 · 航班跟踪 · 飞机追踪 · 头顶的飞机 · MLAT · Mode S · 航线 · 军用飞机 · 空军一号 · Air Force One · 直升机 · aircraft · flight tracker · Flugzeuge · Flugverfolgung · avions · suivi des vols · vliegtuigen · vluchten volgen · aviones · seguimiento de vuelos · aerei · tracciamento voli · fly · flysporing · adsb.fi · adsb.lol · adsbdb · FiledRoutesDB · FAA 登记册 · OurAirports · ADS-B Radar · geo_location · 地图卡片 · Lovelace · HACS · Marketplace · Live Track · LiveTrack · StrausbergAutomationWorks
+
+---
+
+**致敬。** StrausbergAutomationWorks 向这张地图上世界各地陆地和水域的原住民族致意，并向他们过去和现在的长老致敬。

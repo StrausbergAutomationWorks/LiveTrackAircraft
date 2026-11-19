@@ -769,8 +769,9 @@ Diese README: [English](README.md), **Deutsch**, [Français](README.fr.md),
 Jede übersetzte README ist vollständig.
 
 Der Einrichtungsdialog und die Optionen sind vorerst nur auf Englisch, gleich
-welche Sprache Ihr Home Assistant hat. Eine Übersetzung davon ist eine der
-einfachsten Arten, [mitzuhelfen](#selbst-etwas-hinzufügen-mit-unserer-hilfe).
+welche Sprache Ihr Home Assistant hat. Wenn Sie eine andere Sprache sprechen,
+können Sie sie selbst übersetzen: Es ist eine kurze Liste von Sätzen in einer
+Datei, und [wir helfen Ihnen dabei](#selbst-etwas-hinzufügen-mit-unserer-hilfe).
 
 Einen Fehler in einer Übersetzung gefunden, oder eine andere Sprache nötig?
 Sagen Sie es uns unter
@@ -851,3 +852,9 @@ aerei · tracciamento voli · fly · flysporing · adsb.fi · adsb.lol · adsbdb
 FiledRoutesDB · FAA-Register · OurAirports · ADS-B Radar · geo_location ·
 Kartenkarte · Lovelace · HACS · Marketplace · Live Track · LiveTrack ·
 StrausbergAutomationWorks
+
+---
+
+**Würdigung.** StrausbergAutomationWorks würdigt die indigenen Völker aller
+Länder und Gewässer auf dieser Karte, überall auf der Welt, und erweist ihren
+Ältesten, in Vergangenheit und Gegenwart, seinen Respekt.
