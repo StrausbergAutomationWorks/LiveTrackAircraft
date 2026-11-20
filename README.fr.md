@@ -588,9 +588,9 @@ suppression. Elle est dessinée droite, sans rotation, parce qu'une photo n'est
 pas dessinée le nez vers le haut. L'attribut `picture_source` de l'avion vaut
 alors `override`.
 
-⚠ Ces images sont servies sans connexion, comme les icônes : quiconque peut
-joindre votre Home Assistant par son adresse peut les ouvrir. N'y mettez pas
-d'image privée.
+Ces images demandent une connexion à votre Home Assistant, comme tout le
+reste. La carte reçoit chacune par un lien signé par Home Assistant, qui
+cesse de fonctionner au bout d'un jour ; un nouveau lien est créé avant.
 
 ### Les avions du président
 

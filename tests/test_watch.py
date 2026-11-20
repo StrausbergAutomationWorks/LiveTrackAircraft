@@ -306,7 +306,9 @@ class Wiring(unittest.TestCase):
         c = source("coordinator.py")
         self.assertIn("self.military_areas = parse_areas(opts.get(CONF_MILITARY_AREAS))[0]", c)
         self.assertIn("self.watch.in_areas(self.military_areas)", c)
-        self.assertLess(c.index("apply_cap("), c.index("self.watch.in_areas("))     # after the cap, so past it
+        # drawn after the cap, so past it. Since 0.1.3 they are GATHERED before the circle's records (one executor job
+        # per poll, hacs/default#14501 item 2), so the pin is on the drawing.
+        self.assertLess(c.index("apply_cap("), c.index('aircraft[obs.identity].setdefault("watch", WHY_MILITARY_AREA)'))
         self.assertLess(c.index("self.watch.in_areas("), c.index("for gone in [k for k in self._fix"))
         self.assertIn('aircraft[obs.identity].setdefault("watch", WHY_MILITARY_AREA)', c)
         self.assertIn('rec["watch"] = WHY_MILITARY_AREA', c)

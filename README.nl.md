@@ -579,9 +579,10 @@ verwijdering. Hij wordt rechtop getekend, niet gedraaid, omdat een foto niet
 met de neus omhoog getekend is. Het attribuut `picture_source` van het
 vliegtuig is dan `override`.
 
-⚠ Deze afbeeldingen worden zonder aanmelding geleverd, net als de symbolen:
-iedereen die je Home Assistant via zijn adres kan bereiken, kan ze openen. Zet
-er geen privéafbeelding neer.
+Voor deze afbeeldingen moet je aangemeld zijn bij je Home Assistant, net als
+voor de rest. De kaart krijgt elke afbeelding via een link die Home Assistant
+ondertekent en die na een dag niet meer werkt; daarvoor wordt een nieuwe
+gemaakt.
 
 ### De vliegtuigen van de president
 

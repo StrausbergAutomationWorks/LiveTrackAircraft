@@ -64,7 +64,6 @@ because it needs user-supplied credentials.
 """
 
 import datetime as dt
-import functools
 import math
 from zoneinfo import ZoneInfo
 
@@ -335,14 +334,53 @@ _TIME_RANK = {IN_WINDOW: 0, NO_TIMES: 1, OUTSIDE_WINDOW: 1}
 ORDER = ("verdict", "phase", "time", "behind", "progress", "history")
 
 
-@functools.lru_cache(maxsize=512)
-def _zone(name):
-    if not name:
-        return None
+# ! THE FIRST ZoneInfo(name) READS tzdata FROM DISK (hacs/default#14501 item 3,
+# Frenck 2026-11-19), so it must not run on Home Assistant's event loop, and an
+# lru_cache does not help the first one. The integration builds every zone a
+# poll can need in that poll's executor job (lookups.resolve -> warm_zones) and
+# switches this module to LOOP-SAFE (set_loop_safe), after which _zone only
+# reads the cache: a name nobody warmed answers None, which is "no time
+# evidence" for that leg on that poll, never a disk read. Offline (the tests,
+# the replays) the default builds on a miss, as before.
+_ZONES: dict = {}
+_LOOP_SAFE = False
+
+
+def set_loop_safe(on: bool = True) -> None:
+    """Never build a ZoneInfo in _zone; only warm_zones builds them."""
+    global _LOOP_SAFE  # noqa: PLW0603 - one switch per process
+    _LOOP_SAFE = bool(on)
+
+
+def _build(name):
     try:
         return ZoneInfo(name)
     except Exception:           # unknown key, missing tzdata
         return None
+
+
+def warm_zones(names) -> int:
+    """Build every named zone not built yet. BLOCKS (tzdata): call it off the loop.
+    Returns how many were built now."""
+    built = 0
+    for name in names:
+        if name and name not in _ZONES:
+            _ZONES[name] = _build(name)
+            built += 1
+    return built
+
+
+def _zone(name):
+    if not name:
+        return None
+    try:
+        return _ZONES[name]
+    except KeyError:
+        pass
+    if _LOOP_SAFE:
+        return None
+    zone = _ZONES[name] = _build(name)
+    return zone
 
 
 def _local(day, minute, zone):

@@ -59,7 +59,7 @@ class AdsbLolKey(unittest.TestCase):
 
     def test_requires_the_library_that_sends_it(self):
         m = json.loads(source("manifest.json"))
-        self.assertIn("saw-livetrack[zones]>=0.2.36,<0.3", m["requirements"])
+        self.assertIn("saw-livetrack[zones]>=0.2.42,<0.3", m["requirements"])
 
 
 if __name__ == "__main__":

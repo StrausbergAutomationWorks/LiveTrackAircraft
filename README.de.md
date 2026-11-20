@@ -589,9 +589,10 @@ Entfernen. Es wird aufrecht gezeichnet, nicht gedreht, weil ein Foto nicht mit
 der Nase nach oben gezeichnet ist. Das Attribut `picture_source` des Flugzeugs
 lautet dann `override`.
 
-⚠ Diese Bilder werden ohne Anmeldung ausgeliefert, wie die Symbole: Jeder, der
-Ihr Home Assistant über seine Adresse erreichen kann, kann sie öffnen. Legen
-Sie dort kein privates Bild ab.
+Diese Bilder erfordern eine Anmeldung an Ihrem Home Assistant, wie alles
+andere darin. Die Karte erhält jedes Bild über einen von Home Assistant
+signierten Link, der nach einem Tag nicht mehr funktioniert; vorher wird ein
+neuer erstellt.
 
 ### Die Flugzeuge des Präsidenten
 

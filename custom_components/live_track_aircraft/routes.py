@@ -108,6 +108,7 @@ class RouteStore:
         self._meta: dict[str, Any] = {}
         self._checked: dt.datetime | None = None
         self._has_times: tuple[sqlite3.Connection, bool] | None = None
+        self._reopen = False
         self.status = "not loaded"
 
     def close(self) -> None:
@@ -120,13 +121,20 @@ class RouteStore:
 
         ! Called after route_download.py moves a new file over the old one.
         On Linux an open connection keeps reading the replaced file until it
-        is closed; without this the switch would wait up to an hour."""
-        self.close()
-        self._checked = None
-        self._has_times = None
+        is closed; without this the switch would wait up to an hour.
+        ! ON THE EVENT LOOP, so it only marks the file; the close happens in
+        the next lookup, which runs in the poll's executor job (lookups.py),
+        never on the loop and never under a query in flight there."""
+        self._reopen = True
 
     def _ensure(self) -> sqlite3.Connection | None:
+        """BLOCKS (stat, open, queries): call it, and every lookup, off the loop."""
         now = dt.datetime.now(dt.UTC)
+        if self._reopen:
+            self._reopen = False
+            self.close()
+            self._checked = None
+            self._has_times = None
 
         # ! Re-validated periodically, NOT once at startup. Home Assistant
         # runs for weeks; a check that only fired at boot would sail past the
@@ -141,8 +149,11 @@ class RouteStore:
             return None
 
         try:
+            # check_same_thread=False: the lookups run in Home Assistant's
+            # executor, one job at a time per coordinator, on whichever thread.
             con = sqlite3.connect(
-                "file:%s?mode=ro" % self._path.replace("\\", "/"), uri=True)
+                "file:%s?mode=ro" % self._path.replace("\\", "/"), uri=True,
+                check_same_thread=False)
             meta = dict(con.execute("SELECT k, v FROM meta").fetchall())
         except sqlite3.Error as err:
             _delete(self._path, "unreadable: %s" % err)

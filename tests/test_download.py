@@ -172,17 +172,27 @@ class Reader(Storage):
         self.assertTrue(store.status.startswith("ok (local"))
         store.close()
 
-    def test_reopen_sees_a_replaced_file(self):
+    def test_reopen_lets_go_at_the_next_lookup(self):
+        # reopen() must let go of the open file: on HA's Linux the old one
+        # would otherwise be read for up to an hour. Since 0.1.3
+        # (hacs/default#14501 item 2) reopen() runs on the event loop and only
+        # MARKS the store; the close happens in the next lookup, which runs in
+        # the poll's executor job (the only thread that touches the connection).
         self.install(payload())
         store = routes.RouteStore(self.hass)
         self.assertEqual(len(store.legs("AAL1")), 2)
+        old = store._con
+        store.reopen()
+        self.assertIs(store._con, old)                 # nothing closed on the caller's thread
+        self.assertEqual(len(store.legs("AAL1")), 2)   # the next lookup closes it and opens THE PATH again
+        self.assertIsNot(store._con, old)
+        with self.assertRaises(sqlite3.ProgrammingError):
+            old.execute("SELECT 1")
+        # A replaced file is read once the old one is let go of (Windows,
+        # where this test runs, cannot replace an open file at all).
+        store.close()
         p = payload(built="2026-10-14T01:30:00+00:00")
         p["routes"]["AAL1"]["l"] = p["routes"]["AAL1"]["l"][:1]
-        # reopen() must let go of the open file: on HA's Linux the old one
-        # would otherwise be read for up to an hour (and Windows, where this
-        # test runs, cannot replace an open file at all).
-        store.reopen()
-        self.assertIsNone(store._con)
         self.install(p)
         self.assertEqual(len(store.legs("AAL1")), 1)
         store.close()

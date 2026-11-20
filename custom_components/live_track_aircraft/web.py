@@ -47,10 +47,11 @@ class AircraftIconView(HomeAssistantView):
     requires_auth = False
 
     async def get(self, request: web.Request, key: str, angle: str) -> web.Response:
-        path = icons.icon_path(key)
-        if path is None:
-            # ! valid_key() rejects anything but [a-z0-9], so a path segment
-            # cannot climb out of the icons folder.
+        # ! valid_key() rejects anything but [a-z0-9], so a path segment
+        # cannot climb out of the icons folder. It is pure; the lookup that
+        # touches the disk (icon_path, os.path.exists) runs in the executor
+        # job with the render (hacs/default#14501 item 4).
+        if not icons.valid_key(key):
             return web.Response(status=404, text="unknown icon")
 
         if angle == "fixed":
@@ -77,10 +78,12 @@ class AircraftIconView(HomeAssistantView):
 
         try:
             svg = await request.app["hass"].async_add_executor_job(
-                icons.render, path, degrees, 64, tone, weight, badge, lights)
+                _render_key, key, degrees, tone, weight, badge, lights)
         except Exception:  # noqa: BLE001
             _LOGGER.exception("Could not render %s at %s", key, angle)
             return web.Response(status=500, text="render failed")
+        if svg is None:
+            return web.Response(status=404, text="unknown icon")
 
         return web.Response(
             body=svg.encode("utf-8"),
@@ -98,9 +101,12 @@ class AircraftPictureView(HomeAssistantView):
 
     url = pictures.URL_BASE + "/{name}"
     name = "api:live_track_aircraft:picture"
-    # ! As the icons: a picture URL cannot carry a token. What is in the
-    # folder is the user's choice to show; pictures.py says so.
-    requires_auth = False
+    # ! AUTHENTICATED, since 0.1.3 (hacs/default#14501 item 1, Frenck
+    # 2026-11-19: these are the user's own files, and the hex in the URL is
+    # public). requires_auth stays at Home Assistant's default, True. The
+    # entity's URL is signed (pictures.Overrides, async_sign_path), which the
+    # auth middleware accepts in place of a token on a GET; measured on Home
+    # Assistant 2026.11.2 on 2026-11-20, before this change.
 
     async def get(self, request: web.Request, name: str) -> web.Response:
         hass = request.app["hass"]
@@ -115,12 +121,23 @@ class AircraftPictureView(HomeAssistantView):
             content_type=content_type,
             headers={
                 # ?v= is the file's mtime, so a replaced file is a new URL.
-                "Cache-Control": "public, max-age=86400",
+                # private: the user's own file, behind a sign-in, is kept by
+                # the browser only, never by a shared cache on the way.
+                "Cache-Control": "private, max-age=86400",
                 "X-Content-Type-Options": "nosniff",
                 # A user's SVG must not run script if opened directly.
                 "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:",
             },
         )
+
+
+def _render_key(key: str, degrees, tone, weight, badge, lights) -> str | None:
+    """BLOCKS: the icon's file (icon_path stats it) and its render, in one
+    executor job. None when no picture has that key."""
+    path = icons.icon_path(key)
+    if path is None:
+        return None
+    return icons.render(path, degrees, 64, tone, weight, badge, lights)
 
 
 def _read(path: str) -> bytes:

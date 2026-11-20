@@ -210,8 +210,10 @@ class Wiring(unittest.TestCase):
                         c.index("await self.watch.async_fetch("))
         self.assertLess(c.index("self.watch.set_callsigns(self.claim_key, self.follow_callsigns)"),
                         c.index("await self.watch.async_fetch("))
-        # drawn after the cap, so past it, and before the forgetting and the claim
-        self.assertLess(c.index("apply_cap("), c.index("self.poll.hex_observations(self.claim_key)"))
+        # drawn after the cap, so past it, and before the forgetting and the claim. Since 0.1.3 the observations are
+        # GATHERED before the circle's records (one executor job per poll, hacs/default#14501 item 2), so the pin is
+        # on the drawing: the followed loop comes after the cap.
+        self.assertLess(c.index("apply_cap("), c.index('aircraft[obs.identity].setdefault("watch", WHY_FOLLOWED)'))
         self.assertLess(c.index("self.watch.callsign_observations(self.follow_callsigns)"),
                         c.index("for gone in [k for k in self._fix"))
         self.assertLess(c.index("for gone in [k for k in self._fix"), c.index("self.poll.claim(self.claim_key"))

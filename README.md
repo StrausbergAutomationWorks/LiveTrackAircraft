@@ -541,9 +541,9 @@ The picture appears within a minute, and so does a change or a removal. It is
 drawn upright, not turned, because a photograph is not drawn nose up. The
 aircraft's `picture_source` attribute then reads `override`.
 
-⚠ These pictures are served without a sign-in, as the icons are: anyone who
-can reach your Home Assistant by its address can open them. Do not put a
-private picture there.
+These pictures need a sign-in to your Home Assistant, like the rest of it.
+The map gets each one by a link that Home Assistant signs, which stops
+working after a day; a new link is made before then.
 
 ### The presidential aircraft
 

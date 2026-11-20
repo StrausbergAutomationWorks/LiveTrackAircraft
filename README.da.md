@@ -562,8 +562,9 @@ Billedet vises inden for et minut, og det samme gør en ændring eller en
 fjernelse. Det tegnes opret, ikke drejet, for et fotografi tegnes ikke med
 næsen opad. Flyets egenskab `picture_source` lyder så `override`.
 
-⚠ Disse billeder serveres uden login, ligesom ikonerne: alle, der kan nå din
-Home Assistant på dens adresse, kan åbne dem. Læg ikke et privat billede der.
+Disse billeder kræver login på din Home Assistant, ligesom resten af den.
+Kortet får hvert billede via et link, som Home Assistant signerer, og som
+holder op med at virke efter et døgn; et nyt link laves inden da.
 
 ### Præsidentens fly
 

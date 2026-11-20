@@ -75,7 +75,11 @@ RECHECK_S = 3600
 class AirportStore:
     """Code -> {lat, lon, tz}. A code is resolved as an OurAirports ident
     first, then through the aliases table - the same order the coverage was
-    measured in."""
+    measured in.
+
+    ! lookup() BLOCKS (a stat at most hourly, SQLite on a first sight of a
+    code): since 0.1.3 it is called only from the poll's executor job
+    (lookups.resolve, hacs/default#14501 item 2), never on the event loop."""
 
     def __init__(self, hass) -> None:
         self._path = hass.config.path(".storage", AIRPORTS_FILENAME)

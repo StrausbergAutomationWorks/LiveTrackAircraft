@@ -572,9 +572,9 @@ La imagen aparece en menos de un minuto, igual que un cambio o un borrado. Se
 dibuja derecha, sin girar, porque una foto no está dibujada con el morro hacia
 arriba. El atributo `picture_source` del avión dice entonces `override`.
 
-⚠ Estas imágenes se sirven sin iniciar sesión, igual que los iconos:
-cualquiera que pueda llegar a tu Home Assistant por su dirección puede
-abrirlas. No pongas ahí una imagen privada.
+Estas imágenes requieren iniciar sesión en tu Home Assistant, como todo lo
+demás. El mapa recibe cada una por un enlace que firma Home Assistant y que
+deja de funcionar al cabo de un día; antes se crea uno nuevo.
 
 ### Los aviones del presidente
 

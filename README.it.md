@@ -575,9 +575,9 @@ L'immagine appare entro un minuto, e così una modifica o una rimozione. È
 disegnata dritta, non girata, perché una fotografia non è disegnata con il
 muso in alto. L'attributo `picture_source` dell'aereo dice allora `override`.
 
-⚠ Queste immagini sono servite senza accesso, come le icone: chiunque possa
-raggiungere il tuo Home Assistant dal suo indirizzo può aprirle. Non metterci
-un'immagine privata.
+Queste immagini richiedono l'accesso al tuo Home Assistant, come tutto il
+resto. La mappa riceve ciascuna tramite un link firmato da Home Assistant,
+che smette di funzionare dopo un giorno; prima ne viene creato uno nuovo.
 
 ### Gli aerei presidenziali
 

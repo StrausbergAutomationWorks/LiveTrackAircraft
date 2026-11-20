@@ -262,6 +262,20 @@ class AdsbdbRoutes:
             return None
         return got[1] if got[0] == HIT else None
 
+    def peek(self, callsign: str | None, now: float | None = None) -> dict | None:
+        """The cached route for this callsign, or None. CHANGES NOTHING: no
+        queueing, no expiry. The coordinator reads it before a poll's executor
+        job, to resolve the airports of the routes route() will return
+        (lookups.py, hacs/default#14501 item 2)."""
+        key = lookup_key(callsign)
+        if key is None:
+            return None
+        now = self._clock() if now is None else now
+        got = self.cache._d.get(key)
+        if got is None or now >= got[2] or got[0] != HIT:
+            return None
+        return got[1]
+
     def _set(self, status: str) -> None:
         if status != self.status:
             self.status = status

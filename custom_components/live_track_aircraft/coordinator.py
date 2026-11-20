@@ -11,6 +11,7 @@ import time
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from homeassistant.components.http.auth import async_sign_path
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -45,7 +46,8 @@ from .airlines import airline_short, lookup_operator
 from .registrations import from_feed_flags, lookup_government, lookup_owner, prettify_owner
 from .routes import RouteStore
 from .airports import AirportStore
-from .route_check import FILED, choose_leg
+from .route_check import FILED, choose_leg, set_loop_safe
+from .lookups import PollLookups, resolve as resolve_lookups
 from .adsbdb import choose as adsbdb_choose
 from .airport_display import shown_code, shown_name
 from .eta import estimated_arrival
@@ -153,8 +155,21 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # Absent means every route reports route_check "unchecked" and
         # nothing else changes - see airports.py.
         self.airports = AirportStore(hass)
-        # The user's own pictures, by hex (pictures.py, Lee 2026-10-21).
-        self.pictures = Overrides(hass.config.path(PICTURES_DIR))
+        # ! NOTHING ABOVE IS READ ON THE EVENT LOOP (hacs/default#14501 items 2
+        # and 3): each poll resolves what _record needs from these stores and
+        # the owner table in ONE executor job (lookups.py) and _record reads
+        # only that; route_check builds no time zone on the loop.
+        self._lk = PollLookups()
+        set_loop_safe(True)
+        # The user's own pictures, by hex (pictures.py, Lee 2026-10-21). The
+        # view needs a sign-in since 0.1.3 (hacs/default#14501 item 1), so each
+        # URL is signed as Home Assistant's own content user, not as whoever's
+        # request happened to set the entry up (that user's token can be
+        # revoked, and with it every URL signed under it).
+        self.pictures = Overrides(
+            hass.config.path(PICTURES_DIR),
+            signer=lambda url, seconds: async_sign_path(
+                hass, url, timedelta(seconds=seconds), use_content_user=True))
         # The worldwide watch list (watch.py), set by __init__.py; None
         # means the circle only.
         self.watch = None
@@ -209,6 +224,34 @@ class AircraftCoordinator(DataUpdateCoordinator):
         if self.pictures.due(now):
             await self.hass.async_add_executor_job(self.pictures.scan)
 
+        # ! EVERY OBSERVATION THIS POLL DRAWS IS GATHERED BEFORE ANY RECORD IS BUILT (hacs/default#14501 item 2),
+        # so ONE executor job resolves everything _record reads from disk: legs and leg times per call sign, the
+        # airports they name, the owner per hex, and their time zones (lookups.py). So the watch list's round is
+        # asked here, ahead of the circle's records; what it finds is still DRAWN after the cap, below.
+        # ! A USER'S OWN WATCH LIST (follow.py, backlog 332) is named before the round, per entry: the hexes join the
+        # shared poll's union round under this entry's key (poll.release drops them on unload), the call signs the
+        # watch list's call-sign round. Set every poll, so an options change is in the next round.
+        if self.poll is not None:
+            self.poll.set_hexes(self.claim_key, self.follow_hexes)
+        if self.watch is not None:
+            self.watch.set_callsigns(self.claim_key, self.follow_callsigns)
+        if self.watch is not None and self.watch.due():
+            await self.watch.async_fetch(self._session, now)
+        watch_found = list(self.watch.observations()) if self.watch is not None else []
+        # Military-flagged aircraft in this entry's watch areas, from the watch list's military request.
+        military_found, military_counts = (
+            self.watch.in_areas(self.military_areas)
+            if self.watch is not None and self.military_areas else ([], []))
+        # Each followed hex and each aircraft broadcasting a followed call sign, from requests already made.
+        followed: dict[str, Observation] = {}
+        if self.poll is not None and self.follow_hexes:
+            followed.update((o.identity, o) for o in self.poll.hex_observations(self.claim_key))
+        if self.watch is not None and self.follow_callsigns:
+            for o in self.watch.callsign_observations(self.follow_callsigns):
+                followed.setdefault(o.identity, o)
+        self._lk = await self._async_lookups(
+            [*observations, *watch_found, *military_found, *followed.values()], now)
+
         aircraft: dict[str, dict[str, Any]] = {}
         for obs in observations:
             rec = self._record(obs)
@@ -254,17 +297,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # Aircraft (backlog 297). An aircraft already in the circle is only
         # tagged, never built twice; the cap never drops a watched one.
         watched = 0
-        # ! A USER'S OWN WATCH LIST (follow.py, backlog 332) is named before the round, per entry: the hexes join the
-        # shared poll's union round under this entry's key (poll.release drops them on unload), the call signs the
-        # watch list's call-sign round. Set every poll, so an options change is in the next round.
-        if self.poll is not None:
-            self.poll.set_hexes(self.claim_key, self.follow_hexes)
+        # (The round was asked, and its observations gathered, before the circle's records: see above.)
         if self.watch is not None:
-            self.watch.set_callsigns(self.claim_key, self.follow_callsigns)
-        if self.watch is not None:
-            if self.watch.due():
-                await self.watch.async_fetch(self._session, now)
-            for obs in self.watch.observations():
+            for obs in watch_found:
                 why = self.watch.why(obs.identity)
                 if obs.identity in aircraft:
                     aircraft[obs.identity]["watch"] = why
@@ -280,9 +315,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # ! MILITARY WATCH AREAS, ALSO AFTER THE CAP (Lee 2026-11-02 22:59): every military-flagged aircraft inside the
         # circles this entry names, from the watch list's military request, so they cost no request of their own. In
         # this entry's circle but past the cap is still drawn; already drawn is only tagged, never built twice.
-        military_found, military_counts = (
-            self.watch.in_areas(self.military_areas)
-            if self.watch is not None and self.military_areas else ([], []))
+        # (military_found was gathered before the circle's records: see above.)
         for obs in military_found:
             if obs.identity in aircraft:
                 aircraft[obs.identity].setdefault("watch", WHY_MILITARY_AREA)
@@ -298,12 +331,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # ! A USER'S OWN WATCH LIST, ALSO AFTER THE CAP (backlog 332): each followed hex and each aircraft broadcasting
         # a followed call sign, wherever it is, from requests already made (hex round, call-sign round). In the circle
         # it is only tagged, keeping any earlier reason (presidential, military area); never built twice.
-        followed: dict[str, Observation] = {}
-        if self.poll is not None and self.follow_hexes:
-            followed.update((o.identity, o) for o in self.poll.hex_observations(self.claim_key))
-        if self.watch is not None and self.follow_callsigns:
-            for o in self.watch.callsign_observations(self.follow_callsigns):
-                followed.setdefault(o.identity, o)
+        # (followed was gathered before the circle's records: see above.)
         for obs in followed.values():
             if obs.identity in aircraft:
                 aircraft[obs.identity].setdefault("watch", WHY_FOLLOWED)
@@ -360,8 +388,24 @@ class AircraftCoordinator(DataUpdateCoordinator):
         self._last_good = result
         return result
 
+    async def _async_lookups(self, observations: list[Observation], now: float) -> PollLookups:
+        """What _record reads from disk for every observation this poll draws, in ONE executor job.
+
+        hacs/default#14501 item 2 (Frenck 2026-11-19). The airports of adsbdb's routes are resolved too: peek()
+        reads adsbdb's in-memory cache and changes nothing, so the route() _record asks for later finds its
+        airports here (one that arrives in between waits a poll, lookups.py).
+        """
+        extra: list[str] = []
+        if self.adsbdb is not None:
+            for obs in observations:
+                route = self.adsbdb.peek(obs.callsign, now)
+                if route:
+                    extra += [route.get("origin_icao"), route.get("destination_icao")]
+        return await self.hass.async_add_executor_job(
+            resolve_lookups, self.routes, self.airports, lookup_owner, observations, extra)
+
     def _record(self, obs: Observation) -> dict[str, Any] | None:
-        """One Observation to the record the entities read."""
+        """One Observation to the record the entities read. Reads no disk: self._lk."""
         here = (round(obs.latitude, 6), round(obs.longitude, 6))
 
         # Advance only on a genuinely NEW observation - see the note on
@@ -482,14 +526,17 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # this fix outranks history, and a low aircraft's climb or descent
         # says which END of the leg is near. See route_check "WHICH LEG".
         # Times are optional; without them the ranking falls back.
+        # ! FROM THIS POLL'S LOOKUPS ONLY (lookups.py, hacs/default#14501 item 2): resolved in the poll's
+        # executor job, so no SQLite, stat or tzdata read happens here on the event loop.
+        lk = self._lk
         leg, verdict, considered = choose_leg(
-            self.routes.legs(obs.callsign), self.airports.lookup,
+            lk.legs(obs.callsign), lk.airport,
             here[0], here[1],
             None if obs.altitude_m is None else obs.altitude_m * 3.28084,
             obs.course_deg, profile=FILED,
             vertical_rate_ms=obs.vertical_rate_ms,
             now=latest[2],
-            times=self.routes.leg_times(obs.callsign))
+            times=lk.leg_times(obs.callsign))
         source = "saw_filed_routes"
         # ! ADSBDB ONLY WHEN FiledRoutesDB HAS NO ROUTE AT ALL (backlog 292).
         # FiledRoutesDB is US-filed flights only, so abroad it is always a
@@ -501,7 +548,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # (adsbdb.choose) - unlike a filed route, which is flagged.
         if not leg and self.adsbdb is not None:
             leg, verdict, considered = adsbdb_choose(
-                self.adsbdb.route(obs.callsign, latest[2]), self.airports.lookup,
+                self.adsbdb.route(obs.callsign, latest[2]), lk.airport,
                 here[0], here[1],
                 None if obs.altitude_m is None else obs.altitude_m * 3.28084,
                 obs.course_deg, vertical_rate_ms=obs.vertical_rate_ms, now=latest[2])
@@ -514,7 +561,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
             for end in ("origin", "destination"):
                 reported = leg[end + "_icao"]
                 rec[end + "_icao"] = shown_code(reported)
-                found = self.airports.lookup(reported)
+                found = lk.airport(reported)
                 name = shown_name(reported, (found or {}).get("ident"), (found or {}).get("name"))
                 if name:
                     rec[end + "_name"] = name
@@ -761,7 +808,9 @@ class AircraftCoordinator(DataUpdateCoordinator):
         # --- identifiers for the shared map (D11) -----------------------
         # ! icao24 is our identity; registration ONLY as the FAA registry
         # states it for this Mode S code, never the feed's `r` (map_keys.py).
-        owner_row = lookup_owner(obs.identity)
+        # ! The owner row was read in the poll's executor job (lookups.py, hacs/default#14501 item 2): the owner
+        # table is SQLite, and this runs on the event loop for every aircraft.
+        owner_row = self._lk.owner(obs.identity)
         ids = object_ids(obs.identity, registry_registration(owner_row, gov))
         if ids:
             out["object_ids"] = ids

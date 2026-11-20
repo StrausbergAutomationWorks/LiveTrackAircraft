@@ -59,6 +59,10 @@ FORMAT = "filedroutesdb/1"
 # The publication clock. The route service rebuilds at 13:30 America/Chicago
 # and ships about four minutes later; checking from 14:00 leaves room.
 PUBLISH_ZONE = "America/Chicago"
+# ! Built ONCE, at import (hacs/default#14501 item 3): a first ZoneInfo reads
+# tzdata from disk, and last_slot() runs on the event loop from async_check.
+# Home Assistant imports this module in its executor.
+PUBLISH_TZ = ZoneInfo(PUBLISH_ZONE)
 PUBLISH_AFTER = dt.time(14, 0)
 STARTUP_MAX_AGE = dt.timedelta(days=1)
 RETRY_AFTER = dt.timedelta(hours=1)
@@ -90,7 +94,7 @@ def parse_sums(text: str, name: str = ASSET) -> str | None:
 def last_slot(now: dt.datetime) -> dt.datetime:
     """The most recent PUBLISH_AFTER on the publication clock at or before
     `now` (aware). Daylight saving moves it in UTC; it does not move locally."""
-    zone = ZoneInfo(PUBLISH_ZONE)
+    zone = PUBLISH_TZ
     local = now.astimezone(zone)
     slot = dt.datetime.combine(local.date(), PUBLISH_AFTER, tzinfo=zone)
     if slot > local:
