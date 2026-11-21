@@ -41,6 +41,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .adsbdb import ATTRIBUTION as ADSBDB_ATTRIBUTION
 from .const import ATTRIBUTION, DOMAIN
 from .coordinator import AircraftCoordinator
+from .photos import lookup_path
 
 # Attributes copied straight through when present. Absent keys are OMITTED.
 _PASSTHROUGH = (
@@ -164,6 +165,9 @@ class Aircraft(GeolocationEvent):
 
     _attr_should_poll = False
     _attr_unit_of_measurement = "km"
+    # D4i (backlog 361): where the map card asks for a Planespotters photo. The same on every write; kept out of
+    # the recorder for anyone who records geo_location.
+    _unrecorded_attributes = frozenset({"marker_photo_lookup"})
 
     # ! adsbdb's route data is David Taylor's and Jim Mason's (adsbdb.py,
     # backlog 292), so an aircraft showing an adsbdb route credits them and
@@ -244,6 +248,11 @@ class Aircraft(GeolocationEvent):
         for key in _PASSTHROUGH:
             if key in rec:
                 attrs[key] = rec[key]
+        # D4i (backlog 361): a photo looked up only when a viewer hovers this aircraft; none for a TIS-B track
+        # or a Privacy ICAO Address (photos.lookup_path).
+        path = lookup_path(self._identity, rec.get("identity_hidden"))
+        if path:
+            attrs["marker_photo_lookup"] = path
         return attrs
 
     async def async_added_to_hass(self) -> None:

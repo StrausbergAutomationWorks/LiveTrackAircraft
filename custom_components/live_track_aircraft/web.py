@@ -22,7 +22,7 @@ from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
 
-from . import icons, pictures
+from . import icons, photos, pictures
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -131,6 +131,34 @@ class AircraftPictureView(HomeAssistantView):
         )
 
 
+class AircraftPhotoView(HomeAssistantView):
+    """A photo of one aircraft from Planespotters.net, asked by the map card when its hover box first opens
+    (photos.py; 06_MAP_CONTRACT.md D4i; backlog 361). Signed in only: requires_auth stays True, and the card
+    asks with the viewer's own sign-in (hass.callApi). Answers `{"photo": <D4g marker_photo> | null}`; 503
+    while lookups are paused or one failed, so the card asks again later."""
+
+    url = photos.URL_BASE + "/{hexid}"
+    name = "api:live_track_aircraft:photo"
+
+    def __init__(self, lookups: photos.PhotoLookups) -> None:
+        self._lookups = lookups
+
+    async def get(self, request: web.Request, hexid: str) -> web.Response:
+        from homeassistant.helpers.aiohttp_client import async_get_clientsession  # noqa: PLC0415
+
+        h = photos.valid_hex(hexid)
+        if h is None:
+            return self.json_message("not an ICAO address", status_code=400)
+        state, photo = await self._lookups.get(async_get_clientsession(request.app["hass"]), h)
+        if state in (photos.PHOTO, photos.NONE):
+            resp = self.json({"photo": photo})
+        else:
+            resp = self.json_message(f"photo lookup {state}", status_code=503)
+        # The card keeps the answer itself (at most 12 h, PhotoLookup.js); no browser or proxy copy.
+        resp.headers["Cache-Control"] = "no-store"
+        return resp
+
+
 def _render_key(key: str, degrees, tone, weight, badge, lights) -> str | None:
     """BLOCKS: the icon's file (icon_path stats it) and its render, in one
     executor job. None when no picture has that key."""
@@ -145,6 +173,15 @@ def _read(path: str) -> bytes:
         return fh.read(pictures.MAX_BYTES + 1)[: pictures.MAX_BYTES]
 
 
+_PHOTOS_KEY = "live_track_aircraft_photos"
+
+
 def register(hass: HomeAssistant) -> None:
+    """Register the views ONCE per run. Every config entry's setup calls this; a second registration of the same
+    URL would add a second route to the same view (the photo view holds state, so it must be one object)."""
+    if hass.data.get(_PHOTOS_KEY) is not None:
+        return
+    lookups = hass.data[_PHOTOS_KEY] = photos.PhotoLookups()
     hass.http.register_view(AircraftIconView())
     hass.http.register_view(AircraftPictureView())
+    hass.http.register_view(AircraftPhotoView(lookups))

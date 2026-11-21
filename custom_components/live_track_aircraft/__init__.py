@@ -51,8 +51,10 @@ def _routes_reopen(hass: HomeAssistant) -> None:
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up from a config entry."""
-    # Serves the rotated marker silhouettes. Registered once; a second entry
-    # re-registering the same view is harmless.
+    # Serves the rotated marker silhouettes, the user's own pictures and the
+    # Planespotters photo lookup (backlog 361). Registered once per run: the
+    # photo view holds the instance's lookups, so a second entry must not add
+    # a second copy (web.register).
     register_views(hass)
     # LiveTrackMapCard, shipped in frontend/: served once per run, offered, and
     # the one dashboard resource row reconciled (backlog 291). Never raises.
