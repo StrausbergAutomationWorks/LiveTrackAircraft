@@ -1,4 +1,4 @@
-/*! live-track-map-card 0.1.8+2bcbc9a */
+/*! live-track-map-card 0.1.9+ae5443e */
 /*!
  * Third-party notices for the packages bundled in this file:
  *
@@ -17327,6 +17327,84 @@ function stormHtml(a, fallback) {
 }
 
 /**
+ * A marker's photo, looked up when the viewer first hovers it (06_MAP_CONTRACT.md D4i `marker_photo_lookup`,
+ * backlog 361).
+ *
+ * The integration does not hold the photo; it publishes WHERE to ask, a path under `/api/` (D4h's rule), and the
+ * card asks it once with the viewer's own sign-in (hass.callApi) the first time the hover box opens. The answer is
+ * `{photo: <D4g marker_photo> | null}`; a photo then draws and links exactly as D4g. Answers are kept for the page,
+ * at most LOOKUP_KEEP_MS, 12 h: an integration may keep its own answer 12 h too, so what a viewer sees is never
+ * older than the 24 h a source such as Planespotters allows. A failed ask is tried again after LOOKUP_RETRY_MS.
+ * One cache for every marker on the page, so two cards asking for one aircraft ask once.
+ */
+
+const LOOKUP_KEEP_MS = 12 * 3600 * 1000;
+const LOOKUP_RETRY_MS = 5 * 60 * 1000;
+const LOOKUP_MAX = 2000;
+
+/** path -> {at: epoch ms, photo: ?object, failed: boolean} or {pending: Promise} */
+const cache = new Map();
+
+/**
+ * `marker_photo_lookup` -> the API path, or null (the same rule as D4h's `marker_track`).
+ * @param {*} v
+ * @returns {?string}
+ */
+function lookupOf(v) {
+  return trackOf(v);
+}
+
+/**
+ * The photo already looked up for this path: a checked photo, null when the answer was "none", undefined when
+ * nothing usable is held (never asked, asking, failed, or too old).
+ * @param {string} path a checked lookup path
+ * @param {number} [now]
+ * @returns {?object|undefined}
+ */
+function lookedUp(path, now = Date.now()) {
+  const e = cache.get(path);
+  if (!e || e.pending || e.failed || now - e.at > LOOKUP_KEEP_MS) return undefined;
+  return e.photo;
+}
+
+/**
+ * Ask for this path unless an answer is held, an ask is in flight, or a failure is under LOOKUP_RETRY_MS old.
+ * @param {object} hass Home Assistant's object, with callApi
+ * @param {string} path a checked lookup path
+ * @param {number} [now]
+ * @returns {?Promise<boolean>} resolves true when a usable answer (photo or none) arrived; null when nothing was asked
+ */
+function askPhoto(hass, path, now = Date.now()) {
+  if (typeof hass?.callApi !== "function") return null;
+  const e = cache.get(path);
+  if (e?.pending) return null;
+  if (e && !e.failed && now - e.at <= LOOKUP_KEEP_MS) return null;
+  if (e?.failed && now - e.at < LOOKUP_RETRY_MS) return null;
+  const pending = (async () => {
+    try {
+      const answer = await hass.callApi("GET", apiPath(path));
+      remember(path, { at: Date.now(), photo: photoOf(answer?.photo), failed: false });
+      return true;
+    } catch {
+      remember(path, { at: Date.now(), photo: null, failed: true });
+      return false;
+    }
+  })();
+  cache.set(path, { pending });
+  return pending;
+}
+
+/**
+ * @param {string} path
+ * @param {object} entry
+ */
+function remember(path, entry) {
+  cache.delete(path);
+  cache.set(path, entry);
+  while (cache.size > LOOKUP_MAX) cache.delete(cache.keys().next().value);
+}
+
+/**
  * Lateness on the map: the delay badge and the stall pulse
  * (06_MAP_CONTRACT.md D4c, backlog 275; Lee, 2026-10-04).
  *
@@ -19470,7 +19548,40 @@ class Entity {
    * @returns {string}
    */
   tooltipHtml(nowMs = Date.now()) {
-    return hoverHtml(this.attributes, this.tooltip, nowMs);
+    this._askPhoto();
+    return hoverHtml(this._photoAttrs(), this.tooltip, nowMs);
+  }
+
+  /**
+   * D4i (backlog 361): the attributes with a looked-up photo in `marker_photo`, when the entity carries none of
+   * its own and the lookup has answered with one. Otherwise the attributes as they are.
+   * @returns {object}
+   */
+  _photoAttrs() {
+    const a = this.attributes;
+    if (!a || photoOf(a.marker_photo)) return a;
+    const path = lookupOf(a.marker_photo_lookup);
+    const photo = path ? lookedUp(path) : undefined;
+    return photo ? { ...a, marker_photo: photo } : a;
+  }
+
+  /**
+   * D4i: the hover box opened; ask for the photo once (PhotoLookup keeps the answer for the page). When it
+   * arrives, the open hover box is redrawn with it and the click popup is bound if it was not.
+   * @private
+   */
+  _askPhoto() {
+    const a = this.attributes;
+    if (!a || photoOf(a.marker_photo)) return;
+    const path = lookupOf(a.marker_photo_lookup);
+    if (!path) return;
+    const asked = askPhoto(this.hass, path);
+    if (!asked) return;
+    asked.then((ok) => {
+      if (!ok || this.removed) return;
+      this.refreshTooltip();
+      this.refreshMarkerPopup();
+    });
   }
 
   /** Redraw the hover label if it is open: new attributes, or the clock. */
@@ -19857,7 +19968,7 @@ class Entity {
    * @returns {boolean}
    */
   _wantsPopup() {
-    return infoOf(this.attributes?.marker_info) !== null || hasExtras(this.attributes);
+    return infoOf(this.attributes?.marker_info) !== null || hasExtras(this._photoAttrs());
   }
 
   /**
@@ -19868,11 +19979,12 @@ class Entity {
   _bindPopup(marker) {
     marker.bindPopup(() => {
       const info = infoOf(this.attributes?.marker_info);
-      if (!hasExtras(this.attributes)) return info ? infoHtml(info) : "";
+      const attrs = this._photoAttrs();   // D4i: a looked-up photo counts as the entity's own
+      if (!hasExtras(attrs)) return info ? infoHtml(info) : "";
       // D4e's text carries its own title; otherwise the popup is named as the hover box is (it closes now)
       const shown = Boolean(this._track);
-      return info ? infoHtml(info) + extrasHtml(this.attributes, undefined, shown)
-        : extrasHtml(this.attributes, titleLine(this.attributes ?? {}, this.tooltip), shown);
+      return info ? infoHtml(info) + extrasHtml(attrs, undefined, shown)
+        : extrasHtml(attrs, titleLine(attrs ?? {}, this.tooltip), shown);
     }, { ...INFO_POPUP, offset: [0, -this.config.size / 2] });
     if (marker._ltmcPopupWired) return;   // refreshMarkerPopup may bind again; the handlers stay
     marker._ltmcPopupWired = true;
@@ -21257,7 +21369,7 @@ class MapConfig {
 
 }
 
-/* global "0.1.8+2bcbc9a" */
+/* global "0.1.9+ae5443e" */
 
 /**
  * This card's version, stamped in at build time by build/stamp-version.js:
@@ -21267,7 +21379,7 @@ class MapConfig {
  * "0.0.0-unbuilt", which can never be mistaken for a release.
  * @type {string}
  */
-const VERSION = "0.1.8+2bcbc9a" ;
+const VERSION = "0.1.9+ae5443e" ;
 
 class HaUrlResolveService {
   hass;
