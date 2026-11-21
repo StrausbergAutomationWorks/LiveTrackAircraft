@@ -23,14 +23,14 @@ des zones que vous nommez.
 > sur les avions. Le vôtre manque ? [Proposez-le](#aidez-le-à-grandir), ou
 > ajoutez-le vous-même : nous vous aiderons à le faire.
 
-**État : 0.1.1, publié.** Ajouté au Marketplace par son lien
+**État : 0.1.5, publié.** Ajouté au Marketplace par son lien
 ([ci-dessous](#linstaller-étape-par-étape)) ; il n'est pas encore dans le
 catalogue du Marketplace.
 
 Travail original de StrausbergAutomationWorks. Sans lien avec adsb.fi,
 adsb.lol, adsbdb, la Federal Aviation Administration (États-Unis),
-OurAirports, ADS-B Radar, une compagnie aérienne ou un exploitant d'avions,
-et sans leur approbation.
+OurAirports, ADS-B Radar, Planespotters.net, une compagnie aérienne ou un
+exploitant d'avions, et sans leur approbation.
 
 > ⚠ **Pas un système de sécurité.** Il montre des données publiques,
 > généralement vieilles de quelques secondes et parfois d'une minute ou plus,
@@ -79,6 +79,7 @@ le tableau le dit, partout dans le monde.
 | **Les avions de la liste publique EnforcementAircraft** (immigration et forces de l'ordre fédérales), avec des feux clignotants | dans chaque zone | la liste EnforcementAircraft |
 | **Les avions militaires dans vos zones de surveillance** : chaque avion que le flux marque comme militaire, dans jusqu'à dix cercles que vous nommez, même quand votre zone est pleine. Facultatif : vous saisissez les cercles dans la boîte de dialogue de configuration | partout dans le monde | la liste militaire d'adsb.fi |
 | **Les avions et les vols que vous suivez** : votre propre avion, la flotte d'un club, ou le vol d'un membre de la famille. Facultatif : vous saisissez leurs codes dans la boîte de dialogue de configuration | partout dans le monde | adsb.fi |
+| **Photos** : une photo de l'avion, avec le nom du photographe, quand vous le pointez | chaque avion dont Planespotters.net a une photo | Planespotters.net ([plus](#photos)) |
 | **Votre propre image pour un avion**, à la place de son icône | partout où cet avion est montré | une image que vous mettez dans un dossier ([comment](#votre-propre-image-pour-un-avion)) |
 
 ### Activé par votre propre clé ou compte gratuit
@@ -349,9 +350,10 @@ règle `- domain: geo_location` de plus pour chaque source.
   vole, et se déplace en douceur entre les positions qu'il transmet.
 * Son étiquette est l'indicatif d'appel du vol (`UAL308`), sinon qui
   l'exploite (`Lewis University`), sinon son type (`Cessna 172 Skyhawk`).
-* **Pointez** un avion pour voir sa compagnie ou son exploitant et, quand une
-  route est connue, sa route et le nombre de minutes avant son arrivée.
-  **Cliquez** dessus pour tous ses détails.
+* **Pointez** un avion pour voir sa compagnie ou son exploitant, sa photo s'il
+  y en a une et, quand une route est connue, sa route et le nombre de minutes
+  avant son arrivée. **Cliquez** dessus pour tous ses détails et une photo
+  plus grande, liée à sa page sur Planespotters.net ([Photos](#photos)).
 
 Si les ressources de vos tableaux de bord sont définies en YAML
 (`lovelace: resource_mode: yaml`), rien ne peut être enregistré pour vous : un
@@ -613,6 +615,38 @@ Ces images demandent une connexion à votre Home Assistant, comme tout le
 reste. La carte reçoit chacune par un lien signé par Home Assistant, qui
 cesse de fonctionner au bout d'un jour ; un nouveau lien est créé avant.
 
+### Photos
+
+Quand vous pointez un avion, la carte montre une photo de lui venant de
+[Planespotters.net](https://www.planespotters.net), s'il y en a une, avec le
+nom du photographe à côté. Cliquez sur l'avion pour voir la photo en plus
+grand ; la photo renvoie à sa page sur Planespotters.net. Il n'y a rien à
+configurer.
+
+La photo n'est cherchée que lorsque quelqu'un pointe cet avion, pas pour
+chaque avion de votre zone. Votre Home Assistant interroge Planespotters.net
+par le code hexadécimal de l'avion. Il garde la réponse, une photo ou pas de
+photo, pendant 12 heures, en mémoire seulement : un redémarrage l'oublie. Le
+navigateur qui affiche la carte charge l'image directement depuis
+Planespotters.net. Home Assistant ne télécharge, ne stocke et ne transmet
+aucune image.
+
+⚠ Une photo montre l'avion tel que le photographe l'a vu, peut-être dans une
+ancienne livrée ou chez un ancien exploitant. Tous les avions n'ont pas de
+photo sur Planespotters.net.
+
+⚠ Aucune photo n'est cherchée pour un avion qui vole avec une adresse
+temporaire pour protéger la vie privée (le programme Privacy ICAO Address de
+la FAA, États-Unis), car ce code hexadécimal n'identifie pas l'avion, ni pour
+une trace sans vrai code hexadécimal.
+
+⚠ Il n'y a pas encore d'option pour désactiver les photos.
+
+Chaque avion qui a un code hexadécimal porte `marker_photo_lookup` : l'adresse
+sur votre Home Assistant où la carte demande la photo. Seule une personne
+connectée à votre Home Assistant peut l'utiliser. Les photos sont l'œuvre de
+leurs photographes : voir [Crédits et licences](#crédits-et-licences).
+
 ### Les avions du président
 
 Les avions qu'utilise le président des États-Unis sont montrés partout dans le
@@ -704,9 +738,12 @@ l'avez réglé, et il commence chez vous : pour ne plus envoyer votre domicile,
 codes hexadécimaux et les indicatifs que vous suivez sont envoyés à adsb.fi
 (ou adsb.lol) une fois par minute, et votre clé adsb.lol seulement à adsb.lol.
 Les indicatifs des vols de ligne dans votre zone sont envoyés à adsbdb quand
-FiledRoutesDB n'a pas de route pour eux. Rien d'autre vous concernant n'est
-envoyé nulle part. Chaque service voit votre adresse Internet, comme tout site
-web.
+FiledRoutesDB n'a pas de route pour eux. Quand quelqu'un pointe un avion sur
+la carte, son code hexadécimal est envoyé à Planespotters.net, au plus une
+fois toutes les 12 heures pour chaque avion, et le navigateur qui affiche la
+carte charge la photo depuis ce site. Il n'y a pas encore d'option pour
+l'arrêter. Rien d'autre vous concernant n'est envoyé nulle part. Chaque
+service voit votre adresse Internet, comme tout site web.
 
 **Combien.**
 
@@ -715,6 +752,7 @@ web.
 | adsb.fi | chaque avion dans votre cercle, à chaque mise à jour (toutes les 15 secondes par défaut) ; une requête par minute pour les avions suivis par code hexadécimal et les avions du président ; une pour la liste militaire ; une pour tous les indicatifs suivis ensemble, seulement si vous en suivez | interroge adsb.lol à la place. Une source qui refuse avec HTTP 429 est sautée pendant le temps qu'elle demande, ou pendant 1 minute, doublée jusqu'à 10 minutes |
 | adsb.lol | les mêmes requêtes, seulement tant qu'adsb.fi ne répond pas | pareil |
 | adsbdb | une requête par nouvel indicatif de compagnie pour lequel FiledRoutesDB n'a pas de route, à au moins 1 seconde d'intervalle ; une réponse est gardée 30 jours, une « pas de route » 24 heures. Les réponses sont gardées en mémoire seulement | pas interrogé de nouveau pendant 15 minutes ; toutes les requêtes s'arrêtent 15 minutes après HTTP 429 |
+| Planespotters.net | une requête pour la photo d'un avion la première fois que quelqu'un le pointe, puis aucune pour cet avion pendant 12 heures. Les réponses sont gardées en mémoire seulement. La photo elle-même est chargée par le navigateur qui affiche la carte | après HTTP 429, aucune photo n'est demandée pendant le temps que Planespotters.net demande, ou pendant 10 minutes ; après HTTP 403, pendant un jour |
 | FiledRoutesDB, depuis GitHub | un petit fichier de sommes de contrôle une fois par jour, après 14:00 heure de Chicago (États-Unis) ; le fichier lui-même, environ 4,6 Mo, seulement s'il a changé | réessayé une heure plus tard ; votre copie reste utilisée jusqu'à son expiration |
 | AirportZones, depuis GitHub | un petit fichier de sommes de contrôle une fois par jour ; la table elle-même, environ 4,8 Mo, seulement si elle a changé | réessayé une heure plus tard ; votre copie reste utilisée |
 | EnforcementAircraft, depuis GitHub | un petit fichier de sommes de contrôle une fois par heure ; la liste elle-même, petite, seulement si elle a changé | votre copie reste utilisée |
@@ -846,6 +884,13 @@ langue ? Dites-le-nous sur
   à l'échelle de la catégorie de l'avion, et anime certaines hélices et
   certains rotors. Chaque changement est listé dans
   [ATTRIBUTION.md](ATTRIBUTION.md).
+* **Planespotters.net** (<https://www.planespotters.net>) : les photos des
+  avions, par son [API de photos](https://www.planespotters.net/photo/api) et
+  selon ses conditions. Chaque photo est l'œuvre de son photographe, nommé à
+  côté d'elle, et renvoie à sa page sur Planespotters.net. Aucune photo n'est
+  copiée dans ce dépôt, et Home Assistant ne télécharge, ne stocke et ne
+  transmet aucune image. En installant cette intégration, vous utilisez
+  Planespotters.net, et ses conditions s'appliquent à vous.
 * **La carte** est [LiveTrackMapCard](https://github.com/StrausbergAutomationWorks/LiveTrackMapCard),
   MIT, une copie de [ha-map-card](https://github.com/nathan-gs/ha-map-card)
   de nathan-gs, MIT. Ses fonds de carte et leurs crédits sont dans son README.
@@ -872,8 +917,8 @@ aircraft · flight tracker · Flugzeuge · Flugverfolgung · vliegtuigen ·
 vluchten volgen · 飞机 · 航班跟踪 · aviones · seguimiento de vuelos ·
 aerei · tracciamento voli · fly · flysporing · adsb.fi · adsb.lol · adsbdb ·
 FiledRoutesDB · registre de la FAA · OurAirports · ADS-B Radar ·
-geo_location · carte · Lovelace · HACS · Marketplace · Live Track ·
-LiveTrack · StrausbergAutomationWorks
+Planespotters.net · photos d'avions · geo_location · carte · Lovelace · HACS ·
+Marketplace · Live Track · LiveTrack · StrausbergAutomationWorks
 
 ---
 

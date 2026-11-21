@@ -22,14 +22,14 @@ ook zijn, en uitkijken naar militaire vliegtuigen in gebieden die je opgeeft.
 > [Stel het voor](#help-het-groeien), of voeg het zelf toe: we helpen je
 > daarbij.
 
-**Status: 0.1.1, uitgebracht.** Via een koppeling aan de Marktplaats
+**Status: 0.1.5, uitgebracht.** Via een koppeling aan de Marktplaats
 toegevoegd ([hieronder](#installeren-stap-voor-stap)); het staat nog niet in
 de catalogus van de Marktplaats.
 
 Eigen werk van StrausbergAutomationWorks. Niet verbonden met, en niet
 gesteund door, adsb.fi, adsb.lol, adsbdb, de Federal Aviation Administration
-(Verenigde Staten), OurAirports, ADS-B Radar, een luchtvaartmaatschappij of
-een gebruiker van vliegtuigen.
+(Verenigde Staten), OurAirports, ADS-B Radar, Planespotters.net, een
+luchtvaartmaatschappij of een gebruiker van vliegtuigen.
 
 > ⚠ **Geen veiligheidssysteem.** Het toont openbare gegevens, meestal
 > seconden oud en soms een minuut of langer, en alleen vliegtuigen die de
@@ -78,6 +78,7 @@ gebied, of, waar de tabel het zegt, overal ter wereld.
 | **Vliegtuigen op de openbare EnforcementAircraft-lijst** (immigratie en federale ordediensten), met knipperende lichten | in elk gebied | de EnforcementAircraft-lijst |
 | **Militaire vliegtuigen in je bewakingsgebieden**: elk vliegtuig dat de feed als militair markeert, binnen tot tien cirkels die je opgeeft, ook als je gebied vol is. Optioneel: je typt de cirkels in de instellingsdialoog | overal ter wereld | de militaire lijst van adsb.fi |
 | **Vliegtuigen en vluchten die je volgt**: je eigen vliegtuig, de vloot van een club, of de vlucht van een familielid. Optioneel: je typt hun codes in de instellingsdialoog | overal ter wereld | adsb.fi |
+| **Foto's**: een foto van het vliegtuig, met de naam van de fotograaf, als je het aanwijst | elk vliegtuig waarvan Planespotters.net een foto heeft | Planespotters.net ([meer](#fotos)) |
 | **Je eigen afbeelding voor één vliegtuig**, in plaats van zijn symbool | overal waar dat vliegtuig getoond wordt | een afbeelding die je in een map zet ([hoe](#je-eigen-afbeelding-voor-één-vliegtuig)) |
 
 ### Ingeschakeld met je eigen gratis sleutel of account
@@ -348,8 +349,9 @@ regel `- domain: geo_location` voor elke bron.
 * Het label is de roepnaam van de vlucht (`UAL308`), anders wie het gebruikt
   (`Lewis University`), anders het type (`Cessna 172 Skyhawk`).
 * **Wijs** een vliegtuig aan om zijn luchtvaartmaatschappij of gebruiker te
-  zien en, als een route bekend is, de route en over hoeveel minuten het
-  aankomt. **Klik** erop voor alle details.
+  zien, zijn foto als die er is en, als een route bekend is, de route en over
+  hoeveel minuten het aankomt. **Klik** erop voor alle details en een grotere
+  foto, gekoppeld aan zijn pagina op Planespotters.net ([Foto's](#fotos)).
 
 Zijn de bronnen van je dashboards in YAML ingesteld
 (`lovelace: resource_mode: yaml`), dan kan er niets voor je worden
@@ -606,6 +608,38 @@ voor de rest. De kaart krijgt elke afbeelding via een link die Home Assistant
 ondertekent en die na een dag niet meer werkt; daarvoor wordt een nieuwe
 gemaakt.
 
+### Foto's
+
+Als je een vliegtuig aanwijst, toont de kaart een foto ervan van
+[Planespotters.net](https://www.planespotters.net), als die er is, met de naam
+van de fotograaf ernaast. Klik op het vliegtuig om de foto groter te zien; de
+foto linkt naar zijn pagina op Planespotters.net. Je hoeft niets in te
+stellen.
+
+De foto wordt alleen opgezocht als iemand dat vliegtuig aanwijst, niet voor
+elk vliegtuig in je gebied. Je Home Assistant vraagt Planespotters.net op de
+hexcode van het vliegtuig. Home Assistant bewaart het antwoord, een foto of
+geen foto, 12 uur, alleen in het geheugen, dus een herstart vergeet het. De
+browser die de kaart toont, laadt de afbeelding rechtstreeks van
+Planespotters.net. Home Assistant downloadt, bewaart of verstuurt geen enkele
+afbeelding.
+
+⚠ Een foto toont het vliegtuig zoals de fotograaf het zag, misschien in een
+eerdere beschildering of bij een eerdere gebruiker. Niet elk vliegtuig heeft
+een foto op Planespotters.net.
+
+⚠ Er wordt geen foto opgezocht voor een vliegtuig dat met een tijdelijk adres
+voor privacy vliegt (het programma Privacy ICAO Address van de FAA, Verenigde
+Staten), omdat die hexcode het vliegtuig niet identificeert, en ook niet voor
+een spoor zonder echte hexcode.
+
+⚠ Foto's kunnen nog niet worden uitgezet.
+
+Elk vliegtuig met een hexcode draagt `marker_photo_lookup`: het adres op je
+Home Assistant waar de kaart om de foto vraagt. Alleen wie op je Home
+Assistant is aangemeld, kan het gebruiken. De foto's zijn het werk van hun
+fotografen: zie [Bronvermelding en licenties](#bronvermelding-en-licenties).
+
 ### De vliegtuigen van de president
 
 De vliegtuigen die de president van de Verenigde Staten gebruikt, worden
@@ -697,9 +731,12 @@ verplaats je het middelpunt ervandaan (**Configureer** → **Centre**) of
 verwijder je het gebied. De hexcodes en roepnamen die je volgt, worden één
 keer per minuut naar adsb.fi (of adsb.lol) gestuurd, en je adsb.lol-sleutel
 alleen naar adsb.lol. De roepnamen van lijnvluchten in je gebied worden naar
-adsbdb gestuurd als FiledRoutesDB er geen route voor heeft. Verder wordt er
-niets over jou ergens naartoe gestuurd. Elke dienst ziet je internetadres,
-zoals elke website.
+adsbdb gestuurd als FiledRoutesDB er geen route voor heeft. Als iemand op de
+kaart een vliegtuig aanwijst, wordt de hexcode ervan naar Planespotters.net
+gestuurd, hoogstens één keer per 12 uur per vliegtuig, en de browser die de
+kaart toont, laadt de foto daarvandaan. Dit kan nog niet worden uitgezet.
+Verder wordt er niets over jou ergens naartoe gestuurd. Elke dienst ziet je
+internetadres, zoals elke website.
 
 **Hoeveel.**
 
@@ -708,6 +745,7 @@ zoals elke website.
 | adsb.fi | elk vliegtuig in je cirkel, bij elke update (standaard elke 15 seconden); één verzoek per minuut voor de op hexcode gevolgde vliegtuigen en de vliegtuigen van de president; één voor de militaire lijst; één voor alle gevolgde roepnamen samen, alleen als je er volgt | vraagt in plaats daarvan adsb.lol. Een bron die weigert met HTTP 429, wordt overgeslagen voor de tijd die hij vraagt, of voor 1 minuut, verdubbeld tot 10 minuten |
 | adsb.lol | dezelfde verzoeken, alleen zolang adsb.fi niet antwoordt | hetzelfde |
 | adsbdb | één verzoek per nieuwe roepnaam van een luchtvaartmaatschappij waarvoor FiledRoutesDB geen route heeft, minstens 1 seconde ertussen; een antwoord wordt 30 dagen bewaard, een "geen route" 24 uur. Antwoorden worden alleen in het geheugen bewaard | 15 minuten niet opnieuw gevraagd; alle verzoeken pauzeren 15 minuten na HTTP 429 |
+| Planespotters.net | één verzoek om de foto van een vliegtuig de eerste keer dat iemand het aanwijst, daarna 12 uur geen voor dat vliegtuig. Antwoorden worden alleen in het geheugen bewaard. De foto zelf laadt de browser die de kaart toont | na HTTP 429 wordt geen foto gevraagd voor de tijd die Planespotters.net vraagt, of 10 minuten; na HTTP 403 een dag lang |
 | FiledRoutesDB, van GitHub | een klein controlesombestand één keer per dag, na 14:00 uur Chicago-tijd (Verenigde Staten); het bestand zelf, ongeveer 4,6 MB, alleen als het veranderd is | een uur later opnieuw geprobeerd; je kopie blijft in gebruik tot hij verloopt |
 | AirportZones, van GitHub | een klein controlesombestand één keer per dag; de tabel zelf, ongeveer 4,8 MB, alleen als hij veranderd is | een uur later opnieuw geprobeerd; je kopie blijft in gebruik |
 | EnforcementAircraft, van GitHub | een klein controlesombestand één keer per uur; de lijst zelf, klein, alleen als hij veranderd is | je kopie blijft in gebruik |
@@ -834,6 +872,14 @@ of [vertaal het met onze hulp](#zelf-iets-toevoegen-met-onze-hulp).
   vulling en omtrek, geschaald naar de klasse van het vliegtuig, en laat
   sommige propellers en rotoren draaien. Elke wijziging staat in
   [ATTRIBUTION.md](ATTRIBUTION.md).
+* **Planespotters.net** (<https://www.planespotters.net>): de foto's van
+  vliegtuigen, via zijn [foto-API](https://www.planespotters.net/photo/api) en
+  onder zijn voorwaarden. Elke foto is het werk van zijn fotograaf, die
+  ernaast wordt genoemd, en linkt naar zijn pagina op Planespotters.net. Er is
+  geen foto in deze repository gekopieerd, en Home Assistant downloadt,
+  bewaart of verstuurt geen enkele afbeelding. Door deze integratie te
+  installeren gebruik je Planespotters.net, en zijn voorwaarden gelden voor
+  jou.
 * **De kaart** is [LiveTrackMapCard](https://github.com/StrausbergAutomationWorks/LiveTrackMapCard),
   MIT, een kopie van [ha-map-card](https://github.com/nathan-gs/ha-map-card)
   door nathan-gs, MIT. De kaarttegels en hun vermeldingen staan in de README
@@ -860,9 +906,9 @@ MLAT · Mode S · vliegroutes · militaire vliegtuigen · Air Force One ·
 helikopters · aircraft · flight tracker · Flugzeuge · Flugverfolgung ·
 avions · suivi des vols · 飞机 · 航班跟踪 · aviones · seguimiento de vuelos ·
 aerei · tracciamento voli · fly · flysporing · adsb.fi · adsb.lol · adsbdb ·
-FiledRoutesDB · FAA-register · OurAirports · ADS-B Radar · geo_location ·
-kaart · Lovelace · HACS · Marktplaats · Live Track · LiveTrack ·
-StrausbergAutomationWorks
+FiledRoutesDB · FAA-register · OurAirports · ADS-B Radar · Planespotters.net ·
+vliegtuigfoto's · geo_location · kaart · Lovelace · HACS · Marktplaats · Live
+Track · LiveTrack · StrausbergAutomationWorks
 
 ---
 

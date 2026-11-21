@@ -21,13 +21,14 @@ holde øje med militærfly i områder, du angiver.
 > fly. Mangler dit? [Foreslå det](#hjælp-den-med-at-vokse), eller tilføj det
 > selv: vi hjælper dig med det.
 
-**Status: 0.1.1, udgivet.** Tilføjes til Markedspladsen via et link
+**Status: 0.1.5, udgivet.** Tilføjes til Markedspladsen via et link
 ([nedenfor](#installation-trin-for-trin)); den er endnu ikke i
 Markedspladsens katalog.
 
 Originalt arbejde af StrausbergAutomationWorks. Ikke tilknyttet eller
 godkendt af adsb.fi, adsb.lol, adsbdb, Federal Aviation Administration (USA),
-OurAirports, ADS-B Radar, noget flyselskab eller nogen operatør af fly.
+OurAirports, ADS-B Radar, Planespotters.net, noget flyselskab eller nogen
+operatør af fly.
 
 > ⚠ **Ikke et sikkerhedssystem.** Den viser offentlige data, som regel få
 > sekunder gamle og nogle gange et minut eller mere, og kun fly, som
@@ -75,6 +76,7 @@ tabellen siger det, hvor som helst i verden.
 | **Fly på den offentlige EnforcementAircraft-liste** (udlændinge- og føderale ordensmyndigheder), med blinkende lys | i hvert område | EnforcementAircraft-listen |
 | **Militærfly i dine overvågningsområder**: hvert fly, datastrømmen markerer som militært, inden for op til ti cirkler, du angiver, også når dit område er fuldt. Valgfrit: du skriver cirklerne i opsætningsdialogen | hvor som helst i verden | adsb.fi's militærliste |
 | **Fly og flyvninger, du følger**: dit eget fly, en klubs flåde eller den flyvning, et familiemedlem er med. Valgfrit: du skriver deres koder i opsætningsdialogen | hvor som helst i verden | adsb.fi |
+| **Fotos**: et foto af flyet, med fotografens navn, når du peger på det | hvert fly, som Planespotters.net har et foto af | Planespotters.net ([mere](#fotos)) |
 | **Dit eget billede til ét fly**, i stedet for dets ikon | overalt, hvor det fly vises | et billede, du lægger i en mappe ([sådan](#dit-eget-billede-til-et-fly)) |
 
 ### Med din egen gratis nøgle eller konto
@@ -334,9 +336,10 @@ Andre Live Track-moduler kommer i `entity_filter` på samme måde: én regel
   bevæger sig jævnt mellem de positioner, det melder.
 * Dets etiket er flyvningens kaldesignal (`UAL308`), ellers hvem der opererer
   det (`Lewis University`), ellers dets type (`Cessna 172 Skyhawk`).
-* **Peg på** et fly for at se dets flyselskab eller operatør og, når en rute
-  kendes, ruten og hvor mange minutter der er til ankomst. **Klik** på det for
-  alle detaljer.
+* **Peg på** et fly for at se dets flyselskab eller operatør, dets foto, når
+  der er et, og, når en rute kendes, ruten og hvor mange minutter der er til
+  ankomst. **Klik** på det for alle detaljer og et større foto, der linker til
+  dets side på Planespotters.net ([Fotos](#fotos)).
 
 Er dine betjeningspanelers ressourcer sat op i YAML
 (`lovelace: resource_mode: yaml`), kan intet registreres for dig: en
@@ -587,6 +590,36 @@ Disse billeder kræver login på din Home Assistant, ligesom resten af den.
 Kortet får hvert billede via et link, som Home Assistant signerer, og som
 holder op med at virke efter et døgn; et nyt link laves inden da.
 
+### Fotos
+
+Når du peger på et fly, viser kortet et foto af det fra
+[Planespotters.net](https://www.planespotters.net), hvis der er et, med
+fotografens navn ved siden af. Klik på flyet for at se fotoet større; fotoet
+linker til dets side på Planespotters.net. Der er intet at sætte op.
+
+Fotoet slås kun op, når nogen peger på det fly, ikke for hvert fly i dit
+område. Din Home Assistant spørger Planespotters.net ud fra flyets hex-kode.
+Den gemmer svaret, et foto eller intet foto, i 12 timer, kun i hukommelsen, så
+en genstart glemmer det. Browseren, der viser kortet, henter billedet direkte
+fra Planespotters.net. Home Assistant henter, gemmer eller videresender ikke
+noget billede.
+
+⚠ Et foto viser flyet, som fotografen så det, måske i en tidligere bemaling
+eller hos en tidligere operatør. Ikke alle fly har et foto på
+Planespotters.net.
+
+⚠ Der slås intet foto op for et fly, der flyver med en midlertidig adresse af
+hensyn til privatlivet (FAA's program Privacy ICAO Address, USA), fordi den
+hex-kode ikke identificerer flyet, og heller ikke for et spor uden en rigtig
+hex-kode.
+
+⚠ Fotos kan endnu ikke slås fra.
+
+Hvert fly med en hex-kode har `marker_photo_lookup`: adressen på din Home
+Assistant, hvor kortet beder om fotoet. Kun en, der er logget ind på din Home
+Assistant, kan bruge den. Fotoene er deres fotografers værk: se [Tak og
+licenser](#tak-og-licenser).
+
 ### Præsidentens fly
 
 De fly, som USA's præsident bruger, vises, hvor de end er i verden, efter
@@ -673,8 +706,11 @@ midtpunktet væk fra det (**Konfigurér** → **Centre**) eller slette området.
 De hex-koder og kaldesignaler, du følger, sendes til adsb.fi (eller adsb.lol)
 én gang i minuttet, og din adsb.lol-nøgle kun til adsb.lol. Kaldesignalerne
 for rutefly i dit område sendes til adsbdb, når FiledRoutesDB ikke har en rute
-for dem. Intet andet om dig sendes nogen steder hen. Hver tjeneste ser din
-internetadresse, som enhver hjemmeside gør.
+for dem. Når nogen peger på et fly på kortet, sendes dets hex-kode til
+Planespotters.net, højst én gang hver 12. time for hvert fly, og browseren,
+der viser kortet, henter fotoet derfra. Det kan endnu ikke slås fra. Intet
+andet om dig sendes nogen steder hen. Hver tjeneste ser din internetadresse,
+som enhver hjemmeside gør.
 
 **Hvor meget.**
 
@@ -683,6 +719,7 @@ internetadresse, som enhver hjemmeside gør.
 | adsb.fi | hvert fly i din cirkel, ved hver opdatering (som standard hvert 15. sekund); én forespørgsel i minuttet for de fly, der følges efter hex-kode, og præsidentens fly; én for militærlisten; én for alle fulgte kaldesignaler samlet, kun når du følger nogen | spørger adsb.lol i stedet. En kilde, der afviser med HTTP 429, springes over i den tid, den beder om, eller i 1 minut, fordoblet op til 10 minutter |
 | adsb.lol | de samme forespørgsler, kun så længe adsb.fi ikke svarer | det samme |
 | adsbdb | én forespørgsel pr. nyt kaldesignal for et rutefly, som FiledRoutesDB ikke har en rute for, med mindst 1 sekunds mellemrum; et svar gemmes i 30 dage, et "ingen rute" i 24 timer. Svar gemmes kun i hukommelsen | spørges ikke igen i 15 minutter; alle forespørgsler holder pause i 15 minutter efter HTTP 429 |
+| Planespotters.net | én forespørgsel efter et flys foto første gang, nogen peger på det, og derefter ingen for det fly i 12 timer. Svar gemmes kun i hukommelsen. Selve fotoet henter browseren, der viser kortet | efter HTTP 429 spørges der ikke efter fotos i den tid, Planespotters.net beder om, eller i 10 minutter; efter HTTP 403 i et døgn |
 | FiledRoutesDB, fra GitHub | en lille kontrolsumfil én gang om dagen, efter kl. 14:00 Chicago-tid (USA); selve filen, omkring 4,6 MB, kun når den er ændret | prøves igen en time senere; den kopi, du har, bliver brugt, indtil den udløber |
 | AirportZones, fra GitHub | en lille kontrolsumfil én gang om dagen; selve tabellen, omkring 4,8 MB, kun når den er ændret | prøves igen en time senere; den kopi, du har, bliver brugt |
 | EnforcementAircraft, fra GitHub | en lille kontrolsumfil én gang i timen; selve listen, lille, kun når den er ændret | den kopi, du har, bliver brugt |
@@ -802,6 +839,13 @@ eller [oversæt det med vores hjælp](#tilføj-det-selv-med-vores-hjælp).
   er også under dens betingelser. Denne integration serverer ikonerne med en ny
   fyldfarve og kontur, skaleret efter flyklasse, og animerer nogle propeller og
   rotorer. Hver ændring står i [ATTRIBUTION.md](ATTRIBUTION.md).
+* **Planespotters.net** (<https://www.planespotters.net>): flyfotoene, gennem
+  dens [foto-API](https://www.planespotters.net/photo/api) og på dens
+  betingelser. Hvert foto er fotografens værk, fotografen nævnes ved siden af
+  det, og fotoet linker til sin side på Planespotters.net. Intet foto er
+  kopieret ind i dette repository, og Home Assistant henter, gemmer eller
+  videresender ikke noget billede. Ved at installere denne integration bruger
+  du Planespotters.net, og dens betingelser gælder for dig.
 * **Kortkortet** er [LiveTrackMapCard](https://github.com/StrausbergAutomationWorks/LiveTrackMapCard),
   MIT, en kopi af [ha-map-card](https://github.com/nathan-gs/ha-map-card) af
   nathan-gs, MIT. Dets kortfliser og deres kildeangivelser står i dets README.
@@ -826,9 +870,9 @@ militærfly · Air Force One · helikoptere · aircraft · flight tracker ·
 Flugzeuge · Flugverfolgung · avions · suivi des vols · vliegtuigen ·
 vluchten volgen · 飞机 · 航班跟踪 · aviones · seguimiento de vuelos · aerei ·
 tracciamento voli · adsb.fi · adsb.lol · adsbdb · FiledRoutesDB ·
-FAA-register · OurAirports · ADS-B Radar · geo_location · kortkort ·
-Lovelace · HACS · Marketplace · Markedsplads · Live Track · LiveTrack ·
-StrausbergAutomationWorks
+FAA-register · OurAirports · ADS-B Radar · Planespotters.net · flyfotos ·
+geo_location · kortkort · Lovelace · HACS · Marketplace · Markedsplads · Live
+Track · LiveTrack · StrausbergAutomationWorks
 
 ---
 

@@ -8,9 +8,9 @@
 
 > **正在成长，欢迎提出想法。** Live Track Aircraft 目前覆盖志愿者运行接收机的全世界，美国的航线和所有者名称最详细。我们正在添加更多航线来源和飞机信息。缺少你那里的吗？[提出建议](#帮助它成长)，或者自己添加：我们会帮你完成。
 
-**状态：0.1.1，已发布。** 可通过链接添加到 Marketplace（[见下文](#安装步骤)）；它还不在 Marketplace 的目录中。
+**状态：0.1.5，已发布。** 可通过链接添加到 Marketplace（[见下文](#安装步骤)）；它还不在 Marketplace 的目录中。
 
-StrausbergAutomationWorks 的原创作品。与 adsb.fi、adsb.lol、adsbdb、美国联邦航空管理局（Federal Aviation Administration，FAA）、OurAirports、ADS-B Radar、任何航空公司或任何飞机运营者均无关联，也未获得它们的认可。
+StrausbergAutomationWorks 的原创作品。与 adsb.fi、adsb.lol、adsbdb、美国联邦航空管理局（Federal Aviation Administration，FAA）、OurAirports、ADS-B Radar、Planespotters.net、任何航空公司或任何飞机运营者均无关联，也未获得它们的认可。
 
 > ⚠ **这不是安全系统。** 它显示公开数据，通常延迟几秒，有时一分钟或更久，而且只显示志愿者的接收机恰好收到的飞机。它不能用于导航、飞机间隔或任何其他操作用途。
 
@@ -53,6 +53,7 @@ StrausbergAutomationWorks 的原创作品。与 adsb.fi、adsb.lol、adsbdb、�
 | **公开的 EnforcementAircraft 列表上的飞机**（移民和联邦执法），带闪烁的灯光 | 每个区域内 | EnforcementAircraft 列表 |
 | **你的监视区域内的军用飞机**：数据源标记为军用的每架飞机，在你指定的最多十个圆圈内，即使你的区域已满也会显示。可选：你在设置对话框中输入这些圆圈 | 全世界任何地方 | adsb.fi 的军用飞机列表 |
 | **你关注的飞机和航班**：你自己的飞机、一个俱乐部的机队，或家人正在乘坐的航班。可选：你在设置对话框中输入它们的代码 | 全世界任何地方 | adsb.fi |
+| **照片**：把指针指向飞机时显示它的照片，并附摄影师的名字 | Planespotters.net 有照片的每架飞机 | Planespotters.net（[详见](#照片)） |
 | **为某架飞机使用你自己的图片**，代替它的图标 | 这架飞机显示的任何地方 | 你放进一个文件夹的图片（[方法](#为某架飞机使用你自己的图片)） |
 
 ### 用你自己的免费密钥或账户开启
@@ -246,7 +247,7 @@ entity_filter:
 
 * 每架飞机都画成它自己的机型，朝向它飞行的方向，并在它报告的位置之间平滑移动。
 * 它的标签是航班的呼号（`UAL308`），否则是运营者（`Lewis University`），再否则是机型（`Cessna 172 Skyhawk`）。
-* 把指针**指向**一架飞机，可以看到它的航空公司或运营者，在已知航线时还能看到航线和距离到达还有多少分钟。**点击**它可以看到全部详情。
+* 把指针**指向**一架飞机，可以看到它的航空公司或运营者、有照片时它的照片，在已知航线时还能看到航线和距离到达还有多少分钟。**点击**它可以看到全部详情和一张更大的照片，照片链接到它在 Planespotters.net 上的页面（[照片](#照片)）。
 
 如果你的仪表盘资源是用 YAML 设置的（`lovelace: resource_mode: yaml`），就无法替你自动注册：这时 **修复** 中会出现一个问题，给出需要添加的确切行。你自己通过 Marketplace 安装的卡片不会被改动。如果在区域仍然设置着的情况下删除了集成的文件，而且没有安装其他 Live Track 模块，请自己在 **设置 → 仪表盘 → 资源** 中删除卡片的那一行。任何其他显示 `geo_location` 实体的地图卡片也会显示这些飞机，只是显示为普通标记。
 
@@ -391,6 +392,20 @@ Live Track Aircraft 可以跟踪你选择的飞机，无论它们在世界的哪
 
 这些图片和 Home Assistant 的其他部分一样，需要登录才能访问。地图通过 Home Assistant 签名的链接获取每张图片，该链接一天后失效；在此之前会生成新的链接。
 
+### 照片
+
+把指针指向一架飞机时，如果 [Planespotters.net](https://www.planespotters.net) 有它的照片，地图会显示这张照片，旁边附有摄影师的名字。点击这架飞机可以看到更大的照片；照片链接到它在 Planespotters.net 上的页面。无需任何设置。
+
+只有当有人指向某架飞机时才会查找它的照片，而不是为你区域内的每架飞机查找。你的 Home Assistant 按飞机的十六进制代码向 Planespotters.net 询问。它把答复（有照片或没有照片）保留 12 小时，只保存在内存中，所以重启后就会忘记。显示地图的浏览器直接从 Planespotters.net 加载图片。Home Assistant 不下载、不保存、也不转发任何图片。
+
+⚠ 照片显示的是摄影师当时看到的飞机，可能是以前的涂装，或属于以前的运营者。并不是每架飞机在 Planespotters.net 上都有照片。
+
+⚠ 对于为保护隐私而使用临时地址飞行的飞机（美国 FAA 的 Privacy ICAO Address 计划），不会查找照片，因为这个十六进制代码并不能识别这架飞机；没有真实十六进制代码的轨迹也不会查找。
+
+⚠ 目前还没有关闭照片的选项。
+
+每架有十六进制代码的飞机都带有 `marker_photo_lookup`：地图向你的 Home Assistant 请求照片时使用的地址。只有登录了你的 Home Assistant 的人才能使用它。这些照片是各自摄影师的作品：见[致谢与许可](#致谢与许可)。
+
 ### 美国总统的飞机
 
 美国总统使用的飞机无论在世界的哪里都会显示，按它们的十六进制代码识别，从不按呼号识别，同时显示的还有第 89 空运联队的飞机（呼号 SAM 和 VENUS）和为总统飞机护航的军用飞机。它们来自 Live Track Aircraft 本来就会每分钟发出一次的请求。每架都带有一个 `watch` 属性，说明它为什么被显示，总统的飞机还在 `presidential_airframe` 中带有它的名称。
@@ -433,7 +448,7 @@ recorder:
 
 ## 它发送和下载的内容
 
-**关于你的位置。** 每个区域的中心点和半径会在每次更新时发送给 adsb.fi，默认每 15 秒一次，adsb.fi 没有响应时发送给 adsb.lol。中心点按你设置的样子发送，而它从你的家开始：要停止发送你家的位置，把中心点移离你家（**配置** → **Centre**），或删除该区域。你关注的十六进制代码和呼号每分钟发送一次给 adsb.fi（或 adsb.lol），你的 adsb.lol 密钥只发送给 adsb.lol。当 FiledRoutesDB 没有你区域内航空公司航班的航线时，这些航班的呼号会发送给 adsbdb。除此之外，不会向任何地方发送关于你的任何信息。每个服务都能看到你的互联网地址，就像任何网站一样。
+**关于你的位置。** 每个区域的中心点和半径会在每次更新时发送给 adsb.fi，默认每 15 秒一次，adsb.fi 没有响应时发送给 adsb.lol。中心点按你设置的样子发送，而它从你的家开始：要停止发送你家的位置，把中心点移离你家（**配置** → **Centre**），或删除该区域。你关注的十六进制代码和呼号每分钟发送一次给 adsb.fi（或 adsb.lol），你的 adsb.lol 密钥只发送给 adsb.lol。当 FiledRoutesDB 没有你区域内航空公司航班的航线时，这些航班的呼号会发送给 adsbdb。有人在地图上指向一架飞机时，它的十六进制代码会发送给 Planespotters.net，每架飞机每 12 小时最多一次，显示地图的浏览器会从那里加载照片。目前还没有停止这一做法的选项。除此之外，不会向任何地方发送关于你的任何信息。每个服务都能看到你的互联网地址，就像任何网站一样。
 
 **发送多少。**
 
@@ -442,6 +457,7 @@ recorder:
 | adsb.fi | 每次更新时你圆圈内的每架飞机（默认每 15 秒一次）；每分钟一个请求，用于按十六进制代码跟踪的飞机和总统的飞机；一个用于军用飞机列表；一个用于所有被跟踪的呼号，只在你跟踪了呼号时发送 | 改为询问 adsb.lol。以 HTTP 429 拒绝的来源会在它要求的时间内被跳过，或者跳过 1 分钟，每次加倍，最多 10 分钟 |
 | adsb.lol | 同样的请求，只在 adsb.fi 没有响应时发送 | 同上 |
 | adsbdb | FiledRoutesDB 没有航线的每个新航空公司呼号一个请求，间隔至少 1 秒；答复保留 30 天，"没有航线"保留 24 小时。答复只保存在内存中 | 15 分钟内不再询问；收到 HTTP 429 后所有请求暂停 15 分钟 |
+| Planespotters.net | 有人第一次指向一架飞机时，请求一次它的照片，之后 12 小时内不再为这架飞机请求。答复只保存在内存中。照片本身由显示地图的浏览器加载 | 收到 HTTP 429 后，在 Planespotters.net 要求的时间内（或 10 分钟内）不请求任何照片；收到 HTTP 403 后，一天内不请求 |
 | FiledRoutesDB，来自 GitHub | 每天一个小的校验和文件，在芝加哥时间（美国）14:00 之后；文件本身大约 4.6 MB，只在它有变化时下载 | 一小时后重试；你已有的副本在过期前继续使用 |
 | AirportZones，来自 GitHub | 每天一个小的校验和文件；表格本身大约 4.8 MB，只在它有变化时下载 | 一小时后重试；你已有的副本继续使用 |
 | EnforcementAircraft，来自 GitHub | 每小时一个小的校验和文件；列表本身很小，只在它有变化时下载 | 你已有的副本继续使用 |
@@ -503,6 +519,7 @@ Live Track Aircraft 仍在成长。我们发现新的航线来源、数据来源
 * **OurAirports**（<https://ourairports.com>），通过 [AirportZones](https://github.com/StrausbergAutomationWorks/AirportZones)：机场名称和位置，采用 ODbL 1.0；时区由 StrausbergAutomationWorks 添加。
 * **EnforcementAircraft**（[StrausbergAutomationWorks](https://github.com/StrausbergAutomationWorks/EnforcementAircraft)）：移民和联邦执法飞机的列表，采用 ODbL 1.0。
 * **ADS-B Radar**（<https://adsb-radar.com>）：飞机图标，来自 Jos Nutbroek 的 [SVG 飞机图标集](https://adsb-radar.com/help/icons.html)，按照其条款使用，条款要求提供这个反向链接。这些图标不在本存储库的 MIT 许可范围内。部分图标由 StrausbergAutomationWorks 按图标集的风格绘制并捐赠给 ADS-B Radar，因此也适用其条款。这个集成提供的图标使用了新的填充和轮廓，按飞机类别缩放，并为部分螺旋桨和旋翼添加了动画。每处改动都列在 [ATTRIBUTION.md](ATTRIBUTION.md) 中。
+* **Planespotters.net**（<https://www.planespotters.net>）：飞机照片，通过它的[照片 API](https://www.planespotters.net/photo/api)，按照其条款使用。每张照片都是其摄影师的作品，摄影师的名字显示在照片旁边，照片链接到它在 Planespotters.net 上的页面。本存储库中没有复制任何照片，Home Assistant 也不下载、不保存、不转发任何图片。安装这个集成即表示你在使用 Planespotters.net，其条款适用于你。
 * **地图卡片**是 [LiveTrackMapCard](https://github.com/StrausbergAutomationWorks/LiveTrackMapCard)，MIT，是 nathan-gs 的 [ha-map-card](https://github.com/nathan-gs/ha-map-card)（MIT）的副本。它的地图瓦片及其署名见它的 README。
 
 这些组织都没有制作或认可这个集成。
@@ -515,7 +532,7 @@ Live Track Aircraft 仍在成长。我们发现新的航线来源、数据来源
 
 ## 关键词
 
-Home Assistant 飞机 · Home Assistant 航班跟踪 · ADS-B · ADS-B 地图 · 航班跟踪 · 飞机追踪 · 头顶的飞机 · MLAT · Mode S · 航线 · 军用飞机 · 空军一号 · Air Force One · 直升机 · aircraft · flight tracker · Flugzeuge · Flugverfolgung · avions · suivi des vols · vliegtuigen · vluchten volgen · aviones · seguimiento de vuelos · aerei · tracciamento voli · fly · flysporing · adsb.fi · adsb.lol · adsbdb · FiledRoutesDB · FAA 登记册 · OurAirports · ADS-B Radar · geo_location · 地图卡片 · Lovelace · HACS · Marketplace · Live Track · LiveTrack · StrausbergAutomationWorks
+Home Assistant 飞机 · Home Assistant 航班跟踪 · ADS-B · ADS-B 地图 · 航班跟踪 · 飞机追踪 · 头顶的飞机 · MLAT · Mode S · 航线 · 军用飞机 · 空军一号 · Air Force One · 直升机 · aircraft · flight tracker · Flugzeuge · Flugverfolgung · avions · suivi des vols · vliegtuigen · vluchten volgen · aviones · seguimiento de vuelos · aerei · tracciamento voli · fly · flysporing · adsb.fi · adsb.lol · adsbdb · FiledRoutesDB · FAA 登记册 · OurAirports · ADS-B Radar · Planespotters.net · 飞机照片 · geo_location · 地图卡片 · Lovelace · HACS · Marketplace · Live Track · LiveTrack · StrausbergAutomationWorks
 
 ---
 

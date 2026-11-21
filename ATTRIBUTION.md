@@ -31,6 +31,34 @@ Mason (Glasgow), and that copying it, publishing it or adding it to another
 database needs David Taylor's explicit permission. Every aircraft showing an
 adsbdb route credits adsbdb and both compilers in its attribution.
 
+## Aircraft photos: Planespotters.net
+
+When a viewer points at an aircraft on the map, the integration asks the
+Planespotters.net photo API (https://www.planespotters.net/photo/api) at
+runtime for a photo of that aircraft, by its hex code. Each Home Assistant asks
+for its own users and answers for its own use; the requests carry a User-Agent
+naming this integration and its repository. Nothing from Planespotters.net is
+shipped in this repository, and no photo is copied into it.
+
+Planespotters.net's terms are on that page (read 21 November 2026). What the
+code does to keep them, wherever a user cannot change it:
+
+* the photographer is named beside every photo, and the photo links to its
+  page on Planespotters.net by the address the API returns, unchanged, in a
+  plain link;
+* an answer is kept for at most 24 hours: 12 hours in Home Assistant's memory,
+  and at most 12 hours more in the page showing the map;
+* the viewer's browser loads each image straight from the address the API
+  returns; the integration does not download, store, proxy or re-host any
+  image;
+* a photo is asked for only when a viewer points at an aircraft, one request
+  at a time for each aircraft; HTTP 429 pauses every lookup, and HTTP 403 stops
+  them for a day.
+
+Each photo belongs to its photographer. The photos are not covered by the MIT
+licence in `LICENSE`, which applies to the code in this repository. If you show
+the map to others, keep the photographer's name and the link with each photo.
+
 ## Aircraft marker icons
 
 The marker icons ship in the shared library saw-livetrack, in
