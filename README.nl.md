@@ -313,11 +313,33 @@ filter:
     - state: unavailable
 ```
 
-De markeringen hebben
+Deze vorm heeft
 [auto-entities](https://github.com/thomasloven/lovelace-auto-entities) uit de
 Marktplaats nodig. Zijn er andere Live Track-modules geïnstalleerd, voeg dan
 voor elk van hun bronnen nog een filter `- domain: geo_location` toe
 (`live_track_ships`, `live_track_weather` enzovoort).
+
+**Zonder auto-entities:** LiveTrackMapCard kan met `entity_filter` zelf kiezen
+wat hij toont. Plak in plaats daarvan dit; er hoeft niets meer geïnstalleerd
+te worden:
+
+```yaml
+type: custom:live-track-map-card
+entity_filter:
+  include:
+    - domain: geo_location
+      attributes:
+        source: live_track_aircraft
+      options:
+        display: attribute
+        attribute: marker_label
+        position_transition: auto
+  exclude:
+    - state: unavailable
+```
+
+Andere Live Track-modules gaan op dezelfde manier in `entity_filter`: nog een
+regel `- domain: geo_location` voor elke bron.
 
 **Op de kaart:**
 

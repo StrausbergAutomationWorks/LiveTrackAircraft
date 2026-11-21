@@ -316,11 +316,32 @@ filter:
     - state: unavailable
 ```
 
-Les marqueurs ont besoin
+Cette forme a besoin
 d'[auto-entities](https://github.com/thomasloven/lovelace-auto-entities)
 depuis le Marketplace. Avec d'autres modules Live Track installés, ajoutez un
 filtre `- domain: geo_location` de plus pour chacune de leurs sources
 (`live_track_ships`, `live_track_weather` et ainsi de suite).
+
+**Sans auto-entities :** LiveTrackMapCard peut choisir elle-même ce qu'elle
+affiche, avec `entity_filter`. Collez plutôt ceci ; rien d'autre à installer :
+
+```yaml
+type: custom:live-track-map-card
+entity_filter:
+  include:
+    - domain: geo_location
+      attributes:
+        source: live_track_aircraft
+      options:
+        display: attribute
+        attribute: marker_label
+        position_transition: auto
+  exclude:
+    - state: unavailable
+```
+
+Les autres modules Live Track vont dans `entity_filter` de la même façon : une
+règle `- domain: geo_location` de plus pour chaque source.
 
 **Sur la carte :**
 

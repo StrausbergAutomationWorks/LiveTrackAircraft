@@ -301,11 +301,32 @@ filter:
     - state: unavailable
 ```
 
-Markørerne kræver
+Denne form kræver
 [auto-entities](https://github.com/thomasloven/lovelace-auto-entities) fra
 Markedspladsen. Er andre Live Track-moduler installeret, så tilføj ét filter
 `- domain: geo_location` mere for hver af deres kilder (`live_track_ships`,
 `live_track_weather` og så videre).
+
+**Uden auto-entities:** LiveTrackMapCard kan selv vælge, hvad den viser, med
+`entity_filter`. Indsæt dette i stedet; der skal ikke installeres mere:
+
+```yaml
+type: custom:live-track-map-card
+entity_filter:
+  include:
+    - domain: geo_location
+      attributes:
+        source: live_track_aircraft
+      options:
+        display: attribute
+        attribute: marker_label
+        position_transition: auto
+  exclude:
+    - state: unavailable
+```
+
+Andre Live Track-moduler kommer i `entity_filter` på samme måde: én regel
+`- domain: geo_location` mere for hver kilde.
 
 **På kortet:**
 
