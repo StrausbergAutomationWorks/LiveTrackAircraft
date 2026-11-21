@@ -1,4 +1,4 @@
-/*! live-track-map-card 0.1.0+5a0bc01 */
+/*! live-track-map-card 0.1.8+2bcbc9a */
 /*!
  * Third-party notices for the packages bundled in this file:
  *
@@ -14797,13 +14797,263 @@ const t$1=globalThis,e$2=t$1.ShadowRoot&&(void 0===t$1.ShadyCSS||t$1.ShadyCSS.na
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t=globalThis,i$1=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$1=`lit$${Math.random().toFixed(9).slice(2)}$`,n="?"+o$1,r=`<${n}>`,l=document,c=()=>l.createComment(""),a=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,d=t=>u(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l.createTreeWalker(l,129);function V(t,i){if(!u(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$1+x):s+o$1+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$1),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L$1:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$1)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$1),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$1,t+1));)d.push({type:7,index:l}),t+=o$1.length-1;}l++;}}static createElement(t,i){const s=l.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a(this._$AH)?this._$AA.nextSibling.data=t:this.T(l.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$1(t).nextSibling;i$1(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}let L$1 = class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}};class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.2");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
+const t=globalThis,i$1=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$1=`lit$${Math.random().toFixed(9).slice(2)}$`,n="?"+o$1,r=`<${n}>`,l=document,c=()=>l.createComment(""),a=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,d=t=>u(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),w=x(2),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l.createTreeWalker(l,129);function V(t,i){if(!u(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$1+x):s+o$1+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$1),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L$1:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$1)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$1),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$1,t+1));)d.push({type:7,index:l}),t+=o$1.length-1;}l++;}}static createElement(t,i){const s=l.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a(this._$AH)?this._$AA.nextSibling.data=t:this.T(l.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$1(t).nextSibling;i$1(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}let L$1 = class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}};class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.2");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */const s=globalThis;class i extends y$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const r=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(r,this.renderRoot,this.renderOptions);}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(true);}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(false);}render(){return E}}i._$litElement$=true,i["finalized"]=true,s.litElementHydrateSupport?.({LitElement:i});const o=s.litElementPolyfillSupport;o?.({LitElement:i});(s.litElementVersions??=[]).push("4.2.2");
+
+/**
+ * `weather_area`: the one place weather is drawn (Lee, 2026-11-02). Shapes outside it are not drawn and radar tiles
+ * outside its box are not asked for. Nothing here names a publisher or a place.
+ */
+
+const KM_PER_DEG = 111.2;
+const STEP_DEG = 0.25;
+const MAX_STEPS = 64;
+
+/**
+ * @param {*} input `{latitude, longitude, radius_km}`
+ * @returns {?{lat: number, lon: number, km: number}} null when absent or not usable
+ */
+function parseWeatherArea(input) {
+  if (input === null || typeof input !== "object") return null;
+  const { latitude: lat, longitude: lon, radius_km: km } = input;
+  if (![lat, lon, km].every((v) => typeof v === "number" && Number.isFinite(v))) return null;
+  if (Math.abs(lat) > 90 || Math.abs(lon) > 180 || km <= 0) return null;
+  return { lat, lon, km };
+}
+
+/**
+ * @param {{lat: number, lon: number, km: number}} area
+ * @returns {number[][]} [[south, west], [north, east]], the box around the circle, as Leaflet takes it
+ */
+function areaBounds(area) {
+  const dLat = area.km / KM_PER_DEG;
+  const dLon = area.km / (KM_PER_DEG * Math.max(Math.cos((area.lat * Math.PI) / 180), 0.01));
+  return [[area.lat - dLat, area.lon - dLon], [area.lat + dLat, area.lon + dLon]];
+}
+
+/**
+ * Near enough for a circle of tens of km and up: flat earth at the area's latitude.
+ * @returns {boolean} the point is inside the circle
+ */
+function inArea(lon, lat, area) {
+  const dy = (lat - area.lat) * KM_PER_DEG;
+  const dx = (lon - area.lon) * KM_PER_DEG * Math.cos((area.lat * Math.PI) / 180);
+  return dx * dx + dy * dy <= area.km * area.km;
+}
+
+/** @returns {boolean} a vertex of the path, or a point along a segment, is inside the circle */
+function pathTouches(path, area) {
+  for (let i = 0; i < path.length; i++) {
+    const [lon, lat] = path[i];
+    if (inArea(lon, lat, area)) return true;
+    if (i === 0) continue;
+    const [lon0, lat0] = path[i - 1];
+    const steps = Math.min(MAX_STEPS, Math.ceil(Math.max(Math.abs(lon - lon0), Math.abs(lat - lat0)) / STEP_DEG));
+    for (let s = 1; s < steps; s++) {
+      if (inArea(lon0 + ((lon - lon0) * s) / steps, lat0 + ((lat - lat0) * s) / steps, area)) return true;
+    }
+  }
+  return false;
+}
+
+/** @returns {boolean} the point is inside the ring (ray casting) */
+function inRing(lon, lat, ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if ((yi > lat) !== (yj > lat) && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/**
+ * Whether a shape applies to the area: its outline crosses or lies inside the circle, or it covers the circle's centre.
+ * @param {{type: string, coordinates: Array}} geometry GeoJSON Polygon, MultiPolygon, LineString or MultiLineString
+ * @param {{lat: number, lon: number, km: number}} area
+ * @returns {boolean}
+ */
+function geometryTouchesArea(geometry, area) {
+  const c = geometry?.coordinates;
+  if (!Array.isArray(c)) return false;
+  if (geometry.type === "LineString") return pathTouches(c, area);
+  if (geometry.type === "MultiLineString") return c.some((p) => pathTouches(p, area));
+  const polys = geometry.type === "Polygon" ? [c] : geometry.type === "MultiPolygon" ? c : [];
+  return polys.some((rings) => rings.some((r) => pathTouches(r, area)) || (rings[0] && inRing(area.lon, area.lat, rings[0])));
+}
+
+/**
+ * The map's credits box, collapsible (Lee, 2026-11-19).
+ *
+ * Every source drawn on the map is credited in Leaflet's attribution box
+ * (contract D4d, the radar, clouds, lightning, shapes and points), and on a
+ * phone that box had grown to cover 85-92% of the map. OpenStreetMap's
+ * attribution guideline (OSMF, adopted 2021-06-25) lets an interactive map's
+ * credits collapse automatically after five seconds or on map interaction,
+ * provided an "(i)" button still leads to them. So:
+ *
+ * - the box opens in full with the map;
+ * - it collapses after five seconds, or at the viewer's first press, scroll or
+ *   key on the map, whichever comes first. Moves the card makes itself (the
+ *   initial view, following) are not the viewer's and do not count; neither
+ *   does anything inside a control, so a credit's link stays clickable;
+ * - an "i" button beside it reopens it, at most 40% of the map's height and
+ *   scrollable; the next press on the map, or the button, closes it again.
+ *
+ * Only classes, a max-height and a max-width are set on the box: Leaflet rewrites the box's
+ * contents whenever a credit is added or removed, so nothing is put inside it.
+ * The button is its own control in the same corner. A map without an
+ * attribution control gets nothing.
+ */
+const COLLAPSE_AFTER_MS = 5000;
+const OPEN_MAX_FRACTION = 0.4;
+const OPEN_SIDE_GAP_PX = 10;
+const COLLAPSED_CLASS = "ltmc-credits-collapsed";
+const OPEN_CLASS = "ltmc-credits-open";
+const BUTTON_LABEL = "Map data credits";
+
+const USER_EVENTS = ["pointerdown", "touchstart", "wheel", "keydown"];
+
+/**
+ * `attribution_collapse`: anything but `false` collapses.
+ * @param {*} value the dashboard's `attribution_collapse`
+ * @returns {boolean} whether the credits box collapses
+ */
+function parseCreditsCollapse(value) {
+  return value !== false;
+}
+
+class CreditsToggle {
+  /**
+   * @param {L.Map} map
+   * @param {{collapseAfterMs?: number, doc?: Document}} [options]
+   */
+  constructor(map, options = {}) {
+    this.map = map;
+    this.collapseAfterMs = options.collapseAfterMs ?? COLLAPSE_AFTER_MS;
+    this.doc = options.doc ?? (typeof document !== "undefined" ? document : undefined);
+    this.expanded = true;
+    this.viewerOpened = false;
+    this.timer = undefined;
+    this.box = undefined;
+    this.button = undefined;
+    this.control = undefined;
+    this._onInput = (e) => this._userInput(e);
+    this._onVisible = () => this._startTimerIfVisible();
+  }
+
+  /** @returns {boolean} whether the box is now collapsible */
+  setup() {
+    const ctl = this.map?.attributionControl;
+    const box = ctl?.getContainer?.();
+    if (!box) return false;
+    this.box = box;
+
+    const wrap = L$2.DomUtil.create("div", "leaflet-control ltmc-credits-control");
+    const button = L$2.DomUtil.create("button", "ltmc-credits-button", wrap);
+    button.type = "button";
+    button.setAttribute("aria-label", BUTTON_LABEL);
+    button.title = BUTTON_LABEL;
+    L$2.DomEvent.disableClickPropagation(wrap);
+    L$2.DomEvent.on(button, "click", (e) => {
+      L$2.DomEvent.stop(e);
+      this.toggle();
+    });
+    this.button = button;
+    const Ctl = L$2.Control.extend({ onAdd: () => wrap, onRemove: () => {} });
+    this.control = new Ctl({ position: ctl.getPosition() });
+    this.control.addTo(this.map);
+
+    const el = this.map.getContainer();
+    for (const t of USER_EVENTS) el.addEventListener(t, this._onInput, { passive: true });
+    this._apply();
+    this._startTimerIfVisible();
+    return true;
+  }
+
+  _startTimerIfVisible() {
+    if (!this.expanded || this.viewerOpened || this.timer !== undefined) return;
+    if (this.doc?.visibilityState === "hidden") {
+      this.doc.addEventListener("visibilitychange", this._onVisible);
+      return;
+    }
+    this.doc?.removeEventListener?.("visibilitychange", this._onVisible);
+    this.timer = setTimeout(() => {
+      this.timer = undefined;
+      this.collapse();
+    }, this.collapseAfterMs);
+  }
+
+  _userInput(e) {
+    const t = e?.target;
+    if (t && typeof t.closest === "function" && t.closest(".leaflet-control")) return;
+    if (this.expanded) this.collapse();
+  }
+
+  collapse() {
+    this._clearTimer();
+    this.expanded = false;
+    this.viewerOpened = false;
+    this._apply();
+  }
+
+  expand() {
+    this._clearTimer();
+    this.expanded = true;
+    this.viewerOpened = true;
+    this._apply();
+  }
+
+  toggle() {
+    if (this.expanded) this.collapse(); else this.expand();
+  }
+
+  _clearTimer() {
+    if (this.timer !== undefined) clearTimeout(this.timer);
+    this.timer = undefined;
+    this.doc?.removeEventListener?.("visibilitychange", this._onVisible);
+  }
+
+  _apply() {
+    if (!this.box) return;
+    this.box.classList.toggle(COLLAPSED_CLASS, !this.expanded);
+    // Capped only when the viewer opened it: at the start the box shows in full.
+    const capped = this.expanded && this.viewerOpened;
+    this.box.classList.toggle(OPEN_CLASS, capped);
+    const size = capped ? this.map.getSize?.() : undefined;
+    const h = size?.y;
+    const w = size?.x;
+    this.box.style.maxHeight = Number.isFinite(h) && h > 0 ? `${Math.floor(h * OPEN_MAX_FRACTION)}px` : "";
+    // Its own width too: the scrollbar otherwise widens the box past the map's
+    // left edge (seen on the look page, 2026-11-19), and Leaflet's corner
+    // sizes itself to the box, so a percentage cannot hold it.
+    this.box.style.maxWidth = Number.isFinite(w) && w > OPEN_SIDE_GAP_PX ? `${Math.floor(w - OPEN_SIDE_GAP_PX)}px` : "";
+    if (this.button) {
+      this.button.setAttribute("aria-expanded", String(this.expanded));
+      this.button.textContent = this.expanded ? "×" : "i";
+    }
+  }
+
+  dispose() {
+    this._clearTimer();
+    const el = this.map?.getContainer?.();
+    if (el) for (const t of USER_EVENTS) el.removeEventListener(t, this._onInput);
+    try { this.control?.remove(); } catch { /* the map is already gone */ }
+    if (this.box) {
+      this.box.classList.remove(COLLAPSED_CLASS, OPEN_CLASS);
+      this.box.style.maxHeight = "";
+      this.box.style.maxWidth = "";
+    }
+    this.control = undefined;
+    this.button = undefined;
+    this.box = undefined;
+  }
+}
 
 /**
  * Shared utility methods for HaMapCard
@@ -15102,9 +15352,10 @@ function parseRingWidth(value) {
  * Marker shapes an emitter may ask for with `marker_shape` (06_MAP_CONTRACT.md
  * D4a). Absent or anything else: the disc, as every marker was before.
  * "star": Live Track Intercity Rail's Amtrak (2026-10-09). "maple": a disc
- * with a maple leaf and a wide outer band, VIA Rail's (Lee 2026-10-11 00:02).
+ * with a maple leaf and a wide outer band, VIA Rail's (Lee 2026-10-11 00:02). "shamrock": three heart-shaped
+ * leaves and a stem, Irish Rail's InterCity trains (Lee 2026-11-09 00:53).
  */
-const MARKER_SHAPES = Object.freeze(["star", "maple"]);
+const MARKER_SHAPES = Object.freeze(["star", "maple", "shamrock"]);
 
 /**
  * Where an emitter may ask for its label with `marker_label_placement`
@@ -15227,6 +15478,7 @@ const MAP_LAYER_OFFSETS = Object.freeze({
   rail: 20000,
   air_low: 30000,
   air: 40000,
+  weather: -1e4,
 });
 
 /**
@@ -15335,11 +15587,6 @@ class EntityConfig {
    */
   positionTransition;
   /**
-   * @type {number} Min map zoom at which a `display: pill` marker shows the
-   * offset callout + leader line; below it the pill centers on the point.
-   */
-  pillCalloutMinZoom;
-  /**
    * @type {string|null} Entity attribute holding the angle, in degrees, to
    * turn a picture marker by. Null turns nothing.
    */
@@ -15381,6 +15628,9 @@ class EntityConfig {
   constructor(config, defaults) {
     this.id = (typeof config === 'string' || config instanceof String) ? config : config.entity;
     this.fingerprint = JSON.stringify(config);
+    // `display: pill` (the place pill) is folded into the people, devices and zones drawn as Home Assistant
+    // draws them (presence/, Lee 2026-11-19): it keeps its name so presence/PresenceRules.js drawnAsPresence
+    // can take the entity; nothing in the older marker draws a pill any more.
     this.display = config.display ? config.display : "marker";
     this.attribute = config.attribute ? config.attribute : "";
     this.prefix = config.display === "attribute" ? (config.prefix ? config.prefix : "") : "";
@@ -15437,7 +15687,6 @@ class EntityConfig {
     this.positionTransition = config.position_transition === "auto"
       ? "auto"
       : EntityConfig._nonNegativeSeconds(config.position_transition);
-    this.pillCalloutMinZoom = config.pill_callout_min_zoom ?? 15;
     this.rotationAttribute = EntityConfig._nonEmptyString(config.rotation_attribute);
     this.rotationTransition = EntityConfig._nonNegativeSeconds(config.rotation_transition);
     this.arrowAttribute = EntityConfig._nonEmptyString(config.arrow_attribute);
@@ -16507,6 +16756,260 @@ class EntityHistoryManager {
 }
 
 /**
+ * A clicked object's text in a Leaflet popup: shapes carrying `info` (06_MAP_CONTRACT_OVERLAYS.md D12 as amended
+ * for Live Track Weather item 310) and markers carrying `marker_info` (06_MAP_CONTRACT.md D4e). Plain text only:
+ * nothing a publisher sends is read as HTML.
+ */
+
+/**
+ * @param {*} v
+ * @returns {boolean} a plain object, not an array or null
+ */
+const isPlainObject$2 = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+
+/** The longest title and text an `info` may show; longer is cut. */
+const INFO_TITLE_MAX = 200;
+const INFO_TEXT_MAX = 4000;
+
+/**
+ * A shape's `info` (D12 as amended for item 310): plain-text `title` and `text`, either may be absent but not
+ * both. Anything else is no info, and the shape stays non-interactive.
+ * @param {*} info
+ * @returns {?{title: string, text: string}}
+ */
+function infoOf(info) {
+  if (!isPlainObject$2(info)) return null;
+  const s = (v, max) => (typeof v === "string" ? v.trim().slice(0, max) : "");
+  const title = s(info.title, INFO_TITLE_MAX);
+  const text = s(info.text, INFO_TEXT_MAX);
+  return title || text ? { title, text } : null;
+}
+
+/**
+ * @param {string} s
+ * @returns {string} s with HTML's special characters escaped
+ */
+function escapeHtml$1(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+}
+
+/**
+ * The popup for a clicked shape: the title in bold, the text's lines as lines. Never HTML from the publisher.
+ * @param {{title: string, text: string}} info
+ * @returns {string}
+ */
+function infoHtml(info) {
+  const title = info.title ? `<b>${escapeHtml$1(info.title)}</b>` : "";
+  const text = info.text ? escapeHtml$1(info.text).replace(/\n/g, "<br>") : "";
+  return `<div class="ltmc-shape-info">${title}${title && text ? "<br>" : ""}${text}</div>`;
+}
+
+/** A clicked shape's popup: Leaflet options. */
+const INFO_POPUP = Object.freeze({ maxWidth: 360, maxHeight: 320, autoPanPadding: [16, 16] });
+
+/**
+ * A marker's recent track, fetched on click (06_MAP_CONTRACT.md D4h `marker_track`, backlog 348).
+ *
+ * The integration keeps the track and publishes only WHERE to fetch it: a path under `/api/` that the card asks
+ * with the viewer's own sign-in (hass.callApi). Nothing is fetched or drawn until the viewer presses "Track" in the
+ * click popup, so a busy port is never covered in lines. The answer holds REAL fixes only (D3c-ii), oldest first.
+ */
+
+const TRACK_COLOR_DEFAULT = "#ff6d00";
+const TRACK_WEIGHT = 3;
+const TRACK_OPACITY = 0.85;
+const TRACK_POINTS_MAX = 25000;
+
+const PATH = /^\/api\/[A-Za-z0-9_\-/]+$/;
+const COLOR = /^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/;
+
+/**
+ * `marker_track` -> the API path, or null. A path under /api/ of letters, digits, `_`, `-` and `/` only, with no
+ * empty segment.
+ * @param {*} v
+ * @returns {?string}
+ */
+function trackOf(v) {
+  if (typeof v !== "string" || v.length > 200 || !PATH.test(v) || v.includes("//") || v.endsWith("/")) return null;
+  return v;
+}
+
+/**
+ * hass.callApi takes the path without `/api/`.
+ * @param {string} path a checked `marker_track`
+ * @returns {string}
+ */
+function apiPath(path) {
+  return path.slice("/api/".length);
+}
+
+/**
+ * The answer's `points` -> [[lat, lon], ...], keeping only well-formed pairs, at most TRACK_POINTS_MAX (the newest).
+ * @param {*} answer
+ * @returns {number[][]}
+ */
+function trackPoints(answer) {
+  const pts = Array.isArray(answer?.points) ? answer.points : [];
+  const out = [];
+  for (const p of pts) {
+    if (!Array.isArray(p)) continue;
+    const [lat, lon] = p;
+    if (Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180) out.push([lat, lon]);
+  }
+  return out.length > TRACK_POINTS_MAX ? out.slice(out.length - TRACK_POINTS_MAX) : out;
+}
+
+/**
+ * The line's colour: the marker's own `marker_color` when it is a hex colour, else the default.
+ * @param {object} attrs
+ * @returns {string}
+ */
+function trackColor(attrs) {
+  const c = attrs?.marker_color;
+  return typeof c === "string" && COLOR.test(c.trim()) ? c.trim() : TRACK_COLOR_DEFAULT;
+}
+
+/**
+ * Append the marker's current position when it is new (not the last point).
+ * @param {number[][]} latlngs
+ * @param {?number} lat
+ * @param {?number} lon
+ * @returns {boolean} whether it was appended
+ */
+function appendPosition(latlngs, lat, lon) {
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) return false;
+  const last = latlngs[latlngs.length - 1];
+  if (last && last[0] === lat && last[1] === lon) return false;
+  latlngs.push([lat, lon]);
+  return true;
+}
+
+/**
+ * A marker's photo and its links out (06_MAP_CONTRACT.md D4g, backlog 346): the photo in the hover box, and on a
+ * click a popup with the photo, its credit and licence, the links, and "Details" for Home Assistant's own dialog.
+ *
+ * Nothing an integration sends is read as HTML: every text is escaped, and only https URLs are used. A photo is
+ * drawn only with its credit beside it (the licences Commons photos carry ask for it; a ShipSpotting thumbnail,
+ * if that comes, requires it).
+ */
+
+const PHOTO_WIDTH_HOVER = 160;
+const PHOTO_WIDTH_POPUP = 280;
+const LINKS_MAX = 4;
+
+const isObj$4 = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+const https = (v) => (typeof v === "string" && /^https:\/\/[^\s"'<>]+$/.test(v) ? v : null);
+const str = (v, max) => (typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null);
+const int = (v) => (Number.isInteger(v) && v > 0 && v < 10000 ? v : null);
+
+/**
+ * `marker_photo` -> a checked photo, or null. Needs an https `url` (the thumbnail), an https `page` (the photo's
+ * own page) and a `credit`; `licence`, `licence_url`, `source`, `width`, `height` are optional.
+ * @param {*} v
+ * @returns {?{url: string, page: string, credit: string, licence: ?string, licence_url: ?string, source: ?string, width: ?number, height: ?number}}
+ */
+function photoOf(v) {
+  if (!isObj$4(v)) return null;
+  const url = https(v.url), page = https(v.page), credit = str(v.credit, 120);
+  if (!url || !page || !credit) return null;
+  return {
+    url, page, credit,
+    licence: str(v.licence, 60),
+    licence_url: https(v.licence_url),
+    source: str(v.source, 60),
+    width: int(v.width),
+    height: int(v.height),
+  };
+}
+
+/**
+ * `marker_links` -> up to LINKS_MAX checked links, each an https `url` with a `label`.
+ * @param {*} v
+ * @returns {{label: string, url: string}[]}
+ */
+function linksOf(v) {
+  if (!Array.isArray(v)) return [];
+  const out = [];
+  for (const l of v) {
+    const url = https(l?.url), label = str(l?.label, 40);
+    if (url && label) out.push({ label, url });
+    if (out.length === LINKS_MAX) break;
+  }
+  return out;
+}
+
+/**
+ * The credit line as text: "Photo: Solomon203, CC BY-SA 4.0, Wikimedia Commons".
+ * @param {object} p a checked photo
+ * @returns {string}
+ */
+function creditText(p) {
+  return ["Photo: " + p.credit, p.licence, p.source].filter(Boolean).join(", ");
+}
+
+/**
+ * @param {object} p
+ * @param {number} width
+ * @returns {string} width and height attributes keeping the photo's proportions
+ */
+function size(p, width) {
+  const h = p.width && p.height ? Math.round((p.height * width) / p.width) : null;
+  return `width="${width}"${h ? ` height="${h}"` : ""}`;
+}
+
+/**
+ * The hover box's photo: the thumbnail and its credit, both escaped. Empty without a photo.
+ * @param {object} attrs
+ * @returns {string}
+ */
+function hoverPhotoHtml(attrs) {
+  const p = photoOf(attrs?.marker_photo);
+  if (!p) return "";
+  return `<div class="hover-photo"><img src="${escapeHtml$1(p.url)}" ${size(p, PHOTO_WIDTH_HOVER)} alt="" `
+    + `referrerpolicy="no-referrer"><div class="hover-credit">${escapeHtml$1(creditText(p))}</div></div>`;
+}
+
+/**
+ * Does this marker carry a photo, a link or a track (D4h)? (Entity also opens the popup for D4e's `marker_info`.)
+ * @param {object} attrs
+ * @returns {boolean}
+ */
+function hasExtras(attrs) {
+  return photoOf(attrs?.marker_photo) !== null || linksOf(attrs?.marker_links).length > 0
+    || trackOf(attrs?.marker_track) !== null;
+}
+
+/**
+ * The click popup's photo, credit and links, escaped; "Details" is a button the card wires to the entity dialog.
+ * @param {object} attrs
+ * @param {string} [title] the marker's name, plain text, as the hover box's first line; none when D4e's text heads it
+ * @param {boolean} [trackShown] whether this marker's track (D4h) is on the map: the button then hides it
+ * @returns {string}
+ */
+function extrasHtml(attrs, title, trackShown = false) {
+  const p = photoOf(attrs?.marker_photo);
+  const links = linksOf(attrs?.marker_links);
+  let html = typeof title === "string" && title.trim() ? `<div class="ltmc-title">${escapeHtml$1(title.trim())}</div>` : "";
+  if (p) {
+    const lic = p.licence
+      ? (p.licence_url ? `<a href="${escapeHtml$1(p.licence_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml$1(p.licence)}</a>` : escapeHtml$1(p.licence))
+      : "";
+    html += `<a class="ltmc-photo" href="${escapeHtml$1(p.page)}" target="_blank" rel="noopener noreferrer">`
+      + `<img src="${escapeHtml$1(p.url)}" ${size(p, PHOTO_WIDTH_POPUP)} alt="" referrerpolicy="no-referrer"></a>`
+      + `<div class="ltmc-credit">Photo: <a href="${escapeHtml$1(p.page)}" target="_blank" rel="noopener noreferrer">${escapeHtml$1(p.credit)}</a>`
+      + (lic ? `, ${lic}` : "") + (p.source ? `, ${escapeHtml$1(p.source)}` : "") + `</div>`;
+  }
+  if (links.length) {
+    html += `<div class="ltmc-links">` + links.map((l) =>
+      `<a href="${escapeHtml$1(l.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml$1(l.label)}</a>`).join(" · ") + `</div>`;
+  }
+  const track = trackOf(attrs?.marker_track)
+    ? `<button type="button" class="ltmc-track-button">${trackShown ? "Hide track" : "Track"}</button> ` : "";
+  html += `<div class="ltmc-details">${track}<button type="button" class="ltmc-details-button">Details</button></div>`;
+  return `<div class="ltmc-extras">${html}</div>`;
+}
+
+/**
  * The hover box: what the instant Leaflet tooltip says about a marker.
  *
  * The emitters publish physics and names (06_MAP_CONTRACT.md D4b); the
@@ -16520,9 +17023,31 @@ class EntityHistoryManager {
  * The train number is NOT repeated: it is on the marker being hovered.
  * Under one minute: "Arriving Irving Park", "KPHX-KORD arriving". A station
  * with no time: "Next: Irving Park". A time with no station says nothing.
- * A route the integration judged implausible is shown with a "?".
+ * A route the integration judged implausible (no leg on file fits where the
+ * aircraft is) reads "New route < 24hrs old" in place of the route, with no
+ * ETA, no names and no source (backlog 281, Lee 2026-10-06; built 2026-10-22).
+ * It keys on route_check alone, so it holds if the integration later stops
+ * publishing the codes of a leg it rejected.
+ * A vessel: its published `name` (Lee 2026-10-30, contract D4b rule 14), then
+ * the agency, "USCGC Benjamin Bottoms · USCG".
  * Anything else keeps the text it had (friendly name, "<person> is at ...").
+ *
+ * Under an aircraft's route (backlog 293, 2026-10-22), the airport names as
+ * the integration publishes them (`origin_name`, `destination_name`; the card
+ * keeps no airport table), then where the route came from (`route_source`),
+ * smaller:
+ *
+ *              South Bend International Airport
+ *              to Purdue University Airport
+ *              FiledRoutesDB
+ *
+ * One name alone reads "From <name>" or "To <name>". An unknown route_source
+ * says nothing rather than guess.
+ *
+ * Last, a photo with its credit when the entity publishes `marker_photo`
+ * (06_MAP_CONTRACT.md D4g, backlog 346; Lee 2026-11-16): MarkerExtras.js.
  */
+
 
 /** How often an OPEN hover box is redrawn, ms. */
 const HOVER_REFRESH_MS = 5000;
@@ -16579,17 +17104,30 @@ function minutesText(n) {
   return m ? `${h} h ${m} min` : `${h} h`;
 }
 
+/** The second line when no leg on file fits the aircraft (backlog 281). */
+const NEW_ROUTE_TEXT = "New route < 24hrs old";
+
 /**
- * "<ORIG>-<DEST>", "?" appended when route_check is implausible; or null.
- * IATA when published, else ICAO (Lee: codes until names exist).
+ * Whether the integration judged the route implausible: no leg on file fits.
+ * @param {object} a attributes
+ * @returns {boolean}
+ */
+function isNewRoute(a) {
+  return a?.route_check === "implausible";
+}
+
+/**
+ * "<ORIG>-<DEST>", or null: none without both ends, none for a route the
+ * integration judged implausible. IATA when published, else ICAO.
  * @param {object} a attributes
  * @returns {string|null}
  */
 function routeText(a) {
+  if (isNewRoute(a)) return null;
   const o = text(a?.origin_iata) ?? text(a?.origin_icao);
   const d = text(a?.destination_iata) ?? text(a?.destination_icao);
   if (!o || !d) return null;
-  return `${o}-${d}${a.route_check === "implausible" ? "?" : ""}`;
+  return `${o}-${d}`;
 }
 
 /**
@@ -16599,6 +17137,7 @@ function routeText(a) {
  * @returns {string|null}
  */
 function detailLine(a, nowMs) {
+  if (isNewRoute(a)) return NEW_ROUTE_TEXT;
   const route = routeText(a);
   const n = minutesUntil(a?.arrival_estimated_at, nowMs);
   if (route) {
@@ -16611,27 +17150,180 @@ function detailLine(a, nowMs) {
   return n < 1 ? `Arriving ${station}` : `${station} in ${minutesText(n)}`;
 }
 
+/** Between the flight and its agency or list status: a space, U+00B7 MIDDLE DOT, a space (Lee 2026-10-25). */
+const OPERATOR_SEPARATOR = " · ";
+
+/** A designator, then a flight number that starts with a digit; 7 characters at most (the FAA's limit). */
+const AIRLINE_FLIGHT = /^[A-Za-z]{3}([0-9][0-9A-Za-z]{0,3})$/;
+
 /**
- * The first line, plain text: callsign, else line name, else the fallback.
+ * The flight as a person reads it, or null: "United 1678" for UAL1678 when the
+ * integration publishes the airline's short name (`airline_short`, Lee
+ * 2026-10-29 14:14), else the callsign as broadcast. A special callsign
+ * (TROY329, VELUX55) or a registration has no airline_short and stays as it is.
+ * @param {object} a attributes
+ * @returns {string|null}
+ */
+function flightText(a) {
+  const callsign = text(a?.callsign);
+  const short = text(a?.airline_short);
+  if (callsign && short) {
+    const m = AIRLINE_FLIGHT.exec(callsign);
+    if (m) return `${short} ${m[1].toUpperCase()}`;
+  }
+  return callsign;
+}
+
+/**
+ * The first line, plain text: the flight (flightText), else the line name,
+ * else the published `name` (a vessel's, D4b rule 14: "USCGC Benjamin Bottoms";
+ * Lee 2026-10-30), else the fallback; then the agency or the list status, `operator_short`,
+ * after OPERATOR_SEPARATOR: "TROY329 · DHS", "VELUX55 · ICE Air Charter?"
+ * (06_MAP_CONTRACT.md D4b rule 12; Lee 2026-10-25, 2026-10-29). Alone when
+ * there is nothing before it; once when the two are the same text.
  * @param {object} a attributes
  * @param {string} fallback what the box said before (Entity.tooltip)
  * @returns {string}
  */
 function titleLine(a, fallback) {
-  return text(a?.callsign) ?? text(a?.line_name) ?? (fallback ?? "");
+  const first = flightText(a) ?? text(a?.line_name) ?? text(a?.name);
+  const op = text(a?.operator_short);
+  if (first && op) return first === op ? first : `${first}${OPERATOR_SEPARATOR}${op}`;
+  return first ?? op ?? (fallback ?? "");
 }
 
 /**
- * The whole box as HTML, both lines escaped.
+ * What each published `route_source` is called in the box: the source's
+ * own name (Lee, 2026-10-22 22:38). Lee's study
+ * `adsb-route-accuracy`: the two are not equally trustworthy, so the box
+ * says which one it is.
+ */
+const ROUTE_SOURCE_TEXT = Object.freeze({
+  saw_filed_routes: "FiledRoutesDB",
+  adsbdb: "adsbdb",
+});
+
+/**
+ * The airport-name lines under a route, plain text: [] unless the box
+ * shows a route.
+ * @param {object} a attributes
+ * @returns {string[]}
+ */
+function airportLines(a) {
+  if (!routeText(a)) return [];
+  const o = text(a.origin_name);
+  const d = text(a.destination_name);
+  if (o && d) return [o, `to ${d}`];
+  if (o) return [`From ${o}`];
+  if (d) return [`To ${d}`];
+  return [];
+}
+
+/**
+ * Where the shown route came from, plain text, or null.
+ * @param {object} a attributes
+ * @returns {string|null}
+ */
+function sourceText(a) {
+  if (!routeText(a)) return null;
+  const s = text(a.route_source);
+  return s && Object.prototype.hasOwnProperty.call(ROUTE_SOURCE_TEXT, s) ? ROUTE_SOURCE_TEXT[s] : null;
+}
+
+/**
+ * The whole box as HTML, every line escaped.
  * @param {object} a attributes
  * @param {string} fallback the first line when there is nothing better
  * @param {number} nowMs epoch milliseconds
  * @returns {string}
  */
 function hoverHtml(a, fallback, nowMs) {
+  if (isStorm(a)) return stormHtml(a, fallback);
   const first = escapeHtml(titleLine(a, fallback));
   const second = detailLine(a, nowMs);
-  return second ? `${first}<br>${escapeHtml(second)}` : first;
+  let html = second ? `${first}<br>${escapeHtml(second)}` : first;
+  const names = airportLines(a);
+  if (names.length) html += `<div class="hover-airports">${names.map(escapeHtml).join("<br>")}</div>`;
+  const source = sourceText(a);
+  if (source) html += `<div class="hover-source">${escapeHtml(source)}</div>`;
+  return html + hoverPhotoHtml(a);
+}
+
+/**
+ * Tropical cyclones (06_MAP_CONTRACT_OVERLAYS.md D15): the entity's name
+ * ("Tropical Storm Vance"), the wind in kt with km/h and the pressure, the
+ * movement, then, smaller, the source and the advisory.
+ */
+
+/** What each published `storm_source` is called in the box. */
+const STORM_SOURCE_TEXT = Object.freeze({
+  nhc: "NOAA NHC",
+  jtwc_eonet: "JTWC via NASA EONET",
+});
+
+const POINTS16 = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+  "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+
+/**
+ * @param {*} v
+ * @returns {number|null} a finite number, else null
+ */
+function num(v) {
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+/**
+ * @param {object} a attributes
+ * @returns {boolean} a storm: it names its class
+ */
+function isStorm(a) {
+  return text(a?.storm_class) !== null;
+}
+
+/**
+ * The storm's wind and pressure line and its movement line, plain text.
+ * @param {object} a attributes
+ * @returns {string[]}
+ */
+function stormLines(a) {
+  const out = [];
+  const kmh = num(a?.max_wind_kmh);
+  const hpa = num(a?.pressure_hpa);
+  const parts = [];
+  if (kmh !== null) parts.push(`${Math.round(kmh / 1.852)} kt (${Math.round(kmh)} km/h)`);
+  if (hpa !== null) parts.push(`${Math.round(hpa)} hPa`);
+  if (parts.length) out.push(parts.join(", "));
+  const c = num(a?.course_deg);
+  const s = num(a?.speed_kmh);
+  if (c !== null && s !== null) {
+    const point = POINTS16[Math.round((((c % 360) + 360) % 360) / 22.5) % 16];
+    out.push(`Moving ${point} at ${Math.round(s)} km/h`);
+  }
+  return out;
+}
+
+/**
+ * The source line, plain text, or null for an unknown source.
+ * @param {object} a attributes
+ * @returns {string|null}
+ */
+function stormSourceText(a) {
+  const s = text(a?.storm_source);
+  if (!s || !Object.prototype.hasOwnProperty.call(STORM_SOURCE_TEXT, s)) return null;
+  const n = num(a?.advisory_number);
+  return n !== null ? `${STORM_SOURCE_TEXT[s]}, advisory ${Math.round(n)}` : STORM_SOURCE_TEXT[s];
+}
+
+/**
+ * @param {object} a attributes
+ * @param {string} fallback the entity's name
+ * @returns {string} HTML, every line escaped
+ */
+function stormHtml(a, fallback) {
+  let html = [fallback ?? "", ...stormLines(a)].map(escapeHtml).join("<br>");
+  const src = stormSourceText(a);
+  if (src) html += `<div class="hover-source">${escapeHtml(src)}</div>`;
+  return html;
 }
 
 /**
@@ -16835,6 +17527,12 @@ function metres(a, b) {
 }
 
 /**
+ * ...and, for a first-sight catch-up (pathAt), start this close to the
+ * segment's previous_* - the path must be THAT segment's.
+ */
+const TRACK_PATH_START_M = 50;
+
+/**
  * An emitted `track_path`: an array of 2 to TRACK_PATH_MAX_POINTS [lat, lon]
  * pairs of finite numbers in range, as {lat, lng}; anything else null.
  * @param {*} value
@@ -16888,6 +17586,1077 @@ function trackRoute(value, start, to) {
 }
 
 /**
+ * Where a first-sight catch-up starts ON THE LINE: `fraction` (0..1) of the
+ * way along the segment's `track_path`, and the route on from there to `to`;
+ * null when there is no such path - it must start within TRACK_PATH_START_M
+ * of `previous` and end within TRACK_PATH_END_M of `to` - and the catch-up is
+ * the straight one. MEASURED 2026-10-20 on Madrid's recorded states replayed
+ * through the built card: straight catch-ups over Renfe's long segments drew
+ * trains up to 2.5 km off the line for minutes.
+ * @param {*} value the entity's track_path attribute
+ * @param {{lat: number, lng: number}} previous
+ * @param {{lat: number, lng: number}} to
+ * @param {number} fraction
+ * @returns {{start: {lat: number, lng: number}, route: Array<{lat: number, lng: number}>}|null}
+ */
+function pathAt(value, previous, to, fraction) {
+  const pts = parseTrackPath(value);
+  if (!pts || !previous || !to || !Number.isFinite(fraction)) return null;
+  if (metres(pts[0], previous) > TRACK_PATH_START_M) return null;
+  if (metres(pts[pts.length - 1], to) > TRACK_PATH_END_M) return null;
+  const cum = [0];
+  for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + metres(pts[i - 1], pts[i]));
+  const total = cum[cum.length - 1];
+  if (!(total > 0)) return null;
+  const d = Math.min(1, Math.max(0, fraction)) * total;
+  let i = 0;
+  while (i < pts.length - 2 && cum[i + 1] < d) i++;
+  const span = cum[i + 1] - cum[i];
+  const g = span > 0 ? (d - cum[i]) / span : 0;
+  const a = pts[i], b = pts[i + 1];
+  const start = { lat: a.lat + (b.lat - a.lat) * g, lng: a.lng + (b.lng - a.lng) * g };
+  return { start, route: [start, ...pts.slice(i + 1, -1), to] };
+}
+
+// Counters for the marker drawing paths (canvas, culling, skipped updates). They cost an
+// increment each and are read by the measuring scripts in the page as
+// window.__LTMC_MARKER_STATS; nothing in the card reads them back.
+
+/** @type {{[name: string]: number}} */
+const stats = (globalThis.__LTMC_MARKER_STATS = globalThis.__LTMC_MARKER_STATS || {
+  skipped: 0, updated: 0, draws: 0, drawMs: 0, drawn: 0, spritesBuilt: 0,
+  promoted: 0, toDom: 0, culledOut: 0, culledIn: 0, animatedPictures: 0, bandMoves: 0, spritesEvicted: 0,
+});
+
+// Where a marker goes: on the canvas or in the DOM, and in which pane.
+//
+// 06_MAP_CONTRACT.md D10 stacks the map's objects in six classes, weather < fixed < water <
+// rail < air_low < air, by a zIndexOffset step of 10000 per class (weather -10000, fixed 0;
+// weather since 83f8d70, 2026-10-27, for tropical cyclones). Leaflet orders DOM markers by
+// screen y plus that offset, all in one pane. A canvas cannot be interleaved with DOM
+// elements inside one pane, so when the canvas is in use every class gets TWO panes of its
+// own, its canvas and then its DOM markers, stacked in class order:
+//
+//   weather 601/602, fixed 603/604, water 605/606, rail 607/608, air_low 609/610, air 611/612
+//
+// (Leaflet's own markerPane is 600, tooltipPane 650.) D10 then holds across canvas and DOM.
+// Inside one class the canvas markers sit under that class's DOM markers rather than being
+// ordered by screen y with them: the one difference from the card without a canvas.
+//
+// With the canvas off, or with clustering on, nothing here applies: every marker stays in
+// Leaflet's markerPane exactly as before.
+
+/** D10's classes, bottom to top. */
+const BANDS = Object.freeze(["weather", "fixed", "water", "rail", "air_low", "air"]);
+/** The zIndexOffset step between two classes (EntityConfig.MAP_LAYER_OFFSETS). */
+const BAND_STEP = 10000;
+/** The offset of the bottom class, `weather` (EntityConfig.MAP_LAYER_OFFSETS). */
+const BAND_BASE = -1e4;
+/** The first pane's z-index: one above Leaflet's markerPane. */
+const PANE_BASE = 601;
+
+/**
+ * The class a zIndexOffset falls in. A dashboard `z_index_offset` override lands in the
+ * class its number falls in; below `weather` is `weather`, above `air` is `air`; absent
+ * or not a number is 0, `fixed`.
+ * @param {number} z
+ * @returns {number} 0..5
+ */
+function bandOf(z) {
+  const n = Math.floor(((Number(z) || 0) - BAND_BASE) / BAND_STEP);
+  return Math.min(BANDS.length - 1, Math.max(0, n));
+}
+
+/**
+ * The pane a class's canvas sits in.
+ * @param {number} b class 0..5
+ * @returns {string}
+ */
+const canvasPane = (b) => `ltmcCanvas_${BANDS[b]}`;
+/**
+ * The pane a class's DOM markers sit in.
+ * @param {number} b class 0..5
+ * @returns {string}
+ */
+const domPane = (b) => `ltmcMarkers_${BANDS[b]}`;
+
+/**
+ * Create the twelve panes once per map.
+ * @param {object} map Leaflet map
+ */
+function ensurePanes(map) {
+  for (let b = 0; b < BANDS.length; b++) {
+    for (const [name, z] of [[canvasPane(b), PANE_BASE + 2 * b], [domPane(b), PANE_BASE + 2 * b + 1]]) {
+      if (map.getPane(name)) continue;
+      const pane = map.createPane(name);
+      pane.style.zIndex = String(z);
+      if (name.startsWith("ltmcCanvas")) pane.style.pointerEvents = "none";
+    }
+  }
+}
+
+/**
+ * Set how this map's markers are drawn. Called once by EntitiesRenderService.
+ * @param {object} map Leaflet map
+ * @param {{canvas: boolean, cull: boolean}} how
+ */
+function setupPlacement(map, how) {
+  if (!map) return;
+  map.__ltmcPlacement = { canvas: Boolean(how?.canvas), cull: Boolean(how?.cull) };
+  if (map.__ltmcPlacement.canvas && typeof map.createPane === "function") ensurePanes(map);
+}
+
+/**
+ * @param {object} map
+ * @returns {{canvas: boolean, cull: boolean}}
+ */
+function placement(map) {
+  return map?.__ltmcPlacement ?? { canvas: false, cull: false };
+}
+
+/**
+ * Put a DOM marker in its class's pane, and keep it there when its offset moves it to
+ * another class (a changed map_layer): Leaflet reads `pane` only when it builds the icon,
+ * so the marker is taken off and put back. A marker that is off the map (culled, or not
+ * yet added) just carries the new pane.
+ * @param {Marker} m
+ * @param {object} map
+ * @returns {Marker} the same marker
+ */
+function bandMarker(m, map) {
+  if (m.__ltmcBanded) return m;
+  m.options.pane = domPane(bandOf(m.options.zIndexOffset));
+  const setZ = m.setZIndexOffset;
+  m.setZIndexOffset = function (z) {
+    const pane = domPane(bandOf(z));
+    if (m.options.pane !== pane) {
+      const on = Boolean(m._map);
+      if (on) leafletSrcExports.Marker.prototype.remove.call(m);
+      m.options.pane = pane;
+      if (on) leafletSrcExports.Marker.prototype.addTo.call(m, map);
+      stats.bandMoves++;
+    }
+    return setZ.call(m, z);
+  };
+  m.__ltmcBanded = true;
+  return m;
+}
+
+// Plain markers drawn on a canvas instead of one DOM element (and one compositing layer)
+// each (map capacity, card SSOT 2026-10-25). "Plain": a picture in its round disc (no label
+// overlay, no ring, no badge, not bare, not animated), or a disc with only its label and
+// arrow. Everything else - rings, stars, maple leaves, heading tags, delay badges, pulses,
+// alternates, pills, icons, animated pictures - stays DOM. A canvas marker under the pointer
+// is PROMOTED to its real DOM marker while hovered, so the hover box, its clock and the tap
+// action are the card's own; it goes back to the canvas on mouseout.
+//
+// One canvas per D10 class, each in its own pane under that class's DOM markers
+// (MarkerPlacement.js), so the contract's stacking holds across canvas and DOM. The pointer
+// is tested against the classes top first.
+//
+// CanvasMarker stands in for the Leaflet Marker that Entity holds: the methods Entity calls
+// (setLatLng, getLatLng, getElement, addTo, remove, setZIndexOffset, tooltips, events). It
+// wraps the real DOM marker Entity built, so Entity's attribute writes keep that marker's
+// stored html current, and a marker whose look stops being plain becomes that DOM marker.
+//
+// Nothing here may import MapCardEntityMarker.js: it pulls Lit into Entity's imports, which
+// the jest setup does not transform, and about 30 suites stop loading.
+// MapCardEntityMarker.SHADOW_FULL_M, copied (see above).
+const SHADOW_FULL_M$1 = 12192;
+
+const JsMap = globalThis.Map;
+/**
+ * What one canvas's sprite cache may hold, in bytes of sprite pixels (4 a pixel), oldest
+ * evicted first. Was a count of 4,000 in the prototype: a 60 px aircraft sprite with its
+ * shadow margin is ~104 x 104 px, so that count was ~170 MB at 1x and ~690 MB at 2x
+ * (soak 2026-10-26: 1,111 sprites after an hour and still rising). 24 MB is ~580 such
+ * sprites at 1x, ~145 at 2x.
+ */
+const SPRITE_BUDGET_BYTES = 24 * 1024 * 1024;
+/** The DOM shadow's `transition: filter 3s linear` (MapCardEntityMarker.groundShadowStyle). */
+const SHADOW_EASE_MS = 3000;
+/** Steps in one shadow ease: one every 100 ms. */
+const SHADOW_EASE_STEPS = 30;
+
+/**
+ * The attributes written into a marker's DivIcon html (Entity.createMapMarker).
+ * @param {string} html
+ * @returns {{[name: string]: string}}
+ */
+function parseAttrs(html) {
+  const out = {};
+  const re = /\s([a-z-]+)=(?:"([^"]*)"|'([^']*)')/g;
+  let m;
+  while ((m = re.exec(html || ""))) out[m[1]] = m[2] !== undefined ? m[2] : m[3];
+  return out;
+}
+
+const has = (v) => v !== undefined && v !== null && v !== "" && v !== "undefined" && v !== "null";
+
+/**
+ * Can this look be drawn on the canvas?
+ * @param {{[name: string]: string}} a
+ * @returns {boolean}
+ */
+function isPlain(a) {
+  // A picture wins over an icon in the marker (_inner), so an icon alone is not plain.
+  if (has(a.icon) && !has(a.picture)) return false;
+  if (has(a["place-icon"]) || has(a.alternate) || has(a["delay-badge"]) || a.pulse === "true") return false;
+  if (has(a.shape) || has(a.symbol) || a["label-placement"] === "heading") return false;
+  if (has(a["ring-width"]) && Number(a["ring-width"]) !== 1) return false;
+  const fill = String(a.color || "").trim().toLowerCase();
+  if (has(a["ring-color"]) && a["ring-color"].trim().toLowerCase() !== fill) return false;
+  if (has(a.prefix) || has(a.suffix) || has(a.label)) return false;
+  if (has(a.picture)) return a["bare-picture"] !== "true";
+  return true;
+}
+
+/**
+ * A picture's path with its query left out: one animation check per picture, whatever token
+ * or version its URL carries.
+ * @param {string} url
+ * @returns {string}
+ */
+function picturePath(url) {
+  return String(url || "").split("?")[0];
+}
+
+/**
+ * Does this image move by itself? A canvas draw copies ONE still frame of an image, so an
+ * animated picture must stay a DOM marker, where the browser plays it as the card's CSS
+ * background (defect found by Lee 2026-10-25 21:33: helicopter rotors frozen). Animated:
+ * SVG with SMIL (<animate>, <animateTransform>, <animateMotion>, <animateColor>, <set>) or a
+ * CSS animation (@keyframes, animation:); a GIF with more than one frame or a loop block; an
+ * APNG (acTL before the first IDAT); an animated WebP (ANIM chunk).
+ * @param {Uint8Array} bytes the image file
+ * @param {string} [contentType]
+ * @returns {boolean}
+ */
+function isAnimatedImage(bytes, contentType = "") {
+  const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes || []);
+  const ascii = (from, to) => {
+    let s = "";
+    const end = Math.min(b.length, to);
+    for (let i = from; i < end; i++) s += String.fromCharCode(b[i]);
+    return s;
+  };
+  if (b.length >= 6 && ascii(0, 3) === "GIF") {
+    let gce = 0;
+    for (let i = 0; i + 2 < b.length; i++) if (b[i] === 0x21 && b[i + 1] === 0xf9 && b[i + 2] === 0x04) gce++;
+    return gce > 1 || ascii(0, b.length).includes("NETSCAPE2.0");
+  }
+  if (b.length >= 8 && b[0] === 0x89 && ascii(1, 4) === "PNG") {
+    const head = ascii(8, b.length);
+    const ac = head.indexOf("acTL"), idat = head.indexOf("IDAT");
+    return ac >= 0 && (idat < 0 || ac < idat);
+  }
+  if (b.length >= 16 && ascii(0, 4) === "RIFF" && ascii(8, 12) === "WEBP") {
+    return ascii(12, 64).includes("ANIM") || ascii(12, 64).includes("ANMF");
+  }
+  const text = ascii(0, Math.min(b.length, 512 * 1024));
+  if (/svg/i.test(contentType) || /<svg[\s>]/i.test(text)) {
+    return /<(animate|animateTransform|animateMotion|animateColor|set)[\s/>]/.test(text) ||
+      /@keyframes|animation(-name)?\s*:/.test(text);
+  }
+  return false;
+}
+
+/**
+ * The ground shadow's numbers, MapCardEntityMarker.groundShadowStyle's formula.
+ * @param {string} altitude
+ * @param {number} size
+ * @returns {{off: number, blur: number, op: number, key: string}|null}
+ */
+function shadowParams(altitude, size) {
+  if (!has(altitude)) return null;
+  const alt = Number(altitude);
+  if (!Number.isFinite(alt) || !(size > 0)) return null;
+  const f = Math.sqrt(Math.min(Math.max(alt, 0), SHADOW_FULL_M$1) / SHADOW_FULL_M$1);
+  const off = +(size * (0.025 + 0.12 * f)).toFixed(1);
+  const blur = +(0.6 + 0.35 * off).toFixed(1);
+  const op = +(0.55 - 0.25 * f).toFixed(2);
+  return { off, blur, op, key: `${off}/${blur}/${op}` };
+}
+
+/** An angle that turns linearly over `secs`, as the marker's CSS transition does. */
+class Turn {
+  constructor(v, secs) {
+    const n = Number(v);
+    this.has = has(v) && Number.isFinite(n);
+    this.from = this.target = this.has ? n : 0;
+    this.t0 = 0;
+    const s = Number(secs);
+    this.ms = Number.isFinite(s) && s > 0 ? s * 1000 : 0;
+  }
+  to(v) {
+    const n = Number(v);
+    if (!has(v) || !Number.isFinite(n)) { this.has = false; return; }
+    const now = performance.now();
+    this.from = this.has ? this.at(now) : n;
+    this.target = n;
+    this.t0 = now;
+    this.has = true;
+  }
+  at(now) {
+    if (!this.ms || now >= this.t0 + this.ms) return this.target;
+    return this.from + (this.target - this.from) * ((now - this.t0) / this.ms);
+  }
+  moving(now) { return this.has && this.ms > 0 && now < this.t0 + this.ms; }
+}
+
+/**
+ * Are two shadows the same, by their rounded key? Null is no shadow.
+ * @param {object|null} p
+ * @param {object|null} q
+ * @returns {boolean}
+ */
+const sameShadow = (p, q) => (p === null || q === null ? p === q : p.key === q.key);
+
+/**
+ * The ground shadow as the DOM marker shows it: `transition: filter 3s linear` on the
+ * marker element (D4a-shadow). A change eases linearly from what is shown now. A shadow
+ * that appears eases in from nothing (CSS interpolates `none` as zero offsets, zero blur,
+ * transparent); one that goes away is gone at once, because the style that has no filter
+ * has no transition either. The ease moves in SHADOW_EASE_STEPS steps (100 ms each), so an
+ * ease builds at most 31 sprites per picture and angle, not one a frame; at the live 60 px
+ * marker the largest step, ground to 40,000 ft, is 0.24 px.
+ */
+class ShadowEase {
+  /** @param {{off: number, blur: number, op: number, key: string}|null} p */
+  constructor(p) {
+    this.from = p;
+    this.target = p;
+    this.t0 = 0;
+  }
+  /**
+   * @param {{off: number, blur: number, op: number, key: string}|null} p
+   * @param {number} [now]
+   */
+  to(p, now = performance.now()) {
+    if (sameShadow(p, this.target)) return;
+    if (!p) { this.from = this.target = null; return; }
+    this.from = this.at(now) ?? { off: 0, blur: 0, op: 0, key: "0/0/0" };
+    this.target = p;
+    this.t0 = now;
+  }
+  /**
+   * @param {number} now
+   * @returns {{off: number, blur: number, op: number, key: string}|null}
+   */
+  at(now) {
+    const t = this.target, f = this.from;
+    if (!t) return null;
+    if (!f || f === t || now >= this.t0 + SHADOW_EASE_MS) return t;
+    const k = Math.floor(Math.max(0, (now - this.t0) / SHADOW_EASE_MS) * SHADOW_EASE_STEPS) / SHADOW_EASE_STEPS;
+    const off = +(f.off + (t.off - f.off) * k).toFixed(1);
+    const blur = +(f.blur + (t.blur - f.blur) * k).toFixed(1);
+    const op = +(f.op + (t.op - f.op) * k).toFixed(2);
+    return { off, blur, op, key: `${off}/${blur}/${op}` };
+  }
+  /**
+   * Is the shadow still easing?
+   * @param {number} now
+   * @returns {boolean}
+   */
+  moving(now) {
+    return Boolean(this.target && this.from && this.from !== this.target && now < this.t0 + SHADOW_EASE_MS);
+  }
+}
+
+class CanvasMarker {
+  /**
+   * @param {object} dom the Leaflet Marker Entity built (not on the map)
+   * @param {object} layer the CanvasMarkerLayer
+   * @param {object} entity the Entity
+   * @param {string} tag the marker element's tag name
+   */
+  constructor(dom, layer, entity, tag) {
+    this.dom = dom;
+    this.layer = layer;
+    this.entity = entity;
+    this.tag = tag;
+    this.options = dom.options;
+    this._latlng = dom.getLatLng();
+    this.a = parseAttrs(dom.options?.icon?.options?.html);
+    this.size = Number(this.a.size) || 24;
+    this.z = dom.options?.zIndexOffset || 0;
+    this.mode = "canvas";
+    this.rot = new Turn(this.a.rotation, this.a["rotation-transition"]);
+    this.arr = new Turn(this.a.arrow, this.a["rotation-transition"]);
+    this.sh = new ShadowEase(shadowParams(this.a["ground-shadow"], this.size));
+    const self = this;
+    this._fake = {
+      querySelector: () => ({
+        setAttribute: (n, v) => {
+          self._attr(n, v);
+          if (self.mode !== "canvas") self.dom.getElement?.()?.querySelector(self.tag)?.setAttribute(n, v);
+        },
+      }),
+    };
+    // The hover clock must see THIS object as the entity's marker (Entity._startTooltipClock).
+    dom.off("tooltipopen");
+    dom.off("tooltipclose");
+    dom.on("tooltipopen", () => entity._startTooltipClock?.(self));
+    dom.on("tooltipclose", () => entity._stopTooltipClock?.());
+    // A click popup PINS the promoted marker in the DOM: taking the DOM marker off the map closes
+    // its popup (Leaflet binds `remove: closePopup`), so on mouseout the popup vanished before the
+    // pointer reached a link in it (Lee 2026-11-20 17:50, a ship's popup). While pinned, mouseout
+    // and another marker's promotion leave it; when the popup closes it goes back to the canvas
+    // unless the pointer is still on it.
+    dom.on("popupopen", () => { self.pinned = true; });
+    dom.on("popupclose", () => {
+      self.pinned = false;
+      if (self.mode !== "hover") return;
+      let over = false;
+      try { over = Boolean(self.dom.getElement?.()?.matches?.(":hover")); } catch { /* */ }
+      if (!over) self.layer.demote(self);
+    });
+    dom.on("mouseout", () => { if (self.mode === "hover") self.layer.demote(self); });   // demote() keeps a pinned one
+  }
+  _attr(n, v) {
+    this.a[n] = String(v);
+    if (n === "rotation") this.rot.to(v);
+    else if (n === "arrow") this.arr.to(v);
+    else if (n === "size") this.size = Number(v) || this.size;
+    if (n === "ground-shadow" || n === "size") this.sh.to(shadowParams(this.a["ground-shadow"], this.size));
+    if (this.mode === "canvas" && (!isPlain(this.a) || (n === "picture" && this.layer.pictureAnimated(v) === true))) this.layer.toDom(this);
+    else this.layer.dirty();
+  }
+  getLatLng() { return this._latlng; }
+  setLatLng(ll) {
+    this._latlng = leafletSrcExports.latLng(ll);
+    this.dom.setLatLng(this._latlng);
+    if (this.mode === "canvas") this.layer.dirty();
+    return this;
+  }
+  getElement() { return this._fake; }
+  /**
+   * A new offset can put the marker in another D10 class: its DOM marker moves pane
+   * (MarkerPlacement.bandMarker) and the marker itself moves to that class's canvas.
+   * @param {number} z
+   * @returns {CanvasMarker}
+   */
+  setZIndexOffset(z) {
+    this.z = z;
+    this.dom.setZIndexOffset?.(z);
+    const map = this.layer._map;
+    const b = bandOf(z);
+    if (map && b !== this.layer.band) {
+      const was = this.layer;
+      if (this.mode === "hover") was.demote(this);
+      was._items.delete(this);
+      was.dirty();
+      this.layer = layerFor(map, b);
+      this.layer._items.add(this);
+      stats.bandMoves++;
+    }
+    this.layer.dirty();
+    return this;
+  }
+  addTo() { this.layer.addMarker(this); return this; }
+  remove() { this.layer.removeMarker(this); return this; }
+  bindTooltip(...args) { this.dom.bindTooltip(...args); return this; }
+  setTooltipContent(c) { this.dom.setTooltipContent(c); return this; }
+  isTooltipOpen() { return this.dom.isTooltipOpen?.() ?? false; }
+  getTooltip() { return this.dom.getTooltip?.(); }
+  // The click popup (Entity._bindPopup, refreshMarkerPopup): a photo or link that arrives after the
+  // marker was made binds it on this stand-in, so the popup methods reach the DOM marker too.
+  bindPopup(...args) { this.dom.bindPopup(...args); return this; }
+  unbindPopup() { this.dom.unbindPopup?.(); return this; }
+  openPopup(...args) { this.dom.openPopup?.(...args); return this; }
+  closePopup() { this.dom.closePopup?.(); return this; }
+  isPopupOpen() { return this.dom.isPopupOpen?.() ?? false; }
+  getPopup() { return this.dom.getPopup?.(); }
+  on(...args) { this.dom.on(...args); return this; }
+  off(...args) { this.dom.off(...args); return this; }
+  fire(...args) { this.dom.fire(...args); return this; }
+  tapAction() {
+    try { return JSON.parse(this.a["tap-action"] || "null"); } catch { return null; }
+  }
+}
+
+/**
+ * The layer's scratch canvas, at least w x h, cleared.
+ * @param {object} layer
+ * @param {number} w
+ * @param {number} h
+ * @returns {{c: HTMLCanvasElement, ctx: CanvasRenderingContext2D}}
+ */
+function scratch(layer, w, h) {
+  const c = layer._scratch || (layer._scratch = document.createElement("canvas"));
+  if (c.width < w || c.height < h) { c.width = Math.max(c.width, w); c.height = Math.max(c.height, h); }
+  const ctx = c.getContext("2d");
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, c.width, c.height);
+  return { c, ctx };
+}
+
+/**
+ * A picture marker as the DOM draws it: border-box disc of `s`, 1px border, the picture
+ * covering the content box, turned about its centre, clipped to the padding box's circle;
+ * the ground shadow as a drop-shadow of the whole disc.
+ * @param {object} layer the CanvasMarkerLayer (its scratch canvas)
+ * @param {HTMLImageElement} img
+ * @param {number} s size, CSS px
+ * @param {string} bg fill
+ * @param {string} bd border
+ * @param {number|null} ang degrees, null for none
+ * @param {{off: number, blur: number, op: number}|null} sh shadow
+ * @param {number} m device pixel ratio
+ * @returns {{c: HTMLCanvasElement, w: number, half: number}}
+ */
+function buildPictureSprite(layer, img, s, bg, bd, ang, sh, m) {
+  const pad = sh ? Math.ceil(sh.off + 3 * sh.blur + 2) : 1;
+  const w = s + 2 * pad;
+  const px = Math.ceil(w * m);
+  const { c: d, ctx: dc } = scratch(layer, Math.ceil(s * m), Math.ceil(s * m));
+  dc.setTransform(m, 0, 0, m, 0, 0);
+  const r = s / 2;
+  if (has(bg) && bg.trim().toLowerCase() !== "transparent") {
+    dc.beginPath(); dc.arc(r, r, r, 0, 2 * Math.PI); dc.fillStyle = bg; dc.fill();
+  }
+  dc.save();
+  dc.beginPath(); dc.arc(r, r, r - 1, 0, 2 * Math.PI); dc.clip();
+  dc.translate(r, r);
+  if (ang !== null) dc.rotate((ang * Math.PI) / 180);
+  const box = s - 2;
+  const k = Math.max(box / (img.naturalWidth || box), box / (img.naturalHeight || box));
+  const iw = (img.naturalWidth || box) * k, ih = (img.naturalHeight || box) * k;
+  dc.drawImage(img, -iw / 2, -ih / 2, iw, ih);
+  dc.restore();
+  if (has(bd) && bd.trim().toLowerCase() !== "transparent") {
+    dc.beginPath(); dc.arc(r, r, r - 0.5, 0, 2 * Math.PI); dc.lineWidth = 1; dc.strokeStyle = bd; dc.stroke();
+  }
+  const c = document.createElement("canvas");
+  c.width = px; c.height = px;
+  const ctx = c.getContext("2d");
+  ctx.setTransform(m, 0, 0, m, 0, 0);
+  if (sh) ctx.filter = `drop-shadow(${sh.off}px ${sh.off}px ${sh.blur}px rgba(0, 0, 0, ${sh.op}))`;
+  ctx.drawImage(d, 0, 0, Math.ceil(s * m), Math.ceil(s * m), pad, pad, s, s);
+  return { c, w, half: w / 2 };
+}
+
+/**
+ * A picture marker whose picture has not loaded (or failed): its disc and border only, as
+ * the DOM marker shows it with no background image. Found on the look page 2026-10-26: the
+ * canvas drew nothing at all.
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {CanvasMarker} it
+ * @param {object} p layer point
+ */
+function drawEmptyDisc(ctx, it, p) {
+  const a = it.a, r = it.size / 2;
+  const bg = String(a.color || "").trim();
+  const bd = has(a["ring-color"]) ? String(a["ring-color"]).trim() : bg;
+  if (has(bg) && bg.toLowerCase() !== "transparent") {
+    ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, 2 * Math.PI); ctx.fillStyle = bg; ctx.fill();
+  }
+  if (has(bd) && bd.toLowerCase() !== "transparent") {
+    ctx.beginPath(); ctx.arc(p.x, p.y, r - 0.5, 0, 2 * Math.PI); ctx.lineWidth = 1; ctx.strokeStyle = bd; ctx.stroke();
+  }
+}
+
+/**
+ * A disc with its label and arrow (MapCardEntityMarker labelTextStyle, _arrow).
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {CanvasMarker} it
+ * @param {object} p layer point
+ * @param {number} now
+ * @param {object} layer the CanvasMarkerLayer (fonts, text colour)
+ */
+function drawDisc(ctx, it, p, now, layer) {
+  const a = it.a, s = it.size, r = s / 2;
+  const fill = String(a.color || "").trim();
+  const filled = fill !== "" && fill.toLowerCase() !== "transparent";
+  if (it.arr.has) {
+    const ang = it.arr.at(now);
+    const w = Math.max(8, Math.round(s * 0.45)), h = Math.round(w * 0.75);
+    const own = String(a["arrow-color"] || "").trim();
+    const ol = String(a["arrow-outline"] || "").trim();
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate((ang * Math.PI) / 180);
+    ctx.translate(-w / 2, -r - h);
+    ctx.scale(w / 10, h / 7.5);
+    ctx.beginPath(); ctx.moveTo(5, 0.6); ctx.lineTo(9.4, 6.9); ctx.lineTo(0.6, 6.9); ctx.closePath();
+    ctx.fillStyle = has(own) ? own : filled ? fill : "#000";
+    ctx.fill();
+    ctx.lineWidth = 1; ctx.lineJoin = "round"; ctx.strokeStyle = has(ol) ? ol : "rgba(0, 0, 0, 0.8)";
+    ctx.stroke();
+    ctx.restore();
+  }
+  if (filled) {
+    ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, 2 * Math.PI); ctx.fillStyle = fill; ctx.fill();
+  }
+  const text = String(a.title || "");
+  if (text === "") return;
+  const lc = String(a["label-color"] || "").trim();
+  const oc = String(a["label-outline"] || "").trim();
+  const color = lc !== "" ? lc : filled ? "#FFFFFF" : layer._textColor;
+  const outline = oc.toLowerCase() === "none" || (lc === "" && !filled) ? null : (oc !== "" ? oc : "rgba(0, 0, 0, 0.8)");
+  ctx.font = layer._fontFor(a.style);
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  if (outline) {
+    ctx.fillStyle = outline;
+    for (const [dx, dy] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) ctx.fillText(text, p.x + dx, p.y + dy);
+  }
+  ctx.fillStyle = color;
+  ctx.fillText(text, p.x, p.y);
+}
+
+const CanvasMarkerLayer = leafletSrcExports.Renderer.extend({
+  options: { padding: 0.1, pane: canvasPane(bandOf(0)) },
+
+  initialize(options) {
+    leafletSrcExports.Renderer.prototype.initialize.call(this, options);
+    this._items = new Set();
+    this._imgs = new JsMap();
+    this._sprites = new JsMap();
+    this._spriteBytes = 0;
+    this._drawnList = [];
+    this._raf = null;
+    this.band = bandOf(0);
+    this._anim = new JsMap();
+  },
+
+  /**
+   * Is this picture animated: true, false, or null while its one check is in flight. The
+   * first call starts the check (one fetch per picture path, as the browser fetches it for
+   * the DOM); when it finds an animation, every canvas marker drawing that picture becomes
+   * its DOM marker. Until it answers, the marker draws on the canvas, frozen, for one fetch.
+   * A failed fetch counts as still: the picture is drawn on the canvas, as before the fix.
+   * @param {string} url
+   * @returns {boolean|null}
+   */
+  pictureAnimated(url) {
+    const key = picturePath(url);
+    if (!key) return false;
+    if (this._anim.has(key)) return this._anim.get(key);
+    this._anim.set(key, null);
+    Promise.resolve()
+      .then(() => fetch(url, { credentials: "same-origin" }))
+      .then(async (r) => (r.ok ? isAnimatedImage(new Uint8Array(await r.arrayBuffer()), r.headers.get("content-type") || "") : false))
+      .catch(() => false)
+      .then((animated) => {
+        this._anim.set(key, animated);
+        if (!animated) return;
+        stats.animatedPictures++;
+        const all = this._map ? layers(this._map).filter(Boolean) : [this];
+        for (const layer of all) {
+          for (const it of layer._items) {
+            if (it.mode === "canvas" && picturePath(it.a.picture) === key) layer.toDom(it);
+          }
+        }
+      });
+    return null;
+  },
+
+  onAdd(map) {
+    ensurePanes(map);
+    leafletSrcExports.Renderer.prototype.onAdd.call(this, map);
+    const box = map.getContainer();
+    const cs = getComputedStyle(box);
+    this._family = cs.fontFamily || "sans-serif";
+    this._baseFont = parseFloat(cs.fontSize) || 12;
+    this._textColor = cs.color || "#000";
+    this._fonts = new JsMap();
+    if (!map.__ltmcCanvasEvents) {
+      map.on("mousemove", onMapMove, map);
+      map.on("click", onMapClick, map);
+      map.__ltmcCanvasEvents = true;
+    }
+    this.dirty();
+  },
+
+  onRemove(map) {
+    const ls = layers(map);
+    if (ls[this.band] === this) ls[this.band] = undefined;
+    if (!ls.some(Boolean) && map.__ltmcCanvasEvents) {
+      map.off("mousemove", onMapMove, map);
+      map.off("click", onMapClick, map);
+      map.__ltmcCanvasEvents = false;
+    }
+    if (this._raf) cancelAnimationFrame(this._raf);
+    this._raf = null;
+    for (const it of this._items) { try { it.dom.remove(); } catch { /* */ } }
+    leafletSrcExports.Renderer.prototype.onRemove.call(this, map);
+  },
+
+  _initContainer() {
+    const c = (this._container = document.createElement("canvas"));
+    c.className = "ltmc-canvas-markers";
+    c.style.pointerEvents = "none";
+    this._ctx = c.getContext("2d");
+  },
+
+  _destroyContainer() {
+    leafletSrcExports.DomUtil.remove(this._container);
+    delete this._ctx;
+  },
+
+  _update() {
+    if (this._map._animatingZoom && this._bounds) return;
+    leafletSrcExports.Renderer.prototype._update.call(this);
+    const b = this._bounds, c = this._container, size = b.getSize();
+    const m = window.devicePixelRatio || 1;
+    if (m !== this._dpr) { this._sprites.clear(); this._spriteBytes = 0; }
+    this._dpr = m;
+    leafletSrcExports.DomUtil.setPosition(c, b.min);
+    c.width = Math.round(m * size.x);
+    c.height = Math.round(m * size.y);
+    c.style.width = size.x + "px";
+    c.style.height = size.y + "px";
+    this._draw(performance.now());
+  },
+
+  _fontFor(style) {
+    const key = style || "";
+    let f = this._fonts.get(key);
+    if (!f) {
+      // The element's own style sets the HOST's size; the disc's text is 1.5em of it
+      // (.marker font-size: var(--ha-marker-font-size, 1.5em)).
+      const mm = /font-size:\s*([\d.]+)(px|%|em|rem)/.exec(key);
+      let host = this._baseFont;
+      if (mm) {
+        const n = Number(mm[1]);
+        host = mm[2] === "px" ? n : mm[2] === "%" ? (this._baseFont * n) / 100 : mm[2] === "em" ? this._baseFont * n : 16 * n;
+      }
+      f = `${+(host * 1.5).toFixed(2)}px ${this._family}`;
+      this._fonts.set(key, f);
+    }
+    return f;
+  },
+
+  count() { let n = 0; for (const it of this._items) if (it.mode === "canvas") n++; return n; },
+
+  dirty() {
+    if (this._raf || !this._map) return;
+    this._raf = requestAnimationFrame((t) => { this._raf = null; this._draw(t); });
+  },
+
+  addMarker(it) {
+    this._items.add(it);
+    if (it.mode !== "canvas") it.dom.addTo(this._map);
+    this.dirty();
+  },
+
+  _unhover(it) {
+    if (this._map && this._map.__ltmcHover === it) this._map.__ltmcHover = null;
+  },
+
+  removeMarker(it) {
+    this._items.delete(it);
+    this._unhover(it);
+    try { it.dom.closeTooltip?.(); it.dom.remove(); } catch { /* */ }
+    this.dirty();
+  },
+
+  promote(it) {
+    if (it.mode !== "canvas" || !this._map) return;
+    const was = this._map.__ltmcHover;
+    if (was && was !== it) was.layer.demote(was);
+    it.mode = "hover";
+    this._map.__ltmcHover = it;
+    stats.promoted++;
+    it.dom.setLatLng(it._latlng);
+    it.dom.addTo(this._map);
+    it.dom.openTooltip?.();
+    this.dirty();
+  },
+
+  demote(it) {
+    if (it.mode !== "hover" || it.pinned) return;
+    try { it.dom.closeTooltip?.(); it.dom.remove(); } catch { /* */ }
+    it.mode = "canvas";
+    this._unhover(it);
+    this.dirty();
+  },
+
+  toDom(it) {
+    if (it.mode === "dom") return;
+    if (it.mode === "canvas") { it.dom.setLatLng(it._latlng); it.dom.addTo(this._map); }
+    this._unhover(it);
+    it.mode = "dom";
+    stats.toDom++;
+    this.dirty();
+  },
+
+  _hit(pt) {
+    for (let i = this._drawnList.length - 1; i >= 0; i--) {
+      const it = this._drawnList[i];
+      if (it.mode !== "canvas" || !it._pt) continue;
+      const r = it.size / 2;
+      const dx = pt.x - it._pt.x, dy = pt.y - it._pt.y;
+      if (dx * dx + dy * dy <= r * r) return it;
+    }
+    return null;
+  },
+
+  _tap(it) {
+    this.promote(it);
+    const host = this._map.getContainer().getRootNode()?.host;
+    const ev = new Event("hass-action", { bubbles: true, composed: true });
+    ev.detail = { config: { entity: it.a["entity-id"], tap_action: it.tapAction() }, action: "tap" };
+    (host || this._map.getContainer()).dispatchEvent(ev);
+  },
+
+  _img(url) {
+    let im = this._imgs.get(url);
+    if (!im) {
+      im = new Image();
+      im.decoding = "async";
+      im.onload = () => this.dirty();
+      im.src = url;
+      this._imgs.set(url, im);
+    }
+    return im.complete && im.naturalWidth > 0 ? im : null;
+  },
+
+  _sprite(it, now) {
+    const a = it.a;
+    const img = this._img(a.picture);
+    if (!img) return null;
+    const ang = it.rot.has ? (((Math.round(it.rot.at(now)) % 360) + 360) % 360) : null;
+    const sh = it.sh.at(now);
+    const bg = a.color || "";
+    const bd = has(a["ring-color"]) ? a["ring-color"] : bg;
+    const key = `${a.picture}|${it.size}|${bg}|${bd}|${ang}|${sh ? sh.key : ""}`;
+    let spr = this._sprites.get(key);
+    if (spr) {
+      this._sprites.delete(key);
+      this._sprites.set(key, spr);
+      return spr;
+    }
+    spr = buildPictureSprite(this, img, it.size, bg, bd, ang, sh, this._dpr || 1);
+    stats.spritesBuilt++;
+    spr.bytes = spr.c.width * spr.c.height * 4;
+    this._sprites.set(key, spr);
+    this._spriteBytes += spr.bytes;
+    // Oldest first, never the one just built.
+    while (this._spriteBytes > SPRITE_BUDGET_BYTES && this._sprites.size > 1) {
+      const oldest = this._sprites.keys().next().value;
+      this._spriteBytes -= this._sprites.get(oldest).bytes;
+      this._sprites.delete(oldest);
+      stats.spritesEvicted++;
+    }
+    return spr;
+  },
+
+  _draw(now) {
+    const ctx = this._ctx, map = this._map;
+    if (!ctx || !map || !this._bounds) return;
+    const t0 = performance.now();
+    const b = this._bounds, m = this._dpr || 1;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, this._container.width, this._container.height);
+    ctx.setTransform(m, 0, 0, m, -b.min.x * m, -b.min.y * m);
+    const list = [];
+    let animating = false;
+    for (const it of this._items) {
+      if (it.mode !== "canvas" || !it._latlng) { it._pt = null; continue; }
+      const p = map.latLngToLayerPoint(it._latlng);
+      const r = it.size;
+      if (p.x < b.min.x - r || p.x > b.max.x + r || p.y < b.min.y - r || p.y > b.max.y + r) { it._pt = null; continue; }
+      it._pt = p;
+      list.push(it);
+      if (it.rot.moving(now) || it.arr.moving(now) || it.sh.moving(now)) animating = true;
+    }
+    list.sort((u, v) => (u.z - v.z) || (u._pt.y - v._pt.y));
+    for (const it of list) {
+      try {
+        if (has(it.a.picture)) {
+          const spr = this._sprite(it, now);
+          if (spr) ctx.drawImage(spr.c, it._pt.x - spr.half, it._pt.y - spr.half, spr.w, spr.w);
+          else drawEmptyDisc(ctx, it, it._pt);
+        } else {
+          drawDisc(ctx, it, it._pt, now, this);
+        }
+      } catch { /* one bad marker never stops the rest */ }
+    }
+    this._drawnList = list;
+    stats.draws++;
+    stats.drawn = list.length;
+    stats.drawMs += performance.now() - t0;
+    if (animating) this.dirty();
+  },
+});
+
+/**
+ * A canvas stand-in for this DOM marker, or null when its look is not plain.
+ * @param {object} dom the Leaflet Marker Entity built
+ * @param {object} entity
+ * @param {string} tag the marker element's tag name
+ * @param {(m: object) => object} [wrapDom] e.g. culling, applied to the DOM fallback
+ * @returns {CanvasMarker|null}
+ */
+function canvasMarkerFor(dom, entity, tag, wrapDom) {
+  if (entity.config?.distanceEntity) return null;
+  // Only the tracked objects: people, zones and the like are a handful of markers, cost
+  // nothing as DOM, and keep their order with the zone they stand in (look page 2026-10-26:
+  // on the canvas, the people at home were drawn under the home zone's icon).
+  if (!String(entity.id ?? entity.config?.id ?? "").startsWith("geo_location.")) return null;
+  const a = parseAttrs(dom.options?.icon?.options?.html);
+  if (!isPlain(a)) return null;
+  const map = entity.map;
+  const layer = layerFor(map, bandOf(dom.options?.zIndexOffset));
+  // An animated picture is never drawn on the canvas (isAnimatedImage).
+  if (has(a.picture) && pictureAnimated(map, a.picture) === true) return null;
+  if (wrapDom) wrapDom(dom);
+  return new CanvasMarker(dom, layer, entity, tag);
+}
+
+/**
+ * This map's canvas layers, indexed by D10 class.
+ * @param {object} map
+ * @returns {Array<object|undefined>}
+ */
+function layers(map) {
+  return map.__ltmcCanvasLayers || (map.__ltmcCanvasLayers = []);
+}
+
+/**
+ * The canvas for one D10 class, made on first use.
+ * @param {object} map
+ * @param {number} band 0..5
+ * @returns {object} a CanvasMarkerLayer on the map
+ */
+function layerFor(map, band) {
+  const ls = layers(map);
+  if (!ls[band]) {
+    const layer = new CanvasMarkerLayer({ pane: canvasPane(band) });
+    layer.band = band;
+    // The animation checks are per picture, not per class: every layer shares one table.
+    layer._anim = map.__ltmcAnim || (map.__ltmcAnim = new JsMap());
+    ls[band] = layer;
+    layer.addTo(map);
+  }
+  return ls[band];
+}
+
+/**
+ * Is this picture animated, as any of the map's layers knows it (CanvasMarkerLayer
+ * pictureAnimated)? The check runs on the first layer asked; its answer moves the canvas
+ * markers drawing that picture to the DOM in every layer.
+ * @param {object} map
+ * @param {string} url
+ * @returns {boolean|null}
+ */
+function pictureAnimated(map, url) {
+  const ls = layers(map).filter(Boolean);
+  return ls.length ? ls[0].pictureAnimated(url) : null;
+}
+
+/**
+ * The canvas marker under a point, the top class first: a class drawn above another wins
+ * the pointer, as it wins the picture.
+ * @param {object} map
+ * @param {object} pt layer point
+ * @returns {CanvasMarker|null}
+ */
+function topHit(map, pt) {
+  const ls = layers(map);
+  for (let b = ls.length - 1; b >= 0; b--) {
+    const it = ls[b]?._hit(pt);
+    if (it) return it;
+  }
+  return null;
+}
+
+/**
+ * The map's mousemove: promote the top canvas marker under the pointer. Bound to the map.
+ * @param {{layerPoint: object}} e
+ */
+function onMapMove(e) {
+  const it = topHit(this, e.layerPoint);
+  if (it) it.layer.promote(it);
+}
+
+/**
+ * The map's click: tap the top canvas marker under the pointer. Bound to the map.
+ * @param {{layerPoint: object}} e
+ */
+function onMapClick(e) {
+  const it = topHit(this, e.layerPoint);
+  if (it) it.layer._tap(it);
+}
+
+// Off-screen DOM markers are taken off the map (map capacity, card SSOT 2026-10-25).
+//
+// A culled marker keeps its object, position and stored DivIcon html; Leaflet rebuilds its
+// element from that html when it comes back, the same path a marker leaving a cluster takes,
+// so attribute writes made while it was off (Entity._setMarkerAttribute) are not lost.
+// Not used with clustering on: the cluster group decides what is on the map.
+
+/** How far beyond the view a marker stays on the map, as a fraction of the view. */
+const CULL_PAD = 0.3;
+
+/**
+ * Take a marker off the map. One only queued (added before the map's first view, so never
+ * drawn) is dropped from the map's layer table instead: Leaflet's remove() would run
+ * onRemove for an icon that was never built and throw. Leaflet's deferred add checks
+ * hasLayer first, so the dropped marker is not added afterwards.
+ * @param {Marker} m
+ * @param {object} map
+ */
+function takeOff(m, map) {
+  if (m._map) { leafletSrcExports.Marker.prototype.remove.call(m); return; }
+  delete map._layers[leafletSrcExports.Util.stamp(m)];
+  m._mapToAdd = null;
+}
+
+/**
+ * The map's culling registry, made on first use: the culled markers and the padded view.
+ * @param {object} map
+ * @returns {{set: Set<Marker>, bounds: object|null, refresh: () => void, check: (m: Marker) => void, checkAll: () => void}}
+ */
+function registry(map) {
+  if (map.__ltmcCull) return map.__ltmcCull;
+  const reg = { set: new Set(), bounds: null };
+  // A map with no view yet (the card builds its entities before its initial view) has no
+  // bounds: getBounds() throws "Set map center and zoom first". Everything is kept on it
+  // until it loads, then checked.
+  reg.refresh = () => { reg.bounds = map._loaded ? map.getBounds().pad(CULL_PAD) : null; };
+  reg.check = (m) => {
+    if (!reg.bounds) reg.refresh();
+    const ll = m.getLatLng();
+    const want = Boolean(ll) && (!reg.bounds || reg.bounds.contains(ll));
+    // On the map, or queued for it: Leaflet defers an add made before the map's first view
+    // (map.whenReady), so the marker has `_mapToAdd` and no `_map` until then. Counting
+    // only `_map` let every marker added before the first view through the first check and
+    // onto the map, off screen or not (found by MarkerCull.test.js, 2026-10-25).
+    const on = Boolean(m._map || m._mapToAdd);
+    if (want && !on) { leafletSrcExports.Marker.prototype.addTo.call(m, map); stats.culledIn++; }
+    else if (!want && on) { takeOff(m, map); stats.culledOut++; }
+  };
+  reg.checkAll = () => { reg.refresh(); for (const m of reg.set) reg.check(m); };
+  map.on("load moveend zoomend resize viewreset", reg.checkAll);
+  map.__ltmcCull = reg;
+  return reg;
+}
+
+/**
+ * Make a Leaflet marker cull itself: addTo/remove/setLatLng go through the registry.
+ * @param {Marker} m
+ * @param {object} map Leaflet map
+ * @returns {Marker} the same marker
+ */
+function cullMarker(m, map) {
+  if (m.__ltmcCulled) return m;
+  const reg = registry(map);
+  const setLL = m.setLatLng;
+  m.addTo = function () { reg.set.add(m); m.__ltmcWanted = true; reg.check(m); return m; };
+  m.remove = function () {
+    reg.set.delete(m); m.__ltmcWanted = false;
+    if (m._map || m._mapToAdd) takeOff(m, map);
+    return m;
+  };
+  m.setLatLng = function (ll) { setLL.call(m, ll); if (m.__ltmcWanted) reg.check(m); return m; };
+  m.__ltmcCulled = true;
+  return m;
+}
+
+/**
  * The custom element every marker is built from. index.js registers it under
  * this name; anything that looks a marker up by tag must use this constant, or
  * it queries an element this card never defines and silently finds nothing.
@@ -16933,6 +18702,38 @@ const isFiniteNumber = (v) => typeof v === "number" && Number.isFinite(v);
  * 29 deg at 20-30 m, and 14-15 deg from 30 m up - the same as at 50-100 m.
  */
 const TRAVEL_BEARING_MIN_M = 30;
+
+/**
+ * A RAIL MOVE ALONG ITS LINE SLIDES OVER THE EMITTER'S OWN SEGMENT
+ * (06_MAP_CONTRACT.md D3c), not only over the 'auto' rule's browser gap. Lee, 2026-10-20 02:24, on Madrid:
+ * trains "apparently achieve super sonic speeds". MEASURED that night on the
+ * live card (Commuter Rail 20_Research/SHAPE_PATHS_20261020.md section 6):
+ * Renfe's positions stand 1-2 minutes and then catch up 1-10 km
+ * (segment_duration_s p50 121 s, max 401 s); 'auto' slid that in at most
+ * 30 s - 4 km drawn at 480 km/h for a train that averaged 120 - and PLACED
+ * the first move after the page opened, kilometres in one frame (3 of the 4
+ * jumps pinned to an entity, each with previous_*, a 42 s segment and a
+ * track_path, arriving 3-5 s after its fix).
+ *
+ * So, with position_transition 'auto', a move of an entity on map_layer
+ * "rail" whose previous_* is within SEGMENT_FROM_M of where the marker was
+ * last sent, and which slides along a track route (track_path, D3c-v), lasts
+ * segment_duration_s (at most SEGMENT_SLIDE_MAX_S) or the 'auto' time,
+ * whichever is longer: the train is drawn at the speed it averaged between
+ * its two fixes, and never faster than before. Anything else keeps the 'auto'
+ * rule. CORRECTED the same night by the A/B replay (Madrid's recorded states
+ * through both built cards, bin\ltmc280_look\index_es_ab.html): the first
+ * build slid for what was LEFT of the segment since observed_at, and for
+ * every move. A fix delivered nearly as late as its segment was long (a 22 s
+ * segment, 21 s late) then slid 3.5 km in about a second, and a move with no
+ * track route slid straight across country for minutes (a 321 s segment, 2.5
+ * km off the line). Rail only:
+ * Ships' segments are p50 240 s, p90 720 s, max 1,441 s on the same night,
+ * and a vessel drawn up to 24 minutes behind its fix is that integration's
+ * call; Aircraft's are about 14 s, where the two rules agree.
+ */
+const SEGMENT_FROM_M = 50;
+const SEGMENT_SLIDE_MAX_S = 600;
 
 /**
  * Initial great-circle bearing from `a` to `b`, degrees clockwise from north,
@@ -17133,6 +18934,13 @@ class Entity {
    */
   _transitionFrame = null;
   /**
+   * The slide in progress, for a fix that arrives before it ends: its points,
+   * the metres along them, when it started and how long it lasts (ms).
+   * @private
+   * @type {{pts: Array<{lat: number, lng: number}>, cum: number[], total: number, started: number, duration: number}|null}
+   */
+  _sliding = null;
+  /**
    * When this entity's position last changed, for position_transition 'auto'.
    * @private
    * @type {number|undefined}
@@ -17226,6 +19034,23 @@ class Entity {
   }
 
   /**
+   * The altitude the ground shadow is cast from (06_MAP_CONTRACT.md
+   * D4a-shadow), in metres rounded to 50 so a few metres of climb do not
+   * rewrite the marker every update: the entity's `altitude_m` when the
+   * marker draws a picture, else empty and no shadow. Only an emitter of
+   * flying things sends `altitude_m` (Live Track Aircraft today).
+   * @returns {string}
+   */
+  get groundShadowAltitude() {
+    if (!this.markerPicture) return "";
+    const raw = this.attributes.altitude_m;
+    if (raw == null || typeof raw === "boolean" || String(raw).trim() === "") return "";
+    const a = Number(raw);
+    if (!Number.isFinite(a)) return "";
+    return String(Math.round(Math.max(0, a) / 50) * 50);
+  }
+
+  /**
    * The marker's fill: the dashboard's `color` if one is configured, else
    * the entity's `marker_color` attribute if it is valid
    * (05_SHARED_LESSONS.md D4a), else the neutral fallback.
@@ -17308,6 +19133,7 @@ class Entity {
    */
   get markerStyling() {
     const width = this.config.configuredColor ? null : parseRingWidth(this.attributes.marker_ring_width);
+    const innerWidth = this.config.configuredColor ? null : parseRingWidth(this.attributes.marker_inner_ring_width);
     const shape = this.config.configuredColor ? null : parseMarkerShape(this.attributes.marker_shape);
     const placement = this.config.configuredColor ? null : parseLabelPlacement(this.attributes.marker_label_placement);
     const symbol = this.config.configuredColor ? null : parseMarkerSymbol(this.attributes.marker_symbol);
@@ -17326,6 +19152,9 @@ class Entity {
       "arrow-outline": this._emitterColor("marker_arrow_outline_color") ?? "",
       "ring-color": this._emitterColor("marker_ring_color") ?? "",
       "ring-width": width == null ? "" : String(width),
+      // D4a-inner-ring (the Enterprise, Lee 2026-11-09): a thin ring just inside the ring, the same width rule.
+      "inner-ring-color": this._emitterColor("marker_inner_ring_color") ?? "",
+      "inner-ring-width": innerWidth == null ? "" : String(innerWidth),
     };
   }
 
@@ -17553,7 +19382,7 @@ class Entity {
       const catchUp = this._catchUpPlan();
       // Built already facing the catch-up's travel, rather than built at the
       // emitter's angle and turned the moment its slide starts.
-      if (catchUp) this._travel = this._segmentBearing(catchUp.start, this.latLng);
+      if (catchUp) this._travel = this._catchUpBearing(catchUp);
       this.marker = this.createMapMarker(catchUp?.start);
 
       // Bind distance tooltip if configured
@@ -17581,45 +19410,10 @@ class Entity {
       // Added to the map or cluster group first, so the slide moves a marker
       // that is already there.
       if (catchUp) this._startCatchUp(catchUp);
-      // Track the current place so update() can recreate the pill on zone change
-      this._currentPlaceIcon = this.placeIcon;
-      // For `display: pill`, the offset callout + leader only show at/above
-      // pillCalloutMinZoom; recreate the marker when zoom crosses that boundary
-      // so it isn't obtrusive when zoomed out region-wide.
-      if (this.display == "pill") {
-        this._calloutActive = this.map.getZoom() >= this.config.pillCalloutMinZoom;
-        this._onZoomEnd = () => {
-          if (!this.marker) return;
-          const active = this.map.getZoom() >= this.config.pillCalloutMinZoom;
-          if (active !== this._calloutActive) {
-            this._calloutActive = active;
-            this._recreateMarker();
-          }
-        };
-        this.map.on("zoomend", this._onZoomEnd);
-      }
     }
     this.historyManager.setup();
     this.circle.setup();
     this.geoJson.setup();
-  }
-
-  /**
-   * Remove and rebuild the marker in place (preserving cluster membership).
-   * @private
-   */
-  _recreateMarker() {
-    const cg = this._clusterGroup;
-    this._settleSlide();
-    this.marker.remove();
-    this.marker = this.createMapMarker();
-    if (cg) {
-      cg.addLayer(this.marker);
-    } else {
-      this.marker.addTo(this.map);
-    }
-    this._currentTitle = this.title;
-    this._currentPlaceIcon = this.placeIcon;
   }
 
   /** @param {TimelineEntry} entry */
@@ -17665,14 +19459,6 @@ class Entity {
 
   /** @returns {string} */
   get tooltip() {
-    // placeName only resolves in pill mode and when inside a zone.
-    const placeName = this.placeName;
-    if (placeName) {
-      // "<person> is at <place>" - strip a trailing tracker-ish suffix so
-      // "Mom Location" reads as "Mom is at Extended Family".
-      const who = (this.friendlyName ?? "").replace(/\s+(location|tracker|device|phone|gps)$/i, "");
-      return `${who} is at ${placeName}`;
-    }
     return this.friendlyName ?? "";
   }
 
@@ -17721,46 +19507,6 @@ class Entity {
 
   get icon() {
     return this.config.icon ?? this.attributes.icon;
-  }
-
-  /**
-   * The HA zone state object the entity is currently inside (a "named place"),
-   * or null when it isn't in one. Drives the place-pill marker. Matches the
-   * entity's RAW state against each zone's friendly_name (case-insensitive);
-   * the home zone reports state "home".
-   * @returns {object|null}
-   */
-  get zoneState() {
-    const raw = this.hass.states[this.id]?.state;
-    if (!raw || ["not_home", "away", "unknown", "unavailable"].includes(raw.toLowerCase())) {
-      return null;
-    }
-    const target = raw.toLowerCase();
-    for (const eid in this.hass.states) {
-      if (!eid.startsWith("zone.")) continue;
-      const fn = (this.hass.states[eid].attributes?.friendly_name ?? "").toLowerCase();
-      if (fn && fn === target) {
-        return this.hass.states[eid];
-      }
-    }
-    if (target === "home" && this.hass.states["zone.home"]) {
-      return this.hass.states["zone.home"];
-    }
-    return null;
-  }
-
-  /** @returns {string|null} mdi icon of the current named place (pill mode only). */
-  get placeIcon() {
-    if (this.display != "pill") return null;
-    const z = this.zoneState;
-    return z ? (z.attributes?.icon ?? "mdi:map-marker") : null;
-  }
-
-  /** @returns {string|null} friendly_name of the current named place (pill mode only). */
-  get placeName() {
-    if (this.display != "pill") return null;
-    const z = this.zoneState;
-    return z ? (z.attributes?.friendly_name ?? null) : null;
   }
 
   /**
@@ -17829,6 +19575,7 @@ class Entity {
     this.circle.remove();
     this.geoJson.remove();
     this.historyManager.remove({ unsubscribe: unsubscribeHistory });
+    this._removeTrack();
   }
 
   /**
@@ -17843,6 +19590,7 @@ class Entity {
    * @param {object|null} clusterGroup the cluster group markers currently live in
    */
   hide(clusterGroup = null) {
+    this._removeTrack();
     if (!this.marker) return;
     this._settleSlide();
     this._stopTooltipClock();
@@ -17870,7 +19618,7 @@ class Entity {
     // replace a marker the viewer is already watching - and get no catch-up.
     if (!this.marker && !this.config.geoJsonConfig?.hideMarker && this.latLng) {
       const catchUp = this._catchUpPlan();
-      if (catchUp) this._travel = this._segmentBearing(catchUp.start, this.latLng);
+      if (catchUp) this._travel = this._catchUpBearing(catchUp);
       this.marker = this.createMapMarker(catchUp?.start);
       if (clusterGroup) {
         clusterGroup.addLayer(this.marker);
@@ -17880,17 +19628,14 @@ class Entity {
       this._clusterGroup = clusterGroup;
       this._lastSetLatLng = this.latLng;
       if (catchUp) this._startCatchUp(catchUp);
-      this._currentPlaceIcon = this.placeIcon;
     }
 
     // Only update marker if it exists (not hidden by GeoJSON config)
     if (this.marker) {
-      // Recreate the marker when the display title changes (state/attribute
-      // modes) OR when the entity enters/leaves a named place (place-pill).
+      // Recreate the marker when the display title changes (state/attribute modes).
       const titleChanged = (this.display == "state" || this.display == "attribute") && this.title != this._currentTitle;
-      const placeIconChanged = this.placeIcon != this._currentPlaceIcon;
-      if (titleChanged || placeIconChanged) {
-        Logger.debug("[Entity] recreating marker for " + this.id + " (title/place change)");
+      if (titleChanged) {
+        Logger.debug("[Entity] recreating marker for " + this.id + " (title change)");
         // When recreating marker, we need to track if it was in a cluster
         const wasInCluster = clusterGroup && clusterGroup.hasLayer(this.marker);
         this._settleSlide();
@@ -17904,9 +19649,9 @@ class Entity {
           this.marker.addTo(this.map);
         }
         this._currentTitle = this.title;
-        this._currentPlaceIcon = this.placeIcon;
       }
 
+      this.refreshMarkerPopup();
       this.refreshMarkerPicture();
       this.refreshMarkerRotation();
       this.refreshMarkerColor();
@@ -17914,6 +19659,7 @@ class Entity {
       this.refreshMarkerArrow();
       this.refreshMarkerStyling();
       this.refreshMarkerLateness();
+      this.refreshMarkerGroundShadow();
       this.refreshMarkerZIndex();
       this.refreshTooltip();
       this.updateMarkerPosition();
@@ -17922,6 +19668,61 @@ class Entity {
     this.historyManager.update();
     this.circle.update();
     this.geoJson.update();
+    this._growTrack();
+  }
+
+  /**
+   * D4h (backlog 348): show or hide this marker's track. Fetched once, on the viewer's click, with their own
+   * sign-in; drawn as one line from the oldest real fix to the marker's position.
+   * @returns {Promise<boolean>} whether a track is now shown
+   */
+  async toggleTrack() {
+    if (this._track) {
+      this._removeTrack();
+      return false;
+    }
+    const path = trackOf(this.attributes?.marker_track);
+    if (!path || this._trackLoading || typeof this.hass?.callApi !== "function") return false;
+    this._trackLoading = true;
+    try {
+      const answer = await this.hass.callApi("GET", apiPath(path));
+      if (this.removed || this._track) return Boolean(this._track);
+      const latlngs = trackPoints(answer);
+      appendPosition(latlngs, this.attributes?.latitude, this.attributes?.longitude);
+      const line = new leafletSrcExports.Polyline(latlngs, {
+        color: trackColor(this.attributes), weight: TRACK_WEIGHT, opacity: TRACK_OPACITY,
+        interactive: false, lineJoin: "round", lineCap: "round",
+      }).addTo(this.map);
+      this._track = { path, latlngs, line };
+      return true;
+    } catch (err) {
+      Logger.warn(`[LiveTrackMapCard] track for ${this.id} not fetched: ${err?.message ?? err}`);
+      return false;
+    } finally {
+      this._trackLoading = false;
+    }
+  }
+
+  /** Take the track off the map. */
+  _removeTrack() {
+    if (!this._track) return;
+    this.map.removeLayer(this._track.line);
+    this._track = null;
+  }
+
+  /**
+   * A shown track follows the marker: each new published position (a real fix) is added to its end. A marker
+   * that stops publishing a track, or publishes another, loses the one drawn.
+   */
+  _growTrack() {
+    if (!this._track) return;
+    if (trackOf(this.attributes?.marker_track) !== this._track.path) {
+      this._removeTrack();
+      return;
+    }
+    if (appendPosition(this._track.latlngs, this.attributes?.latitude, this.attributes?.longitude)) {
+      this._track.line.setLatLngs(this._track.latlngs);
+    }
   }
 
   /**
@@ -18028,6 +19829,19 @@ class Entity {
   }
 
   /**
+   * Give an existing marker the entity's current ground-shadow altitude. In
+   * place, never a rebuild, so a slide in flight carries on; the marker's CSS
+   * transition eases the shadow to its new place.
+   */
+  refreshMarkerGroundShadow() {
+    if (!this.marker) return;
+    const wanted = this.groundShadowAltitude;
+    if (wanted === this._currentGroundShadow) return;
+    this._setMarkerAttribute("ground-shadow", wanted);
+    this._currentGroundShadow = wanted;
+  }
+
+  /**
    * Give an existing marker the entity's current arrow angle. In place, as
    * refreshMarkerRotation(); the arrow's CSS transition does the turning.
    */
@@ -18038,6 +19852,71 @@ class Entity {
     this._setMarkerAttribute("arrow", wanted ?? "");
     this._currentArrow = wanted;
   }
+  /**
+   * Does a click open the popup: D4e's `marker_info`, or D4g's photo or links?
+   * @returns {boolean}
+   */
+  _wantsPopup() {
+    return infoOf(this.attributes?.marker_info) !== null || hasExtras(this.attributes);
+  }
+
+  /**
+   * The click popup: D4e's text, then D4g's photo, credit and links, and "Details", which opens Home
+   * Assistant's own dialog for the entity (the click no longer does). Content is a function: read on open.
+   * @param {object} marker
+   */
+  _bindPopup(marker) {
+    marker.bindPopup(() => {
+      const info = infoOf(this.attributes?.marker_info);
+      if (!hasExtras(this.attributes)) return info ? infoHtml(info) : "";
+      // D4e's text carries its own title; otherwise the popup is named as the hover box is (it closes now)
+      const shown = Boolean(this._track);
+      return info ? infoHtml(info) + extrasHtml(this.attributes, undefined, shown)
+        : extrasHtml(this.attributes, titleLine(this.attributes ?? {}, this.tooltip), shown);
+    }, { ...INFO_POPUP, offset: [0, -this.config.size / 2] });
+    if (marker._ltmcPopupWired) return;   // refreshMarkerPopup may bind again; the handlers stay
+    marker._ltmcPopupWired = true;
+    // The hover box must not sit behind the popup. Leaflet 1.9 opens a hover tooltip on `click` as well as on
+    // mouseover (leaflet-src.js _initTooltipInteractions), after the popup's own click handler: close it a tick later.
+    marker.on("tooltipopen", () => {
+      if (marker.isPopupOpen?.()) setTimeout(() => { if (marker.isPopupOpen?.()) marker.closeTooltip(); }, 0);
+    });
+    marker.on("popupopen", (e) => {
+      marker.closeTooltip?.();
+      const box = e.popup?.getElement?.();
+      // D4h: "Track" fetches and draws the track, "Hide track" takes it off; the popup closes so the line shows.
+      const track = box?.querySelector(".ltmc-track-button");
+      if (track) {
+        track.onclick = () => {
+          marker.closePopup();
+          this.toggleTrack();
+        };
+      }
+      const button = box?.querySelector(".ltmc-details-button");
+      if (!button) return;
+      button.onclick = () => {
+        marker.closePopup();
+        const ev = new Event("hass-action", { bubbles: true, composed: true });
+        ev.detail = { config: { entity: this.id, tap_action: { action: "more-info" } }, action: "tap" };
+        (marker.getElement?.() ?? this.map.getContainer()).dispatchEvent(ev);
+      };
+    });
+  }
+
+  /**
+   * A photo or link can arrive after the marker was made (Ships looks the photo up): bind or drop the popup in
+   * place, and tell the marker element whether a click is the popup's (MapCardEntityMarker._badgeTap).
+   */
+  refreshMarkerPopup() {
+    if (!this.marker) return;
+    const wanted = this._wantsPopup();
+    if (wanted === this._hasPopup) return;
+    if (wanted) this._bindPopup(this.marker);
+    else this.marker.unbindPopup?.();
+    this._setMarkerAttribute("info", wanted ? "true" : "");
+    this._hasPopup = wanted;
+  }
+
   /**
    * Set an attribute on the live marker element AND in the DivIcon's stored
    * html. Leaflet re-parses that html whenever it rebuilds the icon - leaving
@@ -18106,10 +19985,13 @@ class Entity {
    * @param {LatLng} to
    */
   _moveMarkerTo(from, to) {
-    const seconds = this._transitionSeconds();
+    const auto = this._transitionSeconds();
+    const segment = auto === 0 && Entity._prefersReducedMotion() ? null : this._segmentSeconds(from);
+    // Read before the slide is cancelled: what is left of it to draw.
+    const left = this._slideRemainder();
     this._cancelTransition();
     const paths = this._pathFollower();
-    if (!from || !seconds || this.positionJump) {
+    if (!from || (!auto && segment === null) || this.positionJump) {
       this.marker.setLatLng(this._drawnAt(to));
       this._endClusterMove();
       // A slide cut short by a placement leaves no travel to face.
@@ -18117,6 +19999,7 @@ class Entity {
       return;
     }
     let route = null;
+    let onTrack = false;
     if (paths) {
       try {
         route = paths.plan(this.marker.getLatLng?.() ?? from, to, this.attributes);
@@ -18128,9 +20011,29 @@ class Entity {
       // The emitter's own line, when it publishes one (06_MAP_CONTRACT.md
       // D3c-v route hint; util/TrackPath.js): along the track, not across.
       route = trackRoute(this.attributes?.track_path, this.marker.getLatLng?.() ?? from, to);
+      // A fix arriving mid-slide: the marker carries on along what is left of
+      // the old slide, then the new path from where that one ends. Measured
+      // 2026-10-20 on Madrid's published fixes (bin\ltmc_seg_survey.py): with
+      // slides as long as their segments, 28 of 55 next fixes arrive mid-slide,
+      // the marker then a median 0.5 km and up to 3 km behind the new path's
+      // start - past TRACK_PATH_JOIN_M, a straight slide off the line.
+      if (left) {
+        const onward = trackRoute(this.attributes?.track_path, left[left.length - 1], to);
+        if (onward) route = [...left, ...onward.slice(1)];
+      }
+      onTrack = route !== null;
     }
     if (route === PLACE) {
       // No way round over water: placed at its fix, never slid across land.
+      this.marker.setLatLng(this._drawnAt(to));
+      this._endClusterMove();
+      this._arrive();
+      return;
+    }
+    const seconds = onTrack && segment !== null ? Math.max(auto, segment) : auto;
+    if (!seconds) {
+      // The first move after the page opened, with no track route to time
+      // by the emitter's segment: placed, as before.
       this.marker.setLatLng(this._drawnAt(to));
       this._endClusterMove();
       this._arrive();
@@ -18196,7 +20099,7 @@ class Entity {
    * catchUpFromPrevious(); a start within positionUpdateThreshold of the
    * current position is not worth a slide.
    * @private
-   * @returns {{start: LatLng, elapsedSeconds: number, remainingSeconds: number}|null}
+   * @returns {{start: LatLng, elapsedSeconds: number, remainingSeconds: number, route: Array<{lat: number, lng: number}>|null}|null}
    */
   _catchUpPlan() {
     if (!this._transitionConfigured() || Entity._prefersReducedMotion()) return null;
@@ -18210,13 +20113,19 @@ class Entity {
     const plan = catchUpFromPrevious(attrs, Date.now());
     if (!plan) return null;
     const to = this.latLng;
-    const start = new leafletSrcExports.LatLng(
-      plan.previous.lat + (to.lat - plan.previous.lat) * plan.fraction,
-      plan.previous.lng + (to.lng - plan.previous.lng) * plan.fraction,
-    );
+    // On the emitter's line when it publishes this segment's track_path
+    // (TrackPath.pathAt), else on the straight line between the two fixes.
+    const along = pathAt(attrs.track_path, plan.previous, to, plan.fraction);
+    const start = along
+      ? new leafletSrcExports.LatLng(along.start.lat, along.start.lng)
+      : new leafletSrcExports.LatLng(
+        plan.previous.lat + (to.lat - plan.previous.lat) * plan.fraction,
+        plan.previous.lng + (to.lng - plan.previous.lng) * plan.fraction,
+      );
     const threshold = this.config.positionUpdateThreshold;
     if (Number.isFinite(threshold) && this.map.distance(start, to) <= threshold) return null;
-    return { start, elapsedSeconds: plan.elapsedSeconds, remainingSeconds: plan.remainingSeconds };
+    return { start, elapsedSeconds: plan.elapsedSeconds, remainingSeconds: plan.remainingSeconds,
+      route: along ? [start, ...along.route.slice(1)] : null };
   }
 
   /**
@@ -18225,12 +20134,25 @@ class Entity {
    * fix was observed, so the NEXT update's slide is measured over a real
    * segment rather than over the time since the page opened.
    * @private
-   * @param {{start: LatLng, elapsedSeconds: number, remainingSeconds: number}} plan
+   * @param {{start: LatLng, elapsedSeconds: number, remainingSeconds: number, route: Array<{lat: number, lng: number}>|null}} plan
    */
   _startCatchUp(plan) {
     this._lastMoveAt = performance.now() - plan.elapsedSeconds * 1000;
     this._cancelTransition();
-    this._slide(plan.start, this.latLng, plan.remainingSeconds);
+    this._slide(plan.start, this.latLng, plan.remainingSeconds, plan.route);
+  }
+
+  /**
+   * The way a catch-up first faces: along its first leg on the line, or
+   * along the straight line to the fix.
+   * @private
+   * @param {{start: LatLng, route: Array<{lat: number, lng: number}>|null}} plan
+   * @returns {number|null}
+   */
+  _catchUpBearing(plan) {
+    return plan.route && plan.route.length > 2
+      ? this._routeBearing(plan.route, 0)
+      : this._segmentBearing(plan.start, this.latLng);
   }
 
   /**
@@ -18273,6 +20195,7 @@ class Entity {
     const total = cum[cum.length - 1];
     const duration = seconds * 1000;
     const started = performance.now();
+    this._sliding = { pts, cum, total, started, duration };
     this._beginClusterMove();
     // Face the way the marker is DRAWN moving. The picture's own CSS
     // transition does the turning.
@@ -18412,6 +20335,44 @@ class Entity {
    * @private
    * @returns {number}
    */
+  /**
+   * A rail move's slide time from the emitter's own segment, in seconds, or
+   * null for the 'auto' rule (SEGMENT_FROM_M above says when and why). Used
+   * only when the move follows a track route; _moveMarkerTo() decides that.
+   * @private
+   * @param {LatLng|null} from the last position the marker was sent to
+   * @returns {number|null}
+   */
+  _segmentSeconds(from) {
+    if (this.config.positionTransition !== "auto") return null;
+    // A declared jump never gets here as a slide: _moveMarkerTo places it.
+    if (this.attributes?.map_layer !== "rail" || !from) return null;
+    const a = this.attributes;
+    const seg = a.segment_duration_s;
+    if (!isFiniteNumber(seg) || seg <= 0) return null;
+    if (!isFiniteNumber(a.previous_latitude) || !isFiniteNumber(a.previous_longitude)) return null;
+    if (metres({ lat: a.previous_latitude, lng: a.previous_longitude }, from) > SEGMENT_FROM_M) return null;
+    return Math.min(seg, SEGMENT_SLIDE_MAX_S);
+  }
+
+  /**
+   * What is left of the slide in progress, from where the marker is drawn to
+   * where that slide ends, or null with no slide running.
+   * @private
+   * @returns {Array<{lat: number, lng: number}>|null}
+   */
+  _slideRemainder() {
+    const sl = this._sliding;
+    if (!this._transitionFrame || !sl || !this.marker?.getLatLng) return null;
+    const f = Math.min(1, Math.max(0, (performance.now() - sl.started) / sl.duration));
+    if (f >= 1) return null;
+    const d = f * sl.total;
+    let leg = 0;
+    while (leg < sl.pts.length - 2 && sl.cum[leg + 1] <= d) leg++;
+    const at = this.marker.getLatLng();
+    return [{ lat: at.lat, lng: at.lng }, ...sl.pts.slice(leg + 1)];
+  }
+
   _transitionSeconds() {
     const now = performance.now();
     const previous = this._lastMoveAt;
@@ -18445,6 +20406,34 @@ class Entity {
    * @returns {Marker}
    */
   createMapMarker(at = this.latLng) {
+    // Map capacity (card SSOT 2026-10-25): with the canvas on, a plain look is drawn on its
+    // D10 class's canvas and every other marker sits in its class's pane; with culling on, a
+    // DOM marker off screen leaves the map. EntitiesRenderService sets which apply
+    // (MarkerPlacement.setupPlacement): neither with clustering on.
+    const dom = this._createDomMarker(at);
+    const how = placement(this.map);
+    if (!how.canvas && !how.cull) return dom;
+    try {
+      if (how.canvas) bandMarker(dom, this.map);
+      const wrap = how.cull ? (m) => cullMarker(m, this.map) : null;
+      if (how.canvas) {
+        const c = canvasMarkerFor(dom, this, MARKER_TAG, wrap);
+        if (c) return c;
+      }
+      if (wrap) return wrap(dom);
+    } catch (e) {
+      Logger.error("[Entity] canvas or culling failed for " + this.id + "; plain DOM marker used", e);
+    }
+    return dom;
+  }
+
+  /**
+   * The card's own DOM marker, which a canvas marker wraps and falls back to.
+   * @private
+   * @param {LatLng} [at]
+   * @returns {Marker}
+   */
+  _createDomMarker(at = this.latLng) {
     Logger.debug("[MarkerEntity] Creating marker for " + this.id + " with display mode " + this.display);
     let icon = this.icon;
     const picture = this.markerPicture;
@@ -18465,30 +20454,19 @@ class Entity {
     this._currentStyling = styling;
     const late = this.markerLateness;
     this._currentLateness = late;
+    const shadowAlt = this.groundShadowAltitude;
+    this._currentGroundShadow = shadowAlt;
     const zIndexOffset = this.zIndexOffset;
     this._currentZIndex = zIndexOffset;
 
     const extraCssClasses = this.darkMode ? "dark" : "";
-    // Pill mode (opt-in via display: pill): zone icon + initials when the entity
-    // is in a named place; falls back to the normal initials marker otherwise.
-    // placeIcon already returns null unless display === "pill".
-    const placeIcon = this.placeIcon;
-    if (this.display == "pill") {
-      icon = null;
-    }
-    // Pill-callout geometry (must match MapCardEntityMarker's pill render): the
-    // pill sits up-left of the point with a short leader line down-right to a
-    // dot on the exact location, so it doesn't cover what's underneath. The
-    // callout only engages at/above pillCalloutMinZoom; zoomed out, the pill
-    // centers on the point with no leader (so it isn't obtrusive region-wide).
+    // The place pill (`display: pill`) was folded into the people, devices and
+    // zones drawn as Home Assistant draws them (presence/, Lee 2026-11-19).
     const s = this.config.size;
-    const pillW = 2 * s + 14;
-    const pillH = s + 8;
-    const off = Math.round(s * 0.7);
-    const boxW = pillW + off;
-    const boxH = pillH + off;
-    const callout = placeIcon != null && this.map.getZoom() >= this.config.pillCalloutMinZoom;
 
+    // `marker_info` (D4e), or a photo or links (D4g, backlog 346): a click opens a popup here instead of the
+    // entity dialog; the popup's "Details" opens the dialog.
+    const hasInfo = this._wantsPopup();
     const marker = new leafletSrcExports.Marker(at, {
       icon: new leafletSrcExports.DivIcon({
         html: `
@@ -18502,10 +20480,9 @@ class Entity {
             icon="${icon ?? ""}"
             picture="${picture ?? ""}"
             bare-picture="${this.barePicture ? "true" : ""}"
+            ground-shadow="${shadowAlt}"
             rotation="${rotation ?? ""}"
             rotation-transition="${this.config.rotationTransition ?? 0}"
-            place-icon="${placeIcon ?? ""}"
-            callout="${callout}"
             color="${color}"
             label-color="${labelColor ?? ""}"
             arrow="${arrow ?? ""}"
@@ -18514,6 +20491,8 @@ class Entity {
             arrow-outline="${styling["arrow-outline"]}"
             ring-color="${styling["ring-color"]}"
             ring-width="${styling["ring-width"]}"
+            inner-ring-color="${styling["inner-ring-color"]}"
+            inner-ring-width="${styling["inner-ring-width"]}"
             shape="${styling["shape"]}"
             symbol="${styling["symbol"]}"
             alternate="${styling["alternate"]}"
@@ -18527,10 +20506,11 @@ class Entity {
             size="${this.config.size}"
             extra-css-classes="${extraCssClasses}"
             tap-action='${JSON.stringify(this.config.tapAction)}'
+            info="${hasInfo ? "true" : ""}"
           ></${MARKER_TAG}>
         `,
-        iconSize: placeIcon ? (callout ? [boxW, boxH] : [pillW, pillH]) : [s, s],
-        iconAnchor: placeIcon ? (callout ? [boxW - 2, boxH - 2] : [pillW / 2, pillH / 2]) : [s / 2, s / 2],
+        iconSize: [s, s],
+        iconAnchor: [s / 2, s / 2],
         className: ''
       }),
       zIndexOffset
@@ -18540,6 +20520,8 @@ class Entity {
     // distance feature (setup) rebinds a permanent tooltip when configured.
     // Content is a FUNCTION: Leaflet calls it on every open and update(), so
     // the next-station minutes are worked out when shown, not when bound.
+    if (hasInfo) this._bindPopup(marker);
+    this._hasPopup = hasInfo;
     if (!this.config.distanceEntity) {
       marker.bindTooltip(() => this.tooltipHtml(), {
         direction: "top",
@@ -18660,6 +20642,326 @@ function parsePathOptions(input = {}) {
   return { enabled, minZoom, strictZoom, sources: sources.length ? sources : DEFAULT_SOURCES };
 }
 
+/**
+ * `entity_filter` (Lee, 2026-11-20): the card picks its own entities, so a dashboard no longer needs
+ * auto-entities around it. The syntax is auto-entities' own include / exclude form, so moving a
+ * dashboard over is a paste of its `filter:` block:
+ *
+ *   entity_filter:
+ *     include:
+ *       - attributes: {source: live_track_aircraft}
+ *         options: {size: 60}
+ *       - domain: geo_location
+ *         not: {attributes: {source: live_track_aircraft}}
+ *         options: {size: 28}
+ *       - domain: device_tracker
+ *         has_position: true
+ *         away_from_person_m: 100
+ *     exclude:
+ *       - state: unavailable
+ *
+ * Rules:
+ * - An entity takes the FIRST include rule it matches, and that rule's `options`. Every key in one
+ *   rule must match. An entity any exclude rule matches is left out.
+ * - `domain`, `entity_id`, `state` and each `attributes` value match as text: exact, `*` as a
+ *   wildcard, or `/regex/` (auto-entities' forms). A missing attribute matches nothing.
+ * - `not:` holds a rule; it matches when that rule does not.
+ * - `has_position: true` needs numeric `latitude` and `longitude` attributes (`false`: neither).
+ * - `away_from_person_m: N` leaves out an entity a person lists in its `device_trackers` while it
+ *   is within N metres of that person (who has a position): the person's own marker covers it.
+ * - No sort: the list is in rule order, then by entity id. The map stacks markers by layer and
+ *   screen position, never by list order, and a sort by a changing state would hand the card a
+ *   new list on nearly every update.
+ * - Any other rule key is refused with an error naming it, never ignored (06_MAP_CONTRACT.md
+ *   D6a-ii: a silently ignored key and a broken feature look the same).
+ *
+ * The work is incremental: Home Assistant's frontend replaces only the state objects that changed,
+ * so an entity is matched again only when its own state object changed, or, for
+ * `away_from_person_m`, when a person carrying it changed. The list (and `version`) changes only
+ * when an entity arrives, leaves or moves to another rule.
+ */
+
+const RULE_KEYS = Object.freeze(["domain", "entity_id", "state", "attributes", "not", "options", "has_position", "away_from_person_m"]);
+const FILTER_KEYS = Object.freeze(["include", "exclude"]);
+
+/**
+ * A text matcher in auto-entities' forms: `/regex/flags`, a `*` wildcard, or the exact text.
+ * Numbers and booleans are compared as their text, as a YAML value may be either.
+ * @param {*} value as written
+ * @param {string} where for the error
+ * @returns {(s: string) => boolean}
+ */
+function textMatcher(value, where) {
+  if (typeof value === "number" || typeof value === "boolean") value = String(value);
+  if (typeof value !== "string") throw new Error(`entity_filter: ${where} must be text, a * wildcard or a /regex/`);
+  const re = /^\/(.+)\/([a-z]*)$/.exec(value);
+  if (re) {
+    let rx;
+    try { rx = new RegExp(re[1], re[2]); } catch { throw new Error(`entity_filter: ${where} is not a valid regex: ${value}`); }
+    return (s) => rx.test(s);
+  }
+  if (value.includes("*")) {
+    const rx = new RegExp("^" + value.split("*").map((p) => p.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*") + "$");
+    return (s) => rx.test(s);
+  }
+  return (s) => s === value;
+}
+
+/**
+ * @param {*} raw one rule as written
+ * @param {string} where for errors
+ * @param {boolean} withOptions whether `options` is allowed (include rules)
+ * @returns {object} the compiled rule
+ */
+function compileRule(raw, where, withOptions) {
+  if (raw == null || typeof raw !== "object" || Array.isArray(raw)) throw new Error(`entity_filter: ${where} must be a mapping`);
+  const rule = {};
+  for (const key of Object.keys(raw)) {
+    if (!RULE_KEYS.includes(key)) throw new Error(`entity_filter: ${where} has "${key}", which is not supported (supported: ${RULE_KEYS.join(", ")})`);
+  }
+  if (raw.domain !== undefined) rule.domain = textMatcher(raw.domain, `${where}.domain`);
+  if (raw.entity_id !== undefined) rule.entityId = textMatcher(raw.entity_id, `${where}.entity_id`);
+  if (raw.state !== undefined) rule.state = textMatcher(raw.state, `${where}.state`);
+  if (raw.attributes !== undefined) {
+    const a = raw.attributes;
+    if (a == null || typeof a !== "object" || Array.isArray(a)) throw new Error(`entity_filter: ${where}.attributes must be a mapping`);
+    rule.attributes = Object.keys(a).map((k) => [k, textMatcher(a[k], `${where}.attributes.${k}`)]);
+  }
+  if (raw.has_position !== undefined) {
+    if (typeof raw.has_position !== "boolean") throw new Error(`entity_filter: ${where}.has_position must be true or false`);
+    rule.hasPosition = raw.has_position;
+  }
+  if (raw.away_from_person_m !== undefined) {
+    const m = raw.away_from_person_m;
+    if (typeof m !== "number" || !Number.isFinite(m) || m <= 0) throw new Error(`entity_filter: ${where}.away_from_person_m must be a number of metres above 0`);
+    rule.awayM = m;
+  }
+  if (raw.not !== undefined) rule.not = compileRule(raw.not, `${where}.not`, false);
+  if (raw.options !== undefined) {
+    if (!withOptions) throw new Error(`entity_filter: ${where} cannot have options`);
+    const o = raw.options;
+    if (o == null || typeof o !== "object" || Array.isArray(o)) throw new Error(`entity_filter: ${where}.options must be a mapping`);
+    rule.options = o;
+  } else {
+    rule.options = {};
+  }
+  rule.usesPersons = rule.awayM !== undefined || Boolean(rule.not?.usesPersons);
+  return rule;
+}
+
+/**
+ * Parse `entity_filter` as written.
+ * @param {*} raw
+ * @returns {{include: object[], exclude: object[], usesPersons: boolean}|null} null when absent
+ */
+function parseEntityFilter(raw) {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw !== "object" || Array.isArray(raw)) throw new Error("entity_filter must be a mapping with include (and exclude)");
+  for (const key of Object.keys(raw)) {
+    if (!FILTER_KEYS.includes(key)) throw new Error(`entity_filter has "${key}", which is not supported (supported: ${FILTER_KEYS.join(", ")})`);
+  }
+  const list = (v, name) => {
+    if (v === undefined || v === null) return [];
+    if (!Array.isArray(v)) throw new Error(`entity_filter.${name} must be a list of rules`);
+    return v;
+  };
+  const include = list(raw.include, "include").map((r, i) => compileRule(r, `include[${i}]`, true));
+  const exclude = list(raw.exclude, "exclude").map((r, i) => compileRule(r, `exclude[${i}]`, false));
+  if (include.length === 0) throw new Error("entity_filter.include needs at least one rule");
+  return { include, exclude, usesPersons: [...include, ...exclude].some((r) => r.usesPersons) };
+}
+
+/**
+ * @param {object} st a state object
+ * @returns {boolean} whether the state carries numeric latitude and longitude
+ */
+function hasPosition(st) {
+  const a = st?.attributes;
+  return typeof a?.latitude === "number" && Number.isFinite(a.latitude)
+    && typeof a?.longitude === "number" && Number.isFinite(a.longitude);
+}
+
+/**
+ * Great-circle distance in metres (haversine, mean Earth radius).
+ * @param {number} lat1 degrees
+ * @param {number} lon1 degrees
+ * @param {number} lat2 degrees
+ * @param {number} lon2 degrees
+ * @returns {number}
+ */
+function metresBetween(lat1, lon1, lat2, lon2) {
+  const r = Math.PI / 180;
+  const dLat = (lat2 - lat1) * r, dLon = (lon2 - lon1) * r;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(dLon / 2) ** 2;
+  return 2 * 6371008.8 * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+/**
+ * @param {object} rule compiled
+ * @param {string} id entity id
+ * @param {object} st its state object
+ * @param {object} states every state
+ * @param {Map<string, string[]>} carriers tracker id -> ids of the persons listing it
+ * @returns {boolean}
+ */
+function matchRule(rule, id, st, states, carriers) {
+  if (rule.domain && !rule.domain(id.slice(0, id.indexOf(".")))) return false;
+  if (rule.entityId && !rule.entityId(id)) return false;
+  if (rule.state && !rule.state(String(st?.state))) return false;
+  if (rule.attributes) {
+    for (const [key, m] of rule.attributes) {
+      const v = st?.attributes?.[key];
+      if (v === undefined || v === null || !m(String(v))) return false;
+    }
+  }
+  if (rule.hasPosition !== undefined && hasPosition(st) !== rule.hasPosition) return false;
+  if (rule.awayM !== undefined && carriedWithin(id, st, rule.awayM, states, carriers)) return false;
+  if (rule.not && matchRule(rule.not, id, st, states, carriers)) return false;
+  return true;
+}
+
+/**
+ * @param {string} id entity id
+ * @param {object} st its state object
+ * @param {number} m metres
+ * @param {object} states every state
+ * @param {Map<string, string[]>} carriers tracker id -> ids of the persons listing it
+ * @returns {boolean} whether a person listing this entity, with a position, is within `m` metres of it
+ */
+function carriedWithin(id, st, m, states, carriers) {
+  const persons = carriers?.get(id);
+  if (!persons || !hasPosition(st)) return false;
+  const a = st.attributes;
+  for (const pid of persons) {
+    const p = states[pid];
+    if (!hasPosition(p)) continue;
+    if (metresBetween(p.attributes.latitude, p.attributes.longitude, a.latitude, a.longitude) < m) return true;
+  }
+  return false;
+}
+
+class EntityFilter {
+  /** @type {number} bumped whenever the list changes */
+  version = 0;
+
+  /**
+   * @param {{include: object[], exclude: object[], usesPersons: boolean}} spec from parseEntityFilter
+   */
+  constructor(spec) {
+    this.spec = spec;
+    /** @type {Map<string, {st: object, rule: number, entry: object|null}>} */
+    this._cache = new globalThis.Map();
+    this._states = null;
+    this._entries = [];
+    this._dirtyList = true;
+    /** @type {Map<string, object>} person id -> its state object when last seen */
+    this._persons = new globalThis.Map();
+    /** @type {Map<string, string[]>} tracker id -> persons listing it */
+    this._carriers = new globalThis.Map();
+  }
+
+  /**
+   * The rule index an entity takes, or -1.
+   * @param {string} id entity id
+   * @param {object} st its state object
+   * @param {object} states every state
+   * @returns {number}
+   */
+  _ruleFor(id, st, states) {
+    for (const ex of this.spec.exclude) if (matchRule(ex, id, st, states, this._carriers)) return -1;
+    const inc = this.spec.include;
+    for (let i = 0; i < inc.length; i++) if (matchRule(inc[i], id, st, states, this._carriers)) return i;
+    return -1;
+  }
+
+  /**
+   * Persons changed? Rebuild who carries what, and return every entity whose answer may differ.
+   * @param {object} states every state
+   * @returns {Set<string>}
+   */
+  _personsChanged(states) {
+    const touched = new Set();
+    let changed = false;
+    const seen = new Set();
+    for (const id in states) {
+      if (!id.startsWith("person.")) continue;
+      seen.add(id);
+      if (this._persons.get(id) !== states[id]) { changed = true; this._persons.set(id, states[id]); }
+    }
+    for (const id of [...this._persons.keys()]) if (!seen.has(id)) { changed = true; this._persons.delete(id); }
+    if (!changed) return touched;
+    for (const t of this._carriers.keys()) touched.add(t);
+    this._carriers = new globalThis.Map();
+    for (const [pid, p] of this._persons) {
+      const list = p?.attributes?.device_trackers;
+      if (!Array.isArray(list)) continue;
+      for (const t of list) {
+        if (typeof t !== "string") continue;
+        touched.add(t);
+        const c = this._carriers.get(t);
+        if (c) c.push(pid); else this._carriers.set(t, [pid]);
+      }
+    }
+    return touched;
+  }
+
+  /**
+   * Bring the result up to date with Home Assistant's states.
+   * @param {object} states hass.states
+   * @returns {boolean} whether the list changed
+   */
+  update(states) {
+    if (!states || states === this._states) return false;
+    this._states = states;
+    const recheck = this.spec.usesPersons ? this._personsChanged(states) : null;
+    let changed = false;
+    let seen = 0;
+    for (const id in states) {
+      seen++;
+      const st = states[id];
+      const c = this._cache.get(id);
+      if (c && c.st === st && !(recheck && recheck.has(id))) continue;
+      const rule = this._ruleFor(id, st, states);
+      if (c) {
+        c.st = st;
+        if (c.rule !== rule) {
+          c.rule = rule;
+          c.entry = rule < 0 ? null : { ...this.spec.include[rule].options, entity: id };
+          changed = true;
+        }
+      } else {
+        this._cache.set(id, { st, rule, entry: rule < 0 ? null : { ...this.spec.include[rule].options, entity: id } });
+        if (rule >= 0) changed = true;
+      }
+    }
+    if (this._cache.size > seen) {
+      for (const [id, c] of this._cache) {
+        if (id in states) continue;
+        this._cache.delete(id);
+        if (c.rule >= 0) changed = true;
+      }
+    }
+    if (changed) { this.version++; this._dirtyList = true; }
+    return changed;
+  }
+
+  /**
+   * The entries, in rule order then entity id: `{...rule options, entity: id}`. An entry object
+   * stays the same while its entity keeps its rule, so a caller can cache what it builds from it.
+   * @returns {object[]}
+   */
+  entries() {
+    if (this._dirtyList) {
+      const list = [];
+      for (const [id, c] of this._cache) if (c.rule >= 0) list.push([c.rule, id, c.entry]);
+      list.sort((a, b) => (a[0] - b[0]) || (a[1] < b[1] ? -1 : a[1] > b[1] ? 1 : 0));
+      this._entries = list.map((x) => x[2]);
+      this._dirtyList = false;
+    }
+    return this._entries;
+  }
+}
+
 class MapConfig {
   /** @type {string} */
   title;
@@ -18698,6 +21000,8 @@ class MapConfig {
   focusFollow;
   /** @type {boolean} */
   clusterMarkers;
+  /** @type {boolean} plain markers on a canvas (canvas_markers, default true) */
+  canvasMarkers;
 
   /** @type {boolean} */
   debug = false;
@@ -18717,6 +21021,9 @@ class MapConfig {
 
     // Enable marker clustering (default: false)
     this.clusterMarkers = this._setConfigWithDefault(inputConfig.cluster_markers, false);
+    // Plain markers drawn on a canvas (map capacity, card SSOT 2026-10-25). On unless the
+    // dashboard says `canvas_markers: false`; never with clustering (MapCard).
+    this.canvasMarkers = inputConfig.canvas_markers !== false;
 
     // Path-following (item 270 part 2): water markers slide along the water
     // from zoom 14 up. ON by default (Lee, 2026-09-29); `path_following:
@@ -18744,15 +21051,14 @@ class MapConfig {
         this.historyEnd = inputConfig.history_end ?? "now";
     }
 
-    this.entities = MapConfig.firstPerEntity(inputConfig["entities"] ? inputConfig.entities : []).map((ent) => {
-      // Pass historyStart/ historyEnd defaults down to entity
-      return new EntityConfig(ent, {
-          historyStart: this.historyStart,
-          historyEnd: this.historyEnd,
-          // Is the date range manager enabled
-          dateRangeManagerEnabled: (!!this.historyDateSelection)
-      });
-    });
+    // `entity_filter` (Lee, 2026-11-20): the card picks its own entities (util/EntityFilter.js).
+    // Parsed here so a malformed filter is refused like any invalid config; MapCard runs it.
+    this.entityFilter = parseEntityFilter(inputConfig.entity_filter);
+    /** One EntityConfig per entry object, so an entry the filter keeps is not parsed again. */
+    this._entityConfigOf = new WeakMap();
+    // The dashboard's own `entities:`, one per entity; they come before the filter's and win.
+    this.staticEntries = MapConfig.firstPerEntity(inputConfig["entities"] ? inputConfig.entities : []);
+    this.entities = this.staticEntries.map((ent) => this.entityConfigFor(ent));
 
 
     // Allow as none array
@@ -18783,11 +21089,44 @@ class MapConfig {
     // list names them. Parsed by ShapeLayersRenderService.
     this.shapeLayers = inputConfig.shape_layers;
     this.shapeStyle = inputConfig.shape_style;
+    // Points on the map (06_MAP_CONTRACT_OVERLAYS.md D19): absent or `auto` finds publishers by attribute
+    // shape, `false` turns it off, a list names them. Parsed by PointLayersRenderService.
+    this.pointLayers = inputConfig.point_layers;
 
     // The weather radar overlay (06_MAP_CONTRACT_OVERLAYS.md D13, backlog
     // 280): absent offers it, ticked; `false` removes it; a mapping sets
     // opacity, show, rainviewer_scheme, sources. Parsed by RadarOverlayService.
     this.weatherRadar = inputConfig.weather_radar;
+
+    // The lightning overlay (06_MAP_CONTRACT_OVERLAYS.md D14): absent offers
+    // it; `false` removes it; a mapping sets opacity, show, outline. Parsed by
+    // LightningOverlayService.
+    this.lightning = inputConfig.lightning;
+
+    // The cloud overlay (06_MAP_CONTRACT_OVERLAYS.md D17): absent offers it,
+    // unticked; `false` removes it; a mapping sets opacity, show. Parsed by
+    // CloudOverlayService.
+    this.clouds = inputConfig.clouds;
+
+    // `layer_control: false` (Lee, 2026-11-02): no checkboxes. Every overlay stays as configured here and a viewer's
+    // stored choice is ignored, since nobody could change it back. TileLayersService.
+    this.layerControl = inputConfig.layer_control !== false;
+    // `layer_control_collapsed` (Lee, 2026-11-19): the checkboxes fold behind Leaflet's layers icon; `false` keeps
+    // them always open, as before. TileLayersService.
+    this.layerControlCollapsed = inputConfig.layer_control_collapsed !== false;
+    // `attribution_collapse` (Lee, 2026-11-19): the credits box opens in full, then collapses behind an "i" button
+    // after 5 s or the viewer's first touch; `false` keeps it always open. util/CreditsToggle.js.
+    this.creditsCollapse = parseCreditsCollapse(inputConfig.attribution_collapse);
+    // `presence_markers` (Lee, 2026-11-19): people, devices and zones as Home Assistant's own map draws them
+    // (every non-passive zone, picture pins, shared zone bubbles); `false` keeps the older markers.
+    // presence/PresenceRenderService.js.
+    this.presenceMarkers = inputConfig.presence_markers !== false;
+    // `overview` (Lee, 2026-11-19, step 2): the People / Devices / Zones panel beside the map. Unset: shown when
+    // the card fills a panel view, as Home Assistant's own map card; true or false forces it. presence/LtmcMapOverview.js.
+    this.overview = typeof inputConfig.overview === "boolean" ? inputConfig.overview : undefined;
+    // `weather_area` (Lee, 2026-11-02): {latitude, longitude, radius_km}. Shapes are drawn only where they touch it,
+    // radar tiles only inside its box. util/WeatherArea.js.
+    this.weatherArea = parseWeatherArea(inputConfig.weather_area);
 
     // Allow as none array
     let plugins = this._setConfigWithDefault(inputConfig.plugins, []);
@@ -18804,10 +21143,50 @@ class MapConfig {
           this._setConfigWithDefault(inputConfig.tile_layer_attribution, '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>')
         )
       : null;
-    if(!(Number.isFinite(this.x) && Number.isFinite(this.y)) && this.focusEntity == null && this.entities.length == 0) {
+    if(!(Number.isFinite(this.x) && Number.isFinite(this.y)) && this.focusEntity == null && this.entities.length == 0 && this.entityFilter == null) {
       throw new Error("We need a map latitude & longitude; set at least [x, y], a focus_entity or have at least 1 entities defined.");
     }
     Logger.debug(`[MapConfig]: created with title: ${this.title}, focusEntity: ${this.focusEntity}, x: ${this.x}, y: ${this.y}, zoom: ${this.zoom}, cardSize: ${this.cardSize}, entities: ${this.entities.map(e => e.id)}, wms: ${this.wms.map(l => l.url)}, tileLayers: ${this.tileLayers.map(l => l.url)}, plugins: ${this.plugins.map(p => p.name)}, historyStart: ${this.historyStart}, historyEnd: ${this.historyEnd}, historyDateSelection: ${this.historyDateSelection}, themeMode: ${this.themeMode}, mapOptions: ${this.mapOptions}, focusFollow: ${this.focusFollow}`);
+  }
+
+  /**
+   * How this map's markers are drawn (MarkerPlacement): the canvas unless
+   * `canvas_markers: false`, culling always; neither with clustering, where the
+   * cluster group decides what is on the map.
+   * @returns {{canvas: boolean, cull: boolean}}
+   */
+  get markerDrawing() {
+    const cluster = Boolean(this.clusterMarkers);
+    return { canvas: this.canvasMarkers && !cluster, cull: !cluster };
+  }
+
+  /**
+   * The EntityConfig for one entry, built once per entry object (a string entry each time).
+   * @param {object|string} ent
+   * @returns {EntityConfig}
+   */
+  entityConfigFor(ent) {
+    const keyed = ent !== null && typeof ent === "object";
+    const cached = keyed ? this._entityConfigOf.get(ent) : undefined;
+    if (cached) return cached;
+    // Pass historyStart/ historyEnd defaults down to entity
+    const config = new EntityConfig(ent, {
+      historyStart: this.historyStart,
+      historyEnd: this.historyEnd,
+      // Is the date range manager enabled
+      dateRangeManagerEnabled: (!!this.historyDateSelection)
+    });
+    if (keyed) this._entityConfigOf.set(ent, config);
+    return config;
+  }
+
+  /**
+   * The entity list with the filter's entries after the dashboard's own (the first entry per
+   * entity wins, so an entity listed in `entities:` keeps its own options).
+   * @param {object[]} filtered entries from EntityFilter.entries()
+   */
+  setFilteredEntries(filtered) {
+    this.entities = MapConfig.firstPerEntity([...this.staticEntries, ...filtered]).map((ent) => this.entityConfigFor(ent));
   }
 
   _setConfigWithDefault(input, d = null) {
@@ -18878,7 +21257,7 @@ class MapConfig {
 
 }
 
-/* global "0.1.0+5a0bc01" */
+/* global "0.1.8+2bcbc9a" */
 
 /**
  * This card's version, stamped in at build time by build/stamp-version.js:
@@ -18888,7 +21267,7 @@ class MapConfig {
  * "0.0.0-unbuilt", which can never be mistaken for a release.
  * @type {string}
  */
-const VERSION = "0.1.0+5a0bc01" ;
+const VERSION = "0.1.8+2bcbc9a" ;
 
 class HaUrlResolveService {
   hass;
@@ -19233,6 +21612,59 @@ class LayerWithHistory extends Layer {
 
 }
 
+/**
+ * A folded layer control must not tick a box with the click that opened it
+ * (Lee, 2026-11-19, seen on the look page).
+ *
+ * Folded, Leaflet's layer control opens on hover with a mouse, so the list
+ * appears under the pointer and the click aimed at the icon lands on the
+ * first row: "Rail lines" was switched off, and the choice stored. Leaflet
+ * 1.9.4 guards against this only until the next tick (`_expandSafely`, a
+ * `setTimeout` with no delay), which a human click does not beat.
+ *
+ * So: watch the control's own class for the moment it opens (no private
+ * Leaflet API), and for GUARD_MS after that, swallow clicks on its rows
+ * (captured before Leaflet's handlers; the default action prevented, so a
+ * checkbox keeps its state). A deliberate choice after that works as before.
+ */
+const GUARD_MS = 400;
+const EXPANDED_CLASS = "leaflet-control-layers-expanded";
+const LIST = ".leaflet-control-layers-list";
+
+/**
+ * @param {HTMLElement} container the layer control's container
+ * @param {{ms?: number, now?: () => number}} [options]
+ * @returns {() => void} undo
+ */
+function guardFirstClick(container, options = {}) {
+  if (!container || typeof container.addEventListener !== "function") return () => {};
+  const ms = options.ms ?? GUARD_MS;
+  const now = options.now ?? (() => Date.now());
+  let openedAt = -Infinity;
+  let wasOpen = container.classList.contains(EXPANDED_CLASS);
+  const watch = () => {
+    const open = container.classList.contains(EXPANDED_CLASS);
+    if (open && !wasOpen) openedAt = now();
+    wasOpen = open;
+  };
+  const Observer = globalThis.MutationObserver;
+  const observer = Observer ? new Observer(watch) : null;
+  observer?.observe(container, { attributes: true, attributeFilter: ["class"] });
+  const onClick = (e) => {
+    watch(); // a class change not yet delivered to the observer
+    if (now() - openedAt >= ms) return;
+    const t = e.target;
+    if (!t || typeof t.closest !== "function" || !t.closest(LIST)) return;
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  container.addEventListener("click", onClick, true);
+  return () => {
+    observer?.disconnect();
+    container.removeEventListener("click", onClick, true);
+  };
+}
+
 /** Where a viewer's choice for a named overlay is kept, per overlay name. */
 const OVERLAY_STORAGE_PREFIX = "ltmc.overlay.";
 
@@ -19284,7 +21716,10 @@ class TileLayersService {
   /** The layer control, when any overlay is named; else null. */
   control = null;
 
-  constructor(map, tileLayersConfig, wmsLayersConfig, urlResolver, linkedEntityService, dateRangeManager, storage = globalThis.localStorage) {
+  constructor(map, tileLayersConfig, wmsLayersConfig, urlResolver, linkedEntityService, dateRangeManager, storage = globalThis.localStorage, controlled = true, collapsed = true) {
+    this.controlled = controlled;
+    // Folded behind Leaflet's layers icon unless `layer_control_collapsed: false` (Lee, 2026-11-19).
+    this.collapsed = collapsed !== false;
     this.map = map;
     this.tileLayersConfig = tileLayersConfig;
     this.wmsLayersConfig = wmsLayersConfig;
@@ -19321,20 +21756,22 @@ class TileLayersService {
         return;
       }
       // The viewer's own choice wins over the dashboard's `show`.
-      const stored = storedOverlayChoice(l.name, this.storage);
+      const stored = this.controlled ? storedOverlayChoice(l.name, this.storage) : null;
       named[l.name] = layer.render(stored ?? l.show !== false);
     });
     return named;
   }
 
   /**
-   * A layer control with one checkbox per named overlay, top right, always
-   * open (no icon to hover). Each change is remembered in the viewer's own
-   * browser. Nothing is added when no overlay is named.
+   * A layer control with one checkbox per named overlay, top right, folded
+   * behind Leaflet's layers icon (a tap or hover opens it; open always with
+   * `layer_control_collapsed: false`; it was always open until 2026-11-19).
+   * Each change is remembered in the viewer's own browser. Nothing is added
+   * when no overlay is named.
    * @param {{[name: string]: object}} named
    */
   _addControl(named) {
-    if (!named || Object.keys(named).length === 0) return;
+    if (!this.controlled || !named || Object.keys(named).length === 0) return;
     this._ensureControl(named);
   }
 
@@ -19345,8 +21782,10 @@ class TileLayersService {
    */
   _ensureControl(named = {}) {
     if (this.control) return this.control;
-    this.control = new L$2.Control.Layers(null, named, { collapsed: false, position: "topright" });
+    this.control = new L$2.Control.Layers(null, named, { collapsed: this.collapsed, position: "topright" });
     this.control.addTo(this.map);
+    // Folded, the click that opens the list must not tick its first box (util/LayerControlGuard.js).
+    if (this.collapsed) this.unguard = guardFirstClick(this.control.getContainer?.());
     this.byLayer = new globalThis.Map(Object.entries(named).map(([n, layer]) => [layer, n]));
     const remember = (shown) => (e) => {
       const n = this.byLayer.get(e.layer);
@@ -19364,10 +21803,21 @@ class TileLayersService {
    * @param {object} layer a Leaflet layer
    * @param {string} name the checkbox label
    * @param {boolean} [show] the default when the viewer has made no choice
+   * @param {string} [former] the label this layer had before (util/LayerLabel.js): a
+   *   choice stored under it is used when none is stored under `name`, and kept under `name`
    * @returns {boolean} whether the layer is on the map
    */
-  addOverlay(layer, name, show = true) {
-    const stored = storedOverlayChoice(name, this.storage);
+  addOverlay(layer, name, show = true, former = undefined) {
+    if (!this.controlled) {
+      const shown = show !== false;
+      if (shown) layer.addTo(this.map);
+      return shown;
+    }
+    let stored = storedOverlayChoice(name, this.storage);
+    if (stored === null && former && former !== name) {
+      stored = storedOverlayChoice(former, this.storage);
+      if (stored !== null) storeOverlayChoice(name, stored, this.storage);
+    }
     const on = stored ?? show !== false;
     if (on) layer.addTo(this.map);
     const control = this._ensureControl();
@@ -22284,6 +24734,123 @@ function mergedAway(entities) {
   return hidden;
 }
 
+/**
+ * Credits in the map's attribution box for the data the map is drawing
+ * (backlog 228; Lee 2026-09-18, wording decided 2026-10-22 23:42).
+ *
+ * Every Live Track entity carries Home Assistant's plain-text `attribution`.
+ * The box shows each distinct one ONCE, and only while an entity carrying it
+ * is drawn:
+ *
+ *   - only the credit part, up to the first full stop; the whole string is
+ *     on hover (the span's `title`);
+ *   - any URL or bare domain in it becomes a link (a domain links to https).
+ *
+ * "Data: Renfe (data.renfe.com), CC BY 4.0, modified. This integration is not
+ * sponsored by ..." shows as "Data: Renfe (data.renfe.com), CC BY 4.0,
+ * modified" with data.renfe.com linked. A full stop is a "." followed by
+ * white space or the end, so "4.0" and "renfe.com" are not stops.
+ */
+
+/**
+ * Escape text for HTML: Leaflet's attribution control sets innerHTML.
+ * @param {*} value
+ * @returns {string}
+ */
+function esc$1(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** A URL, or a bare domain whose last label is 2 to 24 letters. */
+const LINK = /\bhttps?:\/\/[^\s,;()<>"']+|\b(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,24}\b/gi;
+
+/** A full stop: a "." followed by white space or the end. */
+const STOP$1 = /\.(?=\s|$)/;
+
+/**
+ * The credit part and the rest, or null for anything but a non-blank string.
+ * @param {*} text
+ * @returns {{short: string, rest: string, full: string}|null}
+ */
+function creditParts(text) {
+  if (typeof text !== "string") return null;
+  const full = text.trim().replace(/\s+/g, " ");
+  if (!full) return null;
+  const m = STOP$1.exec(full);
+  if (!m) return { short: full, rest: "", full };
+  const short = full.slice(0, m.index).trim();
+  const rest = full.slice(m.index + 1).trim();
+  return short ? { short, rest, full } : { short: full, rest: "", full };
+}
+
+/**
+ * Text as HTML with every URL and bare domain made a link.
+ * @param {string} text
+ * @returns {string}
+ */
+function linkify(text) {
+  const s = String(text ?? "");
+  let out = "";
+  let at = 0;
+  for (const m of s.matchAll(LINK)) {
+    let word = m[0];
+    const trail = /[.!?:]+$/.exec(word);           // "https://x.org." ends a sentence
+    if (trail) word = word.slice(0, trail.index);
+    if (!word) continue;
+    const href = /^https?:\/\//i.test(word) ? word : `https://${word}`;
+    out += esc$1(s.slice(at, m.index));
+    out += `<a href="${esc$1(href)}" target="_blank" rel="noopener noreferrer">${esc$1(word)}</a>`;
+    at = m.index + word.length;
+  }
+  return out + esc$1(s.slice(at));
+}
+
+/** Between two credits: the separator Leaflet puts after its own prefix. */
+const CREDIT_SEPARATOR = ' <span aria-hidden="true">|</span> ';
+
+/**
+ * Every credit as ONE line for the box, or "" when there is none. Leaflet
+ * joins separate attributions with commas, and the credits hold commas of
+ * their own, so the card writes them as one entry, separated by "|".
+ * Strings that cut to the same credit are shown once, every full string on
+ * hover (seen 2026-10-22: two Fintraffic strings, one credit). Sorted, so
+ * the same set always gives the same line.
+ * @param {Array<*>|Set<*>} texts entities' `attribution`s
+ * @returns {string}
+ */
+function creditLine(texts) {
+  const groups = new Map();
+  for (const t of texts ?? []) {
+    const p = creditParts(t);
+    if (!p) continue;
+    if (!groups.has(p.short)) groups.set(p.short, new Set());
+    groups.get(p.short).add(p.full);
+  }
+  return [...groups.keys()].sort((a, b) => a.localeCompare(b, "en")).map((short) =>
+    `<span class="ltmc-credit" title="${esc$1([...groups.get(short)].sort().join(" | "))}">${linkify(short)}</span>`,
+  ).join(CREDIT_SEPARATOR);
+}
+
+/**
+ * May this entity skip an update when its own state is unchanged (map capacity, card SSOT
+ * 2026-10-25)? Not when anything else feeds its marker: a distance entity, device
+ * trackers, a zone pill, history, a circle, GeoJSON, history playback or a fixed position.
+ * @param {Entity} e
+ * @returns {boolean}
+ */
+function selfContained(e) {
+  const c = e.config ?? {};
+  return !c.distanceEntity && !c.circleConfig?.enabled && !c.geoJsonConfig?.enabled &&
+    !e.historyManager?.hasHistory && e.display !== "pill" &&
+    !(e.attributes?.device_trackers?.length) && !e.currentTimelineEntry && !(c.fixedX && c.fixedY);
+}
+
+
 class EntitiesRenderService {
 
   /** @type {[Entity]} */
@@ -22323,6 +24890,22 @@ class EntitiesRenderService {
   isStale = () => false;
 
   /**
+   * Has the viewer hidden this entity's group? (D4f, backlog 345; the map
+   * card passes its GroupFilter.) Such an entity is not drawn, not merged
+   * with another source's marker and not credited.
+   * @type {(id: string) => boolean}
+   */
+  isFiltered = () => false;
+
+  /**
+   * Is this entity drawn by another service (people, devices and zones by
+   * presence/PresenceRenderService, Lee 2026-11-19)? Its marker is kept off
+   * the map here, but it still counts when the map fits its entities.
+   * @type {(id: string) => boolean}
+   */
+  drawnElsewhere = () => false;
+
+  /**
    * Entities not drawn because another source already draws the same
    * object (06_MAP_CONTRACT.md D11). Recomputed on every render: a
    * proximity pair can form or part as positions move.
@@ -22338,7 +24921,7 @@ class EntitiesRenderService {
     const candidates = [];
     for (const ent of this.entities) {
       try {
-        if (this.isStale(ent.id)) continue;
+        if (this.isStale(ent.id) || this.isFiltered(ent.id) || this.drawnElsewhere(ent.id)) continue;
         const ll = ent.latLng;
         if (!ll) continue;
         candidates.push({ id: ent.id, attributes: ent.attributes, lat: ll.lat, lng: ll.lng });
@@ -22355,26 +24938,82 @@ class EntitiesRenderService {
     }
   }
 
-  /** Hide every entity D11 has merged away. */
+  /** Hide every entity D11 has merged away, and every one whose group the viewer hid (D4f). */
   hideMerged() {
     for (const ent of this.entities) {
-      if (this.merged.has(ent.id)) {
+      if (this.merged.has(ent.id) || this.isFiltered(ent.id) || this.drawnElsewhere(ent.id)) {
         try { ent.hide(this.markerClusterGroup); } catch (e) { Logger.error("hide failed " + ent.id, e); }
       }
     }
   }
 
   /**
-   * Is this entity kept off the map: stale, or merged away?
+   * The one credit line this service has put in the map's attribution box
+   * (backlog 228), or "" for none.
+   * @type {string}
+   */
+  credits = "";
+
+  /**
+   * Credit the `attribution` of every entity drawn now: not stale, not
+   * merged away, with a position, as one line (util/EntityCredits.js
+   * creditLine). A source leaves the line when its last drawn entity goes.
+   * The box is touched only when the line changes. Never lets a bad credit
+   * stop the map drawing.
+   */
+  refreshCredits() {
+    const ctl = this.map?.attributionControl;
+    if (!ctl) return;
+    const texts = new Set();
+    for (const ent of this.entities ?? []) {
+      try {
+        if (this.isHidden(ent.id) || this.drawnElsewhere(ent.id) || !ent.latLng) continue;
+        const a = ent.attributes?.attribution;
+        if (typeof a === "string") texts.add(a);
+      } catch (e) {
+        Logger.error("[EntitiesRenderService] credit skipped " + ent.id, e);
+      }
+    }
+    try {
+      const line = creditLine(texts);
+      if (line === this.credits) return;
+      if (this.credits) ctl.removeAttribution(this.credits);
+      if (line) ctl.addAttribution(line);
+      this.credits = line;
+    } catch (e) {
+      Logger.error("[EntitiesRenderService] credits failed", e);
+    }
+  }
+
+  /**
+   * Is this entity kept off the map: stale, hidden by the viewer, or merged away?
    * @param {string} id entity id
    * @returns {boolean}
    */
   isHidden(id) {
-    return this.isStale(id) || this.merged.has(id);
+    return this.isStale(id) || this.isFiltered(id) || this.merged.has(id);
   }
 
-  constructor(map, hass, focusFollowConfig, entityConfigs, linkedEntityService, dateRangeManager, historyService, isDarkMode, clusterMarkers = true, isStale = null) {
+  /**
+   * @param {object} map Leaflet map
+   * @param {object} hass
+   * @param {FocusFollowConfig} focusFollowConfig
+   * @param {EntityConfig[]} entityConfigs
+   * @param {HaLinkedEntityService} linkedEntityService
+   * @param {HaDateRangeService} dateRangeManager
+   * @param {HaHistoryService} historyService
+   * @param {boolean} isDarkMode
+   * @param {boolean} [clusterMarkers]
+   * @param {((id: string) => boolean)|null} [isStale]
+   * @param {{canvas: boolean, cull: boolean}|null} [markerDrawing] canvas markers and
+   *   culling for this map (MarkerPlacement). MapCard turns both off with clustering;
+   *   null leaves every marker a plain DOM marker in Leaflet's markerPane.
+   *   (12th since the rebase onto main, 2026-11-19: main's isFiltered took the 11th.)
+   */
+  constructor(map, hass, focusFollowConfig, entityConfigs, linkedEntityService, dateRangeManager, historyService, isDarkMode, clusterMarkers = true, isStale = null, isFiltered = null, markerDrawing = null) {
     if (isStale) this.isStale = isStale;
+    if (isFiltered) this.isFiltered = isFiltered;
+    if (markerDrawing) setupPlacement(map, clusterMarkers ? { canvas: false, cull: false } : markerDrawing);
     this.map = map;
     this.hass = hass;
     this.focusFollowConfig = focusFollowConfig;
@@ -22415,6 +25054,7 @@ class EntitiesRenderService {
 
     this.computeMerged();
     this.hideMerged();
+    this.refreshCredits();
 
     if (!this.focusFollowConfig.isNone && this.focusFollowConfig.hasPause) {
       this._setupFollowPauseListeners();
@@ -22519,6 +25159,15 @@ class EntitiesRenderService {
     this.entityConfigs = plan.map((p) => p.config);
     this.computeMerged();
     this.hideMerged();
+    this.refreshCredits();
+  }
+
+  /**
+   * Markers drawn on the canvases now, every class together.
+   * @returns {number}
+   */
+  canvasCount() {
+    return (this.map?.__ltmcCanvasLayers ?? []).reduce((n, l) => n + (l?.count?.() ?? 0), 0);
   }
 
   cleanup() {
@@ -22546,6 +25195,10 @@ class EntitiesRenderService {
       if (this.hass) ent.hass = this.hass;
     }
     this.computeMerged();
+    // Map capacity (card SSOT 2026-10-25): an entity whose state object Home Assistant has
+    // not replaced since its last update is not updated again. Home Assistant replaces a
+    // state's object on every change, so the same object is the same state.
+    const states = this.hass?.states;
     this.entities.forEach((ent) => {
       // Entity keeps the hass object from setup(); Lovelace replaces hass on
       // every state change, so without this the marker reads a stale snapshot
@@ -22554,15 +25207,24 @@ class EntitiesRenderService {
         if (this.hass) {
           ent.hass = this.hass;
         }
-        if (this.isHidden(ent.id)) {
+        if (this.isHidden(ent.id) || this.drawnElsewhere(ent.id)) {
+          ent._seenState = undefined;
           ent.hide(this.markerClusterGroup);
           return;
         }
+        const st = states?.[ent.id];
+        if (st !== undefined && st === ent._seenState && ent.marker && selfContained(ent)) {
+          stats.skipped++;
+          return;
+        }
+        ent._seenState = st;
+        stats.updated++;
         ent.update(this.markerClusterGroup);
       } catch (e) {
         Logger.error("Entity: " + ent.id + " failed to update", e);
       }
     });
+    this.refreshCredits();
     this.updateInitialView();
   }
 
@@ -23126,6 +25788,44 @@ class GeoJsonRenderService {
 }
 
 /**
+ * The label of a publisher's checkbox in the layer control (Lee, 2026-11-19).
+ *
+ * A publisher (shapes D12, points D19) is a sensor, and Home Assistant builds
+ * its `friendly_name` as the DEVICE name followed by the entity's own name:
+ * "Live Track Weather" + "Storm reports". With a dozen of them the device
+ * name repeats on every line and makes each one too long. So the label drops
+ * the device name when the friendly name starts with it, as Home Assistant's
+ * own frontend does for an entity with a name of its own: "Storm reports".
+ * Any integration, nothing named in this file.
+ *
+ * - The dashboard's own `name` for the layer always wins, as before.
+ * - No device, a device name the friendly name does not start with, or a
+ *   friendly name that IS only the device name: the friendly name as before.
+ * - No friendly name: the entity id, as before.
+ *
+ * `former` is the label the card used before this change (the full friendly
+ * name) when it differs: a viewer's ticks are stored per label, so the
+ * control reads a choice stored under the old label once and keeps it.
+ * @param {object} hass Home Assistant's frontend object (states, entities, devices)
+ * @param {string} id the publisher's entity id
+ * @param {?string} itemName the dashboard's own `name`, if any
+ * @returns {{name: string, former: (string|undefined)}}
+ */
+function layerLabel(hass, id, itemName) {
+  if (itemName !== null && itemName !== undefined) return { name: itemName || id, former: undefined };
+  const fn = hass?.states?.[id]?.attributes?.friendly_name;
+  if (typeof fn !== "string" || fn === "") return { name: id, former: undefined };
+  const deviceId = hass?.entities?.[id]?.device_id;
+  const device = deviceId ? hass?.devices?.[deviceId] : undefined;
+  const deviceName = device?.name_by_user || device?.name;
+  if (typeof deviceName === "string" && deviceName !== "" && fn.startsWith(deviceName + " ")) {
+    const own = fn.slice(deviceName.length + 1).trim();
+    if (own !== "") return { name: own, former: fn };
+  }
+  return { name: fn, former: undefined };
+}
+
+/**
  * Shapes on the map (06_MAP_CONTRACT.md D12, backlog 277).
  *
  * A publisher is one entity whose `shapes_url` names a file of shapes by key
@@ -23134,10 +25834,16 @@ class GeoJsonRenderService {
  * priority per event) and `attribution`. The card fetches each file once,
  * keeps it in memory only, and fills translucent shapes over the tiles and
  * under every marker, lowest priority first. Nothing here names a publisher.
+ * A `polygons` item carrying `info` {title, text} is clickable and shows it
+ * (D12 as amended for Live Track Weather item 310); every other shape stays
+ * non-interactive.
  */
 
 /** Colour and priority for an event the publisher sent no style for (D12 rule 8). */
 const UNKNOWN_STYLE = Object.freeze({ color: "#808080", priority: 999 });
+
+/** A line's casing shows this many px either side of it (D12 as amended for D15). */
+const CASING_PX = 1;
 
 /** After a failed fetch, the same URL is tried again no sooner than this (D12 rule 6). */
 const RETRY_MS = 10 * 60 * 1000;
@@ -23160,7 +25866,7 @@ const DEFAULT_SHAPE_STYLE = Object.freeze({
  * @param {*} v
  * @returns {boolean} a plain object, not an array or null
  */
-function isPlainObject(v) {
+function isPlainObject$1(v) {
   return v !== null && typeof v === "object" && !Array.isArray(v);
 }
 
@@ -23172,7 +25878,27 @@ function isPlainObject(v) {
 function isPublisherState(state) {
   if (!state || state.state === "unavailable" || state.state === "unknown") return false;
   const a = state.attributes;
-  return isPlainObject(a) && typeof a.shapes_url === "string" && a.shapes_url !== "" && isPlainObject(a.zones);
+  // D12 rule 1 as amended for D15: a shape file, or `polygons` alone.
+  return isPlainObject$1(a) && isPlainObject$1(a.zones) && (hasShapesUrl(a) || Array.isArray(a.polygons));
+}
+
+/**
+ * @param {object} a attributes
+ * @returns {boolean} a non-empty `shapes_url`
+ */
+function hasShapesUrl(a) {
+  return typeof a.shapes_url === "string" && a.shapes_url !== "";
+}
+
+/**
+ * A publisher's place among the others (D12 as amended for D16): `shape_order`, an
+ * integer; a lower one is drawn beneath. Anything else is 0. Ties go by entity id.
+ * @param {object} attributes
+ * @returns {number}
+ */
+function shapeOrderOf(attributes) {
+  const o = attributes?.shape_order;
+  return Number.isInteger(o) ? o : 0;
 }
 
 /**
@@ -23198,7 +25924,7 @@ function parseShapeLayersOption(input) {
   const seen = new Set();
   for (const raw of list) {
     const o = typeof raw === "string" ? { entity: raw } : raw;
-    if (!isPlainObject(o) || typeof o.entity !== "string" || o.entity.trim() === "") {
+    if (!isPlainObject$1(o) || typeof o.entity !== "string" || o.entity.trim() === "") {
       Logger.warn("[ShapeLayers] shape_layers entry ignored: needs an entity", raw);
       continue;
     }
@@ -23221,7 +25947,7 @@ function parseShapeLayersOption(input) {
  */
 function parseShapeStyle(input) {
   const s = { ...DEFAULT_SHAPE_STYLE };
-  if (!isPlainObject(input)) return s;
+  if (!isPlainObject$1(input)) return s;
   const frac = (v) => typeof v === "number" && Number.isFinite(v) && v >= 0 && v <= 1;
   if (frac(input.fill_opacity)) s.fillOpacity = input.fill_opacity;
   if (frac(input.opacity)) s.opacity = input.opacity;
@@ -23232,17 +25958,19 @@ function parseShapeStyle(input) {
 }
 
 /**
- * Colour and priority for one event (D12 rule 8).
+ * Colour and priority for one event (D12 rule 8), and its optional `casing`:
+ * a colour drawn beneath a line, CASING_PX either side (D12 as amended for D15).
  * @param {string} event
  * @param {object} styles the publisher's `styles`
- * @returns {{color: string, priority: number}}
+ * @returns {{color: string, priority: number, casing?: string}}
  */
 function styleFor(event, styles) {
-  const s = isPlainObject(styles) ? styles[event] : undefined;
-  const color = isPlainObject(s) && typeof s.color === "string" && /^#[0-9a-fA-F]{6}$/.test(s.color) ? s.color : null;
-  const priority = isPlainObject(s) && Number.isInteger(s.priority) ? s.priority : null;
+  const s = isPlainObject$1(styles) ? styles[event] : undefined;
+  const color = isPlainObject$1(s) && typeof s.color === "string" && /^#[0-9a-fA-F]{6}$/.test(s.color) ? s.color : null;
+  const priority = isPlainObject$1(s) && Number.isInteger(s.priority) ? s.priority : null;
   if (color === null || priority === null) return { ...UNKNOWN_STYLE };
-  return { color, priority };
+  const casing = typeof s.casing === "string" && /^#[0-9a-fA-F]{6}$/.test(s.casing) ? s.casing : null;
+  return casing ? { color, priority, casing } : { color, priority };
 }
 
 const AREA_TYPES = new Set(["Polygon", "MultiPolygon"]);
@@ -23252,7 +25980,17 @@ const AREA_TYPES = new Set(["Polygon", "MultiPolygon"]);
  * @returns {boolean} a GeoJSON Polygon or MultiPolygon with coordinates
  */
 function isArea(g) {
-  return isPlainObject(g) && AREA_TYPES.has(g.type) && Array.isArray(g.coordinates);
+  return isPlainObject$1(g) && AREA_TYPES.has(g.type) && Array.isArray(g.coordinates);
+}
+
+const LINE_TYPES = new Set(["LineString", "MultiLineString"]);
+
+/**
+ * @param {*} g
+ * @returns {boolean} a GeoJSON LineString or MultiLineString (D12 as amended for D15)
+ */
+function isLine(g) {
+  return isPlainObject$1(g) && LINE_TYPES.has(g.type) && Array.isArray(g.coordinates);
 }
 
 /**
@@ -23267,7 +26005,7 @@ function buildDrawList(attributes, shapes) {
   const items = [];
   const missing = [];
   const styles = attributes?.styles;
-  if (isPlainObject(shapes) && isPlainObject(attributes?.zones)) {
+  if (isPlainObject$1(shapes) && isPlainObject$1(attributes?.zones)) {
     for (const key of Object.keys(attributes.zones).sort()) {
       const event = attributes.zones[key];
       if (typeof event !== "string") continue;
@@ -23278,10 +26016,11 @@ function buildDrawList(attributes, shapes) {
   }
   const polygons = Array.isArray(attributes?.polygons) ? attributes.polygons : [];
   polygons.forEach((p) => {
-    if (!isPlainObject(p) || typeof p.event !== "string" || !isArea(p)) return;
-    items.push({ kind: "polygon", key: null, event: p.event, geometry: { type: p.type, coordinates: p.coordinates }, ...styleFor(p.event, styles) });
+    if (!isPlainObject$1(p) || typeof p.event !== "string" || !(isArea(p) || isLine(p))) return;
+    const info = infoOf(p.info);
+    items.push({ kind: isLine(p) ? "line" : "polygon", key: null, event: p.event, geometry: { type: p.type, coordinates: p.coordinates }, ...styleFor(p.event, styles), ...(info ? { info } : {}) });
   });
-  const kindRank = { zone: 0, polygon: 1 };
+  const kindRank = { zone: 0, polygon: 1, line: 2 };
   const order = items.map((it, i) => [it, i]);
   order.sort(([a, ia], [b, ib]) => (b.priority - a.priority) || (kindRank[a.kind] - kindRank[b.kind]) || ia - ib);
   return { items: order.map(([it]) => it), missing };
@@ -23320,7 +26059,7 @@ const warnedKeys = new Set();
  * @returns {?object} its `shapes`, or null
  */
 function shapesOf(json) {
-  return isPlainObject(json) && isPlainObject(json.shapes) ? json.shapes : null;
+  return isPlainObject$1(json) && isPlainObject$1(json.shapes) ? json.shapes : null;
 }
 
 class ShapeLayersService {
@@ -23329,7 +26068,7 @@ class ShapeLayersService {
    * @param {*} option the card's `shape_layers`
    * @param {*} styleOption the card's `shape_style`
    * @param {{addOverlay: Function, removeOverlay: Function}} overlays the layer control (TileLayersService)
-   * @param {{fetch?: Function, now?: Function}} [deps] for tests
+   * @param {{fetch?: Function, now?: Function, area?: ?object}} [deps] for tests; `area` is the card's `weather_area`
    */
   constructor(map, option, styleOption, overlays, deps = {}) {
     this.map = map;
@@ -23338,6 +26077,7 @@ class ShapeLayersService {
     this.overlays = overlays;
     this.fetch = deps.fetch ?? ((...a) => globalThis.fetch(...a));
     this.now = deps.now ?? (() => Date.now());
+    this.area = deps.area ?? null;
     this.hass = null;
     this.renderer = null;
     /** @type {Map<string, {group: object, url: ?string, state: ?object, fileStatus: ?string, drawn: number}>} */
@@ -23401,10 +26141,14 @@ class ShapeLayersService {
     if (!p) {
       const attribution = typeof state?.attributes?.attribution === "string" ? state.attributes.attribution : undefined;
       const group = L$2.layerGroup([], attribution ? { attribution } : {});
-      const name = item.name ?? (typeof state?.attributes?.friendly_name === "string" && state.attributes.friendly_name) ?? id;
-      this.overlays.addOverlay(group, name || id, item.show);
-      p = { group, url: null, state: null, fileStatus: null, drawn: 0 };
+      // The device name left off the label (util/LayerLabel.js, Lee 2026-11-19).
+      const label = layerLabel(this.hass ?? { states: { [id]: state } }, id, item.name);
+      this.overlays.addOverlay(group, label.name, item.show, label.former);
+      p = { group, url: null, state: null, fileStatus: null, drawn: 0, order: 0 };
       this.publishers.set(id, p);
+      // A re-ticked box puts its shapes back on top: restore the order (D16).
+      const added = p;
+      group.on("add", () => this._restack(added));
     }
     if (!isPublisherState(state)) {
       if (p.drawn || p.state) this._clear(p);
@@ -23412,15 +26156,31 @@ class ShapeLayersService {
       p.url = null;
       return;
     }
-    const url = state.attributes.shapes_url;
+    const url = hasShapesUrl(state.attributes) ? state.attributes.shapes_url : null;
     if (p.url !== null && p.url !== url) files.delete(p.url);
     p.url = url;
-    const file = this._file(url, id);
+    // No shape file (D15's storms): nothing fetched, `polygons` drawn alone.
+    const file = url ? this._file(url, id) : { status: "none" };
     const fileStatus = file.status;
     if (p.state === state && p.fileStatus === fileStatus) return;
     p.state = state;
     p.fileStatus = fileStatus;
+    p.order = shapeOrderOf(state.attributes);
     this._draw(p, state.attributes, fileStatus === "ok" ? file.shapes : null);
+    this._restack(p);
+  }
+
+  /**
+   * A publisher just drawn (or re-added) lands on top of every other. Bring each one
+   * ranked above it back to the front, lowest first, so the stack is in `shape_order`
+   * again (D12 as amended for D16). Nothing moves when it is the top one.
+   * @param {object} p the publisher record
+   */
+  _restack(p) {
+    const ranked = [...this.publishers.entries()]
+      .sort(([ia, a], [ib, b]) => (a.order - b.order) || (ia < ib ? -1 : ia > ib ? 1 : 0))
+      .map(([, q]) => q);
+    for (const q of ranked.slice(ranked.indexOf(p) + 1)) q.group.eachLayer((l) => l.bringToFront());
   }
 
   /**
@@ -23482,7 +26242,8 @@ class ShapeLayersService {
    */
   _draw(p, attributes, shapes) {
     p.group.clearLayers();
-    const { items, missing } = buildDrawList(attributes, shapes);
+    const { items: all, missing } = buildDrawList(attributes, shapes);
+    const items = this.area ? all.filter((it) => geometryTouchesArea(it.geometry, this.area)) : all;
     for (const key of missing) {
       if (warnedKeys.has(key)) continue;
       warnedKeys.add(key);
@@ -23491,17 +26252,29 @@ class ShapeLayersService {
     const opacities = fillOpacities(items, this.style);
     const renderer = this._renderer();
     items.forEach((it, i) => {
-      p.group.addLayer(L$2.geoJSON({ type: "Feature", properties: {}, geometry: it.geometry }, {
-        interactive: false,
+      const feature = { type: "Feature", properties: {}, geometry: it.geometry };
+      if (it.kind === "line" && it.casing) {
+        p.group.addLayer(L$2.geoJSON(feature, {
+          interactive: false,
+          renderer,
+          style: () => ({ color: it.casing, weight: this.style.weight + 2 * CASING_PX, opacity: this.style.opacity, fill: false }),
+        }));
+      }
+      const layer = L$2.geoJSON(feature, {
+        interactive: !!it.info,
         renderer,
-        style: () => ({
-          color: it.color,
-          fillColor: it.color,
-          weight: this.style.weight,
-          opacity: this.style.opacity,
-          fillOpacity: opacities[i],
-        }),
-      }));
+        style: () => (it.kind === "line"
+          ? { color: it.color, weight: this.style.weight, opacity: this.style.opacity, fill: false }
+          : {
+            color: it.color,
+            fillColor: it.color,
+            weight: this.style.weight,
+            opacity: this.style.opacity,
+            fillOpacity: opacities[i],
+          }),
+      });
+      if (it.info) layer.bindPopup(infoHtml(it.info), INFO_POPUP);
+      p.group.addLayer(layer);
     });
     p.drawn = items.length;
   }
@@ -23542,6 +26315,567 @@ class ShapeLayersService {
 }
 
 /**
+ * Points on the map (06_MAP_CONTRACT_OVERLAYS.md D19): the parts that need no Leaflet.
+ *
+ * A publisher is one entity whose `points_url` names a file of points under /api/ and whose `point_styles` say
+ * how each style looks. The card draws the file's points as dots on one canvas per publisher, only those on
+ * screen, at most one dot per radius of screen, and opens a popup for a clicked dot. Nothing here names a
+ * publisher. First publishers: Live Track Weather's fire detections and air-quality sites (2026-11-17).
+ */
+
+
+const isPlainObject = (v) => v !== null && typeof v === "object" && !Array.isArray(v);
+const HEX = /^#[0-9a-fA-F]{6}$/;
+
+/** A style the publisher did not send (D19 rule 7). */
+const UNKNOWN_POINT_STYLE = Object.freeze({ color: "#808080", label: "Point", radius: 4, outline: null });
+const RADIUS_MIN = 2;
+const RADIUS_MAX = 10;
+/** A click this many px beyond a dot's radius still hits it (D19 rule 4). */
+const HIT_SLOP_PX = 3;
+/** The most lines a popup lists. */
+const POPUP_LINES_MAX = 12;
+const MAX_LAT$1 = 85.0511287798;
+
+/**
+ * @param {object} attributes
+ * @returns {?string} the checked `points_url` (the D4h path rule), or null
+ */
+function pointsUrlOf(attributes) {
+  return trackOf(attributes?.points_url);
+}
+
+/**
+ * Whether a state is a point publisher that can be drawn now (D19 rules 1, 8).
+ * @param {object|undefined} state
+ * @returns {boolean}
+ */
+function isPointPublisherState(state) {
+  if (!state || state.state === "unavailable" || state.state === "unknown") return false;
+  const a = state.attributes;
+  return isPlainObject(a) && isPlainObject(a.point_styles) && pointsUrlOf(a) !== null;
+}
+
+/**
+ * @param {object} states hass.states
+ * @returns {string[]} every point publisher, sorted
+ */
+function discoverPointPublishers(states) {
+  return Object.keys(states ?? {}).filter((id) => isPointPublisherState(states[id])).sort();
+}
+
+/**
+ * `point_layers`: absent or "auto" discovers; false or "off" turns it off; a list names publishers as
+ * `{entity, name, show}` or a bare entity id (as `shape_layers`).
+ * @param {*} input
+ * @returns {{mode: string, items?: {entity: string, name: ?string, show: boolean}[]}}
+ */
+function parsePointLayersOption(input) {
+  if (input === undefined || input === null || input === true || input === "auto") return { mode: "auto" };
+  if (input === false || input === "off") return { mode: "off" };
+  const items = [];
+  const seen = new Set();
+  for (const raw of Array.isArray(input) ? input : [input]) {
+    const o = typeof raw === "string" ? { entity: raw } : raw;
+    if (!isPlainObject(o) || typeof o.entity !== "string" || o.entity.trim() === "") continue;
+    const entity = o.entity.trim();
+    if (seen.has(entity)) continue;
+    seen.add(entity);
+    items.push({ entity, name: typeof o.name === "string" && o.name.trim() ? o.name.trim() : null, show: o.show !== false });
+  }
+  return { mode: "list", items };
+}
+
+/**
+ * @param {object} attributes
+ * @returns {number} `point_order`, an integer, else 0
+ */
+function pointOrderOf(attributes) {
+  const o = attributes?.point_order;
+  return Number.isInteger(o) ? o : 0;
+}
+
+/**
+ * One style's look (D19): colour, label, radius 2-10 (default 4), outline or null. Unknown or malformed: grey.
+ * @param {string} style
+ * @param {object} styles the publisher's `point_styles`
+ * @returns {{color: string, label: string, radius: number, outline: ?string}}
+ */
+function pointStyleFor(style, styles) {
+  const s = isPlainObject(styles) ? styles[style] : undefined;
+  if (!isPlainObject(s) || typeof s.color !== "string" || !HEX.test(s.color)) return { ...UNKNOWN_POINT_STYLE };
+  const label = typeof s.label === "string" && s.label.trim() ? s.label.trim().slice(0, 200) : UNKNOWN_POINT_STYLE.label;
+  const radius = Number.isInteger(s.radius) && s.radius >= RADIUS_MIN && s.radius <= RADIUS_MAX ? s.radius : UNKNOWN_POINT_STYLE.radius;
+  const outline = typeof s.outline === "string" && HEX.test(s.outline) ? s.outline : null;
+  return { color: s.color, label, radius, outline };
+}
+
+/**
+ * A parsed file -> its columns and well-formed points, each with its Mercator position in [0, 1] (computed once,
+ * so a redraw only scales and shifts). Null when it is not a D19 file (rule 6). Rule 7: a malformed point is
+ * skipped. `keep(lon, lat)` filters by place (weather_area, rule 9).
+ * @param {*} json
+ * @param {?Function} [keep]
+ * @returns {?{columns: {key: string, label: string}[], points: Array[], mx: Float64Array, my: Float64Array}}
+ */
+function pointsOf(json, keep = null) {
+  if (!isPlainObject(json) || !Array.isArray(json.points)) return null;
+  const columns = Array.isArray(json.columns)
+    ? json.columns.map((c) => ({ key: String(c?.key ?? ""), label: typeof c?.label === "string" ? c.label : String(c?.key ?? "") }))
+    : [];
+  const points = [];
+  for (const p of json.points) {
+    if (!Array.isArray(p)) continue;
+    const [lon, lat, style] = p;
+    if (!Number.isFinite(lon) || !Number.isFinite(lat) || Math.abs(lat) > 90 || Math.abs(lon) > 180) continue;
+    if (typeof style !== "string") continue;
+    if (keep && !keep(lon, lat)) continue;
+    points.push(p);
+  }
+  const mx = new Float64Array(points.length);
+  const my = new Float64Array(points.length);
+  points.forEach((p, i) => { [mx[i], my[i]] = mercator(p[0], p[1]); });
+  return { columns, points, mx, my };
+}
+
+/**
+ * Web Mercator in [0, 1], as Leaflet's EPSG:3857 at scale 1 (x east, y south).
+ * @param {number} lon
+ * @param {number} lat
+ * @returns {number[]}
+ */
+function mercator(lon, lat) {
+  const la = (Math.max(-MAX_LAT$1, Math.min(MAX_LAT$1, lat)) * Math.PI) / 180;
+  return [0.5 + lon / 360, 0.5 - Math.log(Math.tan(Math.PI / 4 + la / 2)) / (2 * Math.PI)];
+}
+
+/**
+ * The dots to draw: points inside the canvas (width x height px, its top left at (left, top) in container px),
+ * at most one per cell of `cell` px (D19 rule 3), in file order.
+ * @param {{mx: Float64Array, my: Float64Array, points: Array[]}} data
+ * @param {{scale: number, ox: number, oy: number}} view container x = mx * scale - ox, y = my * scale - oy
+ * @param {{left: number, top: number, width: number, height: number}} box
+ * @param {number} cell
+ * @returns {{i: Int32Array, x: Float64Array, y: Float64Array, n: number}}
+ */
+function visiblePoints(data, view, box, cell) {
+  const n = data.points.length;
+  const c = Math.max(1, cell);
+  const cols = Math.ceil(box.width / c) + 1;
+  const rows = Math.ceil(box.height / c) + 1;
+  const taken = new Uint8Array(cols * rows);
+  const i = new Int32Array(Math.min(n, cols * rows));
+  const x = new Float64Array(i.length);
+  const y = new Float64Array(i.length);
+  let k = 0;
+  for (let j = 0; j < n && k < i.length; j++) {
+    const px = data.mx[j] * view.scale - view.ox - box.left;
+    const py = data.my[j] * view.scale - view.oy - box.top;
+    if (px < 0 || py < 0 || px >= box.width || py >= box.height) continue;
+    const g = Math.floor(py / c) * cols + Math.floor(px / c);
+    if (taken[g]) continue;
+    taken[g] = 1;
+    i[k] = j; x[k] = px + box.left; y[k] = py + box.top; k++;
+  }
+  return { i, x, y, n: k };
+}
+
+/**
+ * The drawn dot under a container point, nearest first: within its radius + HIT_SLOP_PX.
+ * @param {{i: Int32Array, x: Float64Array, y: Float64Array, n: number}} drawn
+ * @param {number} px
+ * @param {number} py
+ * @param {Function} radiusOf (index into the points) -> px
+ * @returns {number} the point's index, or -1
+ */
+function hitTest(drawn, px, py, radiusOf) {
+  let best = -1;
+  let bestD = Infinity;
+  for (let k = 0; k < drawn.n; k++) {
+    const dx = drawn.x[k] - px;
+    const dy = drawn.y[k] - py;
+    const d = dx * dx + dy * dy;
+    const r = radiusOf(drawn.i[k]) + HIT_SLOP_PX;
+    if (d <= r * r && d < bestD) { best = drawn.i[k]; bestD = d; }
+  }
+  return best;
+}
+
+/**
+ * The popup for one point (D19 rule 4): the style's label in bold, then `label: value` per column with a value.
+ * Everything escaped.
+ * @param {Array} point
+ * @param {{key: string, label: string}[]} columns
+ * @param {{label: string}} style
+ * @returns {string}
+ */
+function pointPopupHtml(point, columns, style) {
+  const lines = [];
+  columns.forEach((c, n) => {
+    const v = point[n + 3];
+    if (v === null || v === undefined || v === "" || lines.length >= POPUP_LINES_MAX) return;
+    if (typeof v !== "string" && !Number.isFinite(v)) return;
+    lines.push(`${escapeHtml$1(c.label)}: ${escapeHtml$1(String(v))}`);
+  });
+  const title = `<b>${escapeHtml$1(style.label)}</b>`;
+  return `<div class="ltmc-shape-info">${title}${lines.length ? `<br>${lines.join("<br>")}` : ""}</div>`;
+}
+
+/**
+ * Points on the map (06_MAP_CONTRACT_OVERLAYS.md D19): one canvas of dots per publisher, in its own pane above
+ * the D12 fills and below every marker, drawn when the view stops moving. The pane takes no pointer events; a map
+ * click within a dot opens its popup. See util/PointLayers.js for the rules.
+ */
+
+const POINTS_PANE = "ltmcPointsPane";
+/** After a failed fetch, the same URL is tried again no sooner than this (D19 rule 6). */
+const POINT_RETRY_MS = 10 * 60 * 1000;
+/** The canvas reaches this share of the view beyond each edge, so a short pan shows dots before the redraw. */
+const PAD = 0.15;
+
+/**
+ * The pane, made once per map, right after the overlay pane (the D12 fills) and so before the shadow, marker,
+ * tooltip and popup panes. ⚠ Placed by DOM ORDER: this card forces every `.leaflet-pane` to `z-index: 0
+ * !important` (MapCard's styles, from ha-map-card), so a z-index here would do nothing (measured on the D19 look
+ * page: dots drew over a popup while the pane was last in the DOM). No pointer events.
+ * @param {object} map
+ * @returns {HTMLElement}
+ */
+function pointsPane(map) {
+  const pane = map.getPane(POINTS_PANE) ?? map.createPane(POINTS_PANE);
+  const after = map.getPane("overlayPane");
+  if (after?.parentNode && pane.previousSibling !== after) after.parentNode.insertBefore(pane, after.nextSibling);
+  pane.style.pointerEvents = "none";
+  return pane;
+}
+
+/**
+ * A dot's picture for one style at a device pixel ratio: the colour, a 1 px outline when the style has one.
+ * @param {{color: string, radius: number, outline: ?string}} st
+ * @param {number} dpr
+ * @returns {?HTMLCanvasElement}
+ */
+function dotSprite(st, dpr) {
+  const r = st.radius + (st.outline ? 1 : 0);
+  const c = document.createElement("canvas");
+  c.width = c.height = Math.ceil((2 * r + 2) * dpr);
+  const g = c.getContext?.("2d");
+  if (!g) return null;
+  g.scale(dpr, dpr);
+  g.beginPath();
+  g.arc(r + 1, r + 1, st.radius, 0, 2 * Math.PI);
+  g.fillStyle = st.color;
+  g.fill();
+  if (st.outline) {
+    g.lineWidth = 1;
+    g.strokeStyle = st.outline;
+    g.stroke();
+  }
+  return c;
+}
+
+/**
+ * One publisher's canvas, a Leaflet layer so the layer control can add and remove it.
+ */
+const PointCanvasLayer = L$2.Layer.extend({
+  initialize(options) {
+    L$2.setOptions(this, options);
+    this._data = null;
+    this._styles = {};
+    this._drawn = { n: 0 };
+    this._sprites = new Map();
+  },
+
+  onAdd(map) {
+    this._map = map;
+    const pane = pointsPane(map);
+    this._canvas = document.createElement("canvas");
+    this._canvas.className = "ltmc-points";
+    this._canvas.style.position = "absolute";
+    pane.appendChild(this._canvas);
+    map.on("moveend resize viewreset", this.redraw, this);
+    map.on("zoomstart", this._hide, this);
+    this.redraw();
+  },
+
+  onRemove(map) {
+    map.off("moveend resize viewreset", this.redraw, this);
+    map.off("zoomstart", this._hide, this);
+    this._canvas?.remove();
+    this._canvas = null;
+    this._drawn = { n: 0 };
+  },
+
+  _hide() {
+    if (this._canvas) this._canvas.style.visibility = "hidden";
+  },
+
+  /**
+   * @param {?object} data from pointsOf, or null for nothing
+   * @param {object} styles the publisher's `point_styles`
+   */
+  setData(data, styles) {
+    this._data = data;
+    this._styles = styles ?? {};
+    this._sprites.clear();
+    this.redraw();
+  },
+
+  /** @returns {number} dots drawn last time */
+  drawnCount() {
+    return this._drawn.n ?? 0;
+  },
+
+  _style(i) {
+    const key = this._data.points[i][2];
+    let st = this._styleCache?.get(key);
+    if (!st) {
+      if (!this._styleCache) this._styleCache = new Map();
+      st = pointStyleFor(key, this._styles);
+      this._styleCache.set(key, st);
+    }
+    return st;
+  },
+
+  redraw() {
+    const map = this._map;
+    const cv = this._canvas;
+    if (!map || !cv) return;
+    this._styleCache = new Map();
+    const size = map.getSize();
+    const padX = Math.round(size.x * PAD);
+    const padY = Math.round(size.y * PAD);
+    const box = { left: -padX, top: -padY, width: size.x + 2 * padX, height: size.y + 2 * padY };
+    const dpr = globalThis.devicePixelRatio || 1;
+    cv.width = Math.round(box.width * dpr);
+    cv.height = Math.round(box.height * dpr);
+    cv.style.width = `${box.width}px`;
+    cv.style.height = `${box.height}px`;
+    const o = map.containerPointToLayerPoint([0, 0]);
+    L$2.DomUtil.setPosition(cv, L$2.point(o.x + box.left, o.y + box.top));
+    cv.style.visibility = "";
+    const g = cv.getContext?.("2d");
+    this._drawn = { n: 0 };
+    if (!g || !this._data || !this._data.points.length) return;
+    const origin = map.getPixelOrigin();
+    const scale = map.options.crs.scale(map.getZoom());
+    const view = { scale, ox: origin.x + o.x, oy: origin.y + o.y };
+    let cell = 2;
+    for (const s of Object.keys(this._styles)) cell = Math.max(cell, pointStyleFor(s, this._styles).radius);
+    const drawn = visiblePoints(this._data, view, box, cell);
+    this._drawn = drawn;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    for (let k = 0; k < drawn.n; k++) {
+      const st = this._style(drawn.i[k]);
+      const key = `${st.color}${st.radius}${st.outline}`;
+      let sp = this._sprites.get(key);
+      if (sp === undefined) { sp = dotSprite(st, dpr); this._sprites.set(key, sp); }
+      if (!sp) continue;
+      const half = sp.width / dpr / 2;
+      g.drawImage(sp, drawn.x[k] - box.left - half, drawn.y[k] - box.top - half, sp.width / dpr, sp.height / dpr);
+    }
+  },
+
+  /**
+   * @param {{x: number, y: number}} cp a container point
+   * @returns {number} the point's index under it, or -1
+   */
+  hit(cp) {
+    if (!this._data || !this._drawn.n) return -1;
+    return hitTest(this._drawn, cp.x, cp.y, (i) => this._style(i).radius);
+  },
+
+  /**
+   * @param {number} i
+   * @returns {{latlng: number[], html: string}}
+   */
+  popupFor(i) {
+    const p = this._data.points[i];
+    return { latlng: [p[1], p[0]], html: pointPopupHtml(p, this._data.columns, this._style(i)) };
+  },
+});
+
+class PointLayersService {
+  /**
+   * @param {object} map
+   * @param {*} option the card's `point_layers`
+   * @param {{addOverlay: Function, removeOverlay: Function}} overlays the layer control
+   * @param {{now?: Function, area?: ?object}} [deps]
+   */
+  constructor(map, option, overlays, deps = {}) {
+    this.map = map;
+    this.option = parsePointLayersOption(option);
+    this.overlays = overlays;
+    this.now = deps.now ?? (() => Date.now());
+    this.area = deps.area ?? null;
+    this.hass = null;
+    /** @type {Map<string, {layer: object, url: ?string, status: ?string, failedAt?: number, order: number, state: ?object}>} */
+    this.publishers = new Map();
+    this.disposed = false;
+    this._onClick = (e) => this._click(e);
+    this._onMove = (e) => this._hover(e);
+    this._listening = false;
+  }
+
+  /** @param {object} hass */
+  render(hass) {
+    if (this.disposed) return;
+    try {
+      if (hass) this.hass = hass;
+      const states = this.hass?.states ?? {};
+      const wanted = this._wanted(states);
+      for (const id of [...this.publishers.keys()]) if (!wanted.has(id)) this._forget(id);
+      for (const [id, item] of wanted) this._update(id, item, states[id]);
+      this._listen(this.publishers.size > 0);
+    } catch (e) {
+      Logger.error("[PointLayers] render failed; markers unaffected", e);
+    }
+  }
+
+  _wanted(states) {
+    const out = new Map();
+    if (this.option.mode === "off") return out;
+    if (this.option.mode === "auto") {
+      for (const id of discoverPointPublishers(states)) out.set(id, { name: null, show: true });
+      return out;
+    }
+    for (const it of this.option.items) if (states[it.entity]) out.set(it.entity, { name: it.name, show: it.show });
+    return out;
+  }
+
+  _update(id, item, state) {
+    let p = this.publishers.get(id);
+    if (!p) {
+      const attribution = typeof state?.attributes?.attribution === "string" ? state.attributes.attribution : undefined;
+      const layer = new PointCanvasLayer(attribution ? { attribution } : {});
+      // The device name left off the label (util/LayerLabel.js, Lee 2026-11-19).
+      const label = layerLabel(this.hass ?? { states: { [id]: state } }, id, item.name);
+      p = { layer, url: null, status: null, order: 0, state: null };
+      this.publishers.set(id, p);
+      layer.on?.("add", () => this._restack());
+      this.overlays.addOverlay(layer, label.name, item.show, label.former);
+    }
+    if (!isPointPublisherState(state)) {
+      if (p.url || p.state) p.layer.setData(null, {});
+      p.url = null;
+      p.state = null;
+      p.status = null;
+      return;
+    }
+    const url = pointsUrlOf(state.attributes);
+    const order = pointOrderOf(state.attributes);
+    if (order !== p.order) { p.order = order; this._restack(); }
+    if (p.state === state && p.url === url) return;
+    p.state = state;
+    if (url !== p.url) {
+      p.url = url;
+      p.status = null;
+    }
+    if (p.status === "ok") {
+      p.layer.setData(p.data, state.attributes.point_styles);
+      return;
+    }
+    if (p.status === "loading") return;
+    if (p.status === "failed" && this.now() - p.failedAt < POINT_RETRY_MS) return;
+    this._fetch(id, p, url);
+  }
+
+  _fetch(id, p, url) {
+    p.status = "loading";
+    let req;
+    try {
+      req = Promise.resolve(this.hass.callApi("GET", apiPath(url)));
+    } catch (e) {
+      req = Promise.reject(e);
+    }
+    req.then((json) => {
+      if (this.disposed || p.url !== url) return;
+      const keep = this.area ? (lon, lat) => geometryTouchesArea({ type: "LineString", coordinates: [[lon, lat]] }, this.area) : null;
+      const data = pointsOf(json, keep);
+      if (!data) throw new Error("no points list");
+      p.status = "ok";
+      p.data = data;
+      p.layer.setData(data, p.state?.attributes?.point_styles);
+    }).catch((e) => {
+      if (this.disposed || p.url !== url) return;
+      p.status = "failed";
+      p.failedAt = this.now();
+      p.layer.setData(null, {});
+      Logger.warn(`[PointLayers] points for ${id} not loaded (${url}): ${e?.message ?? e}; retry in 10 min or on a new URL`);
+    });
+  }
+
+  /** Canvases in `point_order`, ties by entity id: a later child is drawn on top. */
+  _restack() {
+    const ranked = [...this.publishers.entries()].sort(([ia, a], [ib, b]) => (a.order - b.order) || (ia < ib ? -1 : ia > ib ? 1 : 0));
+    for (const [, q] of ranked) {
+      const cv = q.layer._canvas;
+      if (cv?.parentNode) cv.parentNode.appendChild(cv);
+    }
+  }
+
+  /** @returns {object[]} publishers on the map, topmost first */
+  _topFirst() {
+    return [...this.publishers.entries()]
+      .sort(([ia, a], [ib, b]) => (b.order - a.order) || (ia < ib ? 1 : ia > ib ? -1 : 0))
+      .map(([, q]) => q)
+      .filter((q) => q.layer._canvas);
+  }
+
+  _hitAt(cp) {
+    for (const q of this._topFirst()) {
+      const i = q.layer.hit(cp);
+      if (i >= 0) return { q, i };
+    }
+    return null;
+  }
+
+  _click(e) {
+    const h = e?.containerPoint ? this._hitAt(e.containerPoint) : null;
+    if (!h) return;
+    const { latlng, html } = h.q.layer.popupFor(h.i);
+    L$2.popup(INFO_POPUP).setLatLng(latlng).setContent(html).openOn(this.map);
+  }
+
+  _hover(e) {
+    if (this._hoverQueued || !e?.containerPoint) return;
+    this._hoverQueued = true;
+    const cp = e.containerPoint;
+    const run = () => {
+      this._hoverQueued = false;
+      if (this.disposed) return;
+      const box = this.map.getContainer?.();
+      if (box) box.style.cursor = this._hitAt(cp) ? "pointer" : "";
+    };
+    (globalThis.requestAnimationFrame ?? ((f) => setTimeout(f, 16)))(run);
+  }
+
+  _listen(on) {
+    if (on === this._listening) return;
+    this._listening = on;
+    if (on) { this.map.on("click", this._onClick); this.map.on("mousemove", this._onMove); } else {
+      this.map.off("click", this._onClick); this.map.off("mousemove", this._onMove);
+    }
+  }
+
+  _forget(id) {
+    const p = this.publishers.get(id);
+    if (!p) return;
+    this.overlays.removeOverlay(p.layer);
+    p.layer.remove();
+    this.publishers.delete(id);
+  }
+
+  cleanup() {
+    for (const id of [...this.publishers.keys()]) {
+      try { this._forget(id); } catch (e) { Logger.error("[PointLayers] cleanup", e); }
+    }
+    this._listen(false);
+    this.disposed = true;
+  }
+}
+
+/**
  * The weather radar overlay's sources and the per-tile choice between them
  * (10_SEED/06_MAP_CONTRACT_OVERLAYS.md D13, backlog 280). Pure: no Leaflet,
  * no network. RadarOverlayService draws what these functions decide.
@@ -23560,6 +26894,29 @@ const RAINVIEWER_MAX_ZOOM = 7;
 
 /** JMA's nowcast tiles stop at z10 (D13). */
 const JMA_MAX_ZOOM = 10;
+
+/** RainViewer's colour scheme and options in the tile URL. The scheme is IGNORED by RainViewer (D13, backlog 285); the options `1_1` are not. */
+const RAINVIEWER_STYLE = "2/1_1";
+
+/** nowCOAST's capabilities: one document lists every regional layer's frames. */
+const NOWCOAST_CAPS = "https://nowcoast.noaa.gov/geoserver/observations/weather_radar/wms?service=WMS&version=1.3.0&request=GetCapabilities";
+
+/**
+ * nowCOAST's five REGIONAL layers, each with its own box and time list
+ * (D13, backlog 285: the group layer has no time list, and the regional
+ * layer draws the same picture for 60% of the bytes). These boxes are also
+ * what D13 calls "the US" (Lee, 2026-10-12 00:50).
+ */
+const NOWCOAST_REGIONS = Object.freeze([
+  { region: "conus", box: { w: -130, e: -60, s: 20, n: 55 } },
+  { region: "alaska", box: { w: -176, e: -126, s: 50, n: 72 } },
+  { region: "hawaii", box: { w: -164, e: -151, s: 15, n: 26 } },
+  { region: "caribbean", box: { w: -90, e: -60, s: 10, n: 25 } },
+  { region: "guam", box: { w: 140, e: 150, s: 9, n: 18 } },
+]);
+
+/** "The US" for the source order (D13): nowCOAST's five regional boxes. */
+const US_BOXES = Object.freeze(NOWCOAST_REGIONS.map((r) => r.box));
 
 /**
  * Source table, in the order a tile tries them (D13). `boxes` are
@@ -23595,21 +26952,15 @@ const SOURCES = Object.freeze([
     boxes: [{ w: -170.32, e: -50, s: 16.93, n: 67.19 }], maxNativeZoom: null,
     credit: 'Radar: <a href="https://eccc-msc.github.io/open-data/">Environment and Climate Change Canada</a>. Contains information licensed under the <a href="https://open.canada.ca/en/open-government-licence-canada">Open Government Licence – Canada</a>.',
   },
-  {
-    id: "nowcoast", kind: "wms", frame: "nowcoast",
-    url: "https://nowcoast.noaa.gov/geoserver/observations/weather_radar/wms", layer: "base_reflectivity_mosaic",
-    list: "https://nowcoast.noaa.gov/geoserver/observations/weather_radar/wms?service=WMS&version=1.3.0&request=GetCapabilities",
-    // Its five regional boxes, from its capabilities (D13).
-    boxes: [
-      { w: -130, e: -60, s: 20, n: 55 },
-      { w: -176, e: -126, s: 50, n: 72 },
-      { w: -164, e: -151, s: 15, n: 26 },
-      { w: -90, e: -60, s: 10, n: 25 },
-      { w: 140, e: 150, s: 9, n: 18 },
-    ],
-    maxNativeZoom: null,
+  // nowCOAST: one source per regional layer, all read from one capabilities
+  // document (`group`), each requested as ITSELF at its own listed time.
+  ...NOWCOAST_REGIONS.map(({ region, box }) => ({
+    id: `nowcoast_${region}`, group: "nowcoast", kind: "wms", frame: "nowcoast",
+    url: "https://nowcoast.noaa.gov/geoserver/observations/weather_radar/wms", layer: `${region}_base_reflectivity_mosaic`,
+    list: NOWCOAST_CAPS,
+    boxes: [box], maxNativeZoom: null,
     credit: 'Radar: <a href="https://nowcoast.noaa.gov/">NOAA nowCOAST</a>',
-  },
+  })),
   {
     id: "rainviewer", kind: "rainviewer", frame: "rainviewer",
     list: "https://api.rainviewer.com/public/weather-maps.json",
@@ -23647,7 +26998,7 @@ function tileLat(y, z) {
  * @param {number} y
  * @returns {{w: number, e: number, s: number, n: number}}
  */
-function tileBounds(z, x, y) {
+function tileBounds$1(z, x, y) {
   const n = 2 ** z;
   const wx = wrapX(x, z);
   return { w: (wx / n) * 360 - 180, e: ((wx + 1) / n) * 360 - 180, n: tileLat(y, z), s: tileLat(y + 1, z) };
@@ -23673,31 +27024,54 @@ function sourceHoldsTile(t, src) {
 }
 
 /**
- * The sources whose boxes hold this tile, in trying order.
- * @param {number} z
- * @param {number} x
- * @param {number} y
- * @param {object[]} sources in trying order
- * @returns {object[]}
+ * @param {{w: number, e: number, s: number, n: number}} t a tile's box
+ * @returns {boolean} whether the whole tile lies inside one of "the US" boxes (D13)
  */
-function chainFor(z, x, y, sources) {
-  const t = tileBounds(z, x, y);
-  return sources.filter((s) => sourceHoldsTile(t, s));
+function inUs(t) {
+  return US_BOXES.some((b) => tileInBox(t, b));
 }
 
 /**
- * The source that draws this tile: the first whose box holds it and whose
- * frame is usable; null when none (the tile stays blank).
+ * A source's place in the US order (D13, Lee 2026-10-12 00:22): relays
+ * first, then RainViewer, GeoMet, nowCOAST, then anything else.
+ * @param {object} s
+ * @returns {number}
+ */
+function usRank(s) {
+  if (s.kind === "relay") return 0;
+  if (s.id === "rainviewer") return 1;
+  if (s.id === "geomet") return 2;
+  if (s.group === "nowcoast") return 3;
+  return 4;
+}
+
+/**
+ * The sources whose boxes hold this tile, in trying order. With `opts.us`
+ * (the default order, no `sources` option) a tile wholly inside "the US"
+ * tries RainViewer, then GeoMet, then nowCOAST (D13); elsewhere, and with
+ * an explicit order, the order given.
  * @param {number} z
  * @param {number} x
  * @param {number} y
  * @param {object[]} sources in trying order
- * @param {function(object): boolean} usable
- * @returns {?object}
+ * @param {{us?: boolean}} [opts]
+ * @returns {object[]}
  */
-function pickSource(z, x, y, sources, usable) {
-  for (const s of chainFor(z, x, y, sources)) if (usable(s)) return s;
-  return null;
+function chainFor(z, x, y, sources, opts = {}) {
+  const t = tileBounds$1(z, x, y);
+  const held = sources.filter((s) => sourceHoldsTile(t, s));
+  if (!opts.us || !inUs(t)) return held;
+  return held.map((s, i) => [s, i]).sort((a, b) => usRank(a[0]) - usRank(b[0]) || a[1] - b[1]).map((p) => p[0]);
+}
+
+/**
+ * In the US, the backups a RainViewer tile falls to when it fails: GeoMet,
+ * then nowCOAST (D13 "Backups take over").
+ * @param {object} s
+ * @returns {boolean}
+ */
+function isUsBackup(s) {
+  return s.id === "geomet" || s.group === "nowcoast";
 }
 
 /**
@@ -23760,11 +27134,10 @@ function wmsTileUrl(src, z, x, y, time) {
  * @param {number} z
  * @param {number} x
  * @param {number} y
- * @param {number} scheme RainViewer colour scheme
  * @returns {string}
  */
-function rainviewerTileUrl(frame, z, x, y, scheme) {
-  return `${frame.host}${frame.path}/256/${z}/${x}/${y}/${scheme}/1_1.png`;
+function rainviewerTileUrl(frame, z, x, y) {
+  return `${frame.host}${frame.path}/256/${z}/${x}/${y}/${RAINVIEWER_STYLE}.png`;
 }
 
 /**
@@ -23792,28 +27165,54 @@ function relayTilePath(template, z, x, y) {
 }
 
 /**
+ * One source's plan for one display tile, or null for a kind it cannot draw.
+ * @param {object} src
+ * @param {object} f its usable frame
+ * @param {number} z
+ * @param {number} x
+ * @param {number} y
+ * @returns {?{source: object, url: string, relay: boolean, scale: number, offX: number, offY: number}}
+ */
+function planFor(src, f, z, x, y) {
+  const nt = nativeTile(z, x, y, src.maxNativeZoom ?? null);
+  let url;
+  if (src.kind === "wms") url = wmsTileUrl(src, nt.z, nt.x, nt.y, f.key);
+  else if (src.kind === "rainviewer") url = rainviewerTileUrl(f, nt.z, nt.x, nt.y);
+  else if (src.kind === "jma") url = jmaTileUrl(src, f, nt.z, nt.x, nt.y);
+  else if (src.kind === "relay") url = relayTilePath(src.tiles, nt.z, nt.x, nt.y);
+  else return null;
+  return { source: src, url, relay: src.kind === "relay", scale: nt.scale, offX: nt.offX, offY: nt.offY };
+}
+
+/**
  * What one display tile shows: which source, which URL, and how the
- * fetched image sits in the tile. Null: blank.
+ * fetched image sits in the tile. Null: blank. In the US (`opts.us`) a
+ * RainViewer plan carries `fallbacks`: the usable GeoMet and nowCOAST plans
+ * for the same tile, in order, which the tile tries when RainViewer's image
+ * fails (D13 "Backups take over").
  * @param {number} z
  * @param {number} x
  * @param {number} y
  * @param {object[]} sources in trying order (relays first)
  * @param {Map<string, object>} frames usable frames by source id
- * @param {{scheme: number}} opts
- * @returns {?{source: object, url: string, relay: boolean, scale: number, offX: number, offY: number}}
+ * @param {{us?: boolean}} [opts]
+ * @returns {?{source: object, url: string, relay: boolean, scale: number, offX: number, offY: number, fallbacks: object[]}}
  */
-function tilePlan(z, x, y, sources, frames, opts) {
-  const src = pickSource(z, x, y, sources, (s) => frames.has(s.id));
+function tilePlan$1(z, x, y, sources, frames, opts = {}) {
+  const chain = chainFor(z, x, y, sources, opts).filter((s) => frames.has(s.id));
+  const src = chain[0];
   if (!src) return null;
-  const f = frames.get(src.id);
-  const nt = nativeTile(z, x, y, src.maxNativeZoom ?? null);
-  let url;
-  if (src.kind === "wms") url = wmsTileUrl(src, nt.z, nt.x, nt.y, f.key);
-  else if (src.kind === "rainviewer") url = rainviewerTileUrl(f, nt.z, nt.x, nt.y, opts.scheme);
-  else if (src.kind === "jma") url = jmaTileUrl(src, f, nt.z, nt.x, nt.y);
-  else if (src.kind === "relay") url = relayTilePath(src.tiles, nt.z, nt.x, nt.y);
-  else return null;
-  return { source: src, url, relay: src.kind === "relay", scale: nt.scale, offX: nt.offX, offY: nt.offY };
+  const plan = planFor(src, frames.get(src.id), z, x, y);
+  if (!plan) return null;
+  plan.fallbacks = [];
+  if (opts.us && src.id === "rainviewer" && inUs(tileBounds$1(z, x, y))) {
+    for (const s of chain.slice(1)) {
+      if (!isUsBackup(s)) continue;
+      const p = planFor(s, frames.get(s.id), z, x, y);
+      if (p) plan.fallbacks.push(p);
+    }
+  }
+  return plan;
 }
 
 /**
@@ -23849,19 +27248,29 @@ function tilesInView(z, px, cap = 400) {
  * that must have a frame (for polling) - every source in a tile's chain up
  * to and including the first usable one, so a source is fetched exactly
  * while a visible tile would use it, and its fallback stays fed.
+ * In the US, while RainViewer draws a tile, its backups are WANTED too, so
+ * their frames are ready the moment one of its tiles fails (D13).
  * @param {number} z
  * @param {{x: number, y: number}[]} tiles
  * @param {object[]} sources in trying order
  * @param {function(object): boolean} usable
+ * @param {{us?: boolean}} [opts]
  * @returns {{drawing: Set<string>, wanted: Set<string>}}
  */
-function sourcesForView(z, tiles, sources, usable) {
+function sourcesForView(z, tiles, sources, usable, opts = {}) {
   const drawing = new Set();
   const wanted = new Set();
   for (const { x, y } of tiles) {
-    for (const s of chainFor(z, x, y, sources)) {
+    const chain = chainFor(z, x, y, sources, opts);
+    for (let i = 0; i < chain.length; i++) {
+      const s = chain[i];
       wanted.add(s.id);
-      if (usable(s)) { drawing.add(s.id); break; }
+      if (!usable(s)) continue;
+      drawing.add(s.id);
+      if (opts.us && s.id === "rainviewer" && inUs(tileBounds$1(z, x, y))) {
+        for (const b of chain.slice(i + 1)) if (isUsBackup(b)) wanted.add(b.id);
+      }
+      break;
     }
   }
   return { drawing, wanted };
@@ -23869,8 +27278,10 @@ function sourcesForView(z, tiles, sources, usable) {
 
 /**
  * The weather radar overlay's frames (D13 "Frames"): the newest frame of each
- * source, one frame, no animation. Pure parsers and clocks; the service
- * fetches and schedules.
+ * source, and (backlog 285, D13 "Motion") the source's whole list on it as
+ * `list`, oldest first, for the 30-minute loop. The list comes from the SAME
+ * answer: nothing more is fetched for it. Pure parsers and clocks; the
+ * service fetches and schedules.
  *
  * A frame is {key, time, ...}: `key` is what goes in the tile URL (an ISO
  * time for WMS, a path for RainViewer, a basetime for JMA), `time` its moment
@@ -23892,7 +27303,7 @@ const POLL_MS = Object.freeze({
  * @param {*} v
  * @returns {boolean}
  */
-function isObj$1(v) {
+function isObj$3(v) {
   return v !== null && typeof v === "object" && !Array.isArray(v);
 }
 
@@ -23902,11 +27313,15 @@ function isObj$1(v) {
  * @returns {?{key: string, host: string, path: string, time: number}}
  */
 function parseRainViewer(json) {
-  if (!isObj$1(json) || typeof json.host !== "string" || !/^https:\/\//.test(json.host)) return null;
-  const past = isObj$1(json.radar) && Array.isArray(json.radar.past) ? json.radar.past : [];
+  if (!isObj$3(json) || typeof json.host !== "string" || !/^https:\/\//.test(json.host)) return null;
+  const past = isObj$3(json.radar) && Array.isArray(json.radar.past) ? json.radar.past : [];
   const last = past[past.length - 1];
-  if (!isObj$1(last) || typeof last.path !== "string" || !/^\/[\w/.-]+$/.test(last.path) || !Number.isFinite(last.time)) return null;
-  return { key: last.path, host: json.host, path: last.path, time: last.time * 1000 };
+  if (!isObj$3(last) || typeof last.path !== "string" || !/^\/[\w/.-]+$/.test(last.path) || !Number.isFinite(last.time)) return null;
+  const list = past
+    .filter((p) => isObj$3(p) && typeof p.path === "string" && /^\/[\w/.-]+$/.test(p.path) && Number.isFinite(p.time))
+    .map((p) => ({ key: p.path, host: json.host, path: p.path, time: p.time * 1000 }))
+    .sort((a, b) => a.time - b.time);
+  return { key: last.path, host: json.host, path: last.path, time: last.time * 1000, list };
 }
 
 /**
@@ -23927,15 +27342,19 @@ function jmaTime(s) {
  */
 function parseJma(json) {
   if (!Array.isArray(json)) return null;
+  const list = [];
   for (const e of json) {
-    if (!isObj$1(e)) continue;
+    if (!isObj$3(e)) continue;
     if (typeof e.basetime !== "string" || e.basetime !== e.validtime) continue;
     const time = jmaTime(e.basetime);
     if (!Number.isFinite(time)) continue;
     if (Array.isArray(e.elements) && !e.elements.includes("hrpns")) continue;
-    return { key: e.basetime, basetime: e.basetime, validtime: e.validtime, time };
+    if (!list.some((f) => f.key === e.basetime)) list.push({ key: e.basetime, basetime: e.basetime, validtime: e.validtime, time });
   }
-  return null;
+  if (!list.length) return null;
+  const first = list[0];
+  list.sort((a, b) => a.time - b.time);
+  return { ...first, list };
 }
 
 /**
@@ -23948,22 +27367,71 @@ function isoTime(s) {
   return Date.parse(s);
 }
 
+/** A WMS time list is never expanded past this many frames. */
+const MAX_LIST = 500;
+
 /**
- * The `time` Dimension elements of a capabilities document, each with its
- * `default` attribute.
- * @param {string} text
- * @returns {string[]} the defaults found, as written
+ * An ISO 8601 duration of hours, minutes and seconds ("PT6M", "PT1H30M") in ms; NaN otherwise.
+ * @param {string} s
+ * @returns {number}
  */
-function timeDefaults(text) {
+function isoDurationMs(s) {
+  const m = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(String(s));
+  if (!m || (!m[1] && !m[2] && !m[3])) return NaN;
+  return ((+(m[1] ?? 0) * 60 + +(m[2] ?? 0)) * 60 + +(m[3] ?? 0)) * 1000;
+}
+
+/**
+ * A WMS time Dimension's values as frames, oldest first: a comma list, each
+ * item a time or a `start/end/period` interval. A listed time is kept
+ * EXACTLY as written (D13: request exactly a listed time); an interval's
+ * times are written as its start is (with or without fractions).
+ * @param {string} body the Dimension's text
+ * @returns {{key: string, time: number}[]}
+ */
+function wmsTimeList(body) {
+  const out = [];
+  if (typeof body !== "string") return out;
+  for (const raw of body.split(",")) {
+    const item = raw.trim();
+    if (!item) continue;
+    const parts = item.split("/");
+    if (parts.length === 1) {
+      const t = isoTime(item);
+      if (Number.isFinite(t)) out.push({ key: item, time: t });
+    } else if (parts.length === 3) {
+      const a = isoTime(parts[0]);
+      const z = isoTime(parts[1]);
+      const step = isoDurationMs(parts[2]);
+      if (!Number.isFinite(a) || !Number.isFinite(z) || !(step > 0) || z < a) continue;
+      const frac = /\.\d+Z$/.test(parts[0]);
+      const first = Math.max(a, z - (MAX_LIST - 1) * step);
+      for (let t = a + Math.ceil((first - a) / step) * step; t <= z; t += step) {
+        const iso = new Date(t).toISOString();
+        out.push({ key: frac ? iso : iso.replace(/\.\d+Z$/, "Z"), time: t });
+      }
+    }
+    if (out.length > 4 * MAX_LIST) break;
+  }
+  const seen = new Set();
+  return out.sort((x, y) => x.time - y.time).filter((f) => !seen.has(f.time) && seen.add(f.time)).slice(-MAX_LIST);
+}
+
+/**
+ * The `time` Dimensions of a capabilities document: each one's `default`
+ * and its values text.
+ * @param {string} text
+ * @returns {{default: ?string, values: string}[]}
+ */
+function timeDimensions(text) {
   const out = [];
   if (typeof text !== "string") return out;
-  const re = /<(?:\w+:)?Dimension\b([^>]*)>/g;
+  const re = /<(?:\w+:)?Dimension\b([^>]*)>([^<]*)</g;
   let m;
   while ((m = re.exec(text)) !== null) {
-    const attrs = m[1];
-    if (!/\bname="time"/.test(attrs)) continue;
-    const d = /\bdefault="([^"]+)"/.exec(attrs);
-    if (d) out.push(d[1]);
+    if (!/\bname="time"/.test(m[1])) continue;
+    const d = /\bdefault="([^"]+)"/.exec(m[1]);
+    out.push({ default: d ? d[1] : null, values: m[2] });
   }
   return out;
 }
@@ -23977,28 +27445,41 @@ function timeDefaults(text) {
  * @returns {?{key: string, time: number}}
  */
 function parseGeoMetCaps(text) {
-  for (const d of timeDefaults(text)) {
-    const t = isoTime(d);
-    if (Number.isFinite(t)) return { key: d, time: t };
+  for (const dim of timeDimensions(text)) {
+    const t = isoTime(dim.default);
+    if (!Number.isFinite(t)) continue;
+    const list = wmsTimeList(dim.values).filter((f) => f.time <= t);
+    return { key: dim.default, time: t, list: list.length ? list : [{ key: dim.default, time: t }] };
   }
   return null;
 }
 
 /**
- * nowCOAST's capabilities. MEASURED 2026-10-06: `base_reflectivity_mosaic`
- * is a layer GROUP with no time list of its own; each of its five regional
- * sublayers carries one (`nearestValue="1"`). The newest default across them
- * is the frame; a region whose own newest is a moment older snaps to it.
+ * nowCOAST's capabilities, per REGIONAL layer (D13, backlog 285): the group
+ * `base_reflectivity_mosaic` has no time list; each regional layer
+ * (`conus_base_reflectivity_mosaic`, ...) carries its own, and the regions'
+ * newest times differ by seconds. MEASURED 2026-10-23: each layer's `<Name>`
+ * is followed by its time Dimension before the next `<Name>` (a style's).
+ * Each regional layer is requested as itself at its own `default`.
  * @param {string} text
- * @returns {?{key: string, time: number}}
+ * @returns {Map<string, {key: string, time: number}>} frame by layer name; empty when none
  */
-function parseNowCoastCaps(text) {
-  let best = null;
-  for (const d of timeDefaults(text)) {
+function parseNowCoastRegions(text) {
+  const out = new Map();
+  if (typeof text !== "string") return out;
+  const names = [...text.matchAll(/<Name>([^<]+)<\/Name>/g)];
+  for (let k = 0; k < names.length; k++) {
+    const name = names[k][1].trim();
+    if (!/^[a-z]+_base_reflectivity_mosaic$/.test(name)) continue;
+    const end = k + 1 < names.length ? names[k + 1].index : text.length;
+    const dim = timeDimensions(text.slice(names[k].index, end))[0];
+    const d = dim?.default;
     const t = isoTime(d);
-    if (Number.isFinite(t) && (best === null || t > best.time)) best = { key: d, time: t };
+    if (!Number.isFinite(t) || out.has(name)) continue;
+    const list = wmsTimeList(dim.values).filter((f) => f.time <= t);
+    out.set(name, { key: d, time: t, list: list.length ? list : [{ key: d, time: t }] });
   }
-  return best;
+  return out;
 }
 
 /**
@@ -24014,12 +27495,171 @@ function computedFiveMinute(now) {
 }
 
 /**
+ * FMI and DWD's frames back from the computed newest, oldest first. Never
+ * one after it (D13: DWD answered an image for a time past its newest).
+ * @param {number} now epoch ms
+ * @param {number} [count]
+ * @returns {{key: string, time: number}[]}
+ */
+function computedList(now, count = 13) {
+  const newest = computedFiveMinute(now);
+  const out = [];
+  for (let k = count - 1; k >= 0; k--) {
+    const t = newest.time - k * 5 * 60 * 1000;
+    out.push({ key: new Date(t).toISOString().replace(".000Z", "Z"), time: t });
+  }
+  return out;
+}
+
+/**
  * @param {?{time: number}} frame
  * @param {number} now
  * @returns {boolean} whether the frame can be drawn (present and no older than STALE_MS)
  */
 function isFresh(frame, now) {
   return !!frame && Number.isFinite(frame.time) && now - frame.time <= STALE_MS;
+}
+
+/**
+ * Radar motion: a 30-minute loop on request (10_SEED/06_MAP_CONTRACT_OVERLAYS.md
+ * D13 "Motion", backlog 285; decided by Lee 2026-10-09 and, the one clock,
+ * 2026-10-12 00:01). Pure: no Leaflet, no network.
+ *
+ * ONE clock for the whole map: E is the newest frame time among the sources
+ * drawing on screen; the steps are E - 30 min, E - 25, ..., E, seven of them
+ * five minutes apart. At each step every tile shows its own source's newest
+ * frame at or before the step, never one after it; a source with no frame at
+ * or before a step shows its oldest. So a 4-minute source never runs ahead of
+ * its 6-minute neighbour across a seam, and the last step shows every
+ * source's newest.
+ */
+
+
+/** Steps in a loop. */
+const MOTION_STEPS = 7;
+
+/** Between steps: five minutes of radar. */
+const MOTION_STEP_MS = 5 * 60 * 1000;
+
+/** How long each step is shown, and how long the newest is held before the loop starts again (the card chat's choice, D13). */
+const STEP_DWELL_MS = 600;
+const NEWEST_DWELL_MS = 2000;
+
+/**
+ * The step times, oldest first, or null when no drawing source has a frame.
+ * @param {Set<string>|string[]} drawing ids of the sources drawing on screen
+ * @param {Map<string, {time: number}>} usable each source's newest usable frame
+ * @returns {?number[]}
+ */
+function loopSteps(drawing, usable) {
+  let e = -Infinity;
+  for (const id of drawing ?? []) {
+    const t = usable.get(id)?.time;
+    if (Number.isFinite(t) && t > e) e = t;
+  }
+  if (!Number.isFinite(e)) return null;
+  const out = [];
+  for (let k = MOTION_STEPS - 1; k >= 0; k--) out.push(e - k * MOTION_STEP_MS);
+  return out;
+}
+
+/**
+ * The frame a source shows at a step: its newest at or before the step,
+ * else its oldest.
+ * @param {{time: number}[]} list oldest first
+ * @param {number} t the step
+ * @returns {?object}
+ */
+function frameAt(list, t) {
+  if (!Array.isArray(list) || !list.length) return null;
+  let best = null;
+  for (const f of list) {
+    if (f.time <= t) best = f;
+    else break;
+  }
+  return best ?? list[0];
+}
+
+/**
+ * A source's frame list for the loop: what its list answer carried; FMI and
+ * DWD computed back from their newest; a relay (or anything without a list)
+ * only its newest, shown at every step (D13: a relay carries only its newest).
+ * @param {object} src
+ * @param {object} newest its usable newest frame
+ * @param {number} now epoch ms
+ * @returns {object[]} oldest first
+ */
+function sourceList(src, newest, now) {
+  if (src?.frame === "computed5") return computedList(now).filter((f) => f.time <= newest.time);
+  if (Array.isArray(newest?.list) && newest.list.length) return newest.list.filter((f) => f.time <= newest.time);
+  return newest ? [newest] : [];
+}
+
+/**
+ * The frames each step draws with: one Map (source id -> frame) per step,
+ * for every source that is usable now. A source stale at the start of the
+ * loop is simply not in `usable`, so its tiles go to the next source for the
+ * WHOLE loop (D13), never part-way through.
+ * @param {object[]} sources in trying order
+ * @param {Map<string, object>} usable newest usable frame by id
+ * @param {number[]} steps
+ * @param {number} now
+ * @returns {Map<string, object>[]}
+ */
+function stepFrames(sources, usable, steps, now) {
+  const lists = new Map();
+  for (const s of sources) {
+    const f = usable.get(s.id);
+    if (f) lists.set(s.id, sourceList(s, f, now));
+  }
+  return steps.map((t) => {
+    const m = new Map();
+    for (const [id, list] of lists) {
+      const f = frameAt(list, t);
+      if (f) m.set(id, f);
+    }
+    return m;
+  });
+}
+
+/**
+ * A loop's identity: the frame each step draws with for the sources drawing
+ * on screen. A new loop is built only when this changes (a new frame arrived,
+ * a source dropped out), so the timer and the tiles carry on otherwise.
+ * @param {Map<string, object>[]} frames per step
+ * @param {Set<string>|string[]} drawing
+ * @returns {string}
+ */
+function loopSignature(frames, drawing) {
+  const ids = [...(drawing ?? [])].sort();
+  return frames.map((m) => ids.map((id) => `${id}=${m.get(id)?.key ?? ""}`).join(",")).join("|");
+}
+
+/**
+ * Which step to show after `k`, and for how long `k` is shown.
+ * @param {number} k
+ * @returns {{next: number, dwell: number}}
+ */
+function stepTiming(k) {
+  const last = MOTION_STEPS - 1;
+  return { next: k >= last ? 0 : k + 1, dwell: k >= last ? NEWEST_DWELL_MS : STEP_DWELL_MS };
+}
+
+/**
+ * The image a tile shows at step `k`: its own when it loaded, else the
+ * nearest step before it that did, counting back round the loop (D13: a
+ * frame that errors holds the previous step's picture). -1: nothing loaded.
+ * @param {number} k
+ * @param {Array<?boolean>} loaded per step: true loaded, false failed, null pending or no plan
+ * @returns {number} the step whose picture to show
+ */
+function shownStep(k, loaded) {
+  const n = loaded.length;
+  for (let i = 0; i < n; i++) {
+    const j = (((k - i) % n) + n) % n;
+    if (loaded[j] === true) return j;
+  }
+  return -1;
 }
 
 /**
@@ -24034,55 +27674,61 @@ function isFresh(frame, now) {
 /** The checkbox label. */
 const RADAR_NAME = "Weather radar";
 
+/** The second checkbox (D13 "Motion"; its label is the card chat's). OFF by default for everyone (Lee, 2026-10-09). */
+const MOTION_NAME = "Radar motion";
+
 /** The pane the radar draws in. */
 const RADAR_PANE = "ltmcRadar";
 
 /** How often the service looks at the clock and the view. */
-const TICK_MS = 30 * 1000;
+const TICK_MS$2 = 30 * 1000;
 
 /** A new frame waits at most this long for its tiles before it is shown anyway. */
-const SWAP_TIMEOUT_MS = 30 * 1000;
+const SWAP_TIMEOUT_MS$2 = 30 * 1000;
 
 /** A frame list that has not answered by now is given up on until its next turn. */
-const FETCH_TIMEOUT_MS = 20 * 1000;
+const FETCH_TIMEOUT_MS$2 = 20 * 1000;
 
 /** A signed relay path is asked for with this lifetime, and reused for 90% of it. */
 const SIGN_SECONDS = 600;
 
 /**
  * Defaults; `weather_radar` in the card config overrides each. Opacity 0.5
- * and RainViewer scheme 2 chosen by Lee from pictures of 0.5 / 0.65 / 0.8 and
- * schemes 2 / 4 / 6 with alerts and rail on, 2026-10-06 (D13 "Drawing" 2, 6).
+ * chosen by Lee from pictures of 0.5 / 0.65 / 0.8 with alerts and rail on,
+ * 2026-10-06 (D13 "Drawing" 2). `rainviewer_scheme` is no longer read:
+ * RainViewer ignores the scheme (D13 "Drawing" 6, backlog 285; Lee
+ * 2026-10-12 00:01), so an old config holding it changes nothing.
  */
-const DEFAULT_RADAR = Object.freeze({ enabled: true, opacity: 0.5, show: true, scheme: 2, order: null });
+const DEFAULT_RADAR = Object.freeze({ enabled: true, opacity: 0.5, show: true, order: null });
 
 /**
  * @param {*} v
  * @returns {boolean}
  */
-function isObj(v) {
+function isObj$2(v) {
   return v !== null && typeof v === "object" && !Array.isArray(v);
 }
 
 /**
  * `weather_radar`: absent or true offers the overlay with D13's defaults;
  * false turns it off (no checkbox, no fetch); a mapping overrides `opacity`,
- * `show` (the checkbox's start state), `rainviewer_scheme` and `sources`
- * (ids to keep, in trying order; a relay by its own `id`).
+ * `show` (the checkbox's start state) and `sources` (ids to keep, in trying
+ * order; a relay by its own `id`; `nowcoast` means its five regional layers).
+ * An explicit `sources` also turns off D13's US order: the order given is
+ * the order everywhere.
  * @param {*} input
- * @returns {{enabled: boolean, opacity: number, show: boolean, scheme: number, order: ?string[]}}
+ * @returns {{enabled: boolean, opacity: number, show: boolean, order: ?string[]}}
  */
 function parseRadarOption(input) {
   if (input === undefined || input === null || input === true || input === "auto") return { ...DEFAULT_RADAR };
   if (input === false || input === "off") return { ...DEFAULT_RADAR, enabled: false };
   const o = { ...DEFAULT_RADAR };
-  if (!isObj(input)) {
+  if (!isObj$2(input)) {
     Logger.warn("[Radar] weather_radar ignored: expected true, false or a mapping", input);
     return o;
   }
   if (typeof input.opacity === "number" && Number.isFinite(input.opacity) && input.opacity >= 0 && input.opacity <= 1) o.opacity = input.opacity;
   if (typeof input.show === "boolean") o.show = input.show;
-  if (Number.isInteger(input.rainviewer_scheme) && input.rainviewer_scheme >= 0 && input.rainviewer_scheme <= 8) o.scheme = input.rainviewer_scheme;
   if (Array.isArray(input.sources)) {
     o.order = [...new Set(input.sources.filter((s) => typeof s === "string" && s.trim() !== "").map((s) => s.trim()))];
   }
@@ -24098,6 +27744,16 @@ function esc(s) {
 }
 
 /**
+ * The frame list a source is read from: its group (nowCOAST's five regional
+ * layers share one capabilities document), else itself.
+ * @param {object} s
+ * @returns {string}
+ */
+function listKey(s) {
+  return s.group ?? s.id;
+}
+
+/**
  * A relay from an entity state (D13 "Relays"), or null when it cannot be
  * used: entity unavailable/unknown, `radar_relay` not a mapping, a field
  * missing or malformed, or a frame-only relay (no `tiles`).
@@ -24107,7 +27763,7 @@ function esc(s) {
 function parseRelay(state) {
   if (!state || state.state === "unavailable" || state.state === "unknown") return null;
   const r = state.attributes?.radar_relay;
-  if (!isObj(r)) return null;
+  if (!isObj$2(r)) return null;
   if (typeof r.id !== "string" || !/^[a-z0-9_-]{1,32}$/.test(r.id)) return null;
   if (typeof r.tiles !== "string" || !r.tiles.startsWith("/") || r.tiles.startsWith("//")) return null;
   if (!["{z}", "{x}", "{y}"].every((k) => r.tiles.includes(k))) return null;
@@ -24166,8 +27822,11 @@ function discoverRelays(states) {
 function orderSources(relays, order) {
   const all = [...relays, ...SOURCES];
   if (!order) return all;
-  const byName = new Map(all.map((s) => [s.kind === "relay" ? s.relayId : s.id, s]));
-  return order.map((n) => byName.get(n)).filter(Boolean);
+  const byName = new Map(all.map((s) => [s.kind === "relay" ? s.relayId : s.id, [s]]));
+  for (const s of SOURCES) if (s.group) byName.set(s.group, [...(byName.get(s.group) ?? []), s]);
+  const out = [];
+  for (const n of order) for (const s of byName.get(n) ?? []) if (!out.includes(s)) out.push(s);
+  return out;
 }
 
 /**
@@ -24188,6 +27847,27 @@ function placeRadarPane(map) {
   return pane;
 }
 
+/**
+ * Size and offset an image for a plan (a source's tile at its native zoom).
+ * @param {HTMLImageElement} img
+ * @param {{scale: number, offX: number, offY: number}} p
+ */
+function placeImg(img, p) {
+  const size = 256 * p.scale;
+  img.style.cssText = `position:absolute;left:${-p.offX * 256}px;top:${-p.offY * 256}px;width:${size}px;height:${size}px;max-width:none;pointer-events:none;`;
+}
+
+/**
+ * @returns {HTMLImageElement} a decorative, undraggable image
+ */
+function blankImg() {
+  const img = document.createElement("img");
+  img.alt = "";
+  img.setAttribute("role", "presentation");
+  img.draggable = false;
+  return img;
+}
+
 let GridClass = null;
 /**
  * The grid layer class, made on first use (Leaflet is mocked in tests).
@@ -24203,22 +27883,29 @@ function radarGridClass() {
     createTile(coords, done) {
       const tile = document.createElement("div");
       tile.style.overflow = "hidden";
+      if (typeof this.options.steps === "function") return this._motionTile(coords, done, tile);
       let plan = null;
       try { plan = this.options.plan(coords); } catch (e) { Logger.error("[Radar] tile plan", e); }
       if (!plan) {
         setTimeout(() => done(null, tile), 0);
         return tile;
       }
-      const img = document.createElement("img");
-      img.alt = "";
-      img.setAttribute("role", "presentation");
-      img.draggable = false;
-      const size = 256 * plan.scale;
-      img.style.cssText = `position:absolute;left:${-plan.offX * 256}px;top:${-plan.offY * 256}px;width:${size}px;height:${size}px;max-width:none;pointer-events:none;`;
+      const img = blankImg();
+      const place = (p) => placeImg(img, p);
+      place(plan);
       let settled = false;
       const finish = () => { if (!settled) { settled = true; done(null, tile); } };
+      // In the US a failed RainViewer image tries its backups in turn (D13),
+      // and the source that drew is reported for the credit line.
+      const backups = Array.isArray(plan.fallbacks) ? [...plan.fallbacks] : [];
       img.onload = finish;
-      img.onerror = () => { img.remove(); finish(); };
+      img.onerror = () => {
+        const next = backups.shift();
+        if (!next) { img.remove(); finish(); return; }
+        place(next);
+        try { this.options.onFallback?.(next.source.id); } catch (e) { Logger.error("[Radar] fallback credit", e); }
+        img.src = next.url;
+      };
       tile.appendChild(img);
       if (plan.relay) {
         Promise.resolve(this.options.sign(plan.url))
@@ -24228,6 +27915,85 @@ function radarGridClass() {
         img.src = plan.url;
       }
       return tile;
+    },
+
+    /**
+     * A motion tile (D13 "Motion"): one image per distinct frame across the
+     * loop's steps, all hidden but the one for the step shown. The tile is
+     * done when the NEWEST step's image settles, so a new loop shows as soon
+     * as its newest frame is in; the older ones keep loading behind it.
+     * @param {object} coords
+     * @param {Function} done
+     * @param {HTMLElement} tile
+     * @returns {HTMLElement}
+     */
+    _motionTile(coords, done, tile) {
+      let plans = [];
+      try { plans = this.options.steps(coords) ?? []; } catch (e) { Logger.error("[Radar] motion plan", e); }
+      const n = plans.length;
+      const state = { imgs: [], idx: new Array(n).fill(-1), loaded: new Array(n).fill(null) };
+      tile.__ltmcMotion = state;
+      if (!this._ltmcTiles) {
+        this._ltmcTiles = new Set();
+        this.on?.("tileunload", (e) => this._ltmcTiles.delete(e?.tile));
+      }
+      this._ltmcTiles.add(tile);
+      let settled = false;
+      const newest = n - 1;
+      const finish = () => { if (!settled) { settled = true; done(null, tile); } };
+      const byUrl = new Map();
+      plans.forEach((p, k) => {
+        if (!p) return;
+        let j = byUrl.get(p.url);
+        if (j === undefined) {
+          j = state.imgs.length;
+          byUrl.set(p.url, j);
+          const img = blankImg();
+          placeImg(img, p);
+          img.style.display = "none";
+          const mark = (ok) => {
+            for (let s = 0; s < n; s++) if (state.idx[s] === j) state.loaded[s] = ok;
+            this._showTile(tile);
+            if (state.idx[newest] === j || state.idx[newest] === -1) finish();
+          };
+          img.onload = () => mark(true);
+          img.onerror = () => mark(false);
+          state.imgs.push(img);
+          tile.appendChild(img);
+          if (p.relay) {
+            Promise.resolve(this.options.sign(p.url))
+              .then((u) => { if (u) img.src = u; else img.onerror(); })
+              .catch(() => img.onerror());
+          } else {
+            img.src = p.url;
+          }
+        }
+        state.idx[k] = j;
+      });
+      if (n === 0 || state.idx[newest] === -1) setTimeout(finish, 0);
+      return tile;
+    },
+
+    /**
+     * Show, in one tile, the picture for the layer's current step.
+     * @param {HTMLElement} tile
+     */
+    _showTile(tile) {
+      const state = tile.__ltmcMotion;
+      if (!state) return;
+      const k = Number.isInteger(this._step) ? this._step : state.idx.length - 1;
+      const s = shownStep(k, state.loaded);
+      const j = s >= 0 ? state.idx[s] : -1;
+      state.imgs.forEach((img, i) => { img.style.display = i === j ? "" : "none"; });
+    },
+
+    /**
+     * Show step `k` in every tile of this layer.
+     * @param {number} k
+     */
+    setStep(k) {
+      this._step = k;
+      for (const tile of this._ltmcTiles ?? []) this._showTile(tile);
     },
   });
   return GridClass;
@@ -24246,11 +28012,22 @@ class RadarOverlayService {
     this.overlays = overlays;
     this.fetch = deps.fetch ?? ((...a) => globalThis.fetch(...a));
     this.now = deps.now ?? (() => Date.now());
+    // The card's `weather_area`: tiles only inside its box (Lee, 2026-11-02).
+    this.bounds = deps.area ? areaBounds(deps.area) : null;
     this.setInterval = deps.setInterval ?? ((f, ms) => globalThis.setInterval(f, ms));
     this.clearInterval = deps.clearInterval ?? ((h) => globalThis.clearInterval(h));
     this.setTimeout = deps.setTimeout ?? ((f, ms) => globalThis.setTimeout(f, ms));
     this.clearTimeout = deps.clearTimeout ?? ((h) => globalThis.clearTimeout(h));
+    // Motion is not animated for a viewer who asked for reduced motion; the newest frame is shown instead.
+    this.reducedMotion = deps.reducedMotion ?? (() => {
+      try { return !!globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches; } catch { return false; }
+    });
     this.hass = null;
+    /** The motion box (D13 "Motion"), its state, and the loop's step timer. */
+    this.motionGroup = null;
+    this.motion = false;
+    this.stepTimer = null;
+    this.step = MOTION_STEPS - 1;
     /** Fetched frames by source id; computed and relay frames are not kept here. */
     this.frames = new Map();
     this.nextAt = new Map();
@@ -24265,6 +28042,9 @@ class RadarOverlayService {
     /** What the newest layer (pending or shown) draws with. */
     this.snap = null;
     this.credits = new Set();
+    /** Sources drawing on screen as the view computes them, and those a failed tile fell to (D13 backups). */
+    this.drawing = new Set();
+    this.fellTo = new Set();
     this.on = false;
     this.timer = null;
     this.disposed = false;
@@ -24281,6 +28061,10 @@ class RadarOverlayService {
       this.group.on("remove", () => this._stop());
       this.map.on("moveend", this._onMove);
       this.overlays.addOverlay(this.group, RADAR_NAME, this.opt.show);
+      this.motionGroup = L$2.layerGroup([]);
+      this.motionGroup.on("add", () => this._setMotion(true));
+      this.motionGroup.on("remove", () => this._setMotion(false));
+      this.overlays.addOverlay(this.motionGroup, MOTION_NAME, false);
     } catch (e) {
       Logger.error("[Radar] setup failed; map unaffected", e);
     }
@@ -24305,6 +28089,44 @@ class RadarOverlayService {
     } catch (e) {
       Logger.error("[Radar] render failed; markers unaffected", e);
     }
+  }
+
+  /**
+   * The motion box changed. With "Weather radar" off it does nothing until
+   * the radar comes on (D13).
+   * @param {boolean} on
+   */
+  _setMotion(on) {
+    if (this.motion === on) return;
+    this.motion = on;
+    if (this.on) this._refresh();
+  }
+
+  /** @returns {boolean} whether the layer should be a loop now */
+  _moving() {
+    return this.motion && !this.reducedMotion();
+  }
+
+  /**
+   * Step a loop layer: each step for STEP_DWELL_MS, the newest held for
+   * NEWEST_DWELL_MS, from the newest.
+   * @param {object} layer
+   */
+  _startSteps(layer) {
+    this._stopSteps();
+    this.step = MOTION_STEPS - 1;
+    layer.setStep?.(this.step);
+    const tick = () => {
+      if (this.layer !== layer || this.disposed) return;
+      this.step = stepTiming(this.step).next;
+      layer.setStep?.(this.step);
+      this.stepTimer = this.setTimeout(tick, stepTiming(this.step).dwell);
+    };
+    this.stepTimer = this.setTimeout(tick, stepTiming(this.step).dwell);
+  }
+
+  _stopSteps() {
+    if (this.stepTimer !== null) { this.clearTimeout(this.stepTimer); this.stepTimer = null; }
   }
 
   /** @returns {object[]} sources in trying order */
@@ -24341,18 +28163,21 @@ class RadarOverlayService {
   _start() {
     if (this.disposed || this.on) return;
     this.on = true;
-    this.timer = this.setInterval(() => this._refresh(), TICK_MS);
+    this.timer = this.setInterval(() => this._refresh(), TICK_MS$2);
     this._refresh();
   }
 
   _stop() {
     this.on = false;
+    this._stopSteps();
     if (this.timer !== null) { this.clearInterval(this.timer); this.timer = null; }
     for (const ctl of this.inflight.values()) { try { ctl?.abort(); } catch { /* nothing */ } }
     this.inflight.clear();
     this._dropPending();
     if (this.layer) { this.group?.removeLayer(this.layer); this.layer = null; }
     this.snap = null;
+    this.drawing = new Set();
+    this.fellTo = new Set();
     this._setCredits(new Set());
   }
 
@@ -24363,16 +28188,19 @@ class RadarOverlayService {
       const sources = this._sources();
       const usable = this._usableFrames();
       const { z, tiles } = this._view();
-      const { drawing, wanted } = sourcesForView(z, tiles, sources, (s) => usable.has(s.id));
+      const { drawing, wanted } = sourcesForView(z, tiles, sources, (s) => usable.has(s.id), this._opts());
       const now = this.now();
+      const asked = new Set();
       for (const s of sources) {
-        if (!wanted.has(s.id) || !s.list || this.inflight.has(s.id)) continue;
-        if ((this.nextAt.get(s.id) ?? 0) > now) continue;
+        const key = listKey(s);
+        if (!wanted.has(s.id) || !s.list || asked.has(key) || this.inflight.has(key)) continue;
+        asked.add(key);
+        if ((this.nextAt.get(key) ?? 0) > now) continue;
         this._fetchFrame(s);
       }
       const rv = this.frames.get("rainviewer");
       if (wanted.has("rainviewer") && rv && !usable.has("rainviewer")) {
-        this._warnOnce("rv-stale", "[Radar] RainViewer's newest frame is over 30 minutes old: no radar where it is the source");
+        this._warnOnce("rv-stale", "[Radar] RainViewer's newest frame is over 30 minutes old: its tiles fall to the next source (in the US GeoMet, then nowCOAST), else no radar");
       }
       // No new layer while a frame list is still on its way: MEASURED 2026-10-06, a cold
       // view over Florida otherwise drew nowCOAST (whose list answered first) and then
@@ -24380,21 +28208,41 @@ class RadarOverlayService {
       // last list to settle refreshes again (its finally), so the layer follows at once.
       if (this.inflight.size === 0) {
         this._swapIfChanged(usable, drawing, wanted);
-        this._setCredits(drawing);
+        this.drawing = drawing;
+        this._setCredits(new Set([...drawing, ...this.fellTo]));
       }
     } catch (e) {
       Logger.error("[Radar] refresh failed; map unaffected", e);
     }
   }
 
-  /** @param {object} s a listed source */
+  /**
+   * D13's US order applies unless the config gave an explicit `sources` order.
+   * @returns {{us: boolean}}
+   */
+  _opts() {
+    return { us: this.opt.order === null };
+  }
+
+  /**
+   * A tile fell from RainViewer to a backup: credit it while that layer shows.
+   * @param {string} id
+   */
+  _noteFallback(id) {
+    if (this.fellTo.has(id)) return;
+    this.fellTo.add(id);
+    this._setCredits(new Set([...this.drawing, ...this.fellTo]));
+  }
+
+  /** @param {object} s a listed source; sources sharing a list (nowCOAST's regions) are read once */
   _fetchFrame(s) {
+    const key = listKey(s);
     const ctl = typeof AbortController === "function" ? new AbortController() : null;
-    this.inflight.set(s.id, ctl);
-    this.nextAt.set(s.id, this.now() + (POLL_MS[s.id] ?? 5 * 60 * 1000));
+    this.inflight.set(key, ctl);
+    this.nextAt.set(key, this.now() + (POLL_MS[key] ?? 5 * 60 * 1000));
     const json = s.frame === "rainviewer" || s.frame === "jma";
     let timedOut = false;
-    const timer = this.setTimeout(() => { timedOut = true; try { ctl?.abort(); } catch { /* nothing */ } }, FETCH_TIMEOUT_MS);
+    const timer = this.setTimeout(() => { timedOut = true; try { ctl?.abort(); } catch { /* nothing */ } }, FETCH_TIMEOUT_MS$2);
     let req;
     try {
       req = Promise.resolve(this.fetch(s.list, { signal: ctl?.signal, credentials: "omit" }));
@@ -24407,19 +28255,30 @@ class RadarOverlayService {
         return json ? r.json() : r.text();
       })
       .then((body) => {
-        const parse = { rainviewer: parseRainViewer, jma: parseJma, geomet: parseGeoMetCaps, nowcoast: parseNowCoastCaps }[s.frame];
+        if (s.frame === "nowcoast") {
+          const regions = parseNowCoastRegions(body);
+          let found = 0;
+          for (const r of SOURCES) {
+            if (r.group !== s.group) continue;
+            const f = regions.get(r.layer);
+            if (f) { this.frames.set(r.id, f); found += 1; }
+          }
+          if (!found) throw new Error("no regional frame in the answer");
+          return;
+        }
+        const parse = { rainviewer: parseRainViewer, jma: parseJma, geomet: parseGeoMetCaps }[s.frame];
         const f = parse ? parse(body) : null;
         if (!f) throw new Error("no frame in the answer");
         this.frames.set(s.id, f);
       })
       .catch((e) => {
         if (e?.name === "AbortError" && !timedOut) return;
-        const why = timedOut ? `no answer in ${FETCH_TIMEOUT_MS / 1000} s` : (e?.message ?? e);
-        this._warnOnce(`fetch:${s.id}`, `[Radar] ${s.id} frame list not read (${why}); its tiles fall to the next source`);
+        const why = timedOut ? `no answer in ${FETCH_TIMEOUT_MS$2 / 1000} s` : (e?.message ?? e);
+        this._warnOnce(`fetch:${key}`, `[Radar] ${key} frame list not read (${why}); its tiles fall to the next source`);
       })
       .finally(() => {
         this.clearTimeout(timer);
-        if (this.inflight.get(s.id) === ctl) this.inflight.delete(s.id);
+        if (this.inflight.get(key) === ctl) this.inflight.delete(key);
         if (this.on && !this.disposed) this._refresh();
       });
   }
@@ -24439,9 +28298,28 @@ class RadarOverlayService {
     const snap = this.snap;
     if (!snap) return true;
     if (snap.relaySig !== this.relaySig) return true;
-    for (const id of drawing) if (snap.frames.get(id)?.key !== usable.get(id)?.key) return true;
+    const moving = this._moving();
+    if (snap.moving !== moving) return true;
+    if (moving) {
+      if (snap.loopSig !== this._loop(usable, drawing).sig) return true;
+    } else {
+      for (const id of drawing) if (snap.frames.get(id)?.key !== usable.get(id)?.key) return true;
+    }
     for (const id of snap.frames.keys()) if (wanted.has(id) && !usable.has(id)) return true;
     return false;
+  }
+
+  /**
+   * The loop for this view: its step frames and identity (RadarMotion.js).
+   * @param {Map<string, object>} usable
+   * @param {Set<string>} drawing
+   * @returns {{steps: ?number[], frames: Map<string, object>[], sig: string}}
+   */
+  _loop(usable, drawing) {
+    const steps = loopSteps(drawing, usable);
+    if (!steps) return { steps: null, frames: [], sig: "" };
+    const frames = stepFrames(this._sources(), usable, steps, this.now());
+    return { steps, frames, sig: loopSignature(frames, drawing) };
   }
 
   /**
@@ -24454,22 +28332,38 @@ class RadarOverlayService {
    */
   _swapIfChanged(usable, drawing, wanted) {
     if (!this._outOfDate(usable, drawing, wanted)) return;
-    const snap = { sources: this._sources(), frames: new Map(usable), scheme: this.opt.scheme, relaySig: this.relaySig };
+    const moving = this._moving();
+    const loop = moving ? this._loop(usable, drawing) : null;
+    const snap = {
+      sources: this._sources(), frames: new Map(usable), opts: this._opts(), relaySig: this.relaySig,
+      moving, loopSig: loop?.sig ?? "", stepFrames: loop?.frames ?? [],
+    };
     this.snap = snap;
     const Grid = radarGridClass();
     const first = !this.layer;
-    const layer = new Grid({
+    const options = {
       pane: RADAR_PANE,
       tileSize: 256,
       opacity: first ? this.opt.opacity : 0,
       updateWhenZooming: false,
       keepBuffer: 1,
-      plan: (c) => tilePlan(c.z, c.x, c.y, snap.sources, snap.frames, { scheme: snap.scheme }),
       sign: (path) => this._sign(path),
-    });
+    };
+    if (this.bounds) options.bounds = this.bounds;
+    if (moving && snap.stepFrames.length) {
+      // A frame that errors holds the previous step's picture (D13): a loop
+      // tile never tries a plan's backups (_motionTile reads only its url).
+      options.steps = (c) => snap.stepFrames.map((m) => tilePlan$1(c.z, c.x, c.y, snap.sources, m, snap.opts));
+      options.step = MOTION_STEPS - 1;
+    } else {
+      options.plan = (c) => tilePlan$1(c.z, c.x, c.y, snap.sources, snap.frames, snap.opts);
+      options.onFallback = (id) => { if (this.layer === layer || this.pending?.layer === layer) this._noteFallback(id); };
+    }
+    const layer = new Grid(options);
     if (first) {
       this.layer = layer;
       this.group.addLayer(layer);
+      if (options.steps) this._startSteps(layer); else this._stopSteps();
       return;
     }
     this._dropPending();
@@ -24480,8 +28374,11 @@ class RadarOverlayService {
       layer.setOpacity(this.opt.opacity);
       if (this.layer) this.group.removeLayer(this.layer);
       this.layer = layer;
+      this.fellTo = new Set();
+      this._setCredits(new Set(this.drawing));
+      if (options.steps) this._startSteps(layer); else this._stopSteps();
     };
-    this.pending = { layer, timer: this.setTimeout(show, SWAP_TIMEOUT_MS) };
+    this.pending = { layer, timer: this.setTimeout(show, SWAP_TIMEOUT_MS$2) };
     layer.once("load", show);
     this.group.addLayer(layer);
   }
@@ -24547,10 +28444,1192 @@ class RadarOverlayService {
         this.overlays?.removeOverlay(this.group);
         this.group.remove();
       }
+      if (this.motionGroup) {
+        this.overlays?.removeOverlay(this.motionGroup);
+        this.motionGroup.remove();
+      }
       const pane = this.map?.getPane?.(RADAR_PANE);
       pane?.remove?.();
     } catch (e) {
       Logger.error("[Radar] cleanup", e);
+    }
+    this.disposed = true;
+  }
+}
+
+/**
+ * The lightning overlay (10_SEED/06_MAP_CONTRACT_OVERLAYS.md D14, Live Track
+ * Weather item 304): NOAA nowCOAST's 15-minute lightning strike density, one
+ * WMS layer, one checkbox. Drawn in a pane of its own right above the radar's,
+ * so it sits over the radar and every tile, under the alert fills (D12) and
+ * every marker, and outside the dark-mode filter. The newest frame only, also
+ * while the radar loops (D14 "Frames").
+ */
+
+/** The checkbox label. */
+const LIGHTNING_NAME = "Lightning";
+
+/** The pane the lightning draws in. */
+const LIGHTNING_PANE = "ltmcLightning";
+
+/** nowCOAST's lightning WMS and its one layer (D14, measured 2026-10-27). */
+const LIGHTNING_WMS = "https://nowcoast.noaa.gov/geoserver/observations/lightning_detection/ows";
+const LIGHTNING_LAYER = "ldn_lightning_strike_density";
+const LIGHTNING_CAPS = `${LIGHTNING_WMS}?service=WMS&version=1.3.0&request=GetCapabilities`;
+
+/**
+ * Where the layer has data: its capabilities' EX_GeographicBoundingBox,
+ * 25 S to 80 N at every longitude (NLDN and GLD360). No tile is asked for
+ * outside it, and its credit shows only while the view overlaps it.
+ */
+const LIGHTNING_BOUNDS = Object.freeze({ w: -180, e: 180, s: -25, n: 80 });
+
+/**
+ * The data are an 8 km grid drawn as smooth contours: a z8 tile scaled 4x
+ * differed from the 16 real z10 tiles in 0.36% of pixels (measured
+ * 2026-10-27), so nothing above z8 is ever requested.
+ */
+const LIGHTNING_MAX_NATIVE_ZOOM = 8;
+
+/** The frame list is read this often while the overlay is on. */
+const LIGHTNING_POLL_MS = 5 * 60 * 1000;
+
+/** A newest frame older than this is treated as down: nothing is drawn (D14 "Stale"). */
+const LIGHTNING_STALE_MS = 45 * 60 * 1000;
+
+/** How often the service looks at the clock. */
+const TICK_MS$1 = 30 * 1000;
+
+/** A new frame waits at most this long for its tiles before it is shown anyway. */
+const SWAP_TIMEOUT_MS$1 = 30 * 1000;
+
+/** A frame list that has not answered by now is given up on until its next turn. */
+const FETCH_TIMEOUT_MS$1 = 20 * 1000;
+
+/** The credit line while lightning is drawn (D14 "Credit"). */
+const LIGHTNING_CREDIT = "Lightning: NOAA nowCOAST";
+
+/**
+ * A 1 px dark ring round every strike cell. MEASURED 2026-10-27: the
+ * commonest class, the lowest density, is cream (255, 255, 204), fully
+ * opaque, on OSM land of (242, 239, 233), so without a ring light strikes
+ * vanish on the light map.
+ */
+const LIGHTNING_OUTLINE = "drop-shadow(0 0 1px rgba(0, 0, 0, 0.85))";
+
+/**
+ * Defaults; `lightning` in the card config overrides each. Opacity 0.6
+ * (Lee, 2026-10-27 02:24: "a bit more transparent so you can read the map
+ * underneath"), from pictures of 0.85, 0.7, 0.6 and 0.5 over a storm. The box
+ * starts UNTICKED (Lee, 2026-10-27 02:37): nothing is fetched until a viewer ticks it.
+ */
+const DEFAULT_LIGHTNING = Object.freeze({ enabled: true, opacity: 0.6, show: false, outline: true });
+
+/**
+ * @param {*} v
+ * @returns {boolean}
+ */
+function isObj$1(v) {
+  return v !== null && typeof v === "object" && !Array.isArray(v);
+}
+
+/**
+ * `lightning`: absent or true offers the overlay with D14's defaults; false
+ * turns it off (no checkbox, no fetch); a mapping overrides `opacity`,
+ * `show` (the checkbox's start state) and `outline`.
+ * @param {*} input
+ * @returns {{enabled: boolean, opacity: number, show: boolean, outline: boolean}}
+ */
+function parseLightningOption(input) {
+  if (input === undefined || input === null || input === true || input === "auto") return { ...DEFAULT_LIGHTNING };
+  if (input === false || input === "off") return { ...DEFAULT_LIGHTNING, enabled: false };
+  const o = { ...DEFAULT_LIGHTNING };
+  if (!isObj$1(input)) {
+    Logger.warn("[Lightning] lightning ignored: expected true, false or a mapping", input);
+    return o;
+  }
+  if (typeof input.opacity === "number" && Number.isFinite(input.opacity) && input.opacity >= 0 && input.opacity <= 1) o.opacity = input.opacity;
+  if (typeof input.show === "boolean") o.show = input.show;
+  if (typeof input.outline === "boolean") o.outline = input.outline;
+  return o;
+}
+
+/**
+ * The newest frame from nowCOAST's capabilities: the `default` of the time
+ * Dimension inside the lightning layer's own Layer element.
+ * @param {string} text
+ * @returns {?{key: string, time: number}}
+ */
+function parseLightningCaps(text) {
+  if (typeof text !== "string") return null;
+  const at = text.indexOf(`<Name>${LIGHTNING_LAYER}</Name>`);
+  if (at < 0) return null;
+  const rest = text.slice(at);
+  const end = rest.indexOf("</Layer>");
+  const own = end < 0 ? rest : rest.slice(0, end);
+  const m = own.match(/<Dimension\b[^>]*\bname="time"[^>]*>/);
+  if (!m) return null;
+  const d = m[0].match(/\bdefault="([^"]+)"/);
+  if (!d) return null;
+  const time = isoTime(d[1]);
+  return Number.isFinite(time) ? { key: d[1], time } : null;
+}
+
+/**
+ * @param {?{time: number}} frame
+ * @param {number} now
+ * @returns {boolean} whether the frame can be drawn
+ */
+function lightningFresh(frame, now) {
+  return !!frame && Number.isFinite(frame.time) && now - frame.time <= LIGHTNING_STALE_MS;
+}
+
+/**
+ * Whether a view overlaps the covered band.
+ * @param {?{getSouth: Function, getNorth: Function}} b the map's bounds
+ * @returns {boolean}
+ */
+function viewCovered$1(b) {
+  if (!b || typeof b.getSouth !== "function") return false;
+  return b.getSouth() < LIGHTNING_BOUNDS.n && b.getNorth() > LIGHTNING_BOUNDS.s;
+}
+
+/**
+ * The lightning pane: right after the radar pane when there is one, else
+ * right after the tile pane; before the overlay and marker panes either way.
+ * @param {object} map
+ * @param {boolean} outline
+ * @returns {HTMLElement}
+ */
+function placeLightningPane(map, outline = true) {
+  const pane = map.getPane(LIGHTNING_PANE) ?? map.createPane(LIGHTNING_PANE);
+  const after = map.getPane(RADAR_PANE) ?? map.getPane("tilePane");
+  if (after?.parentNode && pane.previousSibling !== after) {
+    after.parentNode.insertBefore(pane, after.nextSibling);
+  }
+  pane.style.pointerEvents = "none";
+  pane.style.filter = outline ? LIGHTNING_OUTLINE : "";
+  return pane;
+}
+
+/**
+ * The WMS tile layer for one frame.
+ * @param {string} key the frame time, as the capabilities wrote it
+ * @param {number} opacity
+ * @returns {object} a Leaflet layer
+ */
+function lightningLayer(key, opacity) {
+  const b = LIGHTNING_BOUNDS;
+  return L$2.tileLayer.wms(LIGHTNING_WMS, {
+    layers: LIGHTNING_LAYER,
+    styles: "",
+    format: "image/png",
+    transparent: true,
+    version: "1.3.0",
+    // Every request carries its frame (D13's rule): a new frame is a new URL.
+    time: key,
+    pane: LIGHTNING_PANE,
+    opacity,
+    maxNativeZoom: LIGHTNING_MAX_NATIVE_ZOOM,
+    maxZoom: 24,
+    bounds: L$2.latLngBounds([b.s, b.w], [b.n, b.e]),
+    updateWhenZooming: false,
+    keepBuffer: 1,
+  });
+}
+
+class LightningOverlayService {
+  /**
+   * @param {object} map Leaflet map
+   * @param {*} option the card's `lightning`
+   * @param {{addOverlay: Function, removeOverlay: Function}} overlays the layer control (TileLayersService)
+   * @param {{fetch?: Function, now?: Function, setInterval?: Function, clearInterval?: Function, setTimeout?: Function, clearTimeout?: Function}} [deps] for tests
+   */
+  constructor(map, option, overlays, deps = {}) {
+    this.map = map;
+    this.opt = parseLightningOption(option);
+    this.overlays = overlays;
+    this.fetch = deps.fetch ?? ((...a) => globalThis.fetch(...a));
+    this.now = deps.now ?? (() => Date.now());
+    this.setInterval = deps.setInterval ?? ((f, ms) => globalThis.setInterval(f, ms));
+    this.clearInterval = deps.clearInterval ?? ((h) => globalThis.clearInterval(h));
+    this.setTimeout = deps.setTimeout ?? ((f, ms) => globalThis.setTimeout(f, ms));
+    this.clearTimeout = deps.clearTimeout ?? ((h) => globalThis.clearTimeout(h));
+    this.group = null;
+    this.layer = null;
+    this.pending = null;
+    this.frame = null;
+    this.nextAt = 0;
+    this.inflight = null;
+    this.credited = false;
+    this.warned = new Set();
+    this.on = false;
+    this.timer = null;
+    this.disposed = false;
+    this._onMove = () => this._credit();
+  }
+
+  /** Create the checkbox (and, if it starts ticked, the layer). Never throws. */
+  setup() {
+    if (!this.opt.enabled || this.disposed) return;
+    try {
+      placeLightningPane(this.map, this.opt.outline);
+      this.group = L$2.layerGroup([]);
+      this.group.on("add", () => this._start());
+      this.group.on("remove", () => this._stop());
+      this.map.on("moveend", this._onMove);
+      this.overlays.addOverlay(this.group, LIGHTNING_NAME, this.opt.show);
+    } catch (e) {
+      Logger.error("[Lightning] setup failed; map unaffected", e);
+    }
+  }
+
+  _start() {
+    if (this.disposed || this.on) return;
+    this.on = true;
+    this.timer = this.setInterval(() => this._refresh(), TICK_MS$1);
+    this._refresh();
+  }
+
+  _stop() {
+    this.on = false;
+    if (this.timer !== null) { this.clearInterval(this.timer); this.timer = null; }
+    try { this.inflight?.abort(); } catch { /* nothing */ }
+    this.inflight = null;
+    this._dropPending();
+    if (this.layer) { this.group?.removeLayer(this.layer); this.layer = null; }
+    this.shownKey = null;
+    this._credit();
+  }
+
+  /** Read the frame list when due; draw the newest fresh frame, or nothing. */
+  _refresh() {
+    if (!this.on || this.disposed) return;
+    try {
+      const now = this.now();
+      if (!this.inflight && this.nextAt <= now) this._fetchFrame();
+      if (this.frame && !lightningFresh(this.frame, now)) {
+        this._warnOnce("stale", "[Lightning] nowCOAST's newest lightning frame is over 45 minutes old: none is drawn");
+        this._dropPending();
+        if (this.layer) { this.group.removeLayer(this.layer); this.layer = null; }
+        this.shownKey = null;
+      } else if (this.frame && this.frame.key !== this.shownKey) {
+        this._swap(this.frame.key);
+      }
+      this._credit();
+    } catch (e) {
+      Logger.error("[Lightning] refresh failed; map unaffected", e);
+    }
+  }
+
+  _fetchFrame() {
+    const ctl = typeof AbortController === "function" ? new AbortController() : null;
+    this.inflight = ctl ?? { abort() {} };
+    this.nextAt = this.now() + LIGHTNING_POLL_MS;
+    let timedOut = false;
+    const timer = this.setTimeout(() => { timedOut = true; try { ctl?.abort(); } catch { /* nothing */ } }, FETCH_TIMEOUT_MS$1);
+    const mine = this.inflight;
+    let req;
+    try {
+      // no-cache: the capabilities say max-age=600, longer than a frame is fresh news.
+      req = Promise.resolve(this.fetch(LIGHTNING_CAPS, { signal: ctl?.signal, credentials: "omit", cache: "no-cache" }));
+    } catch (e) {
+      req = Promise.reject(e);
+    }
+    req
+      .then((r) => {
+        if (!r || !r.ok) throw new Error(`HTTP ${r?.status}`);
+        return r.text();
+      })
+      .then((body) => {
+        const f = parseLightningCaps(body);
+        if (!f) throw new Error("no frame in the answer");
+        // A failed or older answer never replaces a frame already held.
+        if (!this.frame || f.time >= this.frame.time) this.frame = f;
+      })
+      .catch((e) => {
+        if (e?.name === "AbortError" && !timedOut) return;
+        const why = timedOut ? `no answer in ${FETCH_TIMEOUT_MS$1 / 1000} s` : (e?.message ?? e);
+        this._warnOnce("fetch", `[Lightning] frame list not read (${why}); the last frame stays until it is stale`);
+      })
+      .finally(() => {
+        this.clearTimeout(timer);
+        if (this.inflight === mine) this.inflight = null;
+        if (this.on && !this.disposed) this._refresh();
+      });
+  }
+
+  /**
+   * Show a new frame without a blank: it loads at opacity 0 and is shown on
+   * its `load`, then the old one is dropped.
+   * @param {string} key
+   */
+  _swap(key) {
+    if (this.pending?.key === key) return;
+    this._dropPending();
+    const first = !this.layer;
+    const layer = lightningLayer(key, first ? this.opt.opacity : 0);
+    if (first) {
+      this.layer = layer;
+      this.shownKey = key;
+      this.group.addLayer(layer);
+      return;
+    }
+    const show = () => {
+      if (this.pending?.layer !== layer) return;
+      this.clearTimeout(this.pending.timer);
+      this.pending = null;
+      layer.setOpacity(this.opt.opacity);
+      if (this.layer) this.group.removeLayer(this.layer);
+      this.layer = layer;
+      this.shownKey = key;
+    };
+    this.pending = { layer, key, timer: this.setTimeout(show, SWAP_TIMEOUT_MS$1) };
+    layer.once("load", show);
+    this.group.addLayer(layer);
+  }
+
+  _dropPending() {
+    if (!this.pending) return;
+    this.clearTimeout(this.pending.timer);
+    this.group?.removeLayer(this.pending.layer);
+    this.pending = null;
+  }
+
+  /** The credit line while a frame is drawn and the view overlaps the covered band. */
+  _credit() {
+    let want = false;
+    try { want = this.on && !!this.layer && viewCovered$1(this.map?.getBounds?.()); } catch { want = false; }
+    if (want === this.credited) return;
+    const ctl = this.map?.attributionControl;
+    if (want) ctl?.addAttribution(LIGHTNING_CREDIT); else ctl?.removeAttribution(LIGHTNING_CREDIT);
+    this.credited = want;
+  }
+
+  /**
+   * @param {string} key
+   * @param {string} msg
+   */
+  _warnOnce(key, msg) {
+    if (this.warned.has(key)) return;
+    this.warned.add(key);
+    Logger.warn(msg);
+  }
+
+  /** Teardown: stop timers, abort the fetch, remove the layer, checkbox and pane. */
+  cleanup() {
+    if (this.disposed) return;
+    try {
+      this._stop();
+      this.map?.off("moveend", this._onMove);
+      if (this.group) {
+        this.overlays?.removeOverlay(this.group);
+        this.group.remove();
+      }
+      this.map?.getPane?.(LIGHTNING_PANE)?.remove?.();
+    } catch (e) {
+      Logger.error("[Lightning] cleanup", e);
+    }
+    this.disposed = true;
+  }
+}
+
+/**
+ * The cloud overlay (10_SEED/06_MAP_CONTRACT_OVERLAYS.md D17, Live Track
+ * Weather item 307). Infrared satellite pictures: GOES from NOAA nowCOAST,
+ * every 5 minutes, for a tile that lies wholly inside GOES's box; everywhere
+ * else EUMETSAT (Lee, 2026-10-28, after NOAA's global mosaic was MEASURED
+ * rescaling its greys tile by tile): MTG every 10 minutes over Europe, Africa
+ * and the Atlantic, Meteosat IODC every 15 minutes over the Indian Ocean, and
+ * the 3-hourly world cloud map under both and alone over East Asia and the
+ * Pacific, layered so the freshest picture with data wins. North to about
+ * 77-81 N; south only to 72.74 S, where the ice sheet begins (Lee, "North
+ * only"). All arrive as solid grey (warm ground dark, cold cloud tops
+ * bright), so each tile is redrawn in a canvas: clear sky transparent, cloud
+ * from its brightness on each picture's own ramp (at most 65% opaque), light
+ * grey on the light map and white on the dark one (Lee, 2026-10-28). One
+ * checkbox, "Clouds", unticked by default; its own pane right above the tiles
+ * and under the radar.
+ */
+
+/** The checkbox label. */
+const CLOUD_NAME = "Clouds";
+
+/** The pane the clouds draw in. */
+const CLOUD_PANE = "ltmcClouds";
+
+/** nowCOAST's satellite WMS and its GOES layer (D17, measured 2026-10-28). */
+const CLOUD_WMS = "https://nowcoast.noaa.gov/geoserver/observations/satellite/ows";
+const CLOUD_CAPS = `${CLOUD_WMS}?service=WMS&version=1.3.0&request=GetCapabilities`;
+const GOES_LAYER = "goes_longwave_imagery";
+
+/**
+ * EUMETSAT's three pictures, each with its own small capabilities (6.4-7.9 KB, CORS `*`, `max-age=120`,
+ * measured 2026-10-28): MTG's IR 10.5 every 10 minutes (the newest about 20 minutes old), Meteosat IODC's
+ * IR 10.8 every 15 minutes (about 17 minutes old), the world cloud map every 3 hours (2.5-3 h old).
+ */
+const MTG_WMS = "https://view.eumetsat.int/geoserver/mtg_fd/ir105_hrfi/ows";
+const MTG_LAYER = "mtg_fd:ir105_hrfi";
+const IODC_WMS = "https://view.eumetsat.int/geoserver/msg_iodc/ir108/ows";
+const IODC_LAYER = "msg_iodc:ir108";
+const WORLD_WMS = "https://view.eumetsat.int/geoserver/mumi/worldcloudmap_ir108/ows";
+const WORLD_LAYER = "mumi:worldcloudmap_ir108";
+
+/**
+ * @param {string} base a WMS
+ * @returns {string} its capabilities
+ */
+function capsUrl(base) {
+  return `${base}?service=WMS&version=1.3.0&request=GetCapabilities`;
+}
+
+/** Each layer's WMS. */
+const LAYER_WMS = Object.freeze({
+  [GOES_LAYER]: CLOUD_WMS, [MTG_LAYER]: MTG_WMS, [IODC_LAYER]: IODC_WMS, [WORLD_LAYER]: WORLD_WMS,
+});
+
+/** Nothing is drawn south of this: past it the pictures show Antarctica's ice as cloud (Lee, 2026-10-28). */
+const SOUTH_LIMIT = -72.74;
+
+/**
+ * GOES's box, its capabilities' EX_GeographicBoundingBox (179.50 W to 50.75 W,
+ * 10.91 N to 50.55 N, read 2026-10-28), rounded inward: a tile wholly inside
+ * it is drawn from GOES alone.
+ */
+const GOES_BOUNDS = Object.freeze({ w: -179.5, e: -50.76, s: 10.92, n: 50.55 });
+
+/**
+ * Where each EUMETSAT picture is used. `reach`: a tile outside is not asked, and the picture's pixels are
+ * laid only between its west and east (cut at those longitudes); `full`: boxes wholly inside its data (a
+ * tile inside one needs no picture underneath). MEASURED 2026-10-28: the data (`bin\ltw307_cover.py`, 0.25
+ * deg, masks `bin\ltw307\cover_*.png`) MTG 80.1 W-80.4 E, 77.4 S-77.1 N, whole 45 W-45 E to 75.25; IODC
+ * 30.1 W-121.1 E, 76.9 S-75.1 N, whole 15.5-75.5 E to 71.5 and 15.5 W-106.5 E to 64.75; the world map every
+ * longitude, its ragged edge 70.1-81.4 N, whole to 69.75. And where their greys hold (`bin\ltw307_limb.py`,
+ * ramp against the world map in 15-degree bands, 40 S-40 N): MTG 0.171-0.176 / 0.561-0.571 from 45 W to
+ * 30 E, then 0.186/0.602 (30-45 E), 0.197/0.624, 0.241/0.717 and 0.206/0.688 (60-45 W), 0.321/0.763 past
+ * 60 W: its limb reads colder, a hard seam against IODC at 80 E in pictures. IODC 0.181 / 0.702-0.706 from
+ * 30 to 90 E, 0.201/0.732 (90-105 E), 0.261/0.963 past 105 E. So MTG from GOES's edge (51 W) to 45 E, IODC
+ * east of that to 100 E, the world map beyond.
+ */
+const MTG_REACH = Object.freeze({ w: -51, e: 45, s: -77.4, n: 77.2 });
+const MTG_FULL = Object.freeze([Object.freeze({ w: -45, e: 45, s: -75, n: 75 })]);
+const IODC_REACH = Object.freeze({ w: -10, e: 100, s: -77, n: 75.2 });
+const IODC_FULL = Object.freeze([
+  Object.freeze({ w: 16, e: 75, s: -71, n: 71 }), Object.freeze({ w: -10, e: 100, s: -64.5, n: 64.5 }),
+]);
+const WORLD_REACH = Object.freeze({ w: -180, e: 180, s: -81.4, n: 81.4 });
+const WORLD_FULL = Object.freeze([Object.freeze({ w: -180, e: 180, s: -69.5, n: 69.5 })]);
+
+/**
+ * MEASURED 2026-10-28 (`bin\ltw307_zoom.py`): a z6 tile scaled 2x differed
+ * from its four z7 tiles in 0.0% (GOES) of pixels by more than 16 grey
+ * levels, so nothing above z6 is asked for.
+ */
+const CLOUD_MAX_NATIVE_ZOOM = 6;
+
+/** The frame lists are read this often while the overlay is on: GOES frames every 5 minutes. */
+const CLOUD_POLL_MS = 5 * 60 * 1000;
+
+/** A GOES frame older than this is not used: EUMETSAT's pictures draw its tiles instead. */
+const GOES_STALE_MS = 30 * 60 * 1000;
+
+/** An MTG frame older than this is not used (10-minute frames, listed about 20 minutes after their time). */
+const MTG_STALE_MS = 40 * 60 * 1000;
+
+/** An IODC frame older than this is not used (15-minute frames, listed about 17 minutes after their time). */
+const IODC_STALE_MS = 45 * 60 * 1000;
+
+/** A world-map frame older than this is not used (3-hourly, listed 2.5-3 h after its time). */
+const WORLD_STALE_MS = 7 * 60 * 60 * 1000;
+
+/** How often the service looks at the clock (and the theme). */
+const TICK_MS = 30 * 1000;
+
+/** A new frame waits at most this long for its tiles before it is shown anyway. */
+const SWAP_TIMEOUT_MS = 30 * 1000;
+
+/** A frame list that has not answered by now is given up on until its next turn. */
+const FETCH_TIMEOUT_MS = 20 * 1000;
+
+/** The credit line while GOES's clouds can show. */
+const CLOUD_CREDIT = "Clouds: NOAA nowCOAST, GOES";
+
+/** The credit line while EUMETSAT's clouds can show (EUMETSAT's data policy asks for it). */
+const EUMETSAT_CREDIT = "Clouds: © EUMETSAT";
+
+/**
+ * Brightness (0 to 1, the mean of red, green and blue) at which a GOES pixel starts
+ * to be cloud, and at which it is cloud at full strength; and that strength.
+ * Chosen from pictures over the real map, 2026-10-28 (`bin\ltw307\sheet_*.png`); the top
+ * lowered from 0.85 by Lee the same day ("more transparent", `sheet_lighter_crop.png` B).
+ */
+const CLEAR = 0.36;
+const CLOUDY = 0.72;
+const MAX_ALPHA = 0.65;
+
+/**
+ * Each picture's ramp [clear, cloudy] on its own grey scale, where its greys match GOES's CLEAR and CLOUDY.
+ * MEASURED 2026-10-28 at 18:00Z (`bin\ltw307_calib.py`, 0.05 deg, the median of the reference's grey per 0.01
+ * of the picture's): the world map against GOES over 125-60 W 0.326/0.585 (the same over 180-125 W); MTG
+ * against the world map over Europe and Africa 0.175/0.566; IODC against the world map over 50-100 E
+ * 0.180/0.706, and 0.181/0.702-0.706 in each 15-degree band from 30 to 90 E. (IODC against MTG over 20-60 E
+ * read 0.174/0.654, and MTG against GOES at MTG's limb 0.265/0.784: MTG's limb reads colder, see MTG_REACH.)
+ */
+const RAMPS = Object.freeze({
+  [GOES_LAYER]: Object.freeze([CLEAR, CLOUDY]),
+  [MTG_LAYER]: Object.freeze([0.175, 0.566]),
+  [IODC_LAYER]: Object.freeze([0.181, 0.704]),
+  [WORLD_LAYER]: Object.freeze([0.326, 0.585]),
+});
+
+/**
+ * Cloud colour by theme (Lee, 2026-10-28: grey on the light map, white on the dark). The grey
+ * lightened from #5F6B7A to #8A94A1 by Lee the same day ("lighten the clouds").
+ */
+const CLOUD_COLOURS = Object.freeze({ light: Object.freeze([0x8a, 0x94, 0xa1]), dark: Object.freeze([255, 255, 255]) });
+
+/** Defaults; `clouds` in the card config overrides each. The box starts UNTICKED (Lee, 2026-10-28). */
+const DEFAULT_CLOUDS = Object.freeze({ enabled: true, opacity: 1, show: false });
+
+const HALF = 20037508.342789244;
+
+/**
+ * @param {*} v
+ * @returns {boolean}
+ */
+function isObj(v) {
+  return v !== null && typeof v === "object" && !Array.isArray(v);
+}
+
+/**
+ * `clouds`: absent or true offers the overlay with D17's defaults; false turns
+ * it off (no checkbox, no fetch); a mapping overrides `opacity` and `show`.
+ * @param {*} input
+ * @returns {{enabled: boolean, opacity: number, show: boolean}}
+ */
+function parseCloudsOption(input) {
+  if (input === undefined || input === null || input === true || input === "auto") return { ...DEFAULT_CLOUDS };
+  if (input === false || input === "off") return { ...DEFAULT_CLOUDS, enabled: false };
+  const o = { ...DEFAULT_CLOUDS };
+  if (!isObj(input)) {
+    Logger.warn("[Clouds] clouds ignored: expected true, false or a mapping", input);
+    return o;
+  }
+  if (typeof input.opacity === "number" && Number.isFinite(input.opacity) && input.opacity >= 0 && input.opacity <= 1) o.opacity = input.opacity;
+  if (typeof input.show === "boolean") o.show = input.show;
+  return o;
+}
+
+/**
+ * The newest frame of one layer: the `default` of the time Dimension inside
+ * that layer's own Layer element.
+ * @param {string} text the capabilities
+ * @param {string} name the layer
+ * @returns {?{key: string, time: number}}
+ */
+function layerFrame(text, name) {
+  if (typeof text !== "string") return null;
+  const at = text.indexOf(`<Name>${name}</Name>`);
+  if (at < 0) return null;
+  const rest = text.slice(at);
+  const end = rest.indexOf("</Layer>");
+  const own = end < 0 ? rest : rest.slice(0, end);
+  const m = own.match(/<Dimension\b[^>]*\bname="time"[^>]*>/);
+  if (!m) return null;
+  const d = m[0].match(/\bdefault="([^"]+)"/);
+  if (!d) return null;
+  const time = isoTime(d[1]);
+  return Number.isFinite(time) ? { key: d[1], time } : null;
+}
+
+/**
+ * @param {string} text nowCOAST's capabilities
+ * @returns {{goes: ?{key: string, time: number}}}
+ */
+function parseCloudCaps(text) {
+  return { goes: layerFrame(text, GOES_LAYER) };
+}
+
+/**
+ * The newest frame of a one-layer capabilities document (EUMETSAT's per-layer ones): the first time
+ * Dimension's `default`.
+ * @param {string} text
+ * @returns {?{key: string, time: number}}
+ */
+function singleFrame(text) {
+  if (typeof text !== "string") return null;
+  const m = text.match(/<Dimension\b[^>]*\bname="time"[^>]*>/);
+  const d = m && m[0].match(/\bdefault="([^"]+)"/);
+  if (!d) return null;
+  const time = isoTime(d[1]);
+  return Number.isFinite(time) ? { key: d[1], time } : null;
+}
+
+/** The four kinds of frame, bottom of the pile first. */
+const KINDS = Object.freeze(["world", "iodc", "mtg", "goes"]);
+
+/**
+ * The frames that may be drawn now.
+ * @param {?object} frames goes, mtg, iodc, world
+ * @param {number} now
+ * @returns {{goes: ?object, mtg: ?object, iodc: ?object, world: ?object}}
+ */
+function freshFrames(frames, now) {
+  const ok = (f, ms) => (f && Number.isFinite(f.time) && now - f.time <= ms ? f : null);
+  return {
+    goes: ok(frames?.goes, GOES_STALE_MS), mtg: ok(frames?.mtg, MTG_STALE_MS),
+    iodc: ok(frames?.iodc, IODC_STALE_MS), world: ok(frames?.world, WORLD_STALE_MS),
+  };
+}
+
+/**
+ * A tile's box in longitude and latitude.
+ * @param {{x: number, y: number, z: number}} c
+ * @returns {{w: number, e: number, s: number, n: number}}
+ */
+function tileBounds(c) {
+  const n2 = 2 ** c.z;
+  const lon = (x) => (x / n2) * 360 - 180;
+  const lat = (y) => (Math.atan(Math.sinh(Math.PI * (1 - (2 * y) / n2))) * 180) / Math.PI;
+  return { w: lon(c.x), e: lon(c.x + 1), n: lat(c.y), s: lat(c.y + 1) };
+}
+
+/**
+ * @param {object} t a box
+ * @param {object} b a box
+ * @returns {boolean} t wholly inside b
+ */
+function inside(t, b) {
+  return t.w >= b.w && t.e <= b.e && t.s >= b.s && t.n <= b.n;
+}
+
+/**
+ * @param {object} t a box
+ * @param {object} b a box
+ * @returns {boolean} t and b overlap
+ */
+function overlaps(t, b) {
+  return t.w < b.e && t.e > b.w && t.s < b.n && t.n > b.s;
+}
+
+/** The pictures, top of the pile first: where each reaches (and is cut), where it is whole, its frame. */
+const PILE = Object.freeze([
+  { kind: "goes", layer: GOES_LAYER, reach: GOES_BOUNDS, full: [GOES_BOUNDS] },
+  { kind: "mtg", layer: MTG_LAYER, reach: MTG_REACH, full: MTG_FULL },
+  { kind: "iodc", layer: IODC_LAYER, reach: IODC_REACH, full: IODC_FULL },
+  { kind: "world", layer: WORLD_LAYER, reach: WORLD_REACH, full: WORLD_FULL },
+]);
+
+/**
+ * Which pictures draw a tile, bottom first (each draws over the ones before it wherever it has data).
+ * From the top of the pile (GOES, MTG, IODC, the world map) every fresh picture that reaches the tile is
+ * taken, down to the first whose data covers the whole tile: nothing under that one would show. Nothing
+ * for a tile wholly south of SOUTH_LIMIT.
+ * @param {{x: number, y: number, z: number}} c
+ * @param {object} fresh from freshFrames
+ * @returns {{layer: string, key: string}[]} empty when none
+ */
+function tilePlan(c, fresh) {
+  const t = tileBounds(c);
+  if (t.n <= SOUTH_LIMIT) return [];
+  const plan = [];
+  for (const p of PILE) {
+    const f = fresh?.[p.kind];
+    if (!f || !overlaps(t, p.reach)) continue;
+    plan.unshift({ layer: p.layer, key: f.key });
+    if (p.full.some((b) => inside(t, b))) break;
+  }
+  return plan;
+}
+
+/**
+ * The first pixel row of a 256 px tile that lies south of SOUTH_LIMIT (256 when none does).
+ * @param {{x: number, y: number, z: number}} c
+ * @returns {number}
+ */
+function southRow(c) {
+  const r = Math.log(Math.tan(Math.PI / 4 + (SOUTH_LIMIT * Math.PI) / 360));
+  const y = ((1 - r / Math.PI) / 2) * 2 ** c.z * 256 - c.y * 256;
+  return Math.min(256, Math.max(0, Math.ceil(y)));
+}
+
+/**
+ * The columns of a 256 px tile whose centres lie between two longitudes: [first, past the last).
+ * @param {{x: number, y: number, z: number}} c
+ * @param {number} w
+ * @param {number} e
+ * @returns {number[]}
+ */
+function colRange(c, w, e) {
+  const px = (lon) => ((lon + 180) / 360) * 2 ** c.z * 256 - c.x * 256;
+  const clamp = (v) => Math.min(256, Math.max(0, v));
+  return [clamp(Math.ceil(px(w) - 0.5)), clamp(Math.ceil(px(e) - 0.5))];
+}
+
+/** Each layer's reach, for its cut. */
+const REACH = Object.freeze(Object.fromEntries(PILE.map((p) => [p.layer, p.reach])));
+
+/**
+ * The GetMap URL for one 256 px tile in Web Mercator.
+ * @param {{x: number, y: number, z: number}} c
+ * @param {{layer: string, key: string}} src
+ * @returns {string}
+ */
+function tileUrl(c, src) {
+  const span = (2 * HALF) / 2 ** c.z;
+  const minx = -HALF + c.x * span;
+  const maxy = HALF - c.y * span;
+  const p = new URLSearchParams({
+    service: "WMS", request: "GetMap", version: "1.3.0", layers: src.layer, styles: "", crs: "EPSG:3857",
+    bbox: [minx, maxy - span, minx + span, maxy].join(","), width: "256", height: "256",
+    format: "image/png", transparent: "true", time: src.key,
+  });
+  return `${LAYER_WMS[src.layer] ?? CLOUD_WMS}?${p.toString()}`;
+}
+
+/**
+ * Recolour a tile's pixels in place: clear sky transparent, cloud in `rgb`
+ * with an alpha that rises from `ramp[0]` to `ramp[1]` brightness up to MAX_ALPHA.
+ * @param {Uint8ClampedArray|number[]} d RGBA
+ * @param {number[]} rgb
+ * @param {number[]} [ramp] [clear, cloudy]
+ */
+function recolour(d, rgb, ramp = [CLEAR, CLOUDY]) {
+  const span = ramp[1] - ramp[0];
+  for (let i = 0; i < d.length; i += 4) {
+    let a = 0;
+    if (d[i + 3] > 0) {
+      const t = ((d[i] + d[i + 1] + d[i + 2]) / 765 - ramp[0]) / span;
+      a = t <= 0 ? 0 : Math.round(255 * MAX_ALPHA * Math.min(1, t));
+    }
+    d[i] = rgb[0];
+    d[i + 1] = rgb[1];
+    d[i + 2] = rgb[2];
+    d[i + 3] = a;
+  }
+}
+
+/**
+ * Lay one picture's pixels over a tile already drawn: wherever the picture has data (alpha above 0) its
+ * recoloured pixel replaces what is there, clear sky included; elsewhere, and outside columns [c0, c1),
+ * the tile is left alone.
+ * @param {Uint8ClampedArray|number[]} dst RGBA, already recoloured
+ * @param {Uint8ClampedArray|number[]} src RGBA, as fetched
+ * @param {number[]} rgb
+ * @param {number[]} ramp
+ * @param {number} [c0]
+ * @param {number} [c1]
+ */
+function layerOver(dst, src, rgb, ramp, c0 = 0, c1 = 256) {
+  const px = [0, 0, 0, 0];
+  for (let i = 0; i < src.length; i += 4) {
+    if (src[i + 3] === 0) continue;
+    const col = (i >> 2) & 255;
+    if (col < c0 || col >= c1) continue;
+    px[0] = src[i]; px[1] = src[i + 1]; px[2] = src[i + 2]; px[3] = src[i + 3];
+    recolour(px, rgb, ramp);
+    dst[i] = px[0]; dst[i + 1] = px[1]; dst[i + 2] = px[2]; dst[i + 3] = px[3];
+  }
+}
+
+/**
+ * A view's box; a view a whole world wide or more spans every longitude.
+ * @param {?object} b Leaflet bounds
+ * @returns {?{w: number, e: number, s: number, n: number}}
+ */
+function viewBox(b) {
+  if (!b || typeof b.getSouth !== "function") return null;
+  const s = b.getSouth();
+  const n = b.getNorth();
+  let w = typeof b.getWest === "function" ? b.getWest() : -180;
+  let e = typeof b.getEast === "function" ? b.getEast() : 180;
+  if (e - w >= 360) { w = -180; e = 180; } else {
+    // Leaflet's longitudes run on past 180 when the map is panned round; bring the west edge back.
+    const k = Math.floor((w + 180) / 360);
+    w -= k * 360;
+    e -= k * 360;
+  }
+  return { w, e, s, n };
+}
+
+/**
+ * @param {object} v a view box
+ * @param {object} b a box
+ * @returns {boolean} they overlap, the view taken also one world east (a view across 180)
+ */
+function viewMeets(v, b) {
+  return overlaps(v, b) || overlaps({ ...v, w: v.w - 360, e: v.e - 360 }, b);
+}
+
+/**
+ * Whether a view overlaps GOES's box.
+ * @param {?object} b Leaflet bounds
+ * @returns {boolean}
+ */
+function viewCovered(b) {
+  const v = viewBox(b);
+  return !!v && viewMeets(v, GOES_BOUNDS);
+}
+
+/**
+ * Whether EUMETSAT's pictures can show in a view: it overlaps where they have data and, while GOES is
+ * fresh, reaches past GOES's box (inside it GOES draws alone).
+ * @param {?object} b Leaflet bounds
+ * @param {boolean} [goesFresh]
+ * @returns {boolean}
+ */
+function viewEumetsat(b, goesFresh = true) {
+  const v = viewBox(b);
+  if (!v || v.n <= SOUTH_LIMIT || v.s >= WORLD_REACH.n) return false;
+  return !goesFresh || !(v.e - v.w < 360 && inside(v, GOES_BOUNDS));
+}
+
+/**
+ * The cloud pane: right after the tile pane, so the radar's (also placed right
+ * after the tile pane, earlier) ends up above it; outside the tile pane, so
+ * the dark filter does not reach it.
+ * @param {object} map
+ * @returns {HTMLElement}
+ */
+function placeCloudPane(map) {
+  const pane = map.getPane(CLOUD_PANE) ?? map.createPane(CLOUD_PANE);
+  const tiles = map.getPane("tilePane");
+  if (tiles?.parentNode && pane.previousSibling !== tiles) {
+    tiles.parentNode.insertBefore(pane, tiles.nextSibling);
+  }
+  pane.style.pointerEvents = "none";
+  return pane;
+}
+
+let CloudGrid = null;
+
+/**
+ * The grid layer for one set of frames. Each tile's pictures are fetched as images
+ * (CORS `*`, measured), recoloured in a canvas, laid bottom first, and handed to Leaflet.
+ * @param {object} fresh from freshFrames
+ * @param {Function} colour () => [r, g, b] for the current theme
+ * @param {number} opacity
+ * @param {Function} onError (err) => void, once per failure kind
+ * @returns {object} a Leaflet layer
+ */
+function cloudLayer(fresh, colour, opacity, onError) {
+  CloudGrid ??= L$2.GridLayer.extend({
+    createTile(coords, done) {
+      const canvas = document.createElement("canvas");
+      canvas.width = 256;
+      canvas.height = 256;
+      const plan = tilePlan(coords, this.options.fresh);
+      if (!plan.length) {
+        setTimeout(() => done(null, canvas), 0);
+        return canvas;
+      }
+      // Every picture is fetched at once; they are laid bottom first when all have answered.
+      const imgs = plan.map((src) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        const p = new Promise((resolve) => {
+          img.onload = () => resolve(img);
+          img.onerror = () => {
+            this.options.onError(new Error(`tile not loaded: ${src.layer}`));
+            resolve(null);
+          };
+        });
+        img.src = tileUrl(coords, src);
+        return p;
+      });
+      Promise.all(imgs).then((loaded) => {
+        if (!loaded.some(Boolean)) {
+          done(new Error("no cloud picture loaded"), canvas);
+          return;
+        }
+        try {
+          const ctx = canvas.getContext("2d", { willReadFrequently: true });
+          const rgb = this.options.colour();
+          const out = ctx.createImageData(256, 256);
+          loaded.forEach((img, i) => {
+            if (!img) return;
+            ctx.clearRect(0, 0, 256, 256);
+            ctx.drawImage(img, 0, 0, 256, 256);
+            const raw = ctx.getImageData(0, 0, 256, 256);
+            const r = REACH[plan[i].layer];
+            const [c0, c1] = r ? colRange(coords, r.w, r.e) : [0, 256];
+            layerOver(out.data, raw.data, rgb, RAMPS[plan[i].layer] ?? [CLEAR, CLOUDY], c0, c1);
+          });
+          out.data.fill(0, southRow(coords) * 256 * 4);
+          ctx.putImageData(out, 0, 0);
+        } catch (e) {
+          this.options.onError(e);
+        }
+        done(null, canvas);
+      });
+      return canvas;
+    },
+  });
+  return new CloudGrid({
+    fresh, colour, onError, opacity,
+    pane: CLOUD_PANE,
+    tileSize: 256,
+    maxNativeZoom: CLOUD_MAX_NATIVE_ZOOM,
+    maxZoom: 24,
+    bounds: L$2.latLngBounds([SOUTH_LIMIT, -180], [WORLD_REACH.n, 180]),
+    updateWhenZooming: false,
+    keepBuffer: 1,
+  });
+}
+
+/**
+ * @param {?object} f fresh frames
+ * @returns {string} the frames' key: a new frame of any kind is a new layer
+ */
+function pairKey(f) {
+  return KINDS.map((k) => f?.[k]?.key ?? "-").join("|");
+}
+
+class CloudOverlayService {
+  /**
+   * @param {object} map Leaflet map
+   * @param {*} option the card's `clouds`
+   * @param {{addOverlay: Function, removeOverlay: Function}} overlays the layer control (TileLayersService)
+   * @param {Function} isDark () => whether the card is dark now
+   * @param {object} [deps] for tests: fetch, now, setInterval, clearInterval, setTimeout, clearTimeout, layer
+   */
+  constructor(map, option, overlays, isDark, deps = {}) {
+    this.map = map;
+    this.opt = parseCloudsOption(option);
+    this.overlays = overlays;
+    this.isDark = typeof isDark === "function" ? isDark : () => false;
+    this.fetch = deps.fetch ?? ((...a) => globalThis.fetch(...a));
+    this.now = deps.now ?? (() => Date.now());
+    this.setInterval = deps.setInterval ?? ((f, ms) => globalThis.setInterval(f, ms));
+    this.clearInterval = deps.clearInterval ?? ((h) => globalThis.clearInterval(h));
+    this.setTimeout = deps.setTimeout ?? ((f, ms) => globalThis.setTimeout(f, ms));
+    this.clearTimeout = deps.clearTimeout ?? ((h) => globalThis.clearTimeout(h));
+    this.makeLayer = deps.layer ?? cloudLayer;
+    this.group = null;
+    this.layer = null;
+    this.pending = null;
+    this.frames = { goes: null, mtg: null, iodc: null, world: null };
+    this.eumCredited = false;
+    this.shownKey = null;
+    this.dark = null;
+    this.nextAt = 0;
+    this.inflight = null;
+    this.credited = false;
+    this.warned = new Set();
+    this.on = false;
+    this.timer = null;
+    this.disposed = false;
+    this._onMove = () => this._credit();
+    this._colour = () => (this.dark ? CLOUD_COLOURS.dark : CLOUD_COLOURS.light);
+    this._onTileError = () => this._warnOnce("tile", "[Clouds] a cloud tile was not drawn (network or CORS); the rest of the map is unaffected");
+  }
+
+  /** Create the checkbox (and, if it starts ticked, the layer). Never throws. */
+  setup() {
+    if (!this.opt.enabled || this.disposed) return;
+    try {
+      placeCloudPane(this.map);
+      this.group = L$2.layerGroup([]);
+      this.group.on("add", () => this._start());
+      this.group.on("remove", () => this._stop());
+      this.map.on("moveend", this._onMove);
+      this.overlays.addOverlay(this.group, CLOUD_NAME, this.opt.show);
+    } catch (e) {
+      Logger.error("[Clouds] setup failed; map unaffected", e);
+    }
+  }
+
+  _start() {
+    if (this.disposed || this.on) return;
+    this.on = true;
+    this.dark = !!this.isDark();
+    this.timer = this.setInterval(() => this._refresh(), TICK_MS);
+    this._refresh();
+  }
+
+  _stop() {
+    this.on = false;
+    if (this.timer !== null) { this.clearInterval(this.timer); this.timer = null; }
+    try { this.inflight?.abort(); } catch { /* nothing */ }
+    this.inflight = null;
+    this._dropPending();
+    if (this.layer) { this.group?.removeLayer(this.layer); this.layer = null; }
+    this.shownKey = null;
+    this._credit();
+  }
+
+  /** Read the frame list when due; draw the fresh frames, or nothing; follow the theme. */
+  _refresh() {
+    if (!this.on || this.disposed) return;
+    try {
+      const now = this.now();
+      if (!this.inflight && this.nextAt <= now) this._fetchFrames();
+      const fresh = freshFrames(this.frames, now);
+      if (this.frames.goes && !fresh.goes) this._warnOnce("goes", "[Clouds] the newest GOES frame is over 30 minutes old: EUMETSAT's pictures draw its tiles");
+      const key = pairKey(fresh);
+      if (!KINDS.some((k) => fresh[k])) {
+        if (KINDS.some((k) => this.frames[k])) this._warnOnce("stale", "[Clouds] no fresh cloud frame: none is drawn");
+        this._dropPending();
+        if (this.layer) { this.group.removeLayer(this.layer); this.layer = null; }
+        this.shownKey = null;
+      } else if (key !== this.shownKey) {
+        this._swap(key, fresh);
+      }
+      const dark = !!this.isDark();
+      if (dark !== this.dark) {
+        this.dark = dark;
+        this.layer?.redraw?.();
+      }
+      this._credit();
+    } catch (e) {
+      Logger.error("[Clouds] refresh failed; map unaffected", e);
+    }
+  }
+
+  _fetchFrames() {
+    const ctl = typeof AbortController === "function" ? new AbortController() : null;
+    this.inflight = ctl ?? { abort() {} };
+    this.nextAt = this.now() + CLOUD_POLL_MS;
+    let timedOut = false;
+    const timer = this.setTimeout(() => { timedOut = true; try { ctl?.abort(); } catch { /* nothing */ } }, FETCH_TIMEOUT_MS);
+    const mine = this.inflight;
+    // Each list is read on its own: one failing never holds back the others.
+    const one = (url, parse, warnKey, label) => {
+      let req;
+      try {
+        // no-cache: NOAA's capabilities say max-age=240, nearly a whole GOES frame.
+        req = Promise.resolve(this.fetch(url, { signal: ctl?.signal, credentials: "omit", cache: "no-cache" }));
+      } catch (e) {
+        req = Promise.reject(e);
+      }
+      return req
+        .then((r) => {
+          if (!r || !r.ok) throw new Error(`HTTP ${r?.status}`);
+          return r.text();
+        })
+        .then((body) => {
+          const f = parse(body);
+          if (!KINDS.some((k) => f[k])) throw new Error("no frame in the answer");
+          this._keep(f);
+        })
+        .catch((e) => {
+          if (e?.name === "AbortError" && !timedOut) return;
+          const why = timedOut ? `no answer in ${FETCH_TIMEOUT_MS / 1000} s` : (e?.message ?? e);
+          this._warnOnce(warnKey, `[Clouds] ${label}frame list not read (${why}); the last frames stay until they are stale`);
+        });
+    };
+    Promise.all([
+      one(CLOUD_CAPS, parseCloudCaps, "fetch", ""),
+      one(capsUrl(MTG_WMS), (b) => ({ mtg: singleFrame(b) }), "fetch-mtg", "EUMETSAT MTG "),
+      one(capsUrl(IODC_WMS), (b) => ({ iodc: singleFrame(b) }), "fetch-iodc", "EUMETSAT IODC "),
+      one(capsUrl(WORLD_WMS), (b) => ({ world: singleFrame(b) }), "fetch-world", "EUMETSAT world map "),
+    ]).finally(() => {
+      this.clearTimeout(timer);
+      if (this.inflight === mine) this.inflight = null;
+      if (this.on && !this.disposed) this._refresh();
+    });
+  }
+
+  /**
+   * Keep the newer of each kind: an older answer never replaces a frame already held.
+   * @param {object} f frames read
+   */
+  _keep(f) {
+    for (const k of KINDS) {
+      if (f[k] && (!this.frames[k] || f[k].time >= this.frames[k].time)) this.frames[k] = f[k];
+    }
+  }
+
+  /**
+   * Show a new pair of frames without a blank, as D13 and D14: it loads at
+   * opacity 0 and is shown on its `load` (or after SWAP_TIMEOUT_MS).
+   * @param {string} key
+   * @param {object} fresh from freshFrames
+   */
+  _swap(key, fresh) {
+    if (this.pending?.key === key) return;
+    this._dropPending();
+    const first = !this.layer;
+    const layer = this.makeLayer(fresh, this._colour, first ? this.opt.opacity : 0, this._onTileError);
+    if (first) {
+      this.layer = layer;
+      this.shownKey = key;
+      this.group.addLayer(layer);
+      return;
+    }
+    const show = () => {
+      if (this.pending?.layer !== layer) return;
+      this.clearTimeout(this.pending.timer);
+      this.pending = null;
+      layer.setOpacity(this.opt.opacity);
+      if (this.layer) this.group.removeLayer(this.layer);
+      this.layer = layer;
+      this.shownKey = key;
+    };
+    this.pending = { layer, key, timer: this.setTimeout(show, SWAP_TIMEOUT_MS) };
+    layer.once("load", show);
+    this.group.addLayer(layer);
+  }
+
+  _dropPending() {
+    if (!this.pending) return;
+    this.clearTimeout(this.pending.timer);
+    this.group?.removeLayer(this.pending.layer);
+    this.pending = null;
+  }
+
+  /**
+   * The credit lines while clouds are drawn: NOAA's while the view overlaps GOES's box and a GOES frame is
+   * fresh, EUMETSAT's while the view reaches past that box and one of EUMETSAT's frames is fresh.
+   */
+  _credit() {
+    let noaa = false;
+    let eum = false;
+    try {
+      const b = this.map?.getBounds?.();
+      if (this.on && this.layer) {
+        const fresh = freshFrames(this.frames, this.now());
+        noaa = !!fresh.goes && viewCovered(b);
+        eum = !!(fresh.mtg || fresh.iodc || fresh.world) && viewEumetsat(b, !!fresh.goes);
+      }
+    } catch {
+      noaa = false;
+      eum = false;
+    }
+    const ctl = this.map?.attributionControl;
+    if (noaa !== this.credited) {
+      if (noaa) ctl?.addAttribution(CLOUD_CREDIT); else ctl?.removeAttribution(CLOUD_CREDIT);
+      this.credited = noaa;
+    }
+    if (eum !== this.eumCredited) {
+      if (eum) ctl?.addAttribution(EUMETSAT_CREDIT); else ctl?.removeAttribution(EUMETSAT_CREDIT);
+      this.eumCredited = eum;
+    }
+  }
+
+  /**
+   * @param {string} key
+   * @param {string} msg
+   */
+  _warnOnce(key, msg) {
+    if (this.warned.has(key)) return;
+    this.warned.add(key);
+    Logger.warn(msg);
+  }
+
+  /** Teardown: stop timers, abort the fetch, remove the layer, checkbox and pane. */
+  cleanup() {
+    if (this.disposed) return;
+    try {
+      this._stop();
+      this.map?.off("moveend", this._onMove);
+      if (this.group) {
+        this.overlays?.removeOverlay(this.group);
+        this.group.remove();
+      }
+      this.map?.getPane?.(CLOUD_PANE)?.remove?.();
+    } catch (e) {
+      Logger.error("[Clouds] cleanup", e);
     }
     this.disposed = true;
   }
@@ -24692,6 +29771,224 @@ class HaStaleStateService {
   get size() {
     return this._stale.size;
   }
+}
+
+/**
+ * Which marker groups a viewer has hidden (06_MAP_CONTRACT.md D4f, backlog 345).
+ *
+ * An integration names a marker's group in `marker_group` (a short key such
+ * as `cargo`); the key that is hidden is `<source>:<marker_group>`, so two
+ * integrations may use the same word for different things. The choice is a
+ * viewer's, kept in THIS browser's localStorage (Lee 2026-11-15: remembered
+ * per browser), made in the filter card on another view of the dashboard and
+ * read by the map card. Storage can be missing, full or refused (a private
+ * window, a sandboxed frame): every read and write is guarded, and with no
+ * storage nothing is hidden.
+ *
+ * Two pages of one browser learn of a change by the `storage` event; the same
+ * page does not get that event, so a write also dispatches GROUPS_EVENT.
+ */
+
+const STORAGE_KEY = "live-track-map-card:hidden-groups";
+const GROUPS_EVENT = "live-track-map-card-groups";
+
+/**
+ * @param {object|undefined} attrs an entity's attributes
+ * @returns {string|null} `<source>:<marker_group>`, or null when the entity names no group
+ */
+function groupKey(attrs) {
+  const source = attrs?.source;
+  const group = attrs?.marker_group;
+  if (typeof source !== "string" || !source || typeof group !== "string" || !group) return null;
+  return `${source}:${group}`;
+}
+
+/**
+ * @param {Window} win
+ * @returns {Storage|null} its localStorage, or null when there is none or reading it throws
+ */
+function storageOf(win) {
+  try {
+    return win?.localStorage ?? null;
+  } catch {
+    return null;   // reading localStorage itself can throw (sandboxed frame)
+  }
+}
+
+/**
+ * @param {Window} [win]
+ * @returns {Set<string>} the hidden keys, empty when nothing is stored or storage fails
+ */
+function readHidden(win = globalThis.window) {
+  try {
+    const raw = storageOf(win)?.getItem(STORAGE_KEY);
+    if (!raw) return new Set();
+    const list = JSON.parse(raw);
+    return new Set(Array.isArray(list) ? list.filter((k) => typeof k === "string") : []);
+  } catch {
+    return new Set();
+  }
+}
+
+/**
+ * Store the hidden keys and tell this page.
+ * @param {string[]|Set<string>} keys
+ * @param {Window} [win]
+ * @returns {boolean} whether it was stored
+ */
+function writeHidden(keys, win = globalThis.window) {
+  const list = [...new Set(keys)].sort();
+  let stored = false;
+  try {
+    const st = storageOf(win);
+    if (st) {
+      // ⚠ "Show everything" is stored as [] and not as no key: it is a
+      // choice, and a filter card's start_hidden must not undo it.
+      st.setItem(STORAGE_KEY, JSON.stringify(list));
+      stored = true;
+    }
+  } catch {
+    stored = false;
+  }
+  try {
+    win?.dispatchEvent(new CustomEvent(GROUPS_EVENT, { detail: { hidden: list } }));
+  } catch { /* never stops the caller */ }
+  return stored;
+}
+
+/**
+ * Has a choice ever been stored in this browser? ("show everything" is stored as [], so it counts)
+ * @param {Window} [win]
+ * @returns {boolean}
+ */
+function hasStoredChoice(win = globalThis.window) {
+  try {
+    return storageOf(win)?.getItem(STORAGE_KEY) != null;
+  } catch {
+    return false;
+  }
+}
+
+/** The map card's view of the choice: answers `hides(attrs)` and follows changes. */
+class GroupFilter {
+  /**
+   * @param {() => void} [onChange] called after the hidden set changed
+   * @param {Window} [win]
+   */
+  constructor(onChange = () => {}, win = globalThis.window) {
+    this.win = win;
+    this.onChange = onChange;
+    this.hidden = readHidden(win);
+    this._onEvent = (e) => {
+      if (e?.type === "storage" && e.key !== STORAGE_KEY && e.key !== null) return;
+      const next = readHidden(this.win);
+      if (next.size === this.hidden.size && [...next].every((k) => this.hidden.has(k))) return;
+      this.hidden = next;
+      try { this.onChange(); } catch { /* the map draws on its next update anyway */ }
+    };
+    try {
+      win?.addEventListener("storage", this._onEvent);
+      win?.addEventListener(GROUPS_EVENT, this._onEvent);
+    } catch { /* no window: nothing to follow */ }
+  }
+
+  /**
+   * @param {object|undefined} attrs
+   * @returns {boolean} whether the viewer hid this entity's group
+   */
+  hides(attrs) {
+    if (!this.hidden.size) return false;
+    const key = groupKey(attrs);
+    return key !== null && this.hidden.has(key);
+  }
+
+  dispose() {
+    try {
+      this.win?.removeEventListener("storage", this._onEvent);
+      this.win?.removeEventListener(GROUPS_EVENT, this._onEvent);
+    } catch { /* nothing to remove */ }
+  }
+}
+
+/**
+ * `live_track_ships` -> "Live Track Ships"; `type_unknown` -> "Type unknown".
+ * @param {string} s
+ * @returns {string}
+ */
+function prettify(s) {
+  const words = String(s ?? "").split(/[_\s]+/).filter(Boolean);
+  if (/^live_track_/.test(String(s))) return words.map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
+  const t = words.join(" ");
+  return t ? t[0].toUpperCase() + t.slice(1) : "";
+}
+
+/**
+ * What the filter card lists: every group a `geo_location` entity names now
+ * (not unavailable), counted, plus every hidden group with nothing on the map
+ * (count 0, so it can be shown again). By source, then by the integration's
+ * `marker_group_order`, then by label; groups with no order go last.
+ * @param {object} states hass.states
+ * @param {Set<string>} hidden
+ * @param {string[]|null} [sources] only these sources
+ * @returns {{source: string, title: string, groups: {key: string, group: string, label: string, order: number, count: number}[]}[]}
+ */
+function summarize(states, hidden, sources = null) {
+  const wanted = Array.isArray(sources) ? new Set(sources) : null;
+  const bySource = new globalThis.Map();
+  const add = (source, group, label, order, n) => {
+    if (wanted && !wanted.has(source)) return;
+    if (!bySource.has(source)) bySource.set(source, new globalThis.Map());
+    const groups = bySource.get(source);
+    const g = groups.get(group) ?? { key: `${source}:${group}`, group, label: label || prettify(group), order, count: 0 };
+    if (label && g.label === prettify(group)) g.label = label;
+    if (Number.isFinite(order) && !Number.isFinite(g.order)) g.order = order;
+    g.count += n;
+    groups.set(group, g);
+  };
+  for (const [id, st] of Object.entries(states ?? {})) {
+    if (!id.startsWith("geo_location.")) continue;
+    const a = st?.attributes;
+    if (!groupKey(a) || st.state === "unavailable") continue;
+    const order = a.marker_group_order == null ? NaN : Number(a.marker_group_order);
+    add(a.source, a.marker_group, typeof a.marker_group_label === "string" ? a.marker_group_label : "", order, 1);
+  }
+  for (const key of hidden ?? []) {
+    const i = key.indexOf(":");
+    if (i > 0) add(key.slice(0, i), key.slice(i + 1), "", NaN, 0);
+  }
+  const rank = (g) => (Number.isFinite(g.order) ? g.order : Number.MAX_SAFE_INTEGER);
+  return [...bySource.entries()]
+    .map(([source, groups]) => ({
+      source,
+      title: prettify(source),
+      groups: [...groups.values()].sort((a, b) => rank(a) - rank(b) || a.label.localeCompare(b.label)),
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title));
+}
+
+/**
+ * The hidden set after hiding or showing some keys.
+ * @param {Set<string>} hidden
+ * @param {string[]} keys
+ * @param {boolean} hide
+ * @returns {Set<string>}
+ */
+function toggled(hidden, keys, hide) {
+  const next = new Set(hidden);
+  for (const k of keys) hide ? next.add(k) : next.delete(k);
+  return next;
+}
+
+/**
+ * The filter card's `start_hidden`, applied only in a browser that never chose.
+ * @param {unknown} start
+ * @param {Window} [win]
+ * @returns {boolean} whether it was applied
+ */
+function applyStartHidden(start, win = globalThis.window) {
+  const keys = (Array.isArray(start) ? start : []).filter((k) => typeof k === "string" && k.indexOf(":") > 0);
+  if (!keys.length || hasStoredChoice(win)) return false;
+  return writeHidden(keys, win);
 }
 
 /**
@@ -26998,6 +32295,2393 @@ function now() {
  */
 function fromCellLatLng(s) { return fromCell(s.gx, s.gy); }
 
+/**
+ * People, devices and zones as Home Assistant's own map draws them (HA 2026.10,
+ * "A whole new map"): the rules, without Leaflet or the DOM, so they can be
+ * tested on their own.
+ *
+ * Written for this card from Home Assistant frontend's design and constants
+ * (home-assistant/frontend, Apache-2.0; read at commit
+ * 4d8eca2229633c545926fd0a1cec32f35768949d: src/common/map/zone-marker.ts,
+ * entity-map-colors.ts, src/common/color/colors.ts,
+ * src/components/map/ha-entity-marker.ts, ha-map.ts and
+ * src/common/map/engines/maplibre-map-engine.ts). See THIRD_PARTY_NOTICES.md.
+ */
+
+const HOME_ZONE = "zone.home";
+
+/** A zone's marker: a circle this wide, its icon this size. */
+const ZONE_CIRCLE_SIZE = 36;
+const ZONE_ICON_SIZE = 24;
+/** WCAG minimum contrast for icons and other graphics. */
+const MIN_CONTENT_CONTRAST = 3;
+
+/** A person or tracker pin: the framed picture, its border. */
+const MARKER_SIZE = 48;
+const MARKER_BORDER = 3;
+/** Floating: the frame above a rotated-square tail and a dot. */
+const FLOATING_TAIL_SIZE = 12;
+const FLOATING_TAIL_REACH = Math.round((FLOATING_TAIL_SIZE * Math.SQRT2) / 2);
+const FLOATING_GAP = 4;
+const FLOATING_DOT_SIZE = 10;
+const FLOATING_LIFT = FLOATING_GAP + FLOATING_DOT_SIZE / 2;
+
+/** Bubbles. */
+const CLUSTER_AVATAR_SIZE = 32;
+const CLUSTER_BUBBLE_PADDING = 6;
+const CLUSTER_BUBBLE_GAP = 4;
+const CLUSTER_BUBBLE_MARGIN = 12;
+const CLUSTER_MAX_AVATARS = 4;
+const CLUSTER_MORE_WIDTH = 28;
+const CLUSTER_MORE_MAX = 99;
+const CLUSTER_TAIL_SIZE = 10;
+const CLUSTER_TAIL_HEIGHT = Math.round((CLUSTER_TAIL_SIZE * Math.SQRT2) / 2);
+const CLUSTER_ZONE_SPACING = 2;
+/** Markers outside a zone merge within this many screen pixels. */
+const CLUSTER_RADIUS = 40;
+/** Same-zone members share the zone's bubble while they span at most this many pixels. */
+const ZONE_GROUP_RADIUS = 160;
+/** Fixes this good (metres) draw a soft disc without an outline. */
+const PRECISE_GPS_ACCURACY = 10;
+/** Circles (zone radius, accuracy): fill opacity and outline width. */
+const CIRCLE_FILL_OPACITY = 0.2;
+const CIRCLE_LINE_WIDTH = 3;
+
+/** The theme's palette: --color-1 .. --color-54. */
+const COLORS_COUNT = 54;
+
+const OUTSIDE_STATES = ["not_home", "unknown", "unavailable"];
+
+/**
+ * @param {string} id entity id
+ * @returns {string} its domain
+ */
+const domainOf = (id) => (typeof id === "string" ? id.split(".")[0] : "");
+
+/**
+ * Is this entity of a kind drawn the new way?
+ * @param {string} id entity id
+ * @returns {boolean} person, device_tracker or zone
+ */
+const isPresenceDomain = (id) => ["person", "device_tracker", "zone"].includes(domainOf(id));
+
+/**
+ * Is an entity from the dashboard drawn the new way? A person, tracker or
+ * zone whose `display:` is unset, `marker` (the default) or `pill` (folded in,
+ * Lee 2026-11-19). Any other `display:` keeps the card's older marker.
+ * @param {{id: string, display?: string}} config an EntityConfig
+ * @param {boolean} enabled the card's `presence_markers` option
+ * @returns {boolean}
+ */
+function drawnAsPresence(config, enabled) {
+  if (!enabled || !config || !isPresenceDomain(config.id)) return false;
+  const d = config.display;
+  return d == null || d === "marker" || d === "pill";
+}
+
+/**
+ * A zone's initials: the first letter of each word, at most two.
+ * @param {string} name the zone's name
+ * @returns {string}
+ */
+const zoneInitials = (name) =>
+  String(name ?? "").split(" ").map((part) => part[0] ?? "").join("").slice(0, 2);
+
+/**
+ * What a pin without a picture shows: the first letter of each word, at most three.
+ * @param {string} title the entity's name
+ * @returns {string}
+ */
+const markerLabel = (title) =>
+  String(title ?? "").split(" ").map((part) => part[0] ?? "").join("").substring(0, 3);
+
+/**
+ * The palette slot of an entity no registry entry places (a YAML zone).
+ * @param {string} entityId entity id
+ * @returns {number}
+ */
+function hashIndex(entityId) {
+  let hash = 5381;
+  const s = String(entityId);
+  for (let i = 0; i < s.length; i++) {
+    hash = (hash * 33 + s.charCodeAt(i)) % 2147483647;
+  }
+  return hash;
+}
+
+const byCreation = (a, b) =>
+  (Number(a.created_at) || 0) - (Number(b.created_at) || 0) || String(a.id).localeCompare(String(b.id));
+
+/**
+ * Palette slots from the entity registry: zones (home excluded) in one
+ * sequence, persons then trackers in another, each by creation.
+ * @param {Array<{entity_id: string, id: string, created_at: number}>} entries
+ * @returns {{byEntityId: Record<string, number>, zoneCount: number}}
+ */
+function paletteIndex(entries) {
+  const list = Array.isArray(entries) ? entries.filter((e) => e && typeof e.entity_id === "string") : [];
+  const of = (domain) => list.filter((e) => domainOf(e.entity_id) === domain).sort(byCreation);
+  const zones = of("zone").filter((e) => e.entity_id !== HOME_ZONE);
+  const people = [...of("person"), ...of("device_tracker")];
+  const byEntityId = {};
+  for (const seq of [zones, people]) seq.forEach((e, i) => { byEntityId[e.entity_id] = i; });
+  return { byEntityId, zoneCount: zones.length };
+}
+
+/**
+ * The theme variable holding a palette slot.
+ * @param {number} index the slot
+ * @returns {string} --color-1 .. --color-54, wrapping
+ */
+const paletteVar = (index) => `--color-${(index % COLORS_COUNT) + 1}`;
+
+/**
+ * The palette slot of an entity: its registry place, else its hash.
+ * @param {string} entityId entity id
+ * @param {{byEntityId: Record<string, number>}|null} index from paletteIndex
+ * @returns {number}
+ */
+function colorIndex(entityId, index) {
+  const i = index?.byEntityId?.[entityId];
+  return Number.isInteger(i) ? i : hashIndex(entityId);
+}
+
+/**
+ * The CSS variable a zone is coloured with: home the theme's primary colour,
+ * a passive zone muted, any other its palette slot.
+ * @param {string} entityId the zone
+ * @param {boolean} passive the zone's passive flag
+ * @param {{byEntityId: Record<string, number>}|null} index from paletteIndex
+ * @returns {string} a CSS variable name
+ */
+function zoneColorVar(entityId, passive, index) {
+  if (entityId === HOME_ZONE) return "--primary-color";
+  return paletteVar(colorIndex(entityId, index));
+}
+
+/**
+ * @param {string} color #rgb, #rrggbb, #rrggbbaa or rgb()/rgba()
+ * @returns {Array<number>|null} red, green, blue 0..255
+ */
+function parseColor(color) {
+  const c = String(color ?? "").trim().toLowerCase();
+  let m = /^#([0-9a-f]{3})$/.exec(c);
+  if (m) return m[1].split("").map((h) => parseInt(h + h, 16));
+  m = /^#([0-9a-f]{6})([0-9a-f]{2})?$/.exec(c);
+  if (m) return [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16));
+  m = /^rgba?\(\s*([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/.exec(c);
+  if (m) return [m[1], m[2], m[3]].map((v) => Math.min(255, Math.max(0, Math.round(Number(v)))));
+  return null;
+}
+
+const luminance = ([r, g, b]) => {
+  const lin = (v) => { const s = v / 255; return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4; };
+  return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
+};
+
+/**
+ * White content while it contrasts enough with the fill, black otherwise; white if unreadable.
+ * @param {string} color the fill
+ * @returns {string} #ffffff or #000000
+ */
+function contrastingContent(color) {
+  const rgb = parseColor(color);
+  if (!rgb) return "#ffffff";
+  const contrast = 1.05 / (luminance(rgb) + 0.05);
+  return contrast >= MIN_CONTENT_CONTRAST ? "#ffffff" : "#000000";
+}
+
+const isNum$1 = (v) => typeof v === "number" && Number.isFinite(v);
+
+/**
+ * The zones drawn: every non-passive zone with a position.
+ * @param {Record<string, any>} states
+ * @returns {Array<{id: string, lat: number, lng: number, radius: number|null, icon: string|null, name: string}>}
+ */
+function drawnZones(states) {
+  const out = [];
+  for (const [id, s] of Object.entries(states ?? {})) {
+    if (domainOf(id) !== "zone" || !s?.attributes) continue;
+    const a = s.attributes;
+    if (a.passive) continue;
+    if (!isNum$1(a.latitude) || !isNum$1(a.longitude)) continue;
+    out.push({
+      id,
+      lat: a.latitude,
+      lng: a.longitude,
+      radius: isNum$1(a.radius) && a.radius > 0 ? a.radius : null,
+      icon: typeof a.icon === "string" && a.icon !== "" ? a.icon : null,
+      name: typeof a.friendly_name === "string" ? a.friendly_name : id,
+    });
+  }
+  return out.sort((a, b) => a.id.localeCompare(b.id));
+}
+
+/**
+ * Great-circle distance in metres.
+ * @param {{lat: number, lng: number}} a
+ * @param {{lat: number, lng: number}} b
+ * @returns {number}
+ */
+function distanceMeters(a, b) {
+  const R = 6371008.8, rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+/**
+ * The smallest drawn zone whose radius covers a position within its GPS accuracy.
+ * @param {{lat: number, lng: number}} position
+ * @param {number} gpsAccuracy metres
+ * @param {Array<{id: string, lat: number, lng: number, radius: number|null}>} zones from drawnZones
+ * @returns {string|undefined} the zone's id
+ */
+function zoneContaining(position, gpsAccuracy, zones) {
+  let found, foundRadius = Infinity, foundDistance = Infinity;
+  for (const z of zones) {
+    if (z.radius == null) continue;
+    const d = distanceMeters(position, z);
+    if (d - (gpsAccuracy || 0) < z.radius && (z.radius < foundRadius || (z.radius === foundRadius && d < foundDistance))) {
+      found = z.id; foundRadius = z.radius; foundDistance = d;
+    }
+  }
+  return found;
+}
+
+/**
+ * The zone a person or tracker counts as in: the first active zone of its
+ * `in_zones` that is drawn; without `in_zones` (and not away or unknown), the
+ * zone containing its position.
+ * @param {object} stateObj the person's or tracker's state
+ * @param {{lat: number, lng: number}} position where it is
+ * @param {Array<{id: string}>} zones from drawnZones
+ * @param {Record<string, any>} states hass.states
+ * @returns {string|undefined} the zone's id
+ */
+function zoneOf(stateObj, position, zones, states) {
+  const domain = domainOf(stateObj?.entity_id);
+  if (domain !== "person" && domain !== "device_tracker") return undefined;
+  const drawn = new Set(zones.map((z) => z.id));
+  const inZones = stateObj.attributes?.in_zones;
+  if (Array.isArray(inZones) && inZones.length > 0) {
+    for (const id of inZones) {
+      const z = states?.[id]?.attributes;
+      if (z && !z.passive && isNum$1(z.latitude) && isNum$1(z.longitude)) return drawn.has(id) ? id : undefined;
+    }
+    return undefined;
+  }
+  if (!Array.isArray(inZones) || !OUTSIDE_STATES.includes(stateObj.state)) {
+    return zoneContaining(position, stateObj.attributes?.gps_accuracy, zones);
+  }
+  return undefined;
+}
+
+/**
+ * Where a person or tracker is: its own position, else (a person) its first active zone's.
+ * @param {object} stateObj the person's or tracker's state
+ * @param {Record<string, any>} states hass.states
+ * @returns {{lat: number, lng: number, gpsAccuracy: number}|null}
+ */
+function locationOf(stateObj, states) {
+  const a = stateObj?.attributes ?? {};
+  if (isNum$1(a.latitude) && isNum$1(a.longitude)) {
+    return { lat: a.latitude, lng: a.longitude, gpsAccuracy: isNum$1(a.gps_accuracy) ? a.gps_accuracy : 0 };
+  }
+  if (domainOf(stateObj?.entity_id) !== "person" || !Array.isArray(a.in_zones)) return null;
+  for (const id of a.in_zones) {
+    const z = states?.[id]?.attributes;
+    if (z && !z.passive && isNum$1(z.latitude) && isNum$1(z.longitude)) return { lat: z.latitude, lng: z.longitude, gpsAccuracy: 0 };
+  }
+  return null;
+}
+
+const spreadOf = (points) => {
+  const xs = points.map((p) => p.x), ys = points.map((p) => p.y);
+  return Math.hypot(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+};
+
+const centerOf = (members) => ({
+  lat: members.reduce((s, m) => s + m.lat, 0) / members.length,
+  lng: members.reduce((s, m) => s + m.lng, 0) / members.length,
+});
+
+/**
+ * Group markers by screen distance. Keyed groups (a zone) first: they share
+ * one bubble while they span at most groupRadius, a lone member included;
+ * spread wider they fall through to proximity, where each joins the first
+ * group with a member within radius.
+ * @param {Array<{id: string, key?: string, x: number, y: number, lat: number, lng: number}>} markers
+ * @param {{radius?: number, groupRadius?: number}} [options] screen pixels
+ * @returns {Array<{members: Array, key?: string, center: {lat: number, lng: number}}>}
+ */
+function groupMarkers(markers, { radius = CLUSTER_RADIUS, groupRadius = ZONE_GROUP_RADIUS } = {}) {
+  const groups = [];
+  const ungrouped = [];
+  const byKey = new Map();
+  for (const m of markers) {
+    if (m.key === undefined || m.key === null) ungrouped.push(m);
+    else { if (!byKey.has(m.key)) byKey.set(m.key, []); byKey.get(m.key).push(m); }
+  }
+  for (const [key, members] of byKey) {
+    if (members.length === 1 || spreadOf(members) <= groupRadius) groups.push({ members: [...members], key });
+    else ungrouped.push(...members);
+  }
+  for (const m of ungrouped) {
+    const g = groups.find((c) => c.members.some((o) => Math.hypot(o.x - m.x, o.y - m.y) <= radius));
+    if (g) g.members.push(m);
+    else groups.push({ members: [m] });
+  }
+  return groups.map((g) => ({ members: g.members, key: g.key, center: centerOf(g.members) }));
+}
+
+/**
+ * Does a group bubble? More than one member, or keyed to a zone.
+ * @param {{members: Array, key?: string}} group
+ * @returns {boolean}
+ */
+const bubbles = (group) => group.members.length > 1 || group.key !== undefined;
+
+/**
+ * Whether the members would still share one bubble at the maximum zoom.
+ * @param {Array<{x: number, y: number}>} points the members projected at max zoom
+ * @param {boolean} keyed the group belongs to a zone
+ * @param {{radius?: number, groupRadius?: number}} [options] screen pixels
+ * @returns {boolean}
+ */
+function staysTogether(points, keyed, { radius = CLUSTER_RADIUS, groupRadius = ZONE_GROUP_RADIUS } = {}) {
+  if (keyed && spreadOf(points) <= groupRadius) return true;
+  const linked = new Set([0]);
+  const queue = [0];
+  while (queue.length) {
+    const from = points[queue.pop()];
+    points.forEach((p, i) => {
+      if (!linked.has(i) && Math.hypot(p.x - from.x, p.y - from.y) <= radius) { linked.add(i); queue.push(i); }
+    });
+  }
+  return linked.size === points.length;
+}
+
+/**
+ * A bubble's layout: how many avatars, the "+N", rows, its size and the
+ * point it hangs from (above its zone's circle, or above the members).
+ * @param {number} count members
+ * @param {boolean} expanded open: every member, rows wrapping to the map
+ * @param {number} mapWidth px
+ * @param {boolean} zoned keyed to a zone
+ * @returns {{shownCount: number, hidden: number, more: string|null, columns: number, rows: number,
+ *   width: number, height: number, anchor: Array<number>}}
+ */
+function bubbleLayout(count, expanded, mapWidth, zoned) {
+  const shownCount = expanded || count <= CLUSTER_MAX_AVATARS ? count : CLUSTER_MAX_AVATARS - 1;
+  const hidden = count - shownCount;
+  const perRow = expanded
+    ? Math.max(1, Math.floor((mapWidth - 2 * CLUSTER_BUBBLE_MARGIN - 2 * CLUSTER_BUBBLE_PADDING + CLUSTER_BUBBLE_GAP)
+        / (CLUSTER_AVATAR_SIZE + CLUSTER_BUBBLE_GAP)))
+    : shownCount;
+  const columns = Math.min(shownCount, perRow);
+  const rows = Math.ceil(shownCount / perRow);
+  let width = columns * CLUSTER_AVATAR_SIZE + (columns - 1) * CLUSTER_BUBBLE_GAP + 2 * CLUSTER_BUBBLE_PADDING;
+  if (hidden > 0) width += CLUSTER_MORE_WIDTH + CLUSTER_BUBBLE_GAP;
+  const height = rows * CLUSTER_AVATAR_SIZE + (rows - 1) * CLUSTER_BUBBLE_GAP + 2 * CLUSTER_BUBBLE_PADDING + CLUSTER_TAIL_HEIGHT;
+  const more = hidden > 0 ? (hidden > CLUSTER_MORE_MAX ? `${CLUSTER_MORE_MAX}+` : `+${hidden}`) : null;
+  const anchor = [width / 2, height + (zoned ? ZONE_CIRCLE_SIZE / 2 + CLUSTER_ZONE_SPACING : FLOATING_LIFT)];
+  return { shownCount, hidden, more, columns, rows, width, height, anchor };
+}
+
+/**
+ * A floating pin's box and the point it stands on (the dot's centre).
+ * @param {number} [size] the frame, px
+ * @returns {{size: Array<number>, anchor: Array<number>}}
+ */
+function pinFootprint(size = MARKER_SIZE) {
+  const height = size + FLOATING_TAIL_REACH + FLOATING_GAP + FLOATING_DOT_SIZE;
+  return { size: [size, height], anchor: [size / 2, height - FLOATING_DOT_SIZE / 2] };
+}
+
+/**
+ * Merge bubbles whose boxes overlap on screen, repeatedly, as HA does. Two
+ * zones cannot share a pinned bubble: a merge of two keys is unkeyed.
+ * @param {Array} groups output of groupMarkers
+ * @param {Function} rectOf (group) => the box {left, top, right, bottom} a bubbling group's icon covers, or null
+ * @param {Function} [prepare] (group) => readies a merged group before its box is read
+ * @returns {Array} the groups after merging
+ */
+function mergeOverlapping(groups, rectOf, prepare = () => {}) {
+  let list = groups.slice();
+  const overlapping = () => {
+    const bubbling = list.filter((g) => bubbles(g));
+    const rects = bubbling.map(rectOf);
+    for (let i = 0; i < bubbling.length; i++) {
+      for (let j = i + 1; j < bubbling.length; j++) {
+        const a = rects[i], b = rects[j];
+        if (a && b && a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom) return [bubbling[i], bubbling[j]];
+      }
+    }
+    return null;
+  };
+  let pair = overlapping();
+  while (pair) {
+    const [p, q] = pair;
+    const members = [...p.members, ...q.members];
+    const keys = [p.key, q.key].filter((k) => k !== undefined);
+    const merged = { members, key: keys.length === 1 ? keys[0] : undefined, center: centerOf(members) };
+    prepare(merged);
+    list = list.filter((g) => g !== p && g !== q).concat(merged);
+    pair = overlapping();
+  }
+  return list;
+}
+
+// The overview beside the map: People, Devices and Zones (step 2, Lee 2026-11-19).
+//
+// The rules Home Assistant's own map card applies, rewritten from its source:
+// home-assistant/frontend @ 4d8eca2229633c545926fd0a1cec32f35768949d,
+// src/panels/lovelace/cards/map/hui-map-overview.ts and map-activity.ts,
+// src/panels/lovelace/cards/hui-map-card.ts, src/components/ha-snap-bottom-sheet.ts,
+// src/common/util/select-unit.ts and swipe-gesture-recognizer.ts, src/common/map/navigation-url.ts
+// (Apache-2.0; the notice is in THIRD_PARTY_NOTICES.md). Pure functions only: the panel is
+// LtmcMapOverview.js, the map side PresenceRenderService.js and MapCard.js.
+/** The activity window, hours. */
+const ACTIVITY_HOURS = 24;
+/** At most this many activity lines. */
+const ACTIVITY_MAX_ENTRIES = 20;
+/** Shown before "Show more". */
+const ACTIVITY_INITIAL_ENTRIES = 5;
+/** A focus zooms in no further than this. */
+const FOCUS_MAX_ZOOM = 17;
+/** ... and only as far as clears the nearest other marker by this many pixels. */
+const FOCUS_CLEARANCE_PX = 80;
+/** Margin around the panel, px (--ha-space-3). */
+const OVERVIEW_GAP = 12;
+/** At or under this width the panel is a bottom sheet. */
+const PHONE_MAX_WIDTH = 600;
+/** A selected marker's frame is this much larger. */
+const SELECTED_MARKER_SCALE = 1.25;
+/** Accuracy circle radius, metres, for a selected marker that reports none. */
+const NOMINAL_ACCURACY = 2.5;
+/** What can be selected. */
+const SELECTABLE_DOMAINS = Object.freeze(["person", "device_tracker", "zone"]);
+/** The URL search parameter that holds the selection. */
+const SELECTED_PARAM = "entity_id";
+/** The bottom sheet's half stop, share of the viewport height. */
+const HALF_VIEWPORT_SHARE = 0.5;
+/** A swipe: faster than this, px/ms, with a move in the last MOVEMENT_TIME_MS. */
+const SWIPE_VELOCITY = 0.5;
+const MOVEMENT_TIME_MS = 100;
+/** A touch moves this far before its direction decides what it drags. */
+const TOUCH_SLOP_PX = 4;
+
+const NO_LOCATION_STATES = ["unavailable", "unknown"];
+
+const isNum = (v) => typeof v === "number" && Number.isFinite(v);
+
+/**
+ * A person's state changes inside the window, newest first; no-location samples are skipped so a
+ * dropout is not an event, and the first sample (the state at the window's start) is not one either.
+ * @param {Array<{s: string, a?: object, lu: number}>|undefined} history compressed history, oldest first
+ * @param {number} since window start, ms
+ * @returns {Array<{state: string, inZones?: string[], when: Date}>}
+ */
+function personActivity(history, since) {
+  const entries = [];
+  let previous;
+  for (const entry of history ?? []) {
+    if (NO_LOCATION_STATES.includes(entry.s)) continue;
+    const changed = entry.s !== previous;
+    previous = entry.s;
+    if (!changed || entry.lu * 1000 < since) continue;
+    entries.push({ state: entry.s, inZones: entry.a?.in_zones, when: new Date(entry.lu * 1000) });
+  }
+  return entries.reverse().slice(0, ACTIVITY_MAX_ENTRIES);
+}
+
+/**
+ * Arrivals at and departures from a zone by the given persons, newest first.
+ * @param {{[entityId: string]: Array<{s: string, a?: object, lu: number}>}|undefined} history
+ * @param {string[]} personIds
+ * @param {string} zoneId
+ * @param {number} since window start, ms
+ * @returns {Array<{state: string, personId: string, arrived: boolean, when: Date}>}
+ */
+function zoneActivity(history, personIds, zoneId, since) {
+  const entries = [];
+  for (const personId of personIds) {
+    let wasInZone;
+    for (const entry of history?.[personId] ?? []) {
+      if (NO_LOCATION_STATES.includes(entry.s)) continue;
+      const inZone = entry.a?.in_zones?.includes(zoneId) ?? false;
+      // The first sample is an event only if it is an in-window arrival.
+      const isEvent = wasInZone === undefined ? inZone : inZone !== wasInZone;
+      if (isEvent && entry.lu * 1000 >= since) {
+        entries.push({ state: entry.s, personId, arrived: inZone, when: new Date(entry.lu * 1000) });
+      }
+      wasInZone = inZone;
+    }
+  }
+  entries.sort((a, b) => b.when.getTime() - a.when.getTime());
+  return entries.slice(0, ACTIVITY_MAX_ENTRIES);
+}
+
+/**
+ * An entity's display name: the dashboard's `name`, else Home Assistant's formatted name, else
+ * its friendly_name, else the object id with spaces.
+ * @param {object} stateObj
+ * @param {Map<string, string>} [configured] dashboard names by entity id
+ * @param {object} [hass]
+ * @returns {string}
+ */
+function entityName(stateObj, configured, hass) {
+  const id = stateObj?.entity_id ?? "";
+  const own = configured?.get(id);
+  if (own) return own;
+  try {
+    const f = hass?.formatEntityName?.(stateObj);
+    if (typeof f === "string" && f !== "") return f;
+  } catch { /* an older Home Assistant */ }
+  return stateObj?.attributes?.friendly_name ?? id.split(".").slice(1).join(".").replace(/_/g, " ");
+}
+
+/**
+ * Is this the viewer's own person?
+ * @param {object} stateObj
+ * @param {{id?: string}|undefined} user hass.user
+ * @returns {boolean}
+ */
+const isMe = (stateObj, user) =>
+  Boolean(user?.id) && domainOf(stateObj?.entity_id) === "person" && stateObj.attributes?.user_id === user.id;
+
+const byName = (name, locale) => (a, b) => name(a).localeCompare(name(b), locale);
+
+/**
+ * The People tab: the viewer first, then those with a location, then by name.
+ * @param {string[]} ids the map's person and tracker ids
+ * @param {object} states hass.states
+ * @param {{user?: object, name: (s: object) => string, locale?: string}} o
+ * @returns {object[]} state objects
+ */
+function peopleOf(ids, states, { user, name, locale }) {
+  return ids.map((id) => states?.[id]).filter((s) => s && domainOf(s.entity_id) === "person").sort((a, b) => {
+    const aMe = isMe(a, user);
+    if (aMe !== isMe(b, user)) return aMe ? -1 : 1;
+    const aLoc = Boolean(locationOf(a, states)), bLoc = Boolean(locationOf(b, states));
+    if (aLoc !== bLoc) return aLoc ? -1 : 1;
+    return byName(name, locale)(a, b);
+  });
+}
+
+/**
+ * The Devices tab: trackers with a location, by name.
+ * @param {string[]} ids
+ * @param {object} states
+ * @param {{name: (s: object) => string, locale?: string}} o
+ * @returns {object[]}
+ */
+function devicesOf(ids, states, { name, locale }) {
+  return ids.map((id) => states?.[id])
+    .filter((s) => s && domainOf(s.entity_id) === "device_tracker" && locationOf(s, states))
+    .sort(byName(name, locale));
+}
+
+/**
+ * The Zones tab: every non-passive zone with a position (the card draws them all), Home first, then by name.
+ * @param {object} states
+ * @param {{name: (s: object) => string, locale?: string}} o
+ * @returns {object[]}
+ */
+function zonesOf(states, { name, locale }) {
+  return Object.values(states ?? {})
+    .filter((s) => domainOf(s?.entity_id) === "zone" && !s.attributes?.passive && isNum(s.attributes?.latitude) && isNum(s.attributes?.longitude))
+    .sort((a, b) => {
+      if ((a.entity_id === HOME_ZONE) !== (b.entity_id === HOME_ZONE)) return a.entity_id === HOME_ZONE ? -1 : 1;
+      return byName(name, locale)(a, b);
+    });
+}
+
+/**
+ * The tabs that have something, in order, each with its items.
+ * @param {object[]} people
+ * @param {object[]} devices
+ * @param {object[]} zones
+ * @returns {Array<[string, object[]]>}
+ */
+const tabsWithItems = (people, devices, zones) =>
+  [["people", people], ["devices", devices], ["zones", zones]].filter(([, items]) => items.length > 0);
+
+/**
+ * The tab shown: the one asked for if it has items, else the first that does.
+ * @param {string} tab
+ * @param {Array<[string, object[]]>} tabs
+ * @returns {string|undefined}
+ */
+const shownTab = (tab, tabs) => (tabs.some(([t]) => t === tab) ? tab : tabs[0]?.[0]);
+
+/**
+ * Does the tab hide this marker? People hides trackers, Devices hides persons; the selection and
+ * every other domain are never hidden.
+ * @param {string} id
+ * @param {string} tab
+ * @param {string|undefined} selected
+ * @returns {boolean}
+ */
+function hiddenByTab(id, tab, selected) {
+  if (id === selected) return false;
+  const d = domainOf(id);
+  if (d === "person") return tab !== "people";
+  if (d === "device_tracker") return tab !== "devices";
+  return false;
+}
+
+/**
+ * With the overview shown, a zone's radius is drawn when selected, or on the Zones tab.
+ * @param {string} zoneId
+ * @param {string|undefined} selected
+ * @param {string} tab
+ * @returns {boolean}
+ */
+const showsRadius = (zoneId, selected, tab) => tab === "zones" || zoneId === selected;
+
+/**
+ * The accuracy circle's radius for a marker; 0 = none. Without the overview, every free pin that
+ * reports one (step 1); with it, only the selection, which gets NOMINAL_ACCURACY if it reports none.
+ * @param {number} gpsAccuracy
+ * @param {boolean} selected
+ * @param {boolean} overview
+ * @returns {number}
+ */
+function accuracyShown(gpsAccuracy, selected, overview) {
+  const acc = isNum(gpsAccuracy) && gpsAccuracy > 0 ? gpsAccuracy : 0;
+  if (!overview) return acc;
+  return selected ? acc || NOMINAL_ACCURACY : 0;
+}
+
+/**
+ * Zoom in only as far as it takes to clear the nearest other marker, never out, never past FOCUS_MAX_ZOOM.
+ * @param {number} zoom the current zoom
+ * @param {number} nearestPx the nearest other marker's distance at that zoom, px (Infinity: none)
+ * @returns {number}
+ */
+function focusZoom(zoom, nearestPx) {
+  return Math.max(zoom, Math.min(FOCUS_MAX_ZOOM, zoom + Math.log2(FOCUS_CLEARANCE_PX / nearestPx)));
+}
+
+/**
+ * The map padding the panel takes, so a fitted marker lands beside it, not under it.
+ * @param {boolean} phone
+ * @param {number} size phone: the sheet's half height; else the panel's width
+ * @param {boolean} [rtl]
+ * @returns {{left?: number, right?: number, bottom?: number}|undefined}
+ */
+function overviewPadding(phone, size, rtl = false) {
+  if (!size) return undefined;
+  if (phone) return { bottom: size + OVERVIEW_GAP };
+  const side = size + 2 * OVERVIEW_GAP;
+  return rtl ? { right: side } : { left: side };
+}
+
+/**
+ * A directions link: Apple Maps on iOS, a geo: link on Android, OpenStreetMap elsewhere.
+ * @param {number} lat
+ * @param {number} lng
+ * @param {{userAgent?: string, maxTouchPoints?: number}} [nav]
+ * @returns {string}
+ */
+function navigationUrl(lat, lng, nav = globalThis.navigator ?? {}) {
+  const point = `${lat},${lng}`;
+  const ua = nav.userAgent ?? "";
+  if (/iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && (nav.maxTouchPoints ?? 0) > 1)) {
+    return `https://maps.apple.com/?daddr=${point}`;
+  }
+  if (/android/i.test(ua)) return `geo:${point}?q=${point}`;
+  return `https://www.openstreetmap.org/directions?to=${encodeURIComponent(point)}#map=15/${lat}/${lng}`;
+}
+
+/**
+ * The state a tracker in this zone reports: "home" for Home, else the zone's name.
+ * @param {object} zone
+ * @returns {string}
+ */
+const zoneTrackerState = (zone) =>
+  zone.entity_id === HOME_ZONE ? "home" : (zone.attributes?.friendly_name ?? zone.entity_id.split(".")[1].replace(/_/g, " "));
+
+/**
+ * The first active zone in an in_zones list (not passive, with a position).
+ * @param {string[]} inZones
+ * @param {object} states
+ * @returns {object|undefined}
+ */
+function firstActiveZone(inZones, states) {
+  for (const id of inZones ?? []) {
+    const z = states?.[id];
+    if (z && !z.attributes?.passive && isNum(z.attributes?.latitude) && isNum(z.attributes?.longitude)) return z;
+  }
+  return undefined;
+}
+
+/**
+ * The zone an activity line belongs to: its in_zones, else the zone whose tracker state it names.
+ * @param {{state: string, inZones?: string[]}} entry
+ * @param {object} states
+ * @returns {object|undefined}
+ */
+function zoneOfEntry(entry, states) {
+  const z = entry.inZones && firstActiveZone(entry.inZones, states);
+  if (z) return z;
+  if (entry.state === "not_home" || entry.state === "unknown") return undefined;
+  return Object.values(states ?? {}).find((c) => domainOf(c?.entity_id) === "zone" && zoneTrackerState(c) === entry.state);
+}
+
+/**
+ * The unit and value for a relative time, as HA chooses them (thresholds 59 s, 59 min, 22 h, then
+ * calendar days under 5, weeks under 4, months under 11 or within the year, then years).
+ * @param {number} from ms
+ * @param {number} to ms
+ * @param {number} [weekStartsOn] 0 Sunday ... 6
+ * @returns {{value: number, unit: string}}
+ */
+function selectUnit(from, to, weekStartsOn = 0) {
+  const secs = (from - to) / 1000;
+  if (Math.abs(secs) < 59) return { value: Math.round(secs), unit: "second" };
+  const mins = secs / 60;
+  if (Math.abs(mins) < 59) return { value: Math.round(mins), unit: "minute" };
+  const hours = secs / 3600;
+  if (Math.abs(hours) < 22) return { value: Math.round(hours), unit: "hour" };
+  const f = new Date(from), t = new Date(to);
+  f.setHours(0, 0, 0, 0); t.setHours(0, 0, 0, 0);
+  const days = Math.round((f - t) / 86400000);
+  if (days === 0) return { value: Math.round(hours), unit: "hour" };
+  if (Math.abs(days) < 5) return { value: days, unit: "day" };
+  const weekStart = (d) => { const c = new Date(d); c.setDate(c.getDate() - ((c.getDay() - weekStartsOn + 7) % 7)); return c; };
+  const weeks = Math.round((weekStart(f) - weekStart(t)) / (7 * 86400000));
+  if (weeks === 0) return { value: days, unit: "day" };
+  if (Math.abs(weeks) < 4) return { value: weeks, unit: "week" };
+  const years = f.getFullYear() - t.getFullYear();
+  const months = years * 12 + f.getMonth() - t.getMonth();
+  if (months === 0) return { value: weeks, unit: "week" };
+  if (Math.abs(months) < 11 || years === 0) return { value: months, unit: "month" };
+  return { value: years, unit: "year" };
+}
+
+/**
+ * "14 min. ago" and the like, in the viewer's language.
+ * @param {Date|string|number} when
+ * @param {{language?: string, style?: string, now?: number, weekStartsOn?: number}} [o]
+ * @returns {string}
+ */
+function relativeTime(when, { language = "en", style = "long", now = Date.now(), weekStartsOn = 0 } = {}) {
+  const t = new Date(when).getTime();
+  if (!Number.isFinite(t)) return "";
+  const { value, unit } = selectUnit(t, now, weekStartsOn);
+  try {
+    return new Intl.RelativeTimeFormat(language, { numeric: "auto", style }).format(value, unit);
+  } catch {
+    return new Intl.RelativeTimeFormat("en", { numeric: "auto", style }).format(value, unit);
+  }
+}
+
+/**
+ * The bottom sheet's stops, lowest first: collapsed (when a strip height is known), half, full.
+ * @param {number|undefined} collapsed px
+ * @param {number} half px
+ * @param {number} full px
+ * @returns {Array<{position: string, height: number}>}
+ */
+function sheetStops(collapsed, half, full) {
+  const stops = [];
+  if (isNum(collapsed)) stops.push({ position: "collapsed", height: collapsed });
+  stops.push({ position: "half", height: half }, { position: "full", height: full });
+  return stops;
+}
+
+/**
+ * Where a drag ends: a swipe goes on to the next stop in its direction, a slow drag settles on the nearest.
+ * @param {Array<{position: string, height: number}>} stops lowest first
+ * @param {number} height the sheet's height when let go, px
+ * @param {"up"|"down"|undefined} direction a swipe's direction, or none
+ * @returns {string} the position
+ */
+function stopAfterDrag(stops, height, direction) {
+  if (direction === "up") return (stops.find((s) => s.height > height) ?? stops[stops.length - 1]).position;
+  if (direction === "down") return ([...stops].reverse().find((s) => s.height < height) ?? stops[0]).position;
+  return stops.reduce((n, s) => (Math.abs(s.height - height) < Math.abs(n.height - height) ? s : n)).position;
+}
+
+/**
+ * Was it a swipe, and which way? Velocity is the whole drag's (px/ms, + down), counted only when the
+ * last move was within MOVEMENT_TIME_MS of letting go.
+ * @param {{startY: number, startTime: number, lastY: number, lastTime: number}} g
+ * @param {number} now ms
+ * @returns {"up"|"down"|undefined}
+ */
+function swipeDirection(g, now) {
+  if (now - g.lastTime >= MOVEMENT_TIME_MS) return undefined;
+  const dt = g.lastTime - g.startTime;
+  const v = dt > 0 ? (g.lastY - g.startY) / dt : 0;
+  if (Math.abs(v) <= SWIPE_VELOCITY) return undefined;
+  return v > 0 ? "down" : "up";
+}
+
+/**
+ * Is the element inside a Lovelace panel view (looking through shadow roots and wrapper cards)?
+ * @param {Node} el
+ * @returns {boolean}
+ */
+function inPanelView(el) {
+  let n = el;
+  for (let i = 0; n && i < 200; i++) {
+    if (n.localName === "hui-panel-view") return true;
+    n = n.parentNode ?? n.host ?? null;
+  }
+  return false;
+}
+
+/**
+ * Is the overview shown? `overview: true|false` forces it; unset, it follows the panel view, as HA.
+ * @param {boolean|undefined} option
+ * @param {boolean} panel
+ * @returns {boolean}
+ */
+const overviewShown = (option, panel) => option === true || (option !== false && panel);
+
+/**
+ * The selection a URL names, when it is a person, tracker or zone.
+ * @param {string} search location.search
+ * @returns {string|undefined}
+ */
+function selectedFromSearch(search) {
+  try {
+    const id = new URLSearchParams(search ?? "").get(SELECTED_PARAM);
+    return id && SELECTABLE_DOMAINS.includes(domainOf(id)) ? id : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * The search string with the selection set (or removed with `undefined`), other parameters kept.
+ * @param {string} search
+ * @param {string|undefined} id
+ * @returns {string} "" or "?..."
+ */
+function searchWith(search, id) {
+  const p = new URLSearchParams(search ?? "");
+  if (id) p.set(SELECTED_PARAM, id); else p.delete(SELECTED_PARAM);
+  const s = p.toString();
+  return s ? `?${s}` : "";
+}
+
+/**
+ * Styles for people, devices and zones drawn as Home Assistant's map draws
+ * them (see PresenceRules.js for the source of each value). Theme variables
+ * come from Home Assistant; the fallbacks are for a page outside it.
+ */
+
+const PRESENCE_STYLE_ID = "ltmc-presence-style";
+
+const PRESENCE_CSS = `
+.ltmc-zone-icon, .ltmc-pin-icon, .ltmc-cluster-icon {
+  background: none;
+  border: none;
+}
+.ltmc-zone-circle {
+  width: ${ZONE_CIRCLE_SIZE}px;
+  height: ${ZONE_CIRCLE_SIZE}px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--card-background-color, #fff);
+  box-sizing: border-box;
+  box-shadow: var(--ha-box-shadow-s, 0 1px 3px rgba(0, 0, 0, 0.24));
+  overflow: hidden;
+  font-family: var(--ha-font-family-body, Roboto, sans-serif);
+  font-size: var(--ha-font-size-s, 12px);
+  font-weight: var(--ha-font-weight-medium, 500);
+  --mdc-icon-size: ${ZONE_ICON_SIZE}px;
+}
+.ltmc-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+  pointer-events: none;
+}
+.ltmc-pin .ltmc-frame, .ltmc-pin .ltmc-tail {
+  pointer-events: auto;
+}
+.ltmc-frame {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  flex: none;
+  width: var(--ltmc-marker-size, 48px);
+  height: var(--ltmc-marker-size, 48px);
+  font-family: var(--ha-font-family-body, Roboto, sans-serif);
+  font-size: var(--ltmc-marker-font-size, var(--ha-font-size-xl, 20px));
+  border-radius: var(--ha-picture-border-radius, 50%);
+  border: var(--ltmc-marker-border-width, ${MARKER_BORDER}px) solid var(--ltmc-marker-color, var(--card-background-color, #fff));
+  color: var(--primary-text-color, #212121);
+  background-color: var(--ltmc-marker-background, var(--card-background-color, #fff));
+  cursor: pointer;
+}
+.ltmc-frame.picture {
+  overflow: hidden;
+}
+.ltmc-picture {
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  height: 100%;
+}
+.ltmc-tail {
+  width: ${FLOATING_TAIL_SIZE}px;
+  height: ${FLOATING_TAIL_SIZE}px;
+  margin-top: ${-FLOATING_TAIL_SIZE / 2}px;
+  margin-bottom: ${FLOATING_TAIL_REACH - FLOATING_TAIL_SIZE / 2}px;
+  border-radius: 2px;
+  background: var(--card-background-color, #fff);
+  transform: rotate(45deg);
+}
+.ltmc-dot {
+  width: ${FLOATING_DOT_SIZE}px;
+  height: ${FLOATING_DOT_SIZE}px;
+  margin-top: ${FLOATING_GAP}px;
+  border-radius: 50%;
+  background: var(--card-background-color, #fff);
+  visibility: hidden;
+}
+.ltmc-cluster {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  isolation: isolate;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+}
+.dark .ltmc-cluster {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4)) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.5));
+}
+.ltmc-bubble {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  gap: ${CLUSTER_BUBBLE_GAP}px;
+  padding: ${CLUSTER_BUBBLE_PADDING}px;
+  box-sizing: border-box;
+  background: var(--card-background-color, #fff);
+  border-radius: 14px;
+  cursor: pointer;
+  --ltmc-marker-size: ${CLUSTER_AVATAR_SIZE}px;
+  --ltmc-marker-color: transparent;
+  --ltmc-marker-border-width: 1px;
+  --ltmc-marker-font-size: var(--ha-font-size-s, 12px);
+  --ltmc-marker-background: var(--ha-color-fill-neutral-quiet-resting, #f0f0f0);
+}
+.ltmc-bubble .more {
+  flex: none;
+  width: ${CLUSTER_MORE_WIDTH}px;
+  height: ${CLUSTER_AVATAR_SIZE}px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--ha-color-fill-neutral-quiet-resting, #f0f0f0);
+  color: var(--primary-text-color, #212121);
+  font-family: var(--ha-font-family-body, Roboto, sans-serif);
+  font-size: var(--ha-font-size-s, 12px);
+  font-weight: var(--ha-font-weight-medium, 500);
+}
+.ltmc-bubble-tail {
+  position: relative;
+  z-index: -1;
+  width: ${CLUSTER_TAIL_SIZE}px;
+  height: ${CLUSTER_TAIL_SIZE}px;
+  margin-top: ${-CLUSTER_TAIL_SIZE / 2}px;
+  border-radius: 2px;
+  background: var(--card-background-color, #fff);
+  transform: rotate(45deg);
+}
+.ltmc-cluster.open .ltmc-bubble {
+  cursor: default;
+}
+/* The overview's selection (step 2): a larger frame, the dot shown, the accuracy circle carries the colour. */
+.ltmc-pin.selected .ltmc-dot {
+  visibility: visible;
+}
+/* With the overview shown a zone's circle is a button that selects it. */
+.ltmc-zone-icon.ltmc-selectable {
+  cursor: pointer;
+}
+`;
+
+/** Panes: zone and accuracy circles over the tiles, zone icons under the markers, people above them. */
+const ZONE_CIRCLE_PANE = "ltmcZoneCircles";
+const ZONE_PANE = "ltmcZones";
+const PRESENCE_PANE = "ltmcPresence";
+// ⚠ These numbers do NOTHING on this card: MapCard's styles force every `.leaflet-pane` to `z-index: 0
+// !important`, so panes stack by DOM order. Made last, the zone panes covered every marker (Lee 2026-11-20
+// 19:23: "the zones need to be on the lowest layer so that entities pass on top of them"). placeZonePanes()
+// puts them in the DOM; people are raised by MapCard's `.leaflet-ltmcPresence-pane` rule. Kept as the intent.
+const PANE_Z = { [ZONE_CIRCLE_PANE]: 405, [ZONE_PANE]: 590, [PRESENCE_PANE]: 640 };
+
+/**
+ * The zone circles, then the zone icons, just BEFORE Leaflet's markerPane: above the tiles, the D12 fills, the
+ * points and the radar (all placed earlier in the DOM), and under markerPane and every marker class pane
+ * (MarkerPlacement, made after it), so a moving marker passes over a zone. Safe to call again.
+ * @param {object} map Leaflet map
+ */
+function placeZonePanes(map) {
+  const marker = map?.getPane?.("markerPane");
+  if (!marker?.parentNode) return;
+  for (const name of [ZONE_CIRCLE_PANE, ZONE_PANE]) {
+    const pane = map.getPane(name);
+    if (pane && pane !== marker) marker.parentNode.insertBefore(pane, marker);
+  }
+}
+
+/** Theme values HA defines; used only when a variable reads empty (a page outside Home Assistant). */
+const THEME_FALLBACK = Object.freeze({
+  "--primary-color": "#03a9f4",
+  "--secondary-text-color": "#727272",
+});
+
+/**
+ * People, devices and zones drawn as Home Assistant's own map draws them
+ * (Lee, 2026-11-19): every non-passive zone as a coloured circle with its
+ * icon, each person or tracker as a framed picture on a pin, everyone in a
+ * zone sharing one bubble above it, bubbles merging when crowded with "+N"
+ * past four, a tap on a bubble zooming to its members.
+ *
+ * Only person, device_tracker and zone entities are drawn here; every other
+ * entity stays with EntitiesRenderService, unchanged.
+ */
+class PresenceRenderService {
+  /** @type {L.Map} */ map;
+  /** @type {object} */ hass;
+  enabled = true;
+  /** Entity ids (person / device_tracker) this service draws, from the dashboard. */
+  entityIds = [];
+  /** Palette slots from the entity registry; null until read (or when it cannot be). */
+  palette = null;
+  _registryAsked = false;
+  _seen = new Map();
+  _zoneSig = "";
+  _pending = null;
+  _zones = [];
+  /** The overview beside the map (step 2): shown, its tab, its selection; and who hears a selection. */
+  overview = false;
+  tab = "people";
+  selected = undefined;
+  /** @type {((entityId: string) => void)|null} with the overview shown, a tap selects instead of opening more-info */
+  onSelect = null;
+
+  /**
+   * @param {L.Map} map
+   * @param {{enabled?: boolean, styleHost?: () => Element|null}} options
+   *   styleHost: the element whose computed style holds Home Assistant's theme variables
+   */
+  constructor(map, { enabled = true, styleHost = null } = {}) {
+    this.map = map;
+    this.enabled = enabled !== false;
+    this._styleHost = styleHost;
+  }
+
+  setup() {
+    if (!this.enabled || !this.map) return;
+    for (const [name, z] of Object.entries(PANE_Z)) {
+      if (!this.map.getPane(name)) {
+        const pane = this.map.createPane(name);
+        pane.style.zIndex = String(z);
+        if (name !== PRESENCE_PANE) pane.style.pointerEvents = "none";
+      }
+    }
+    placeZonePanes(this.map);
+    this._zoneLayer = L$2.layerGroup().addTo(this.map);
+    this._markerLayer = L$2.layerGroup().addTo(this.map);
+    this._injectStyle();
+    this._onZoomEnd = () => this.regroup();
+    this._onMoveEnd = () => { if (this._pending) this.regroup(); };
+    this.map.on("zoomend", this._onZoomEnd);
+    this.map.on("moveend", this._onMoveEnd);
+  }
+
+  /** @param {Array<{id: string, display?: string}>} configs the card's EntityConfigs */
+  setEntities(configs) {
+    const mine = (configs ?? []).filter((c) => drawnAsPresence(c, this.enabled));
+    this._drawnIds = new Set(mine.map((c) => c.id));
+    const ids = mine.filter((c) => domainOf(c.id) !== "zone").map((c) => c.id);
+    if (ids.join(",") !== this.entityIds.join(",")) {
+      this.entityIds = ids;
+      this._seen.clear();
+    }
+  }
+
+  /**
+   * Is this dashboard entity drawn here (and so not by EntitiesRenderService)?
+   * @param {string} id entity id
+   * @returns {boolean}
+   */
+  drawsId(id) {
+    return this._drawnIds?.has(id) === true;
+  }
+
+  render(hass) {
+    if (!this.enabled || !this.map || !hass) return;
+    this.hass = hass;
+    this._askRegistry();
+    const zones = drawnZones(hass.states);
+    const zoneSig = JSON.stringify(zones);
+    let changed = zoneSig !== this._zoneSig;
+    for (const id of this.entityIds) {
+      const s = hass.states?.[id];
+      if (this._seen.get(id) !== s) { changed = true; this._seen.set(id, s); }
+    }
+    if (!changed) return;
+    this._zoneSig = zoneSig;
+    this._zones = zones;
+    this.redraw();
+  }
+
+  /**
+   * The overview's state, as Home Assistant's panel layout applies it: the tab hides persons or
+   * trackers, only the selection shows an accuracy circle and leaves its bubble at 1.25x, a zone's
+   * radius shows when selected or on the Zones tab, and a tap selects. Redraws when anything changed.
+   * @param {{shown: boolean, tab?: string, selected?: string}} o
+   */
+  setOverview({ shown, tab = "people", selected = undefined }) {
+    const next = { overview: Boolean(shown), tab, selected: shown ? selected : undefined };
+    if (next.overview === this.overview && next.tab === this.tab && next.selected === this.selected) return;
+    Object.assign(this, next);
+    const zp = this.map?.getPane?.(ZONE_PANE);
+    if (zp) zp.style.pointerEvents = this.overview ? "" : "none";
+    if (this.hass) this.redraw();
+  }
+
+  redraw() {
+    try {
+      this._drawZones();
+      this.regroup();
+    } catch (e) {
+      Logger.error("[PresenceRenderService] redraw failed", e);
+    }
+  }
+
+  cleanup() {
+    if (!this.map) return;
+    this.map.off("zoomend", this._onZoomEnd);
+    this.map.off("moveend", this._onMoveEnd);
+    this._zoneLayer?.remove();
+    this._markerLayer?.remove();
+  }
+
+  // ---- colours -----------------------------------------------------------
+
+  _readVar(name) {
+    try {
+      const host = this._styleHost?.() ?? this.map.getContainer();
+      const v = getComputedStyle(host).getPropertyValue(name).trim();
+      if (v) return v;
+    } catch { /* no style yet */ }
+    return THEME_FALLBACK[name] ?? THEME_FALLBACK["--primary-color"];
+  }
+
+  zoneColor(zone) {
+    return this._readVar(zoneColorVar(zone.id, false, this.palette));
+  }
+
+  entityColor(id) {
+    return this._readVar(paletteVar(colorIndex(id, this.palette)));
+  }
+
+  _askRegistry() {
+    if (this._registryAsked) return;
+    this._registryAsked = true;
+    const conn = this.hass?.connection;
+    if (typeof conn?.sendMessagePromise !== "function") return;
+    conn.sendMessagePromise({ type: "config/entity_registry/list" })
+      .then((entries) => {
+        this.palette = paletteIndex(entries);
+        this.redraw();
+      })
+      .catch((e) => Logger.warn?.("[PresenceRenderService] entity registry not readable; zone colours from their ids", e));
+  }
+
+  // ---- zones -------------------------------------------------------------
+
+  _drawZones() {
+    this._zoneLayer.clearLayers();
+    const selectable = this.overview && typeof this.onSelect === "function";
+    for (const z of this._zones) {
+      const color = this.zoneColor(z);
+      if (z.radius && (!this.overview || showsRadius(z.id, this.selected, this.tab))) {
+        L$2.circle([z.lat, z.lng], {
+          radius: z.radius, color, weight: CIRCLE_LINE_WIDTH, opacity: 1,
+          fillColor: color, fillOpacity: CIRCLE_FILL_OPACITY, interactive: false, pane: ZONE_CIRCLE_PANE,
+        }).addTo(this._zoneLayer);
+      }
+      const marker = L$2.marker([z.lat, z.lng], {
+        icon: L$2.divIcon({
+          className: "ltmc-zone-icon" + (selectable ? " ltmc-selectable" : ""), html: this._zoneElement(z, color),
+          iconSize: [ZONE_CIRCLE_SIZE, ZONE_CIRCLE_SIZE], iconAnchor: [ZONE_CIRCLE_SIZE / 2, ZONE_CIRCLE_SIZE / 2],
+        }),
+        interactive: selectable, keyboard: false, pane: ZONE_PANE, bubblingMouseEvents: false, title: z.name,
+      });
+      if (selectable) marker.on("click", () => this.onSelect(z.id));
+      marker.addTo(this._zoneLayer);
+    }
+  }
+
+  _zoneElement(zone, color) {
+    const el = document.createElement("div");
+    el.className = "ltmc-zone-circle";
+    el.dataset.zone = zone.id;
+    el.title = zone.name;
+    el.style.backgroundColor = color;
+    el.style.color = contrastingContent(color);
+    if (zone.icon) {
+      const icon = document.createElement("ha-icon");
+      icon.setAttribute("icon", zone.icon);
+      el.appendChild(icon);
+    } else {
+      const span = document.createElement("span");
+      span.textContent = zoneInitials(zone.name);
+      el.appendChild(span);
+    }
+    return el;
+  }
+
+  // ---- people and devices ------------------------------------------------
+
+  _members() {
+    const states = this.hass?.states ?? {};
+    const zoom = this.map.getZoom();
+    const out = [];
+    for (const id of this.entityIds) {
+      const s = states[id];
+      if (!s) continue;
+      if (this.overview && hiddenByTab(id, this.tab, this.selected)) continue;
+      const loc = locationOf(s, states);
+      if (!loc) continue;
+      const p = this.map.project([loc.lat, loc.lng], zoom);
+      const title = s.attributes?.friendly_name ?? id;
+      const pic = s.attributes?.entity_picture;
+      out.push({
+        id, title, x: p.x, y: p.y, lat: loc.lat, lng: loc.lng, gpsAccuracy: loc.gpsAccuracy,
+        key: zoneOf(s, loc, this._zones, states),
+        picture: typeof pic === "string" && pic !== "" ? (this.hass.hassUrl ? this.hass.hassUrl(pic) : pic) : null,
+      });
+    }
+    return out;
+  }
+
+  /**
+   * The deepest zoom the base map has tiles for: the maxZoom of the first tile layer in Leaflet's tile
+   * pane (the card adds its base map before any overlay), else the map's own. Home Assistant uses its
+   * map's maximum, where its tiles end; ours can be deeper than the base tiles (seen live 2026-11-19:
+   * 24, from an overlay, and a tap zoomed to 23 over an empty map).
+   * @returns {number}
+   */
+  maxZoom() {
+    let base = null;
+    this.map.eachLayer?.((layer) => {
+      if (base === null && layer instanceof L$2.TileLayer && (layer.options?.pane ?? "tilePane") === "tilePane") base = layer;
+    });
+    const own = this.map.getMaxZoom();
+    const b = base?.options?.maxZoom;
+    return Number.isFinite(b) ? Math.min(b, own) : own;
+  }
+
+  _atMaxZoom() {
+    return this.map.getZoom() >= this.maxZoom() - 0.01;
+  }
+
+  _prepare(group, pending) {
+    if (!bubbles(group)) { group.layout = null; return; }
+    if (!group.open) {
+      const together = () => staysTogether(
+        group.members.map((m) => this.map.project([m.lat, m.lng], this.maxZoom())), group.key !== undefined);
+      if (this._atMaxZoom() || (pending && group.members.some((m) => pending.has(m.id)) && together())) group.open = true;
+    }
+    group.layout = bubbleLayout(group.members.length, Boolean(group.open), this.map.getSize().x, group.key !== undefined);
+  }
+
+  _bubbleAt(group) {
+    const z = group.key !== undefined ? this._zones.find((zz) => zz.id === group.key) : null;
+    return z ? { lat: z.lat, lng: z.lng } : group.center;
+  }
+
+  _rectOf(group) {
+    if (!group.layout) return null;
+    const p = this.map.project(this._bubbleAt(group), this.map.getZoom());
+    const left = p.x - group.layout.anchor[0], top = p.y - group.layout.anchor[1];
+    return { left, top, right: left + group.layout.width, bottom: top + group.layout.height };
+  }
+
+  /** Group, merge and draw the pins and bubbles for the current zoom. */
+  regroup() {
+    if (!this._markerLayer || !this.hass) return;
+    try {
+      const pending = this._pending;
+      this._pending = null;
+      const all = this._members();
+      // Selected, it leaves its bubble and is drawn last, above the rest (HA: cluster false, raised).
+      const chosen = this.overview ? all.find((m) => m.id === this.selected) : undefined;
+      let groups = groupMarkers(chosen ? all.filter((m) => m !== chosen) : all);
+      groups.forEach((g) => this._prepare(g, pending));
+      groups = mergeOverlapping(groups, (g) => this._rectOf(g), (g) => this._prepare(g, pending));
+      this._markerLayer.clearLayers();
+      this.groups = groups;
+      for (const g of groups) {
+        if (g.layout) this._drawBubble(g);
+        else this._drawPin(g.members[0], false);
+      }
+      if (chosen) this._drawPin(chosen, true);
+    } catch (e) {
+      Logger.error("[PresenceRenderService] regroup failed", e);
+    }
+  }
+
+  _frame(member, size) {
+    const frame = document.createElement("div");
+    frame.className = "ltmc-frame" + (member.picture ? " picture" : "");
+    frame.dataset.entityId = member.id;
+    frame.title = member.title;
+    if (size) frame.style.setProperty("--ltmc-marker-size", `${size}px`);
+    if (member.picture) {
+      const pic = document.createElement("div");
+      pic.className = "ltmc-picture";
+      pic.style.backgroundImage = `url("${member.picture}")`;
+      frame.appendChild(pic);
+    } else {
+      frame.textContent = markerLabel(member.title);
+    }
+    return frame;
+  }
+
+  /**
+   * A free pin. Selected (the overview's), its frame is 1.25x, its dot shows and it sits above the rest.
+   * @param {object} member
+   * @param {boolean} selected
+   */
+  _drawPin(member, selected) {
+    const color = this.entityColor(member.id);
+    const accuracy = accuracyShown(member.gpsAccuracy, selected, this.overview);
+    if (accuracy > 0) {
+      L$2.circle([member.lat, member.lng], {
+        radius: accuracy, color, weight: accuracy > PRECISE_GPS_ACCURACY ? CIRCLE_LINE_WIDTH : 0,
+        opacity: 1, fillColor: color, fillOpacity: CIRCLE_FILL_OPACITY, interactive: false, pane: ZONE_CIRCLE_PANE,
+      }).addTo(this._markerLayer);
+    }
+    const size = selected ? Math.round(MARKER_SIZE * SELECTED_MARKER_SCALE) : MARKER_SIZE;
+    const root = document.createElement("div");
+    root.className = "ltmc-pin" + (selected ? " selected" : "");
+    const frame = this._frame(member, size);
+    const tail = document.createElement("div");
+    tail.className = "ltmc-tail";
+    const dot = document.createElement("div");
+    dot.className = "ltmc-dot";
+    root.append(frame, tail, dot);
+    frame.addEventListener("click", (ev) => { ev.stopPropagation(); this._tap(member.id); });
+    const fp = pinFootprint(size);
+    L$2.marker([member.lat, member.lng], {
+      icon: L$2.divIcon({ className: "ltmc-pin-icon", html: root, iconSize: fp.size, iconAnchor: fp.anchor }),
+      pane: PRESENCE_PANE, keyboard: false, bubblingMouseEvents: false, zIndexOffset: selected ? 1000 : 0,
+    }).addTo(this._markerLayer);
+  }
+
+  /**
+   * A tap on a person or tracker: with the overview shown it selects (HA's panel layout), else more-info.
+   * @param {string} id
+   */
+  _tap(id) {
+    if (this.overview && typeof this.onSelect === "function") this.onSelect(id);
+    else this._moreInfo(id);
+  }
+
+  /**
+   * The overview's selection brought into view, as Home Assistant does: a zone's circle fitted no
+   * deeper than the current zoom; a person or tracker zoomed in only as far as clears the nearest
+   * other marker by 80 px (17 at most), flying there when it is off screen; the panel's side kept clear.
+   * @param {string} id
+   * @param {{left?: number, right?: number, bottom?: number}} [padding] what the panel covers, px
+   * @returns {boolean} whether it moved the map
+   */
+  focus(id, padding = {}) {
+    const states = this.hass?.states ?? {};
+    const s = states[id];
+    if (!s || !this.map) return false;
+    const opts = {
+      paddingTopLeft: [padding.left ?? 0, padding.top ?? 0],
+      paddingBottomRight: [padding.right ?? 0, padding.bottom ?? 0],
+    };
+    const zoom = this.map.getZoom();
+    if (domainOf(id) === "zone") {
+      const a = s.attributes ?? {};
+      if (typeof a.latitude !== "number" || typeof a.longitude !== "number") return false;
+      const center = L$2.latLng(a.latitude, a.longitude);
+      const bounds = center.toBounds(2 * (a.radius ?? 100)).pad(0.2);
+      this.map.fitBounds(bounds, { ...opts, maxZoom: Math.min(zoom, this.maxZoom()) });
+      return true;
+    }
+    const loc = locationOf(s, states);
+    if (!loc) return false;
+    const center = L$2.latLng(loc.lat, loc.lng);
+    const here = this.map.project(center, zoom);
+    // The nearest other person, tracker or zone. HA counts every marker on its map; on the shared map
+    // that would be the nearest aircraft or train, so only the overview's own kinds count here.
+    let nearest = Infinity;
+    for (const other of [...this._members(), ...this._zones]) {
+      if (other.id === id || (other.lat === loc.lat && other.lng === loc.lng)) continue;
+      nearest = Math.min(nearest, here.distanceTo(this.map.project([other.lat, other.lng], zoom)));
+    }
+    const target = Math.min(focusZoom(zoom, nearest), this.maxZoom());
+    const bounds = L$2.latLngBounds([center, center]);
+    const fly = !this.map.getBounds().contains(center);
+    (fly ? this.map.flyToBounds : this.map.fitBounds).call(this.map, bounds, { ...opts, maxZoom: target });
+    return true;
+  }
+
+  _drawBubble(group) {
+    const { layout } = group;
+    const root = document.createElement("div");
+    root.className = "ltmc-cluster" + (group.open ? " open" : "");
+    if (group.key !== undefined) root.dataset.zone = group.key;
+    root.style.width = `${layout.width}px`;
+    root.style.height = `${layout.height}px`;
+    const bubble = document.createElement("div");
+    bubble.className = "ltmc-bubble";
+    for (const m of group.members.slice(0, layout.shownCount)) {
+      const avatar = this._frame(m, null);
+      if (group.open) {
+        avatar.addEventListener("click", (ev) => { ev.stopPropagation(); this._tap(m.id); });
+      }
+      bubble.appendChild(avatar);
+    }
+    if (layout.more) {
+      const more = document.createElement("span");
+      more.className = "more";
+      more.textContent = layout.more;
+      bubble.appendChild(more);
+    }
+    const tail = document.createElement("div");
+    tail.className = "ltmc-bubble-tail";
+    root.append(bubble, tail);
+    root.title = group.members.map((m) => m.title).join(", ");
+    if (!group.open) {
+      root.addEventListener("click", (ev) => { ev.stopPropagation(); this.zoomTo(group.members); });
+    }
+    L$2.marker(this._bubbleAt(group), {
+      icon: L$2.divIcon({ className: "ltmc-cluster-icon", html: root, iconSize: [layout.width, layout.height], iconAnchor: layout.anchor }),
+      pane: PRESENCE_PANE, keyboard: false, bubblingMouseEvents: false,
+    }).addTo(this._markerLayer);
+  }
+
+  /**
+   * A tap on a closed bubble: zoom to its members; it opens if zooming in could not part them.
+   * @param {Array<{id: string, lat: number, lng: number}>} members
+   */
+  zoomTo(members) {
+    this._pending = new Set(members.map((m) => m.id));
+    const bounds = L$2.latLngBounds(members.map((m) => [m.lat, m.lng])).pad(0.3);
+    const max = this.maxZoom();
+    const zoom = Math.min(this.map.getBoundsZoom(bounds), max);
+    // Already there: no moveend would come, so regroup now
+    if (zoom === this.map.getZoom() && this.map.getBounds().contains(bounds)) { this.regroup(); return; }
+    this.map.fitBounds(bounds, { maxZoom: max });
+  }
+
+  _moreInfo(entityId) {
+    const ev = new Event("hass-action", { bubbles: true, composed: true });
+    ev.detail = { config: { entity: entityId, tap_action: { action: "more-info" } }, action: "tap" };
+    this.map.getContainer().dispatchEvent(ev);
+  }
+
+  _injectStyle() {
+    const root = this.map.getContainer().getRootNode?.();
+    const target = root && root.nodeType === 11 ? root : document.head;
+    if (target.querySelector?.(`#${PRESENCE_STYLE_ID}`)) return;
+    const style = document.createElement("style");
+    style.id = PRESENCE_STYLE_ID;
+    style.textContent = PRESENCE_CSS;
+    target.appendChild(style);
+  }
+}
+
+const OVERVIEW_TAG = "ltmc-map-overview";
+
+/** English for when Home Assistant has no translation (a page outside it, an older release). */
+const EN = Object.freeze({
+  label: "Map overview", people: "People", devices: "Devices", zones: "Zones", me: "Me", activity: "Activity",
+  show_more: "Show more", no_activity: "No recent activity", activity_unavailable: "Activity couldn't be loaded",
+  directions: "Directions", entered: "Entered", left: "Left",
+});
+
+/**
+ * The overview beside the map, as Home Assistant's own map card shows it in a panel view
+ * (hui-map-overview.ts @ 4d8eca2, Apache-2.0, rewritten; rules in OverviewRules.js): tabs People,
+ * Devices, Zones; a row per entity with its state and how long ago; a selected entity's last 24 hours
+ * of activity. Desktop: a floating panel. Phone (600 px or less): a bottom sheet dragged between
+ * collapsed, half and full, in the browser's top layer.
+ *
+ * It never touches the map. It fires, bubbling and composed:
+ *   ltmc-overview-select {entityId}  (undefined: back to the list)
+ *   ltmc-overview-tab    {tab}
+ *   ltmc-overview-resize {width, height, fitHeight?}  (0 x 0 when gone or collapsed to nothing)
+ */
+class LtmcMapOverview extends i {
+  static get properties() {
+    return {
+      hass: { attribute: false },
+      entityIds: { attribute: false },
+      names: { attribute: false },
+      selected: { attribute: false },
+      tab: { attribute: false },
+      zoneColor: { attribute: false },
+      _phone: { state: true },
+      _activity: { state: true },
+      _activityFailed: { state: true },
+      _activityExpanded: { state: true },
+      _position: { state: true },
+      _dragHeight: { state: true },
+      _minHeight: { state: true },
+      _tick: { state: true },
+    };
+  }
+
+  constructor() {
+    super();
+    this.entityIds = [];
+    this.names = new Map();
+    this.tab = "people";
+    this.selected = undefined;
+    this.zoneColor = () => "var(--accent-color, #ff9800)";
+    this._phone = false;
+    this._activity = undefined;
+    this._activityFailed = false;
+    this._activityExpanded = false;
+    this._activityRequest = 0;
+    this._position = "half";
+    this._dragHeight = undefined;
+    this._minHeight = undefined;
+    this._tick = 0;
+    this._drag = null;
+    this._pendingTouch = null;
+    this._reported = null;
+  }
+
+  // ---- strings and formatting -------------------------------------------
+
+  _t(key, vars) {
+    try {
+      const s = this.hass?.localize?.(`ui.panel.lovelace.cards.map.overview.${key}`, vars);
+      if (s) return s;
+    } catch { /* no translation */ }
+    if (key === "people_in_zone") {
+      const n = vars?.count ?? 0;
+      return n === 0 ? "No one here" : n === 1 ? "1 person" : `${n} people`;
+    }
+    return EN[key] ?? key;
+  }
+
+  _ui(key, fallback) {
+    try { return this.hass?.localize?.(key) || fallback; } catch { return fallback; }
+  }
+
+  get _language() {
+    return this.hass?.locale?.language ?? this.hass?.language ?? "en";
+  }
+
+  _name(s) {
+    return entityName(s, this.names, this.hass);
+  }
+
+  _personName(s) {
+    return isMe(s, this.hass?.user) ? this._t("me") : this._name(s);
+  }
+
+  _state(s, state) {
+    try {
+      const f = this.hass?.formatEntityState?.(s, state);
+      if (typeof f === "string" && f !== "") return f;
+    } catch { /* an older Home Assistant */ }
+    return state ?? s?.state ?? "";
+  }
+
+  _ago(when, style = "long") {
+    return relativeTime(when, { language: this._language, style });
+  }
+
+  _time(when) {
+    const tf = this.hass?.locale?.time_format;
+    const hour12 = tf === "12" ? true : tf === "24" ? false : undefined;
+    try {
+      return new Intl.DateTimeFormat(this._language, { hour: "numeric", minute: "2-digit", hour12 }).format(when);
+    } catch {
+      return when.toLocaleTimeString();
+    }
+  }
+
+  // ---- lists ------------------------------------------------------------
+
+  _lists() {
+    const states = this.hass?.states ?? {};
+    const o = { user: this.hass?.user, name: (s) => this._name(s), locale: this._language };
+    const people = peopleOf(this.entityIds ?? [], states, o);
+    const devices = devicesOf(this.entityIds ?? [], states, o);
+    const zones = zonesOf(states, o);
+    return { people, devices, zones, tabs: tabsWithItems(people, devices, zones) };
+  }
+
+  // ---- life cycle -------------------------------------------------------
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._phoneQuery ??= globalThis.matchMedia?.(`(max-width: ${PHONE_MAX_WIDTH}px)`);
+    this._phone = Boolean(this._phoneQuery?.matches);
+    this._onPhone = () => { this._phone = Boolean(this._phoneQuery?.matches); };
+    this._phoneQuery?.addEventListener?.("change", this._onPhone);
+    this._onViewport = () => this._report();
+    globalThis.addEventListener?.("resize", this._onViewport);
+    this._ro ??= typeof ResizeObserver === "function" ? new ResizeObserver(() => { if (!this._phone) this._report(); }) : null;
+    this._ro?.observe(this);
+    this._clock();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this._phoneQuery?.removeEventListener?.("change", this._onPhone);
+    globalThis.removeEventListener?.("resize", this._onViewport);
+    this._ro?.disconnect();
+    clearTimeout(this._clockTimer);
+    this._endDrag();
+    this._fire("ltmc-overview-resize", { width: 0, height: 0 });
+  }
+
+  /** Keeps "x min ago" counting: every second under a minute old, else every minute. */
+  _clock() {
+    clearTimeout(this._clockTimer);
+    const s = this.hass?.states?.[this.selected];
+    const ages = [s?.last_updated, ...(this._activity ?? []).map((e) => e.when)]
+      .map((t) => Date.now() - new Date(t).getTime()).filter((a) => Number.isFinite(a));
+    const soon = ages.some((a) => a < 60000);
+    this._clockTimer = setTimeout(() => { this._tick++; this._clock(); }, soon ? 1000 : 60000);
+  }
+
+  willUpdate(changed) {
+    if (changed.has("selected")) {
+      this._activity = undefined;
+      this._activityFailed = false;
+      this._activityExpanded = false;
+      const request = ++this._activityRequest;
+      if (this.selected) this.loadActivity(this.selected, request);
+    }
+  }
+
+  updated(changed) {
+    // The host filters the map by the tab it set; say so when that tab has gone.
+    const { tabs } = this._lists();
+    if (tabs.length && !tabs.some(([t]) => t === this.tab)) this._fire("ltmc-overview-tab", { tab: tabs[0][0] });
+    this.toggleAttribute("single-tab", tabs.length === 1);
+    this.toggleAttribute("phone", this._phone);
+    if (this._phone) {
+      this._showPopovers();
+      this._measurePeek();
+      if (changed.has("selected") && this.selected) this._position = "half";
+      if (changed.has("_position") || changed.has("_minHeight") || changed.has("_phone") ||
+          (changed.has("_dragHeight") && this._dragHeight === undefined)) this._reportWhenSettled();
+    } else if (changed.has("_phone")) {
+      this._report();
+    }
+    if (changed.has("selected")) this._moveFocus(changed.get("selected"));
+  }
+
+  _fire(type, detail) {
+    this.dispatchEvent(new CustomEvent(type, { detail, bubbles: true, composed: true }));
+  }
+
+  // ---- activity ---------------------------------------------------------
+
+  /**
+   * The selection's activity in the last 24 hours, from Home Assistant's history: a person's or
+   * tracker's state changes, or a zone's arrivals and departures by the map's people.
+   * @param {string} entityId
+   * @param {number} request only the newest request may show its answer
+   * @returns {Promise<void>}
+   */
+  async loadActivity(entityId, request) {
+    const since = Date.now() - ACTIVITY_HOURS * 3600 * 1000;
+    const zone = domainOf(entityId) === "zone";
+    const ids = zone ? this._lists().people.map((p) => p.entity_id) : [entityId];
+    let history = {};
+    if (ids.length) {
+      try {
+        history = await this.hass.callWS({
+          type: "history/history_during_period",
+          start_time: new Date(since).toISOString(),
+          end_time: new Date(Date.now()).toISOString(),
+          entity_ids: ids,
+          minimal_response: false,
+          no_attributes: false,
+        });
+      } catch {
+        history = null;
+      }
+    }
+    if (request !== this._activityRequest) return;
+    if (history === null) {
+      this._activityFailed = true;
+      this._activity = [];
+      return;
+    }
+    this._activity = zone ? zoneActivity(history, ids, entityId, since) : personActivity(history?.[entityId], since);
+    this._clock();
+  }
+
+  // ---- events from the panel --------------------------------------------
+
+  _onRow(ev) {
+    const id = ev.currentTarget?.dataset?.entityId;
+    if (id) this._fire("ltmc-overview-select", { entityId: id });
+  }
+
+  _onBack() {
+    this._fire("ltmc-overview-select", { entityId: undefined });
+  }
+
+  _onTabClick(ev) {
+    this._fire("ltmc-overview-tab", { tab: ev.currentTarget?.dataset?.tab });
+  }
+
+  _onTabKey(ev) {
+    const step = ev.key === "ArrowRight" ? 1 : ev.key === "ArrowLeft" ? -1 : 0;
+    if (!step) return;
+    ev.preventDefault();
+    const buttons = [...(this.renderRoot?.querySelectorAll?.(".tablist button") ?? [])];
+    const i = buttons.indexOf(ev.target);
+    const rtl = getComputedStyle(this).direction === "rtl";
+    const next = buttons[(i + (rtl ? -step : step) + buttons.length) % buttons.length];
+    if (next?.dataset?.tab) {
+      this._fire("ltmc-overview-tab", { tab: next.dataset.tab });
+      next.focus();
+    }
+  }
+
+  _onDirections() {
+    const s = this.hass?.states?.[this.selected];
+    const loc = s && locationOf(s, this.hass.states);
+    if (loc) globalThis.open?.(navigationUrl(loc.lat, loc.lng), "_blank", "noreferrer");
+  }
+
+  _onSettings() {
+    if (!this.selected) return;
+    this._fire("hass-more-info", { entityId: this.selected, view: "settings" });
+  }
+
+  _moveFocus(previous) {
+    const root = this.renderRoot;
+    if (!root?.querySelector) return;
+    if (this.selected) {
+      root.querySelector(".detail-name")?.focus?.();
+    } else if (previous) {
+      const row = [...root.querySelectorAll(".row")].find((r) => r.dataset.entityId === previous);
+      (row ?? root.querySelector('.tablist button[aria-selected="true"]'))?.focus?.();
+    }
+  }
+
+  // ---- size reports -----------------------------------------------------
+
+  _report() {
+    if (this._phone) { this._reportWhenSettled(); return; }
+    const r = this.getBoundingClientRect?.();
+    const d = { width: r?.width ?? 0, height: r?.height ?? 0 };
+    if (this._reported?.width === d.width && this._reported?.height === d.height) return;
+    this._reported = d;
+    this._fire("ltmc-overview-resize", d);
+  }
+
+  _halfHeight() {
+    return (globalThis.innerHeight ?? 0) * HALF_VIEWPORT_SHARE;
+  }
+
+  /** The sheet tells the host its height once it settles, not on every frame of a drag. */
+  async _reportWhenSettled() {
+    await this.updateComplete;
+    const sheet = this.renderRoot?.querySelector?.(".sheet");
+    if (!sheet || this._drag) return;
+    try { await Promise.all((sheet.getAnimations?.() ?? []).map((a) => a.finished)); } catch { return; }
+    if (this._drag) return;
+    const d = { width: globalThis.innerWidth ?? 0, height: sheet.offsetHeight, fitHeight: this._halfHeight() };
+    if (this._reported?.height === d.height && this._reported?.fitHeight === d.fitHeight && this._reported?.width === d.width) return;
+    this._reported = d;
+    this._fire("ltmc-overview-resize", d);
+  }
+
+  /** The collapsed sheet keeps the tabs (or the detail header) reachable: padding + that strip + a gap. */
+  _measurePeek() {
+    const panel = this.renderRoot?.querySelector?.(".sheet .panel");
+    const peek = this.renderRoot?.querySelector?.(".peek");
+    if (!panel || !peek) return;
+    const st = getComputedStyle(panel);
+    const h = (parseFloat(st.paddingTop) || 0) + peek.offsetHeight + 12;
+    if (h > 0 && Math.abs(h - (this._minHeight ?? 0)) > 0.5) this._minHeight = h;
+  }
+
+  _showPopovers() {
+    for (const el of this.renderRoot?.querySelectorAll?.(".backdrop, .sheet") ?? []) {
+      try { if (el.showPopover && !el.matches(":popover-open")) el.showPopover(); } catch { /* no popover support */ }
+    }
+  }
+
+  // ---- the sheet's drag (ha-snap-bottom-sheet's rules) --------------------
+
+  _stops() {
+    const sheet = this.renderRoot?.querySelector?.(".sheet");
+    const full = sheet ? parseFloat(getComputedStyle(sheet).maxHeight) : (globalThis.innerHeight ?? 0) - 48;
+    return sheetStops(this._minHeight, this._halfHeight(), Number.isFinite(full) ? full : (globalThis.innerHeight ?? 0) - 48);
+  }
+
+  /** @param {number} clientY */
+  _startDrag(clientY) {
+    const sheet = this.renderRoot?.querySelector?.(".sheet");
+    const now = Date.now();
+    this._drag = { startY: clientY, startTime: now, lastY: clientY, lastTime: now, startHeight: sheet?.offsetHeight ?? 0 };
+  }
+
+  /** @param {number} clientY */
+  _moveDrag(clientY) {
+    if (!this._drag) return;
+    this._drag.lastY = clientY;
+    this._drag.lastTime = Date.now();
+    const lowest = this._stops()[0].height;
+    this._dragHeight = Math.max(lowest, this._drag.startHeight + (this._drag.startY - clientY));
+  }
+
+  _endDrag() {
+    const g = this._drag;
+    if (!g) return;
+    this._drag = null;
+    globalThis.document?.body?.style?.removeProperty?.("cursor");
+    globalThis.document?.removeEventListener?.("mousemove", this._onMouseMove);
+    globalThis.document?.removeEventListener?.("mouseup", this._onMouseUp);
+    const height = this._dragHeight ?? g.startHeight;
+    this._position = stopAfterDrag(this._stops(), height, swipeDirection(g, Date.now()));
+    this._dragHeight = undefined;
+  }
+
+  _onMouseDown = (ev) => {
+    globalThis.document?.body?.style?.setProperty?.("cursor", "grabbing");
+    globalThis.document?.addEventListener?.("mousemove", this._onMouseMove);
+    globalThis.document?.addEventListener?.("mouseup", this._onMouseUp);
+    this._startDrag(ev.clientY);
+  };
+
+  _onMouseMove = (ev) => this._moveDrag(ev.clientY);
+
+  _onMouseUp = () => this._endDrag();
+
+  _onTouchStart = (ev) => {
+    if (ev.touches?.length !== 1) return;
+    this._pendingTouch = null;
+    this._endDrag();
+    const t = ev.touches[0];
+    const path = ev.composedPath?.() ?? [];
+    if (path.some((n) => n?.classList?.contains?.("handle"))) {
+      ev.preventDefault();
+      this._startDrag(t.clientY);
+      return;
+    }
+    this._pendingTouch = { x: t.clientX, y: t.clientY };
+  };
+
+  _onTouchMove = (ev) => {
+    const t = ev.touches?.[0];
+    if (!t) return;
+    if (this._pendingTouch) {
+      const s = this._pendingTouch;
+      const dx = t.clientX - s.x, dy = t.clientY - s.y;
+      if (ev.cancelable && Math.hypot(dx, dy) < TOUCH_SLOP_PX) return;
+      this._pendingTouch = null;
+      // Sideways moves, scrolls the browser began, and scrolling up at full height stay with the content.
+      if (!ev.cancelable || Math.abs(dx) > Math.abs(dy) || (dy < 0 && this._position === "full")) return;
+      this._startDrag(s.y);
+    }
+    if (!this._drag) return;
+    ev.preventDefault();
+    this._moveDrag(t.clientY);
+  };
+
+  _onTouchEnd = () => {
+    this._pendingTouch = null;
+    this._endDrag();
+  };
+
+  // ---- render -----------------------------------------------------------
+
+  render() {
+    const { tabs } = this._lists();
+    if (!tabs.length) return A;
+    const s = this.selected ? this.hass?.states?.[this.selected] : undefined;
+    const content = s ? this._renderDetail(s) : this._renderList(tabs);
+    if (!this._phone) return b`<div class="panel">${content}</div>`;
+    const full = this._position === "full";
+    const dragging = this._dragHeight !== undefined;
+    const height = dragging ? `${this._dragHeight}px`
+      : this._position === "collapsed" && this._minHeight !== undefined ? `${this._minHeight}px` : "";
+    const backdrop = full && !dragging ? 1 : 0;
+    return b`
+      <div class="backdrop ${full ? "active" : ""} ${dragging ? "dragging" : ""}" popover="manual"
+        style="opacity: ${backdrop}" @click=${() => { this._position = "half"; }}></div>
+      <div class="sheet ${full ? "full" : ""} ${dragging ? "dragging" : ""}" popover="manual" role="region"
+        aria-label=${this._t("label")}
+        style="${height ? `height: ${height};` : ""} ${this._minHeight !== undefined ? `min-height: ${this._minHeight}px;` : ""}"
+        @touchstart=${this._onTouchStart} @touchmove=${this._onTouchMove}
+        @touchend=${this._onTouchEnd} @touchcancel=${this._onTouchEnd}>
+        <div class="handle-wrapper"><div class="handle" @mousedown=${this._onMouseDown}></div></div>
+        <div class="panel">${content}</div>
+      </div>`;
+  }
+
+  _renderList(tabs) {
+    const tab = shownTab(this.tab, tabs);
+    const items = tabs.find(([t]) => t === tab)[1];
+    if (tabs.length === 1) {
+      return b`<div class="heading peek" id="tab-${tab}">${this._t(tab)}</div>${this._renderItems(tab, items)}`;
+    }
+    const i = tabs.findIndex(([t]) => t === tab);
+    return b`
+      <div class="tabs peek">
+        <span class="pill" style="--tab-count: ${tabs.length}; --tab-index: ${i}" aria-hidden="true"></span>
+        <div class="tablist" role="tablist" @keydown=${this._onTabKey}>
+          ${tabs.map(([t]) => b`<button type="button" role="tab" id="tab-${t}" aria-controls="tabpanel"
+              aria-selected=${t === tab ? "true" : "false"} tabindex=${t === tab ? 0 : -1} data-tab=${t}
+              @click=${this._onTabClick}>${this._t(t)}</button>`)}
+        </div>
+      </div>
+      ${this._renderItems(tab, items)}`;
+  }
+
+  _renderItems(tab, items) {
+    return b`
+      <div class="list" id="tabpanel" role="tabpanel" aria-labelledby="tab-${tab}">
+        <div class="rows">${items.map((s) => (tab === "zones" ? this._renderZone(s) : this._renderEntity(s)))}</div>
+      </div>`;
+  }
+
+  _renderEntity(s) {
+    const located = Boolean(locationOf(s, this.hass?.states ?? {}));
+    return b`
+      <button type="button" class="row ${located ? "" : "no-location"}" data-entity-id=${s.entity_id} @click=${this._onRow}>
+        ${this._renderAvatar(s)}
+        <span class="row-text">
+          <span class="headline">${this._personName(s)}</span>
+          <span class="supporting">${this._state(s)} · ${this._ago(s.last_updated, "short")}</span>
+        </span>
+      </button>`;
+  }
+
+  _renderZone(z) {
+    const count = Number(z.state);
+    return b`
+      <button type="button" class="row" data-entity-id=${z.entity_id} @click=${this._onRow}>
+        ${this._renderZoneAvatar(z)}
+        <span class="row-text">
+          <span class="headline">${this._name(z)}</span>
+          <span class="supporting">${Number.isNaN(count) ? "" : this._t("people_in_zone", { count })}</span>
+        </span>
+      </button>`;
+  }
+
+  _icon(s) {
+    if (globalThis.customElements?.get?.("ha-state-icon")) return b`<ha-state-icon .hass=${this.hass} .stateObj=${s}></ha-state-icon>`;
+    const fallback = domainOf(s.entity_id) === "zone" ? "mdi:map-marker-radius" : domainOf(s.entity_id) === "person" ? "mdi:account" : "mdi:cellphone";
+    return b`<ha-icon icon=${s.attributes?.icon ?? fallback}></ha-icon>`;
+  }
+
+  _renderAvatar(s) {
+    const pic = s.attributes?.entity_picture;
+    const url = typeof pic === "string" && pic ? (this.hass?.hassUrl ? this.hass.hassUrl(pic) : pic) : null;
+    return b`<div class="avatar" aria-hidden="true">${url
+      ? b`<img src=${url} alt="" loading="lazy" />`
+      : domainOf(s.entity_id) === "person" ? b`<span class="initials">${markerLabel(this._name(s)) || "?"}</span>` : this._icon(s)}</div>`;
+  }
+
+  _renderZoneAvatar(z) {
+    const color = this.zoneColor(z.entity_id, Boolean(z.attributes?.passive));
+    return b`<div class="avatar zone" aria-hidden="true"
+      style="background: ${color}; color: ${contrastingContent(color)}">${this._icon(z)}</div>`;
+  }
+
+  _renderDetail(s) {
+    const zone = domainOf(s.entity_id) === "zone";
+    const count = zone ? Number(s.state) : NaN;
+    const located = Boolean(locationOf(s, this.hass?.states ?? {}));
+    return b`
+      <div class="detail-header peek">
+        <ha-icon-button class="back" .label=${this._ui("ui.common.back", "Back")} @click=${this._onBack}>
+          <ha-icon icon="mdi:arrow-left"></ha-icon>
+        </ha-icon-button>
+        <div class="detail-title">
+          <span class="detail-name" tabindex="-1">${this._personName(s)}</span>
+          <span class="detail-state">${zone
+            ? (Number.isNaN(count) ? "" : this._t("people_in_zone", { count }))
+            : b`${this._state(s)} · ${this._ago(s.last_updated, "short")}`}</span>
+        </div>
+        ${located ? b`<ha-icon-button class="directions" .label=${this._t("directions")} @click=${this._onDirections}>
+            <ha-icon icon="mdi:directions"></ha-icon></ha-icon-button>` : A}
+        ${this.hass?.user?.is_admin ? b`<ha-icon-button class="settings"
+            .label=${this._ui("ui.dialogs.more_info_control.settings", "Settings")} @click=${this._onSettings}>
+            <ha-icon icon="mdi:cog-outline"></ha-icon></ha-icon-button>` : A}
+      </div>
+      <div class="list">
+        <div class="activity">
+          <div class="activity-header">
+            <span class="activity-icon"><ha-icon icon="mdi:history"></ha-icon></span>
+            <span class="activity-title">${this._t("activity")}</span>
+          </div>
+          ${!this._activity
+            ? b`<div class="activity-loading"><span class="spinner" aria-hidden="true"></span></div>`
+            : !this._activity.length
+              ? b`<span class="activity-empty">${this._t(this._activityFailed ? "activity_unavailable" : "no_activity")}</span>`
+              : this._renderTimeline(s, this._activity)}
+        </div>
+      </div>`;
+  }
+
+  _renderTimeline(s, activity) {
+    const shown = this._activityExpanded ? activity : activity.slice(0, ACTIVITY_INITIAL_ENTRIES);
+    return b`
+      <div class="timeline">${shown.map((e) => this._renderEntry(s, e))}</div>
+      ${activity.length > shown.length
+        ? b`<button type="button" class="show-more" @click=${() => { this._activityExpanded = true; }}>${this._t("show_more")}</button>`
+        : A}`;
+  }
+
+  _renderEntry(s, e) {
+    const states = this.hass?.states ?? {};
+    const person = e.personId ? states[e.personId] : undefined;
+    const headline = e.personId ? (person ? this._personName(person) : e.personId) : this._state(s, e.state);
+    const zone = e.personId ? undefined : zoneOfEntry(e, states);
+    const tile = zone ? this._renderZoneAvatar(zone) : person ? this._renderAvatar(person) : b`<span class="rail" aria-hidden="true"></span>`;
+    return b`
+      <div class="entry">
+        ${tile}
+        <div class="entry-text">
+          <span class="entry-headline">${headline}</span>
+          <span class="entry-when">${e.personId ? b`${this._t(e.arrived ? "entered" : "left")} · ` : A}${this._time(e.when)} · ${this._ago(e.when)}</span>
+        </div>
+      </div>`;
+  }
+
+  static get styles() {
+    return i$3`
+      :host {
+        display: block;
+        pointer-events: none;
+        font-family: var(--ha-font-family-body, Roboto, sans-serif);
+      }
+      .panel {
+        --avatar-size: 48px;
+        pointer-events: auto;
+        box-sizing: border-box;
+        width: 100%;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: var(--ha-space-3, 12px);
+        border-radius: var(--ha-border-radius-xl, 16px);
+        background: var(--card-background-color, #fff);
+        color: var(--primary-text-color, #212121);
+        box-shadow: var(--ha-box-shadow-m, 0 4px 12px rgba(0, 0, 0, 0.18));
+      }
+      .heading {
+        flex: none;
+        padding: var(--ha-space-2, 8px) var(--ha-space-3, 12px);
+        font-size: var(--ha-font-size-l, 16px);
+        font-weight: var(--ha-font-weight-medium, 500);
+      }
+      .tabs {
+        position: relative;
+        flex: none;
+        padding: var(--ha-space-1, 4px);
+        border-radius: var(--ha-border-radius-lg, 12px);
+        background: var(--ha-color-fill-neutral-quiet-resting, rgba(127, 127, 127, 0.12));
+      }
+      .tablist { display: flex; gap: var(--ha-space-1, 4px); }
+      .tabs .pill {
+        --segment-width: calc((100% - (var(--tab-count) + 1) * var(--ha-space-1, 4px)) / var(--tab-count));
+        position: absolute;
+        top: var(--ha-space-1, 4px);
+        bottom: var(--ha-space-1, 4px);
+        inset-inline-start: calc(var(--ha-space-1, 4px) + var(--tab-index) * (var(--segment-width) + var(--ha-space-1, 4px)));
+        width: var(--segment-width);
+        border-radius: calc(var(--ha-border-radius-lg, 12px) - var(--ha-space-1, 4px));
+        background: var(--card-background-color, #fff);
+        box-shadow: var(--ha-box-shadow-s, 0 1px 3px rgba(0, 0, 0, 0.2));
+        transition: inset-inline-start 200ms ease;
+      }
+      .tabs button {
+        position: relative;
+        flex: 1;
+        border: none;
+        margin: 0;
+        padding: var(--ha-space-2, 8px) var(--ha-space-3, 12px);
+        border-radius: calc(var(--ha-border-radius-lg, 12px) - var(--ha-space-1, 4px));
+        background: none;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: var(--ha-font-size-m, 14px);
+        font-weight: var(--ha-font-weight-medium, 500);
+        color: var(--secondary-text-color, #727272);
+        transition: color 180ms ease-in-out;
+      }
+      .tabs button[aria-selected="true"] { color: var(--primary-text-color, #212121); }
+      .tabs button:focus-visible { outline: 2px solid var(--primary-color, #03a9f4); outline-offset: -2px; }
+      @media (prefers-reduced-motion: reduce) { .tabs .pill { transition: none; } }
+      .list { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+      .rows {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        margin-top: var(--ha-space-2, 8px);
+        display: flex;
+        flex-direction: column;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: var(--ha-space-3, 12px);
+        width: 100%;
+        padding: var(--ha-space-2, 8px);
+        border: none;
+        border-radius: var(--ha-border-radius-lg, 12px);
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: start;
+        cursor: pointer;
+      }
+      .row:hover, .row:focus-visible { background: var(--ha-color-fill-neutral-quiet-resting, rgba(127, 127, 127, 0.12)); outline: none; }
+      .row.no-location { color: var(--secondary-text-color, #727272); }
+      .row-text, .detail-title, .entry-text { display: flex; flex-direction: column; min-width: 0; }
+      .headline, .entry-headline {
+        font-size: var(--ha-font-size-m, 14px);
+        font-weight: var(--ha-font-weight-medium, 500);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .supporting, .entry-when, .detail-state {
+        color: var(--secondary-text-color, #727272);
+        font-size: var(--ha-font-size-s, 12px);
+      }
+      .avatar {
+        position: relative;
+        flex: none;
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        border-radius: var(--ha-border-radius-lg, 12px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--ha-color-fill-neutral-quiet-resting, rgba(127, 127, 127, 0.12));
+        color: var(--secondary-text-color, #727272);
+        font-weight: var(--ha-font-weight-medium, 500);
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      .avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+      .avatar.zone { color: #fff; }
+      .detail-header {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: var(--ha-space-1, 4px);
+        padding: var(--ha-space-1, 4px) var(--ha-space-3, 12px);
+        border-radius: var(--ha-border-radius-lg, 12px);
+        background: var(--ha-color-fill-neutral-quiet-resting, rgba(127, 127, 127, 0.12));
+      }
+      .detail-title { flex: 1; }
+      .detail-name { font-size: var(--ha-font-size-l, 16px); font-weight: var(--ha-font-weight-medium, 500); outline: none; }
+      .activity {
+        margin-top: var(--ha-space-2, 8px);
+        padding: var(--ha-space-3, 12px);
+        border-radius: var(--ha-border-radius-lg, 12px);
+        background: var(--ha-color-fill-neutral-quiet-resting, rgba(127, 127, 127, 0.12));
+        min-height: 0;
+        overflow-y: auto;
+      }
+      .activity .avatar { background: var(--card-background-color, #fff); }
+      .activity-header { display: flex; align-items: center; gap: var(--ha-space-3, 12px); }
+      .activity-icon {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        border-radius: var(--ha-border-radius-lg, 12px);
+        background: var(--card-background-color, #fff);
+        color: var(--primary-color, #03a9f4);
+      }
+      .activity-title { font-weight: var(--ha-font-weight-medium, 500); }
+      .activity-loading { display: flex; justify-content: center; padding: var(--ha-space-3, 12px); }
+      .spinner {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid var(--divider-color, rgba(0, 0, 0, 0.12));
+        border-top-color: var(--primary-color, #03a9f4);
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .activity-empty { color: var(--secondary-text-color, #727272); font-size: var(--ha-font-size-s, 12px); }
+      .timeline { display: flex; flex-direction: column; gap: var(--ha-space-4, 16px); margin-top: var(--ha-space-3, 12px); }
+      .entry { display: flex; align-items: center; gap: var(--ha-space-3, 12px); }
+      .rail {
+        flex: none;
+        align-self: stretch;
+        width: 2px;
+        margin-inline: calc((var(--avatar-size) - 2px) / 2);
+        border-radius: 999px;
+        background: var(--divider-color, rgba(0, 0, 0, 0.12));
+      }
+      .show-more {
+        display: block;
+        width: 100%;
+        margin-top: var(--ha-space-3, 12px);
+        padding: var(--ha-space-2, 8px) 0 0;
+        border: none;
+        border-top: 1px solid var(--divider-color, rgba(0, 0, 0, 0.12));
+        background: none;
+        color: var(--primary-color, #03a9f4);
+        font: inherit;
+        font-weight: var(--ha-font-weight-medium, 500);
+        cursor: pointer;
+      }
+      /* The phone's bottom sheet (ha-snap-bottom-sheet's look), in the browser's top layer. */
+      .sheet {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 50vh;
+        height: 50dvh;
+        max-height: calc(100vh - max(var(--safe-area-inset-top, 0px), 48px));
+        max-height: calc(100dvh - max(var(--safe-area-inset-top, 0px), 48px));
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        overflow: visible;
+        pointer-events: auto;
+        color: var(--primary-text-color, #212121);
+        background: var(--card-background-color, #fff);
+        border-top-left-radius: var(--ha-border-radius-2xl, 24px);
+        border-top-right-radius: var(--ha-border-radius-2xl, 24px);
+        box-shadow: 0px -8px 16px rgba(0, 0, 0, 0.2);
+        transition: height var(--ha-animation-duration-normal, 250ms) ease;
+        z-index: 7;
+      }
+      .sheet.full {
+        height: calc(100vh - max(var(--safe-area-inset-top, 0px), 48px));
+        height: calc(100dvh - max(var(--safe-area-inset-top, 0px), 48px));
+      }
+      .sheet.dragging { transition: none; }
+      .sheet .panel {
+        flex: 1;
+        min-height: 0;
+        background: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 28px max(12px, var(--safe-area-inset-right, 0px)) max(12px, var(--safe-area-inset-bottom, 0px)) max(12px, var(--safe-area-inset-left, 0px));
+      }
+      .handle-wrapper {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        padding-bottom: 2px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: grab;
+        touch-action: none;
+      }
+      .handle {
+        height: 20px;
+        width: 200px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 7;
+        padding-bottom: 8px;
+      }
+      .handle::after {
+        content: "";
+        border-radius: 8px;
+        height: 4px;
+        width: 40px;
+        background: var(--divider-color, rgba(0, 0, 0, 0.12));
+      }
+      .backdrop {
+        position: fixed;
+        inset: 0;
+        width: auto;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: var(--ha-bottom-sheet-scrim-color, transparent);
+        pointer-events: none;
+        transition: opacity var(--ha-animation-duration-normal, 250ms) ease;
+      }
+      .backdrop.active { pointer-events: auto; }
+      .backdrop.dragging { transition: none; }
+    `;
+  }
+}
+
+try {
+  if (globalThis.customElements && !globalThis.customElements.get(OVERVIEW_TAG)) {
+    globalThis.customElements.define(OVERVIEW_TAG, LtmcMapOverview);
+  }
+} catch { /* tests replace LitElement with a plain class; the page defines it */ }
+
+// The card's update waits for the next animation frame (map capacity, card SSOT 2026-10-25):
+// every hass change that lands before that frame is one update, and the work leaves Home
+// Assistant's websocket task. In a hidden tab no frame comes, so no update runs until the
+// tab is shown again, and then one does.
+
+/**
+ * A promise that settles on the next animation frame, or at once without one.
+ * @param {(cb: (t: number) => void) => number} [raf] requestAnimationFrame
+ * @returns {Promise<void>}
+ */
+function nextFrame(raf = globalThis.requestAnimationFrame) {
+  if (typeof raf !== "function") return Promise.resolve();
+  return new Promise((resolve) => { raf(() => resolve()); });
+}
+
+/**
+ * Run `update` after the next animation frame; its promise is the update's.
+ * @template T
+ * @param {() => T} update
+ * @param {(cb: (t: number) => void) => number} [raf] requestAnimationFrame
+ * @returns {Promise<Awaited<T>>}
+ */
+function afterFrame(update, raf = globalThis.requestAnimationFrame) {
+  return nextFrame(raf).then(() => update());
+}
+
 class MapCard extends i {
   static get properties() {
     return {
@@ -27035,6 +34719,11 @@ class MapCard extends i {
   geoJsonRenderService;
   hasError = false;
   hadError = false;
+  /** The overview beside the map (step 2): shown, its tab, its selection, and what it covers. */
+  _overviewOn = false;
+  _overviewTab = "people";
+  _overviewSelected = undefined;
+  _overviewSize = { width: 0, height: 0 };
 
   setup() {
     Logger.debug("[MapCard] Setting up map card");
@@ -27046,6 +34735,7 @@ class MapCard extends i {
 
     this.themeMode = this._config.themeMode;
     this.map = this._setupMap();
+    this._setupCreditsToggle();
     this._setupPathFollower();
     // redraw the map every time it resizes
     this.resizeObserver = this._setupResizeObserver();
@@ -27056,28 +34746,44 @@ class MapCard extends i {
     if (this._config.historyDateSelection) {
       this.dateRangeManager = new HaDateRangeService(this.hass);
     }
-    this.tileLayersService = new TileLayersService(this.map, this._config.tileLayers, this._config.wms, this.urlResolver, this.linkedEntityService, this.dateRangeManager);
+    this.tileLayersService = new TileLayersService(this.map, this._config.tileLayers, this._config.wms, this.urlResolver, this.linkedEntityService, this.dateRangeManager, undefined, this._config.layerControl, this._config.layerControlCollapsed);
     // Entities the page still holds after Home Assistant removed them - a
     // reconnect merges instead of replacing (HaStaleStateService). A change
     // to the record redraws, which hides or restores the markers.
     this.staleStateService = new HaStaleStateService(() => this.hass, () => this.requestUpdate());
-    this.entitiesRenderService = new EntitiesRenderService(this.map, this.hass, this._config.focusFollow, this._config.entities, this.linkedEntityService, this.dateRangeManager, this.historyService, this._isDarkMode(), this._config.clusterMarkers, (id) => this.staleStateService.isStale(id));
+    // The groups this browser's viewer hid in the filter card (D4f, backlog
+    // 345). A change redraws, which hides or restores the markers.
+    this.groupFilter = new GroupFilter(() => this.requestUpdate());
+    this.entitiesRenderService = new EntitiesRenderService(this.map, this.hass, this._config.focusFollow, this._config.entities, this.linkedEntityService, this.dateRangeManager, this.historyService, this._isDarkMode(), this._config.clusterMarkers, (id) => this.staleStateService.isStale(id), (id) => this.groupFilter.hides(this.hass?.states?.[id]?.attributes), this._config.markerDrawing);
+    this._setupPresence();
     this.initialViewRenderService = new InitialViewRenderService(this.map, this._config, this.hass, this.entitiesRenderService);
 
     this.pluginsRenderService = new PluginsRenderService(this.map, this._config.plugins);
     this.geoJsonRenderService = new GeoJsonRenderService(this.map, this.hass, this._config.geojson);
     // Shapes on the map (D12): filled by key from a publisher's file.
-    this.shapeLayersService = new ShapeLayersService(this.map, this._config.shapeLayers, this._config.shapeStyle, this.tileLayersService);
+    this.shapeLayersService = new ShapeLayersService(this.map, this._config.shapeLayers, this._config.shapeStyle, this.tileLayersService, { area: this._config.weatherArea });
+    // Points on the map (D19): dots from a publisher's file, above the fills, below the markers.
+    this.pointLayersService = new PointLayersService(this.map, this._config.pointLayers, this.tileLayersService, { area: this._config.weatherArea });
     // The weather radar overlay (D13): one layer, its own pane under the fills.
-    this.radarOverlayService = new RadarOverlayService(this.map, this._config.weatherRadar, this.tileLayersService);
+    this.radarOverlayService = new RadarOverlayService(this.map, this._config.weatherRadar, this.tileLayersService, { area: this._config.weatherArea });
+    // Lightning (D14): its own pane right above the radar's.
+    this.lightningOverlayService = new LightningOverlayService(this.map, this._config.lightning, this.tileLayersService);
+    // Clouds (D17): its own pane right above the tiles, under the radar's.
+    this.cloudOverlayService = new CloudOverlayService(this.map, this._config.clouds, this.tileLayersService, () => this._isDarkMode());
 
     try {
       this.pluginsRenderService.setup();
       this.tileLayersService.setup();
       // After the named tile overlays, so its checkbox follows theirs.
       this.radarOverlayService.setup();
+      // After the radar: its pane goes right above the radar's, its checkbox below.
+      this.lightningOverlayService.setup();
+      // After the radar's pane exists: the clouds' goes in right after the tiles, under it.
+      this.cloudOverlayService.setup();
       this.geoJsonRenderService.setup();
       this.entitiesRenderService.setup();
+      this.presenceRenderService.setup();
+      this._setupOverview();
       this.initialViewRenderService.setup();
       // After the entities exist: a check that finds stale ones redraws.
       this.staleStateService.start();
@@ -27093,6 +34799,14 @@ class MapCard extends i {
     Logger.debug("[MapCard] Map card setup complete");
   }
 
+  /**
+   * An update waits for the next animation frame (markers/FrameBatch.js).
+   * @returns {unknown}
+   */
+  scheduleUpdate() {
+    return afterFrame(() => super.scheduleUpdate());
+  }
+
   firstUpdated() {
     if (this.hass && this.isConnected) {
       this.setup();
@@ -27100,6 +34814,9 @@ class MapCard extends i {
   };
 
   render() {
+
+    // `entity_filter`: bring the card's own entity list up to date before anything draws.
+    this._applyEntityFilter();
 
     // Never build a map on a card that is not in the page. Home Assistant can
     // still call setConfig on a card it has just replaced (a websocket
@@ -27118,8 +34835,10 @@ class MapCard extends i {
       this.tileLayersService.render();
       this.geoJsonRenderService.render(this.hass);
       this.shapeLayersService?.render(this.hass);
+      this.pointLayersService?.render(this.hass);
       this.radarOverlayService?.render(this.hass);
       this.entitiesRenderService.render(this.hass);
+      this.presenceRenderService?.render(this.hass);
       this.initialViewRenderService.render();
 
       if (!this.hasError && this.hadError) {
@@ -27139,7 +34858,7 @@ class MapCard extends i {
                 <div id="map" style="min-height: ${this._config.mapHeight}px">
                   <ha-icon-button
                     label='Reset focus'
-                    style='${this._isDarkMode() ? "color:#ffffff;" : "color:#000000;"} position: absolute; top: 75px; left: 3px; z-index: 1;'
+                    style='${this._isDarkMode() ? "color:#ffffff;" : "color:#000000;"} position: absolute; top: 75px; left: ${3 + this._leftInset()}px; z-index: 1;'
                     @click=${this._fitMap}
                     tabindex="0"
                   >
@@ -27148,7 +34867,7 @@ class MapCard extends i {
                   ${this._config.clusterMarkers ? b`
                     <ha-icon-button
                       label='Toggle grouping'
-                      style='${this._isDarkMode() ? "color:#ffffff;" : "color:#000000;"} position: absolute; top: 115px; left: 3px; z-index: 1;'
+                      style='${this._isDarkMode() ? "color:#ffffff;" : "color:#000000;"} position: absolute; top: 115px; left: ${3 + this._leftInset()}px; z-index: 1;'
                       @click=${this._toggleClustering}
                       tabindex="0"
                     >
@@ -27156,6 +34875,20 @@ class MapCard extends i {
                     </ha-icon-button>
                   ` : ''}
                 </div>
+                ${this._overviewOn && this.presenceRenderService ? b`
+                  <ltmc-map-overview
+                    id="overview"
+                    .hass=${this.hass}
+                    .entityIds=${this.presenceRenderService.entityIds}
+                    .names=${this._overviewNames()}
+                    .selected=${this._overviewSelected}
+                    .tab=${this._overviewTab}
+                    .zoneColor=${this._overviewZoneColor}
+                    @ltmc-overview-select=${this._onOverviewSelect}
+                    @ltmc-overview-tab=${this._onOverviewTab}
+                    @ltmc-overview-resize=${this._onOverviewResize}
+                  ></ltmc-map-overview>
+                ` : ''}
               </div>
             </ha-card>
         `;
@@ -27251,12 +34984,25 @@ class MapCard extends i {
       !this.setupNeeded && !this.hasError &&
       MapCard._withoutEntities(this.config) === MapCard._withoutEntities(config);
 
+    // `entity_filter` (Lee, 2026-11-20): the card picks its own entities. The filter is the same
+    // when only `entities:` changed, so its work so far is kept; any other change starts it again.
+    if (!onlyEntitiesChanged) {
+      this._entityFilter = mapConfig.entityFilter ? new EntityFilter(mapConfig.entityFilter) : undefined;
+    }
+
     this.config = config;
     this._config = mapConfig;
+    // The filter's entries join the list now, so an in-place update below never drops them.
+    try {
+      this._mergeFiltered();
+    } catch (e) {
+      Logger.error("[MapCard] entity_filter failed; the dashboard's own entities only", e);
+    }
 
     if (onlyEntitiesChanged) {
       try {
         Logger.debug("[MapCard] entity list changed - updating in place");
+        this.presenceRenderService?.setEntities(mapConfig.entities);
         this.entitiesRenderService.updateEntityConfigs(mapConfig.entities);
         return;
       } catch (e) {
@@ -27276,6 +35022,40 @@ class MapCard extends i {
     return JSON.stringify(rest);
   }
 
+  /**
+   * `entity_filter`: run the filter over the current states and put its entries in the card's
+   * list (after the dashboard's own `entities:`). Does nothing without a filter or a hass.
+   * @returns {boolean} whether the list was rebuilt
+   */
+  _mergeFiltered() {
+    const f = this._entityFilter;
+    if (!f || !this._config || !this.hass?.states) return false;
+    f.update(this.hass.states);
+    if (this._filterApplied?.config === this._config && this._filterApplied.version === f.version) return false;
+    this._config.setFilteredEntries(f.entries());
+    this._filterApplied = { config: this._config, version: f.version };
+    return true;
+  }
+
+  /**
+   * Called on every render, which Home Assistant's state updates drive. The filter looks only at
+   * state objects that changed; the map's entity list is updated in place only when an entity
+   * arrived, left or moved to another rule. A failure here never stops the map: the last list stays.
+   */
+  _applyEntityFilter() {
+    if (!this._entityFilter) return;
+    try {
+      if (!this._mergeFiltered()) return;
+      if (this.map && this.entitiesRenderService && !this.setupNeeded) {
+        this.presenceRenderService?.setEntities(this._config.entities);
+        this.entitiesRenderService.updateEntityConfigs(this._config.entities);
+      }
+    } catch (e) {
+      if (!this._filterFailed) Logger.error("[MapCard] entity_filter failed; keeping the last entity list", e);
+      this._filterFailed = true;
+    }
+  }
+
   // The height of your card. Home Assistant uses this to automatically
   // distribute all cards over the available columns.
   getCardSize() {
@@ -27285,25 +35065,36 @@ class MapCard extends i {
   connectedCallback() {
     super.connectedCallback();
     Logger.debug("[MapCard.connectedCallback] called");
+    globalThis.addEventListener?.("popstate", this._syncSelection);
+    globalThis.addEventListener?.("location-changed", this._syncSelection);
     if (this.setupNeeded) {
       this.requestUpdate();
     }
   }
 
   _teardown() {
+    this.creditsToggle?.dispose();
+    this.creditsToggle = undefined;
     this.pathFollower?.dispose();
     this.pathFollower = undefined;
     this.resizeObserver?.disconnect();
     this.resizeObserver = undefined;
     this.staleStateService?.stop();
+    this.groupFilter?.dispose();
+    this.groupFilter = undefined;
     this.historyService?.unsubscribe();
     this.dateRangeManager?.disconnect();
     this.linkedEntityService?.disconnect();
     this.pluginsRenderService?.cleanup();
     this.geoJsonRenderService?.cleanup();
     this.shapeLayersService?.cleanup();
+    this.pointLayersService?.cleanup();
     this.radarOverlayService?.cleanup();
+    this.lightningOverlayService?.cleanup();
+    this.cloudOverlayService?.cleanup();
     this.entitiesRenderService?.cleanup();
+    this.presenceRenderService?.cleanup();
+    this.presenceRenderService = undefined;
     this.map.remove();
     this.map = undefined;
   }
@@ -27311,9 +35102,192 @@ class MapCard extends i {
   disconnectedCallback() {
     super.disconnectedCallback();
     Logger.debug("[MapCard.disconnectedCallback] called");
+    globalThis.removeEventListener?.("popstate", this._syncSelection);
+    globalThis.removeEventListener?.("location-changed", this._syncSelection);
     if (this.map) {
       this._teardown();
       this.setupNeeded = true;
+    }
+  }
+
+  /**
+   * People, devices and zones as Home Assistant's map draws them (Lee, 2026-11-19): the presence service
+   * takes the dashboard's person, device_tracker and zone entities, and EntitiesRenderService leaves
+   * their older markers off the map. `presence_markers: false` takes nothing.
+   */
+  _setupPresence() {
+    this.presenceRenderService = new PresenceRenderService(this.map, { enabled: this._config.presenceMarkers, styleHost: () => this });
+    this.presenceRenderService.setEntities(this._config.entities);
+    this.entitiesRenderService.drawnElsewhere = (id) => this.presenceRenderService?.drawsId(id) === true;
+  }
+
+  /**
+   * The overview beside the map (step 2, Lee 2026-11-19): People, Devices and Zones, as Home Assistant's
+   * map card shows it in a panel view. Shown when the card fills a panel view (railair-map's card sits in
+   * auto-entities, so the enclosing hui-panel-view is looked for) or when `overview: true`; never with
+   * `overview: false` or `presence_markers: false`. Its tab filters persons and trackers on the map, its
+   * selection lives in the URL (?entity_id=, as HA), a tap on a person, tracker or zone selects, a tap on
+   * the map clears it.
+   */
+  _setupOverview() {
+    const svc = this.presenceRenderService;
+    this._overviewOn = Boolean(svc?.enabled) && overviewShown(this._config.overview, inPanelView(this));
+    if (!svc) return;
+    svc.onSelect = (id) => this._overviewSelect(id);
+    this._overviewPath = globalThis.location?.pathname;
+    this._overviewSelected = this._overviewOn ? selectedFromSearch(globalThis.location?.search) : undefined;
+    this._onMapClick = () => { if (this._overviewSelected) this._overviewSelect(undefined); };
+    this.map.on("click", this._onMapClick);
+    svc.setOverview({ shown: this._overviewOn, tab: this._overviewTab, selected: this._overviewSelected });
+    // A selection named in the URL is brought into view once the initial view has been set.
+    if (this._overviewSelected) setTimeout(() => this._focusSelected(), 0);
+  }
+
+  /**
+   * Select (or with `undefined` clear) a person, tracker or zone. A new selection is focused on the map;
+   * clearing returns the map to its initial view (HA refits its map).
+   * @param {string|undefined} id
+   * @param {{push?: boolean}} [o] push: record it in the URL (false when the URL itself changed)
+   */
+  _overviewSelect(id, { push = true } = {}) {
+    if (!this._overviewOn) return;
+    if (id === this._overviewSelected) { if (id) this._focusSelected(); return; }
+    const was = this._overviewSelected;
+    this._overviewSelected = id;
+    if (push) this._navigateSelection(id);
+    this.presenceRenderService?.setOverview({ shown: true, tab: this._overviewTab, selected: id });
+    this.requestUpdate();
+    if (id) this._focusSelected();
+    else if (was) this._fitMap();
+  }
+
+  _focusSelected() {
+    if (this._overviewSelected) this.presenceRenderService?.focus(this._overviewSelected, this._overviewPaddingNow() ?? {});
+  }
+
+  /** @param {string|undefined} id */
+  _navigateSelection(id) {
+    try {
+      const loc = globalThis.location;
+      globalThis.history.pushState(globalThis.history.state, "", `${loc.pathname}${searchWith(loc.search, id)}${loc.hash}`);
+      globalThis.dispatchEvent(new CustomEvent("location-changed", { detail: { replace: false } }));
+    } catch (e) {
+      Logger.warn?.("[MapCard] the selection could not be put in the URL", e);
+    }
+  }
+
+  /** Back and forward, or another card's navigation: follow the URL's selection on this card's page. */
+  _syncSelection = () => {
+    if (!this._overviewOn || globalThis.location?.pathname !== this._overviewPath) return;
+    const id = selectedFromSearch(globalThis.location.search);
+    if (id !== this._overviewSelected) this._overviewSelect(id, { push: false });
+  };
+
+  _onOverviewSelect(ev) {
+    this._overviewSelect(ev.detail?.entityId);
+  }
+
+  _onOverviewTab(ev) {
+    const tab = ev.detail?.tab;
+    if (!tab || tab === this._overviewTab) return;
+    this._overviewTab = tab;
+    this.presenceRenderService?.setOverview({ shown: this._overviewOn, tab, selected: this._overviewSelected });
+    this.requestUpdate();
+  }
+
+  _onOverviewResize(ev) {
+    const before = JSON.stringify(this._overviewPaddingNow() ?? null);
+    const { width, height } = ev.detail ?? {};
+    // A collapsed overview keeps its width; zero both so it takes no space.
+    this._overviewSize = width && height ? ev.detail : { width: 0, height: 0 };
+    this._applyInsets();
+    this.requestUpdate();
+    if (this._overviewSelected && JSON.stringify(this._overviewPaddingNow() ?? null) !== before) this._focusSelected();
+  }
+
+  _isPhone() {
+    return Boolean(globalThis.matchMedia?.("(max-width: 600px)")?.matches);
+  }
+
+  /** @returns {{left?: number, right?: number, bottom?: number}|undefined} what the panel covers */
+  _overviewPaddingNow() {
+    if (!this._overviewOn) return undefined;
+    const { width, height, fitHeight } = this._overviewSize;
+    if (!width || !height) return undefined;
+    const phone = this._isPhone();
+    let rtl = false;
+    try { rtl = getComputedStyle(this).direction === "rtl"; } catch { /* no style */ }
+    return overviewPadding(phone, phone ? (fitHeight ?? height) : width, rtl);
+  }
+
+  /** @returns {number} px the desktop panel takes from the map's left side (0 on a phone or without it) */
+  _leftInset() {
+    const w = this._overviewSize?.width;
+    return this._overviewOn && w && !this._isPhone() ? w + 2 * OVERVIEW_GAP : 0;
+  }
+
+  /** Keep Leaflet's controls beside the panel (desktop) or above the sheet (phone), as HA keeps its own. */
+  _applyInsets() {
+    const box = this.map?.getContainer?.();
+    if (!box?.querySelectorAll) return;
+    const left = this._leftInset();
+    box.querySelectorAll(".leaflet-top.leaflet-left, .leaflet-bottom.leaflet-left").forEach((el) => { el.style.left = left ? `${left}px` : ""; });
+    const h = this._overviewSize?.height;
+    const bottom = this._overviewOn && h && this._isPhone() ? h + 8 : 0;
+    box.querySelectorAll(".leaflet-bottom").forEach((el) => { el.style.bottom = bottom ? `${bottom}px` : ""; });
+  }
+
+  /** @returns {Map<string, string>} a dashboard `name:` per entity, which the overview shows as HA does */
+  _overviewNames() {
+    // With `entity_filter`, a rule's `options: {name: ...}` names its entities too. Rebuilt only when
+    // the filter's list changed: serialising ~2,000 entries on every render would cost a frame.
+    const f = this._entityFilter;
+    if (f) {
+      if (this._namesFrom !== this._config || this._namesVersion !== f.version) {
+        this._namesFrom = this._config;
+        this._namesVersion = f.version;
+        this._namesKey = undefined;
+        this._names = MapCard._namesOf([...(this._config?.staticEntries ?? []), ...f.entries()]);
+      }
+      return this._names;
+    }
+    const raw = this.config?.entities;
+    const key = JSON.stringify(raw ?? null);
+    if (this._namesKey !== key) {
+      this._namesKey = key;
+      this._namesFrom = undefined;
+      this._names = MapCard._namesOf(raw);
+    }
+    return this._names;
+  }
+
+  /**
+   * @param {*} raw entity entries
+   * @returns {Map<string, string>} entity id -> its `name:`; the first entry for an id wins
+   */
+  static _namesOf(raw) {
+    const out = new Map();
+    for (const e of Array.isArray(raw) ? raw : []) {
+      if (e && typeof e === "object" && typeof e.entity === "string" && typeof e.name === "string" && !out.has(e.entity)) out.set(e.entity, e.name);
+    }
+    return out;
+  }
+
+  _overviewZoneColor = (id) => this.presenceRenderService?.zoneColor({ id }) ?? "var(--primary-color)";
+
+  /**
+   * The credits box collapses behind an "i" button (Lee, 2026-11-19;
+   * util/CreditsToggle.js); `attribution_collapse: false` keeps it open.
+   * Nothing here may stop the map: any failure leaves the box as Leaflet made it.
+   */
+  _setupCreditsToggle() {
+    try {
+      if (!this._config.creditsCollapse || !this.map) return;
+      const toggle = new CreditsToggle(this.map);
+      if (toggle.setup()) this.creditsToggle = toggle;
+    } catch (e) {
+      Logger.error("[MapCard] collapsible credits disabled", e);
+      this.creditsToggle = undefined;
     }
   }
 
@@ -27384,17 +35358,52 @@ class MapCard extends i {
         overflow: hidden;
       }
       #mapContainer {
+        position: relative;
         border-radius: var(--ha-card-border-radius, 12px);
         overflow: hidden;
         z-index: 0;
         height: 100%;
         width: 100%;
       }
+      /* The overview (step 2): floating at the start side, as HA's #overview; on a phone its sheet is in the top layer. */
+      #overview {
+        position: absolute;
+        top: 12px;
+        inset-inline-start: 12px;
+        width: min(360px, calc(100% - 24px));
+        max-height: calc(100% - 24px);
+        display: flex;
+        z-index: 2;
+      }
+      #overview[single-tab] {
+        width: min(300px, calc(100% - 24px));
+      }
+      #overview[phone] {
+        top: auto;
+        bottom: 0;
+        width: 0;
+        height: 0;
+      }
       #map {
         height: 100%;
       }
       .leaflet-pane {
         z-index: 0 !important;
+      }
+      /* Every pane is 0 above, so panes stack by DOM order, and the canvas markers' twelve class panes
+         (MarkerPlacement.ensurePanes, v0.1.5) are made AFTER Leaflet's tooltip and popup panes: the hover box
+         and the click popup drew under the markers (Lee 2026-11-20 17:50). They go above every other pane.
+         People and their devices (PresenceRenderService's pane) sit above every marker, under the hover box and
+         the popup (Lee 2026-11-20 19:23: "make a person be on the top level"); zones go to the bottom by DOM order
+         (PresenceRenderService.placeZonePanes). */
+      .leaflet-ltmcPresence-pane {
+        z-index: 1 !important;
+      }
+      .leaflet-tooltip-pane {
+        z-index: 2 !important;
+      }
+      .leaflet-popup-pane {
+        z-index: 3 !important;
       }
       .leaflet-edit-resize {
         border-radius: 50%;
@@ -27412,6 +35421,68 @@ class MapCard extends i {
         color: white !important;
         border-radius: 4px;
         box-shadow: none !important;
+      }
+      .leaflet-tooltip .hover-airports {
+        white-space: normal;
+        width: max-content;
+        max-width: 20em;
+        margin-top: 2px;
+      }
+      .leaflet-tooltip .hover-source {
+        font-size: 85%;
+        opacity: 0.75;
+        margin-top: 2px;
+      }
+      /* D4g (backlog 346): a photo under the hover box's lines, with its credit; the popup's photo and links. */
+      .leaflet-tooltip .hover-photo {
+        margin-top: 6px;
+        width: 160px;
+      }
+      .leaflet-tooltip .hover-photo img,
+      .ltmc-extras .ltmc-photo img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .leaflet-tooltip .hover-credit {
+        font-size: 75%;
+        opacity: 0.75;
+        margin-top: 2px;
+        white-space: normal;
+      }
+      .ltmc-extras {
+        width: 280px;
+        max-width: 100%;
+      }
+      .ltmc-shape-info + .ltmc-extras {
+        margin-top: 8px;
+      }
+      .ltmc-extras .ltmc-title {
+        font-weight: bold;
+        margin-bottom: 6px;
+      }
+      .ltmc-extras .ltmc-credit {
+        font-size: 80%;
+        opacity: 0.8;
+        margin-top: 3px;
+      }
+      .ltmc-extras .ltmc-links {
+        margin-top: 6px;
+      }
+      .ltmc-extras .ltmc-details {
+        margin-top: 8px;
+        text-align: right;
+      }
+      .ltmc-extras .ltmc-details-button {
+        font: inherit;
+        cursor: pointer;
+        padding: 2px 10px;
+        border: 1px solid currentColor;
+        border-radius: 4px;
+        background: transparent;
+        color: inherit;
       }
       .distance-tooltip {
         padding: 4px 8px;
@@ -27438,6 +35509,38 @@ class MapCard extends i {
       }
       #map.dark .leaflet-control-attribution a {
         color: #ffffff;
+      }
+      .leaflet-control-attribution.ltmc-credits-collapsed {
+        display: none;
+      }
+      .leaflet-control-attribution.ltmc-credits-open {
+        overflow-y: auto;
+        box-sizing: border-box;
+        overflow-wrap: anywhere;
+      }
+      .ltmc-credits-control {
+        clear: both;
+      }
+      .ltmc-credits-button {
+        display: block;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.85);
+        color: #333333;
+        font: italic bold 15px/22px Georgia, "Times New Roman", serif;
+        text-align: center;
+        cursor: pointer;
+      }
+      .ltmc-credits-button[aria-expanded="true"] {
+        font: bold 16px/22px Arial, sans-serif;
+      }
+      #map.dark .ltmc-credits-button {
+        background: #000000cc;
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.4);
       }
       #map.light {
         background: #ffffff;
@@ -27543,6 +35646,41 @@ function pictureRotationStyle(rotation, transition) {
   const t = Number(transition);
   const secs = Number.isFinite(t) && t >= 0 ? t : 0;
   return `transform: rotate(${deg}deg); transition: transform ${secs}s linear;`;
+}
+
+/**
+ * The altitude at which the ground shadow stops growing: 40,000 ft.
+ */
+const SHADOW_FULL_M = 12192;
+
+/**
+ * Inline style casting a picture's GROUND SHADOW (06_MAP_CONTRACT.md
+ * D4a-shadow; Lee 2026-10-21): an aircraft drawn as a picture reads as flying
+ * when its shadow falls on the map beside it, further away the higher it is.
+ *
+ * It sits on the marker element, which never turns: a CSS filter on a parent
+ * is applied after its child's rotation, so the shadow keeps one direction
+ * (light from the upper left) whichever way the picture faces. A filter's
+ * output is not clipped by the element's own `overflow: hidden`, so a round
+ * picture marker does not cut it off. Separation grows with the square root
+ * of altitude, and the shadow softens and fades as it moves away; offsets are
+ * a fraction of the marker size, so a bigger marker casts a bigger shadow.
+ * Values chosen by eye on OSM Standard tiles (Live Track Aircraft
+ * 20_Research/icons_depth_20261021/), not measured.
+ * @param {string} altitude metres, or empty for no shadow
+ * @param {number} size marker size in px
+ * @returns {string}
+ */
+function groundShadowStyle(altitude, size) {
+  if (altitude == null || String(altitude).trim() === "") return "";
+  const a = Number(altitude);
+  const s = Number(size);
+  if (!Number.isFinite(a) || !Number.isFinite(s) || s <= 0) return "";
+  const f = Math.sqrt(Math.min(Math.max(a, 0), SHADOW_FULL_M) / SHADOW_FULL_M);
+  const off = +(s * (0.025 + 0.12 * f)).toFixed(1);
+  const blur = +(0.6 + 0.35 * off).toFixed(1);
+  const op = +(0.55 - 0.25 * f).toFixed(2);
+  return `filter: drop-shadow(${off}px ${off}px ${blur}px rgba(0, 0, 0, ${op})); transition: filter 3s linear;`;
 }
 
 /**
@@ -27737,6 +35875,62 @@ function starLabelStyle(labelColor, outlineColor) {
 }
 
 /**
+ * The shamrock (06_MAP_CONTRACT.md D4a `marker_shape: "shamrock"`; Lee 2026-11-09 00:53, Irish Rail's InterCity
+ * trains: "a shamrock filled with #009444 and outlined and labeled with #fbaf41"): three heart-shaped leaves round the
+ * centre, one straight up, and a stem between the lower two, in a 200-unit box (-100..100). Each leaf is two lobes
+ * (circles) and a wedge from the centre; its outer notch is the lobes' gap.
+ */
+const SHAMROCK_LEAF_ANGLES = Object.freeze([-90, 150, 30]);
+const SHAMROCK_LOBE = Object.freeze({ along: 50, across: 22, r: 28 });
+const SHAMROCK_STEM = "M 0 10 Q 6 55 22 88";
+const SHAMROCK_STEM_WIDTH = 12;
+
+/**
+ * The shamrock's parts in its 200-unit box: [{circle: [cx, cy, r]} | {polygon: "x,y ..."}], leaf by leaf.
+ * @returns {Array<{circle?: number[], polygon?: string}>}
+ */
+function shamrockParts() {
+  const out = [];
+  const { along, across, r } = SHAMROCK_LOBE;
+  for (const deg of SHAMROCK_LEAF_ANGLES) {
+    const a = (deg * Math.PI) / 180;
+    const u = [Math.cos(a), Math.sin(a)];
+    const v = [-Math.sin(a), Math.cos(a)];
+    const at = (p, q) => [+(p * u[0] + q * v[0]).toFixed(2), +(p * u[1] + q * v[1]).toFixed(2)];
+    for (const s of [1, -1]) out.push({ circle: [...at(along, s * across), r] });
+    out.push({ polygon: [at(-4, 0), at(along - 10, 48), at(along - 10, -48)].map((p) => p.join(",")).join(" ") });
+  }
+  return out;
+}
+
+/**
+ * The shamrock's outline in CSS px: the emitter's `marker_ring_width` when sent, else a sixteenth of the size, at
+ * least 1.5 px (about 2.9 px on the live 46 px Intercity marker).
+ * @param {number} size
+ * @param {string} [ringWidth]
+ * @returns {number}
+ */
+function shamrockEdgePx(size, ringWidth) {
+  const w = Number(ringWidth);
+  if (ringWidth != null && String(ringWidth).trim() !== "" && Number.isFinite(w) && w > 0) return w;
+  return Math.max(1.5, (size || 24) / 16);
+}
+
+/**
+ * The disc's inner ring (06_MAP_CONTRACT.md D4a `marker_inner_ring_color`, `marker_inner_ring_width`; Lee 2026-11-09,
+ * the Enterprise's "thin red inner ring"): an inset ring just inside the ring, taken from the fill. "" with no colour.
+ * @param {string} [color]
+ * @param {string} [width] absent: 1 px
+ * @returns {string} an inline style fragment
+ */
+function innerRingStyle(color, width) {
+  const c = typeof color === "string" ? color.trim() : "";
+  if (c === "") return "";
+  const w = ringWidthPx(width);
+  return ` box-shadow: inset 0 0 0 ${w}px ${c};`;
+}
+
+/**
  * The maple leaf (06_MAP_CONTRACT.md D4a `marker_shape: "maple"`; Lee
  * 2026-10-11 00:02, VIA Rail): the eleven-point leaf of the Flag of Canada,
  * in its own units. MAPLE_LEAF_VIEWBOX is its bounding box, measured with
@@ -27838,11 +36032,10 @@ class MapCardEntityMarker extends i {
       'tooltip': {type: String, attribute: 'tooltip'},
       'picture': {type: String, attribute: 'picture'},
       'barePicture': {type: String, attribute: 'bare-picture'},
+      'groundShadow': {type: String, attribute: 'ground-shadow'},
       'rotation': {type: String, attribute: 'rotation'},
       'rotationTransition': {type: String, attribute: 'rotation-transition'},
       'icon': {type: String, attribute: 'icon'},
-      'placeIcon': {type: String, attribute: 'place-icon'},
-      'callout': {type: String, attribute: 'callout'},
       'color': {type: String, attribute: 'color'},
       'labelColor': {type: String, attribute: 'label-color'},
       'arrow': {type: String, attribute: 'arrow'},
@@ -27851,6 +36044,8 @@ class MapCardEntityMarker extends i {
       'arrowOutline': {type: String, attribute: 'arrow-outline'},
       'ringColor': {type: String, attribute: 'ring-color'},
       'ringWidth': {type: String, attribute: 'ring-width'},
+      'innerRingColor': {type: String, attribute: 'inner-ring-color'},
+      'innerRingWidth': {type: String, attribute: 'inner-ring-width'},
       'shape': {type: String, attribute: 'shape'},
       'symbol': {type: String, attribute: 'symbol'},
       'alternate': {type: String, attribute: 'alternate'},
@@ -27862,6 +36057,7 @@ class MapCardEntityMarker extends i {
       'pulse': {type: String, attribute: 'pulse'},
       'size': {type: Number},
       'tapAction': {type: Object, attribute: 'tap-action'},
+      'info': {type: String, attribute: 'info'},
       'extraCssClasses': {type: String, attribute: 'extra-css-classes'},
     };
   }
@@ -27872,12 +36068,12 @@ class MapCardEntityMarker extends i {
    * and CSS fades between them (`ltmc-alt-a`/`-b`, each shown for `s`
    * seconds, a crossfade of an eighth of the cycle); nothing ticks in
    * JavaScript, so a slide in flight is not disturbed. Under
-   * prefers-reduced-motion only the primary look is shown. Not for a pill.
+   * prefers-reduced-motion only the primary look is shown.
    * @returns {unknown}
    */
   render() {
     const alt = this._alternateLook();
-    if (!alt || this.placeIcon) return this._renderLook();
+    if (!alt) return this._renderLook();
     const a = this._renderLook();
     const b$1 = this._withLook(alt.look, () => this._renderLook());
     const cycle = 2 * alt.s;
@@ -27929,51 +36125,6 @@ class MapCardEntityMarker extends i {
   }
 
   _renderLook() {
-    // When the entity is inside a named place, render a horizontal "pill":
-    // a stadium outline holding two circles - the zone icon (left) and the
-    // entity's initials (right). Otherwise fall back to the normal marker.
-    if (this.placeIcon) {
-      // Pill: zone icon (left) + initials (right). Geometry must match
-      // Entity.createMapMarker. When `callout` is on (zoomed in) the pill sits
-      // up-left of the point with a thin leader line down-right to a dot on the
-      // exact location; otherwise it just centers on the point (no leader).
-      const s = this.size;
-      const pillW = 2 * s + 14;
-      const pillH = s + 8;
-      const pill = b`
-        <div class="place-pill" style="border-color: ${this.color}; width: ${pillW}px; height: ${pillH}px;">
-          <div class="pill-badge" style="border-color: ${this.color}; width: ${s}px; height: ${s}px;">
-            <ha-icon icon="${this.placeIcon}" style="--icon-primary-color: ${this.color}; --mdc-icon-size: ${s - 14}px;"></ha-icon>
-          </div>
-          <div class="pill-badge pill-initials" style="border-color: ${this.color}; color: ${this.color}; width: ${s}px; height: ${s}px; font-size: ${Math.round(s * 0.5)}px;">
-            ${this.title}
-          </div>
-        </div>`;
-      if (this.callout !== "true") {
-        return b`
-          <div class="place-pill-wrap ${this.extraCssClasses ? this.extraCssClasses : ""}"
-               style="width: ${pillW}px; height: ${pillH}px;"
-               @click=${this._badgeTap}>
-            ${pill}
-          </div>`;
-      }
-      const off = Math.round(s * 0.7);
-      const boxW = pillW + off;
-      const boxH = pillH + off;
-      const dotX = boxW - 2, dotY = boxH - 2;
-      return b`
-        <div class="place-pill-wrap ${this.extraCssClasses ? this.extraCssClasses : ""}"
-             style="width: ${boxW}px; height: ${boxH}px;"
-             @click=${this._badgeTap}>
-          <svg class="pill-leader" width="${boxW}" height="${boxH}">
-            <line x1="${pillW - 2}" y1="${pillH - 2}" x2="${dotX}" y2="${dotY}"
-                  stroke="${this.color}" stroke-width="1.5"></line>
-            <circle cx="${dotX}" cy="${dotY}" r="2.5" fill="${this.color}"></circle>
-          </svg>
-          ${pill}
-        </div>
-      `;
-    }
     // The label as a heading tag (D4a `marker_label_placement: "heading"`):
     // the tag replaces the arrow and the label inside, and the delay moves to
     // the side opposite. Not on a picture or an icon, which draw their own.
@@ -27989,6 +36140,21 @@ class MapCardEntityMarker extends i {
           >
           ${this._pulse()}
           ${this._star()}
+          ${tag ? this._tag() : this._arrow()}
+          ${tag ? this._delayOpposite() : this._inner()}
+        </div>
+      `;
+    }
+    if (this.shape === "shamrock" && !this.picture && !this.icon) {
+      // The shamrock: no disc, no CSS ring. Arrow, pulse and delay badge as on the disc, around the same box.
+      return b`
+        <div
+          class="marker shamrock ${this.extraCssClasses ? this.extraCssClasses : ""}"
+          style="${starLabelStyle(this.labelColor, this.labelOutline)} height: ${this.size}px; width: ${this.size}px;"
+          @click=${this._badgeTap}
+          >
+          ${this._pulse()}
+          ${this._shamrock()}
           ${tag ? this._tag() : this._arrow()}
           ${tag ? this._delayOpposite() : this._inner()}
         </div>
@@ -28017,11 +36183,11 @@ class MapCardEntityMarker extends i {
     // clipped, and its delay beside it - opposite its tag, else east.
     const bare = this._bare();
     const disc = bare ? "background-color: transparent; border-color: transparent;"
-      : `background-color: ${this.color}; ${ringStyle(this.color, this.ringColor, this.ringWidth)}`;
+      : `background-color: ${this.color}; ${ringStyle(this.color, this.ringColor, this.ringWidth)}${this.picture ? "" : innerRingStyle(this.innerRingColor, this.innerRingWidth)}`;
     return b`
         <div
           class="marker ${this.picture ? "picture" : ""}${bare ? " bare" : ""}  ${this.extraCssClasses ? this.extraCssClasses : ""}"
-          style="${disc} ${labelTextStyle(this.color, this.labelColor, this.labelOutline)} height: ${this.size}px; width: ${this.size}px;"
+          style="${disc} ${labelTextStyle(this.color, this.labelColor, this.labelOutline)} height: ${this.size}px; width: ${this.size}px; ${this.picture ? groundShadowStyle(this.groundShadow, this.size) : ""}"
           @click=${this._badgeTap}
           >
           ${this._pulse()}
@@ -28133,7 +36299,32 @@ class MapCardEntityMarker extends i {
       </svg>`;
   }
 
+  /**
+   * The shamrock under its label (D4a-shamrock): every part drawn twice, first in the outline colour
+   * (`marker_ring_color`, else the fill) with a stroke of twice the edge, then in the fill on top, so only the
+   * union's outside edge shows. The stem likewise.
+   * @returns {unknown}
+   */
+  _shamrock() {
+    const ring = typeof this.ringColor === "string" ? this.ringColor.trim() : "";
+    const edge = ring !== "" ? ring : this.color;
+    const w$1 = +((shamrockEdgePx(this.size, this.ringWidth) * 200) / (this.size || 24)).toFixed(2);
+    const parts = shamrockParts();
+    const draw = (fill, stroke, sw) => parts.map((p) => p.circle
+      ? w`<circle cx="${p.circle[0]}" cy="${p.circle[1]}" r="${p.circle[2]}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"></circle>`
+      : w`<polygon points="${p.polygon}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" stroke-linejoin="round"></polygon>`);
+    return b`
+      <svg class="shamrock-shape" width="${this.size}" height="${this.size}" viewBox="-100 -100 200 200">
+        <path d="${SHAMROCK_STEM}" fill="none" stroke="${edge}" stroke-width="${SHAMROCK_STEM_WIDTH + 2 * w$1}" stroke-linecap="round"></path>
+        ${draw(edge, edge, 2 * w$1)}
+        <path d="${SHAMROCK_STEM}" fill="none" stroke="${this.color}" stroke-width="${SHAMROCK_STEM_WIDTH}" stroke-linecap="round"></path>
+        ${draw(this.color, "none", 0)}
+      </svg>`;
+  }
+
   _badgeTap(ev) {
+    // A marker with `marker_info` (D4e): the click goes on to Leaflet's marker, which opens the popup.
+    if (this.info === "true") return;
     ev.stopPropagation();
     if (this.entityId) {
       // https://developers.home-assistant.io/blog/2023/07/07/action-event-custom-cards/
@@ -28338,6 +36529,20 @@ class MapCardEntityMarker extends i {
         pointer-events: none;
         z-index: -1;
       }
+      .marker.shamrock {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        font-weight: 700;
+        isolation: isolate;
+      }
+      .shamrock-shape {
+        position: absolute;
+        inset: 0;
+        overflow: visible;
+        pointer-events: none;
+        z-index: -1;
+      }
       .marker.maple {
         background: transparent;
         border: none;
@@ -28445,6 +36650,7 @@ class MapCardEntityMarker extends i {
          Amtrak star stood on a #1c1c1c square in dark mode, since the star
          (64d611a), because this rule comes after .marker.star. */
       .marker.star.dark,
+      .marker.shamrock.dark,
       .marker.maple.dark {
         background: transparent;
       }
@@ -28454,54 +36660,137 @@ class MapCardEntityMarker extends i {
       .suffix {
         margin-left: var(--ha-marker-suffix-margin, 2px);
       }
-      .place-pill-wrap {
-        position: relative;
-      }
-      .pill-leader {
-        position: absolute;
-        left: 0;
-        top: 0;
-        overflow: visible;
-        pointer-events: none;
-      }
-      .place-pill {
-        position: absolute;
-        left: 0;
-        top: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 2px;
-        box-sizing: border-box;
-        padding: 3px 5px;
-        border-radius: 999px;
-        border: 1px solid var(--ha-marker-color, var(--primary-color));
-        background-color: var(--card-background-color);
-        font-size: var(--ha-marker-font-size, 1.5em);
-        white-space: nowrap;
-      }
-      .place-pill .pill-badge {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        border-radius: 50%;
-        border: 1px solid var(--ha-marker-color, var(--primary-color));
-        background-color: var(--card-background-color);
-        color: var(--primary-text-color);
-        flex: 0 0 auto;
-      }
-      .place-pill .pill-initials {
-        font-weight: 700;
-        text-align: center;
-        line-height: 1;
-      }
-      .place-pill.dark,
-      .place-pill.dark .pill-badge {
-        color: #ffffff;
-        background: #1c1c1c;
-      }
     `, r$2(LATENESS_CSS)];
+  }
+}
+
+/**
+ * The filter card (06_MAP_CONTRACT.md D4f, backlog 345): one checkbox per
+ * marker group the integrations publish, grouped by source, with how many of
+ * each are on the map now. It sits on ANOTHER view of the dashboard, not on
+ * the map (Lee 2026-11-15); the map card reads the choice from this browser's
+ * storage (util/GroupFilter.js, where the logic and its tests live: rendering
+ * a LitElement under babel-jest fails inside lit-html, so this file is thin).
+ * A hidden group with nothing on the map now stays listed, so it can be
+ * shown again.
+ *
+ * Options:
+ *   title          heading; default "Show on the map"
+ *   sources        list of sources to offer; default every source that publishes groups
+ *   start_hidden   ["<source>:<group>", ...] hidden in a browser that has never made a choice
+ */
+class GroupFilterCard extends i {
+  static get properties() {
+    return { hass: { attribute: false }, _hidden: { state: true } };
+  }
+
+  constructor() {
+    super();
+    this._config = { title: "Show on the map" };
+    this._hidden = readHidden();
+    this._signature = "";
+    this._onEvent = (e) => {
+      if (e?.type === "storage" && e.key !== STORAGE_KEY && e.key !== null) return;
+      this._hidden = readHidden();
+    };
+  }
+
+  setConfig(config) {
+    if (config?.sources != null && !Array.isArray(config.sources)) {
+      throw new Error("sources must be a list of integration domains");
+    }
+    if (config?.start_hidden != null && !Array.isArray(config.start_hidden)) {
+      throw new Error("start_hidden must be a list of \"<source>:<group>\"");
+    }
+    this._config = { title: "Show on the map", ...config };
+    if (applyStartHidden(this._config.start_hidden)) this._hidden = readHidden();
+  }
+
+  static getStubConfig() {
+    return { title: "Show on the map" };
+  }
+
+  getCardSize() {
+    return 2 + Math.ceil(this._summary().reduce((n, s) => n + s.groups.length + 1, 0) / 2);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener("storage", this._onEvent);
+    window.addEventListener(GROUPS_EVENT, this._onEvent);
+    this._hidden = readHidden();
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener("storage", this._onEvent);
+    window.removeEventListener(GROUPS_EVENT, this._onEvent);
+    super.disconnectedCallback();
+  }
+
+  _summary() {
+    return summarize(this.hass?.states, this._hidden, this._config.sources);
+  }
+
+  shouldUpdate(changed) {
+    if (!changed.has("hass") || changed.size > 1) return true;
+    // A hass change redraws only when a count, label or group changed: hass
+    // changes many times a second on a busy instance.
+    const sig = JSON.stringify(this._summary().map((s) => [s.source, s.groups.map((g) => [g.group, g.count, g.label])]));
+    if (sig === this._signature) return false;
+    this._signature = sig;
+    return true;
+  }
+
+  _set(keys, hide) {
+    writeHidden(toggled(this._hidden, keys, hide));
+    this._hidden = readHidden();
+  }
+
+  render() {
+    const sources = this._summary();
+    return b`
+      <ha-card header=${this._config.title}>
+        <div class="body">
+          ${sources.length ? sources.map((s) => b`
+            <div class="source">
+              <div class="head">
+                <span class="name">${s.title}</span>
+                <span class="all">
+                  <button @click=${() => this._set(s.groups.map((g) => g.key), false)}>Show all</button>
+                  <button @click=${() => this._set(s.groups.map((g) => g.key), true)}>Hide all</button>
+                </span>
+              </div>
+              ${s.groups.map((g) => b`
+                <label class="row ${this._hidden.has(g.key) ? "off" : ""}">
+                  <input type="checkbox" .checked=${!this._hidden.has(g.key)}
+                    @change=${(e) => this._set([g.key], !e.target.checked)}>
+                  <span class="label">${g.label}</span>
+                  <span class="count">${g.count}</span>
+                </label>`)}
+            </div>`) : b`<div class="empty">Nothing on the map names a group yet.</div>`}
+          <div class="note">Remembered in this browser only.</div>
+        </div>
+      </ha-card>`;
+  }
+
+  static get styles() {
+    return i$3`
+      .body { padding: 0 16px 12px; }
+      .source + .source { margin-top: 12px; }
+      .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+      .name { font-weight: 500; }
+      .all button {
+        background: none; border: 1px solid var(--divider-color, #ccc); border-radius: 4px;
+        color: var(--primary-text-color); font: inherit; font-size: 0.85em; padding: 2px 8px; cursor: pointer;
+      }
+      .row { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; }
+      .row input { width: 18px; height: 18px; margin: 0; accent-color: var(--primary-color); }
+      .row .label { flex: 1; }
+      .row .count { color: var(--secondary-text-color); font-variant-numeric: tabular-nums; }
+      .row.off .label { color: var(--secondary-text-color); }
+      .empty, .note { color: var(--secondary-text-color); font-size: 0.9em; }
+      .note { margin-top: 10px; }
+    `;
   }
 }
 
@@ -28520,6 +36809,11 @@ if (!customElements.get("live-track-map-card")) {
     'color: #EBF213; font-weight: bold; background: #000000'
   );
 }
+// The filter card (D4f, backlog 345): its own guard, so a page that already
+// has the map card from an older bundle still gets it.
+if (!customElements.get("live-track-map-filter-card")) {
+  customElements.define("live-track-map-filter-card", GroupFilterCard);
+}
 
 // Register card so that it appears in the "Card Picker". Create the list
 // when no card loaded before us has: pushing to an undefined list threw
@@ -28533,4 +36827,12 @@ window.customCards.push({
     version: VERSION,
     preview: true,
     documentationURL: `https://github.com/StrausbergAutomationWorks/LiveTrackMapCard`,
+});
+window.customCards.push({
+    name: 'Live Track Map Filter',
+    description: 'Checkboxes that hide groups of markers (vessel types, for example) on the Live Track map, remembered per browser.',
+    type: 'live-track-map-filter-card',
+    version: VERSION,
+    preview: false,
+    documentationURL: `https://github.com/StrausbergAutomationWorks/LiveTrackMapCard#the-filter-card`,
 });
