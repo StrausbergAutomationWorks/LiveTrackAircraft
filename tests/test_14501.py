@@ -333,8 +333,8 @@ class Views(unittest.TestCase):
 class Manifest(unittest.TestCase):
     def test_version_and_floor(self):
         m = json.loads(source("manifest.json"))
-        self.assertEqual(m["version"], "0.1.5")
-        self.assertIn("saw-livetrack[zones]>=0.2.42,<0.3", m["requirements"])
+        self.assertEqual(m["version"], "0.1.6")
+        self.assertIn("saw-livetrack[zones]>=0.2.43,<0.3", m["requirements"])
 
 
 if __name__ == "__main__":

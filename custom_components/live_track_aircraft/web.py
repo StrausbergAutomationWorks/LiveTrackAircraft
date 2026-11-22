@@ -22,6 +22,8 @@ from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
 
+from saw_livetrack import aircraft_photos as photos_lib
+
 from . import icons, photos, pictures
 
 _LOGGER = logging.getLogger(__name__)
@@ -133,27 +135,26 @@ class AircraftPictureView(HomeAssistantView):
 
 class AircraftPhotoView(HomeAssistantView):
     """A photo of one aircraft from Planespotters.net, asked by the map card when its hover box first opens
-    (photos.py; 06_MAP_CONTRACT.md D4i; backlog 361). Signed in only: requires_auth stays True, and the card
+    (saw_livetrack.aircraft_photos; 06_MAP_CONTRACT.md D4i; backlogs 361, 362). Signed in only: requires_auth stays True, and the card
     asks with the viewer's own sign-in (hass.callApi). Answers `{"photo": <D4g marker_photo> | null}`; 503
     while lookups are paused or one failed, so the card asks again later."""
 
     url = photos.URL_BASE + "/{hexid}"
     name = "api:live_track_aircraft:photo"
 
-    def __init__(self, lookups: photos.PhotoLookups) -> None:
-        self._lookups = lookups
-
     async def get(self, request: web.Request, hexid: str) -> web.Response:
         from homeassistant.helpers.aiohttp_client import async_get_clientsession  # noqa: PLC0415
 
-        h = photos.valid_hex(hexid)
-        if h is None:
+        # The library's instance-wide store and pause (saw_livetrack.aircraft_photos.shared), shared with every other
+        # consumer on the same library (backlog 362).
+        hass = request.app["hass"]
+        status, body = await photos_lib.answer(hass.data, async_get_clientsession(hass), hexid)
+        if status == 400:
             return self.json_message("not an ICAO address", status_code=400)
-        state, photo = await self._lookups.get(async_get_clientsession(request.app["hass"]), h)
-        if state in (photos.PHOTO, photos.NONE):
-            resp = self.json({"photo": photo})
+        if status == 200:
+            resp = self.json(body)
         else:
-            resp = self.json_message(f"photo lookup {state}", status_code=503)
+            resp = self.json_message("photo lookup paused or failed", status_code=503)
         # The card keeps the answer itself (at most 12 h, PhotoLookup.js); no browser or proxy copy.
         resp.headers["Cache-Control"] = "no-store"
         return resp
@@ -173,15 +174,15 @@ def _read(path: str) -> bytes:
         return fh.read(pictures.MAX_BYTES + 1)[: pictures.MAX_BYTES]
 
 
-_PHOTOS_KEY = "live_track_aircraft_photos"
+_VIEWS_KEY = "live_track_aircraft_views"
 
 
 def register(hass: HomeAssistant) -> None:
     """Register the views ONCE per run. Every config entry's setup calls this; a second registration of the same
-    URL would add a second route to the same view (the photo view holds state, so it must be one object)."""
-    if hass.data.get(_PHOTOS_KEY) is not None:
+    URL would add a second route. The photo store is the library's (backlog 362), not held here."""
+    if hass.data.get(_VIEWS_KEY):
         return
-    lookups = hass.data[_PHOTOS_KEY] = photos.PhotoLookups()
+    hass.data[_VIEWS_KEY] = True
     hass.http.register_view(AircraftIconView())
     hass.http.register_view(AircraftPictureView())
-    hass.http.register_view(AircraftPhotoView(lookups))
+    hass.http.register_view(AircraftPhotoView())

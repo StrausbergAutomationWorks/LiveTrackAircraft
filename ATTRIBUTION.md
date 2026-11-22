@@ -37,8 +37,9 @@ When a viewer points at an aircraft on the map, the integration asks the
 Planespotters.net photo API (https://www.planespotters.net/photo/api) at
 runtime for a photo of that aircraft, by its hex code. Each Home Assistant asks
 for its own users and answers for its own use; the requests carry a User-Agent
-naming this integration and its repository. Nothing from Planespotters.net is
-shipped in this repository, and no photo is copied into it.
+naming the shared `saw-livetrack` library and its repository. Nothing from
+Planespotters.net is shipped in this repository, and no photo is copied into
+it.
 
 Planespotters.net's terms are on that page (read 21 November 2026). What the
 code does to keep them, wherever a user cannot change it:

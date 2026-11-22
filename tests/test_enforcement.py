@@ -165,7 +165,7 @@ class Wiring(unittest.TestCase):
 
     def test_manifest_pin(self):
         req = json.loads(source("manifest.json"))["requirements"]
-        self.assertIn("saw-livetrack[zones]>=0.2.42,<0.3", req)   # ICE Air's call signs (backlog 313), 0.2.18; UX forms 0.2.22; adsb.lol key 0.2.36 (backlog 336); own map-card rows only 0.2.42 (hacs/default#14501 item 5)
+        self.assertIn("saw-livetrack[zones]>=0.2.43,<0.3", req)   # ICE Air's call signs (backlog 313), 0.2.18; UX forms 0.2.22; adsb.lol key 0.2.36 (backlog 336); own map-card rows only 0.2.42 (hacs/default#14501 item 5); the photo lookup 0.2.43 (backlog 362)
 
     def test_the_lists_agency_when_the_registry_gives_none(self):
         # backlog 300: the registry's short name first, the list's agency for a sourced aircraft without one
