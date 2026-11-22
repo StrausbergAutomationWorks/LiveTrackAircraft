@@ -22,7 +22,7 @@ und in Gebieten, die Sie nennen, nach Militärflugzeugen Ausschau halten.
 > [Schlagen Sie es vor](#helfen-sie-mit-es-zu-erweitern), oder fügen Sie es
 > selbst hinzu: Wir helfen Ihnen dabei.
 
-**Status: 0.1.5, veröffentlicht.** Per Link zum Marketplace hinzugefügt
+**Status: 0.1.6, veröffentlicht.** Per Link zum Marketplace hinzugefügt
 ([unten](#installation-schritt-für-schritt)); es ist noch nicht im Katalog
 des Marketplace.
 

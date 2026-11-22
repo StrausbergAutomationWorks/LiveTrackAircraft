@@ -22,7 +22,7 @@ ook zijn, en uitkijken naar militaire vliegtuigen in gebieden die je opgeeft.
 > [Stel het voor](#help-het-groeien), of voeg het zelf toe: we helpen je
 > daarbij.
 
-**Status: 0.1.5, uitgebracht.** Via een koppeling aan de Marktplaats
+**Status: 0.1.6, uitgebracht.** Via een koppeling aan de Marktplaats
 toegevoegd ([hieronder](#installeren-stap-voor-stap)); het staat nog niet in
 de catalogus van de Marktplaats.
 

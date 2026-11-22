@@ -22,7 +22,7 @@ sorvegliare gli aerei militari nelle zone che indichi.
 > [Suggeriscilo](#aiutaci-a-farlo-crescere), o aggiungilo tu: ti aiuteremo a
 > farlo.
 
-**Stato: 0.1.5, pubblicato.** Si aggiunge al Marketplace tramite link
+**Stato: 0.1.6, pubblicato.** Si aggiunge al Marketplace tramite link
 ([più sotto](#installazione-passo-dopo-passo)); non è ancora nel catalogo del
 Marketplace.
 

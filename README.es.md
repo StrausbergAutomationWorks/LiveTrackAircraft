@@ -22,7 +22,7 @@ aviones militares en zonas que tú indiques.
 > [Sugiérelo](#ayúdanos-a-hacerlo-crecer), o añádelo tú mismo: te ayudaremos a
 > hacerlo.
 
-**Estado: 0.1.5, publicado.** Añadido al Marketplace por su enlace
+**Estado: 0.1.6, publicado.** Añadido al Marketplace por su enlace
 ([abajo](#instalarlo-paso-a-paso)); todavía no está en el catálogo del
 Marketplace.
 

@@ -23,7 +23,7 @@ des zones que vous nommez.
 > sur les avions. Le vôtre manque ? [Proposez-le](#aidez-le-à-grandir), ou
 > ajoutez-le vous-même : nous vous aiderons à le faire.
 
-**État : 0.1.5, publié.** Ajouté au Marketplace par son lien
+**État : 0.1.6, publié.** Ajouté au Marketplace par son lien
 ([ci-dessous](#linstaller-étape-par-étape)) ; il n'est pas encore dans le
 catalogue du Marketplace.
 

@@ -21,7 +21,7 @@ for military aircraft in areas you name.
 > aircraft information. Is yours missing? [Suggest it](#help-it-grow), or add
 > it yourself: we will help you do it.
 
-**Status: 0.1.5, released.** Added to the Marketplace by link
+**Status: 0.1.6, released.** Added to the Marketplace by link
 ([below](#install-it-step-by-step)); it is not in the Marketplace's catalog
 yet.
 

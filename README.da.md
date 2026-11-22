@@ -21,7 +21,7 @@ holde øje med militærfly i områder, du angiver.
 > fly. Mangler dit? [Foreslå det](#hjælp-den-med-at-vokse), eller tilføj det
 > selv: vi hjælper dig med det.
 
-**Status: 0.1.5, udgivet.** Tilføjes til Markedspladsen via et link
+**Status: 0.1.6, udgivet.** Tilføjes til Markedspladsen via et link
 ([nedenfor](#installation-trin-for-trin)); den er endnu ikke i
 Markedspladsens katalog.
 
