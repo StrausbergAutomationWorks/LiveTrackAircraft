@@ -23,9 +23,8 @@ des zones que vous nommez.
 > sur les avions. Le vôtre manque ? [Proposez-le](#aidez-le-à-grandir), ou
 > ajoutez-le vous-même : nous vous aiderons à le faire.
 
-**État : 0.1.6, publié.** Ajouté au Marketplace par son lien
-([ci-dessous](#linstaller-étape-par-étape)) ; il n'est pas encore dans le
-catalogue du Marketplace.
+**État : 0.1.6, publié.** Dans le catalogue du Marketplace ([l'installer
+ci-dessous](#linstaller-étape-par-étape)).
 
 Travail original de StrausbergAutomationWorks. Sans lien avec adsb.fi,
 adsb.lol, adsbdb, la Federal Aviation Administration (États-Unis),
@@ -175,18 +174,16 @@ Tout est gratuit et libre. Rien n'est réservé aux sponsors.
 
 ### Depuis le Marketplace (recommandé)
 
-Live Track Aircraft n'est pas encore dans le catalogue du Marketplace.
-Ajoutez-le par son lien :
-
 1. Dans Home Assistant, ouvrez **Paramètres → Marketplace** (HACS).
-2. Choisissez **Ajouter grâce à un lien** (ou le menu à trois points →
-   **Dépôts personnalisés**).
-3. Saisissez `StrausbergAutomationWorks/LiveTrackAircraft`. Si le type est
-   demandé, choisissez **Integration**.
-4. Trouvez **Live Track Aircraft** dans la liste et choisissez
-   **Télécharger** ou **Installer**.
-5. **Redémarrez Home Assistant** : **Paramètres → Système → Corrections**
+2. Recherchez **Live Track Aircraft** et ouvrez-le.
+3. Choisissez **Télécharger** (ou **Installer**).
+4. **Redémarrez Home Assistant** : **Paramètres → Système → Corrections**
    propose le redémarrage, ou utilisez **Paramètres → Système → Redémarrer**.
+
+Si la recherche ne le trouve pas, ajoutez-le par son lien : choisissez **Ajouter
+grâce à un lien** (ou le menu à trois points → **Dépôts personnalisés**),
+saisissez `StrausbergAutomationWorks/LiveTrackAircraft`, choisissez
+**Integration** si le type est demandé, puis reprenez à l'étape 3.
 
 Le Marketplace propose ensuite chaque nouvelle version comme mise à jour.
 

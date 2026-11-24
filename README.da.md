@@ -21,9 +21,8 @@ holde øje med militærfly i områder, du angiver.
 > fly. Mangler dit? [Foreslå det](#hjælp-den-med-at-vokse), eller tilføj det
 > selv: vi hjælper dig med det.
 
-**Status: 0.1.6, udgivet.** Tilføjes til Markedspladsen via et link
-([nedenfor](#installation-trin-for-trin)); den er endnu ikke i
-Markedspladsens katalog.
+**Status: 0.1.6, udgivet.** I Markedspladsens katalog ([installér den
+nedenfor](#installation-trin-for-trin)).
 
 Originalt arbejde af StrausbergAutomationWorks. Ikke tilknyttet eller
 godkendt af adsb.fi, adsb.lol, adsbdb, Federal Aviation Administration (USA),
@@ -165,18 +164,16 @@ Alt er gratis og open source. Intet holdes tilbage til sponsorer.
 
 ### Fra Markedspladsen (anbefalet)
 
-Live Track Aircraft er endnu ikke i Markedspladsens katalog. Tilføj den via
-dens link:
-
 1. Åbn **Indstillinger → Markedsplads** (HACS) i Home Assistant.
-2. Vælg **Tilføj fra link** (eller menuen med tre prikker →
-   **Brugerdefinerede repositorier**).
-3. Skriv `StrausbergAutomationWorks/LiveTrackAircraft`. Hvis du bliver spurgt
-   om typen, så vælg **Integration**.
-4. Find **Live Track Aircraft** på listen, og vælg **Download** eller
-   **Installér**.
-5. **Genstart Home Assistant**: **Indstillinger → System → Reparationer**
+2. Søg efter **Live Track Aircraft**, og åbn den.
+3. Vælg **Download** (eller **Installér**).
+4. **Genstart Home Assistant**: **Indstillinger → System → Reparationer**
    tilbyder genstarten, eller brug **Indstillinger → System → Genstart**.
+
+Hvis søgningen ikke finder den, så tilføj den via dens link: vælg **Tilføj fra
+link** (eller menuen med tre prikker → **Brugerdefinerede repositorier**), skriv
+`StrausbergAutomationWorks/LiveTrackAircraft`, vælg **Integration**, hvis du
+bliver spurgt om typen, og fortsæt derefter fra trin 3.
 
 Markedspladsen tilbyder derefter hver ny udgivelse som en opdatering.
 

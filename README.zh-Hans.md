@@ -8,7 +8,7 @@
 
 > **正在成长，欢迎提出想法。** Live Track Aircraft 目前覆盖志愿者运行接收机的全世界，美国的航线和所有者名称最详细。我们正在添加更多航线来源和飞机信息。缺少你那里的吗？[提出建议](#帮助它成长)，或者自己添加：我们会帮你完成。
 
-**状态：0.1.6，已发布。** 可通过链接添加到 Marketplace（[见下文](#安装步骤)）；它还不在 Marketplace 的目录中。
+**状态：0.1.6，已发布。** 已在 Marketplace 的目录中（[安装方法见下文](#安装步骤)）。
 
 StrausbergAutomationWorks 的原创作品。与 adsb.fi、adsb.lol、adsbdb、美国联邦航空管理局（Federal Aviation Administration，FAA）、OurAirports、ADS-B Radar、Planespotters.net、任何航空公司或任何飞机运营者均无关联，也未获得它们的认可。
 
@@ -125,13 +125,12 @@ Live Track 是一组 Home Assistant 集成，每种移动的东西一个，全�
 
 ### 通过 Marketplace（推荐）
 
-Live Track Aircraft 还不在 Marketplace 的目录中。通过它的链接添加：
-
 1. 在 Home Assistant 中打开 **设置 → Marketplace**（HACS）。
-2. 选择 **从链接添加**（或三点菜单 → **自定义存储库**）。
-3. 输入 `StrausbergAutomationWorks/LiveTrackAircraft`。如果询问类型，选择 **集成**。
-4. 在列表中找到 **Live Track Aircraft**，选择 **下载** 或 **安装**。
-5. **重启 Home Assistant**：**设置 → 系统 → 修复** 会提供重启，或使用 **设置 → 系统 → 重启**。
+2. 搜索 **Live Track Aircraft** 并打开它。
+3. 选择 **下载**（或 **安装**）。
+4. **重启 Home Assistant**：**设置 → 系统 → 修复** 会提供重启，或使用 **设置 → 系统 → 重启**。
+
+如果搜索找不到它，就通过链接添加：选择 **从链接添加**（或三点菜单 → **自定义存储库**），输入 `StrausbergAutomationWorks/LiveTrackAircraft`，如果询问类型，选择 **集成**，然后从第 3 步继续。
 
 之后，Marketplace 会把每个新版本作为更新提供给你。
 

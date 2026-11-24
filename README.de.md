@@ -22,9 +22,8 @@ und in Gebieten, die Sie nennen, nach Militärflugzeugen Ausschau halten.
 > [Schlagen Sie es vor](#helfen-sie-mit-es-zu-erweitern), oder fügen Sie es
 > selbst hinzu: Wir helfen Ihnen dabei.
 
-**Status: 0.1.6, veröffentlicht.** Per Link zum Marketplace hinzugefügt
-([unten](#installation-schritt-für-schritt)); es ist noch nicht im Katalog
-des Marketplace.
+**Status: 0.1.6, veröffentlicht.** Im Katalog des Marketplace ([Installation
+unten](#installation-schritt-für-schritt)).
 
 Eigene Arbeit von StrausbergAutomationWorks. Nicht verbunden mit und nicht
 unterstützt von adsb.fi, adsb.lol, adsbdb, der Federal Aviation
@@ -174,19 +173,18 @@ Alles ist kostenlos und quelloffen. Nichts wird für Sponsoren zurückgehalten.
 
 ### Über den Marketplace (empfohlen)
 
-Live Track Aircraft ist noch nicht im Katalog des Marketplace. Fügen Sie es
-per Link hinzu:
-
 1. Öffnen Sie in Home Assistant **Einstellungen → Marketplace** (HACS).
-2. Wählen Sie **Über Link hinzufügen** (oder das Dreipunktmenü →
-   **Benutzerdefinierte Repositorys**).
-3. Geben Sie `StrausbergAutomationWorks/LiveTrackAircraft` ein. Wenn nach dem
-   Typ gefragt wird, wählen Sie **Integration**.
-4. Suchen Sie **Live Track Aircraft** in der Liste und wählen Sie
-   **Herunterladen** oder **Installieren**.
-5. **Starten Sie Home Assistant neu**: **Einstellungen → System → Reparaturen**
+2. Suchen Sie nach **Live Track Aircraft** und öffnen Sie es.
+3. Wählen Sie **Herunterladen** (oder **Installieren**).
+4. **Starten Sie Home Assistant neu**: **Einstellungen → System → Reparaturen**
    bietet den Neustart an, oder nutzen Sie **Einstellungen → System → Neu
    starten**.
+
+Findet die Suche es nicht, fügen Sie es per Link hinzu: wählen Sie **Über Link
+hinzufügen** (oder das Dreipunktmenü → **Benutzerdefinierte Repositorys**),
+geben Sie `StrausbergAutomationWorks/LiveTrackAircraft` ein, wählen Sie
+**Integration**, wenn nach dem Typ gefragt wird, und fahren Sie dann mit Schritt
+3 fort.
 
 Der Marketplace bietet dann jede neue Veröffentlichung als Aktualisierung an.
 

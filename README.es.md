@@ -22,9 +22,8 @@ aviones militares en zonas que tú indiques.
 > [Sugiérelo](#ayúdanos-a-hacerlo-crecer), o añádelo tú mismo: te ayudaremos a
 > hacerlo.
 
-**Estado: 0.1.6, publicado.** Añadido al Marketplace por su enlace
-([abajo](#instalarlo-paso-a-paso)); todavía no está en el catálogo del
-Marketplace.
+**Estado: 0.1.6, publicado.** En el catálogo del Marketplace ([instálalo más
+abajo](#instalarlo-paso-a-paso)).
 
 Obra original de StrausbergAutomationWorks. Sin relación con adsb.fi,
 adsb.lol, adsbdb, la Federal Aviation Administration (Estados Unidos),
@@ -169,18 +168,16 @@ Todo es gratuito y de código abierto. Nada se reserva para patrocinadores.
 
 ### Desde el Marketplace (recomendado)
 
-Live Track Aircraft todavía no está en el catálogo del Marketplace. Añádelo
-por su enlace:
-
 1. En Home Assistant, abre **Configuración → Marketplace** (HACS).
-2. Elige **Añadir desde enlace** (o el menú de tres puntos → **Repositorios
-   personalizados**).
-3. Escribe `StrausbergAutomationWorks/LiveTrackAircraft`. Si te pregunta el
-   tipo, elige **Integration**.
-4. Busca **Live Track Aircraft** en la lista y elige **Descargar** o
-   **Instalar**.
-5. **Reinicia Home Assistant**: **Configuración → Sistema → Reparaciones**
+2. Busca **Live Track Aircraft** y ábrelo.
+3. Elige **Descargar** (o **Instalar**).
+4. **Reinicia Home Assistant**: **Configuración → Sistema → Reparaciones**
    ofrece el reinicio, o usa **Configuración → Sistema → Reiniciar**.
+
+Si la búsqueda no lo encuentra, añádelo por su enlace: elige **Añadir desde
+enlace** (o el menú de tres puntos → **Repositorios personalizados**), escribe
+`StrausbergAutomationWorks/LiveTrackAircraft`, elige **Integration** si te pide
+el tipo y continúa desde el paso 3.
 
 Después, el Marketplace ofrece cada versión nueva como actualización.
 
