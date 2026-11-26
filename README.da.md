@@ -151,8 +151,6 @@ Alt er gratis og open source. Intet holdes tilbage til sponsorer.
 * **Markedspladsen** (HACS) i din Home Assistant, så du nemt kan installere
   og opdatere den. Uden den kan du kopiere filerne manuelt.
 * **Internetadgang** for Home Assistant: alt kommer fra offentlige kilder.
-* **Valgfrit: auto-entities** fra Markedspladsen, til at sætte markørerne på
-  kortet (se [Sæt kortet på et betjeningspanel](#sæt-kortet-på-et-betjeningspanel)).
 * Intet at betale og ingen konto nødvendig. adsb.lol-nøglen ovenfor er
   valgfri.
 * Home Assistant installerer selv de to Python-pakker, den har brug for
@@ -282,32 +280,6 @@ tilføje.
    derefter **Tilføj kort**.
 2. Rul helt ned, og vælg **Manuel**.
 3. Indsæt dette, og vælg **Gem**:
-
-```yaml
-type: custom:auto-entities
-card:
-  type: custom:live-track-map-card
-filter:
-  include:
-    - domain: geo_location
-      attributes:
-        source: live_track_aircraft
-      options:
-        display: attribute
-        attribute: marker_label
-        position_transition: auto
-  exclude:
-    - state: unavailable
-```
-
-Denne form kræver
-[auto-entities](https://github.com/thomasloven/lovelace-auto-entities) fra
-Markedspladsen. Er andre Live Track-moduler installeret, så tilføj ét filter
-`- domain: geo_location` mere for hver af deres kilder (`live_track_ships`,
-`live_track_weather` og så videre).
-
-**Uden auto-entities:** LiveTrackMapCard kan selv vælge, hvad den viser, med
-`entity_filter`. Indsæt dette i stedet; der skal ikke installeres mere:
 
 ```yaml
 type: custom:live-track-map-card

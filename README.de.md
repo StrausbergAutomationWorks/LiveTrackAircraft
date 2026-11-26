@@ -158,9 +158,6 @@ Alles ist kostenlos und quelloffen. Nichts wird für Sponsoren zurückgehalten.
   Weg zu installieren und zu aktualisieren. Ohne ihn können Sie die Dateien
   von Hand kopieren.
 * **Internetzugang** für Home Assistant: Alles kommt aus öffentlichen Quellen.
-* **Freiwillig: auto-entities** aus dem Marketplace, um die Markierungen auf
-  die Karte zu bringen (siehe
-  [Die Karte auf ein Dashboard bringen](#die-karte-auf-ein-dashboard-bringen)).
 * Nichts zu bezahlen und kein Konto nötig. Der adsb.lol-Schlüssel oben ist
   freiwillig.
 * Home Assistant installiert die zwei Python-Pakete, die es braucht
@@ -297,33 +294,6 @@ Ressource hinzuzufügen.
    dann **Karte hinzufügen**.
 2. Scrollen Sie ganz nach unten und wählen Sie **Manuell**.
 3. Fügen Sie dies ein und wählen Sie **Speichern**:
-
-```yaml
-type: custom:auto-entities
-card:
-  type: custom:live-track-map-card
-filter:
-  include:
-    - domain: geo_location
-      attributes:
-        source: live_track_aircraft
-      options:
-        display: attribute
-        attribute: marker_label
-        position_transition: auto
-  exclude:
-    - state: unavailable
-```
-
-Diese Form braucht
-[auto-entities](https://github.com/thomasloven/lovelace-auto-entities) aus dem
-Marketplace. Sind andere Live-Track-Module installiert, fügen Sie für jede
-ihrer Quellen einen weiteren Filter `- domain: geo_location` hinzu
-(`live_track_ships`, `live_track_weather` und so weiter).
-
-**Ohne auto-entities:** LiveTrackMapCard kann mit `entity_filter` selbst
-auswählen, was sie zeigt. Fügen Sie stattdessen dies ein; weiter muss nichts
-installiert werden:
 
 ```yaml
 type: custom:live-track-map-card

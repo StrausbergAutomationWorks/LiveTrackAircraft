@@ -115,7 +115,6 @@ Live Track 是一组 Home Assistant 集成，每种移动的东西一个，全�
 * **Home Assistant** 2026.11 或更高版本。
 * 你的 Home Assistant 中的 **Marketplace**（HACS），用来方便地安装和更新。没有它，你也可以手动复制文件。
 * Home Assistant 需要**互联网访问**：一切都来自公开来源。
-* **可选：Marketplace 中的 auto-entities**，用来把标记放到地图上（见[把地图放到仪表盘上](#把地图放到仪表盘上)）。
 * 无需付费，也不需要账户。上面的 adsb.lol 密钥是可选的。
 * 集成第一次加载时，Home Assistant 会自动安装它需要的两个 Python 包（`saw-livetrack` 和 `tzfpy`）。
 
@@ -203,27 +202,6 @@ Live Track Aircraft 先询问 adsb.fi，只有在 adsb.fi 没有响应时才询�
 1. 打开一个仪表盘，选择铅笔图标（**编辑仪表盘**），然后选择 **添加卡片**。
 2. 滚动到最下面，选择 **手动**。
 3. 粘贴下面的内容，然后选择 **保存**：
-
-```yaml
-type: custom:auto-entities
-card:
-  type: custom:live-track-map-card
-filter:
-  include:
-    - domain: geo_location
-      attributes:
-        source: live_track_aircraft
-      options:
-        display: attribute
-        attribute: marker_label
-        position_transition: auto
-  exclude:
-    - state: unavailable
-```
-
-这种写法需要 Marketplace 中的 [auto-entities](https://github.com/thomasloven/lovelace-auto-entities)。如果安装了其他 Live Track 模块，为它们的每个来源再添加一个 `- domain: geo_location` 过滤器（`live_track_ships`、`live_track_weather` 等）。
-
-**不用 auto-entities：** LiveTrackMapCard 可以用 `entity_filter` 自己选择要显示的内容。改为粘贴下面这段，无需再安装其他东西：
 
 ```yaml
 type: custom:live-track-map-card
