@@ -139,6 +139,7 @@ eine Quelle stellt, die eine andere bereits liest.
 | [Live Track Intercity Rail](https://github.com/StrausbergAutomationWorks/LiveTrackIntercityRail) | Intercity- und Fernzüge in Nordamerika, Europa und Australien | veröffentlicht |
 | [Live Track SALT](https://github.com/StrausbergAutomationWorks/LiveTrackSALT) | Flugzeuge und Schiffe der Einwanderungs- und Bundespolizeibehörden, aus öffentlichen Listen | veröffentlicht |
 | [Live Track Weather](https://github.com/StrausbergAutomationWorks/LiveTrackWeather) | Wetter, Stürme und Naturgefahren | veröffentlicht |
+| [Live Track Internet](https://github.com/StrausbergAutomationWorks/LiveTrackInternet) | Internetausfälle, Seekabel und Landverbindungen | veröffentlicht |
 | Live Track Stations | Abfahrtstafeln und „Zeit zu gehen“-Hinweise für jeden Bahnhof | geplant |
 | Live Track Satellites | Satelliten, die über Sie hinwegziehen | geplant |
 | Live Track Freight Trains | Güter- und Arbeitszüge, wo Bahnen sie veröffentlichen | geplant |

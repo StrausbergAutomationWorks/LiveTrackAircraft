@@ -98,6 +98,7 @@ Live Track 是一组 Home Assistant 集成，每种移动的东西一个，全�
 | [Live Track Intercity Rail](https://github.com/StrausbergAutomationWorks/LiveTrackIntercityRail) | 北美、欧洲和澳大利亚的城际和长途列车 | 已发布 |
 | [Live Track SALT](https://github.com/StrausbergAutomationWorks/LiveTrackSALT) | 来自公开列表的移民和联邦执法飞机及船只 | 已发布 |
 | [Live Track Weather](https://github.com/StrausbergAutomationWorks/LiveTrackWeather) | 天气、风暴和自然灾害 | 已发布 |
+| [Live Track Internet](https://github.com/StrausbergAutomationWorks/LiveTrackInternet) | 互联网中断、海底光缆和陆地链路 | 已发布 |
 | Live Track Stations | 每个车站的发车信息板和"该出发了"提醒 | 计划中 |
 | Live Track Satellites | 从头顶经过的卫星 | 计划中 |
 | Live Track Freight Trains | 铁路公开发布的货运和工程列车 | 计划中 |

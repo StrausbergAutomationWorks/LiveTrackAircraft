@@ -134,6 +134,7 @@ so installing another one adds no requests to a source another already reads.
 | [Live Track Intercity Rail](https://github.com/StrausbergAutomationWorks/LiveTrackIntercityRail) | intercity and long-distance trains in North America, Europe and Australia | released |
 | [Live Track SALT](https://github.com/StrausbergAutomationWorks/LiveTrackSALT) | immigration and federal law-enforcement aircraft and vessels, from public lists | released |
 | [Live Track Weather](https://github.com/StrausbergAutomationWorks/LiveTrackWeather) | weather, storms and natural hazards | released |
+| [Live Track Internet](https://github.com/StrausbergAutomationWorks/LiveTrackInternet) | internet outages, submarine cables and terrestrial links | released |
 | Live Track Stations | departure boards and "time to leave" alerts for every station | planned |
 | Live Track Satellites | satellites passing overhead | planned |
 | Live Track Freight Trains | freight and work trains where railways publish them | planned |

@@ -139,6 +139,7 @@ andere al leest.
 | [Live Track Intercity Rail](https://github.com/StrausbergAutomationWorks/LiveTrackIntercityRail) | intercity- en langeafstandstreinen in Noord-Amerika, Europa en Australië | uitgebracht |
 | [Live Track SALT](https://github.com/StrausbergAutomationWorks/LiveTrackSALT) | vliegtuigen en schepen van immigratie- en federale ordediensten, uit openbare lijsten | uitgebracht |
 | [Live Track Weather](https://github.com/StrausbergAutomationWorks/LiveTrackWeather) | weer, stormen en natuurgevaren | uitgebracht |
+| [Live Track Internet](https://github.com/StrausbergAutomationWorks/LiveTrackInternet) | internetstoringen, zeekabels en verbindingen over land | uitgebracht |
 | Live Track Stations | vertrekborden en "tijd om te gaan"-meldingen voor elk station | gepland |
 | Live Track Satellites | satellieten die over je heen trekken | gepland |
 | Live Track Freight Trains | goederen- en werktreinen waar spoorwegen ze publiceren | gepland |
