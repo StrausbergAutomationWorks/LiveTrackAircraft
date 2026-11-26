@@ -22,7 +22,7 @@ und in Gebieten, die Sie nennen, nach Militärflugzeugen Ausschau halten.
 > [Schlagen Sie es vor](#helfen-sie-mit-es-zu-erweitern), oder fügen Sie es
 > selbst hinzu: Wir helfen Ihnen dabei.
 
-**Status: 0.1.6, veröffentlicht.** Im Katalog des Marketplace ([Installation
+**Status: 0.1.7, veröffentlicht.** Im Katalog des Marketplace ([Installation
 unten](#installation-schritt-für-schritt)).
 
 Eigene Arbeit von StrausbergAutomationWorks. Nicht verbunden mit und nicht

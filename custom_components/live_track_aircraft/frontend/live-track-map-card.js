@@ -1,4 +1,4 @@
-/*! live-track-map-card 0.1.9+ae5443e */
+/*! live-track-map-card 0.1.12+4cc0970 */
 /*!
  * Third-party notices for the packages bundled in this file:
  *
@@ -14806,6 +14806,88 @@ const t=globalThis,i$1=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html"
  */const s=globalThis;class i extends y$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const r=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(r,this.renderRoot,this.renderOptions);}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(true);}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(false);}render(){return E}}i._$litElement$=true,i["finalized"]=true,s.litElementHydrateSupport?.({LitElement:i});const o=s.litElementPolyfillSupport;o?.({LitElement:i});(s.litElementVersions??=[]).push("4.2.2");
 
 /**
+ * Leaflet.markercluster 1.5.3's two stylesheets, MarkerCluster.css and MarkerCluster.Default.css, copied verbatim from
+ * the npm package so the card loads nothing from unpkg at runtime (LiveTrackMapCard#1, hacs/default #14498). MIT
+ * licence, (c) 2012 David Leaver; its notice is in the bundle's licence notices with the plugin's code.
+ * Regenerate from the package when the dependency changes: MarkerClusterCss.test.js fails until this matches it.
+ */
+const MARKERCLUSTER_CSS = `.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+	-webkit-transition: -webkit-transform 0.3s ease-out, opacity 0.3s ease-in;
+	-moz-transition: -moz-transform 0.3s ease-out, opacity 0.3s ease-in;
+	-o-transition: -o-transform 0.3s ease-out, opacity 0.3s ease-in;
+	transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+}
+
+.leaflet-cluster-spider-leg {
+	/* stroke-dashoffset (duration and function) should match with leaflet-marker-icon transform in order to track it exactly */
+	-webkit-transition: -webkit-stroke-dashoffset 0.3s ease-out, -webkit-stroke-opacity 0.3s ease-in;
+	-moz-transition: -moz-stroke-dashoffset 0.3s ease-out, -moz-stroke-opacity 0.3s ease-in;
+	-o-transition: -o-stroke-dashoffset 0.3s ease-out, -o-stroke-opacity 0.3s ease-in;
+	transition: stroke-dashoffset 0.3s ease-out, stroke-opacity 0.3s ease-in;
+}
+.marker-cluster-small {
+	background-color: rgba(181, 226, 140, 0.6);
+	}
+.marker-cluster-small div {
+	background-color: rgba(110, 204, 57, 0.6);
+	}
+
+.marker-cluster-medium {
+	background-color: rgba(241, 211, 87, 0.6);
+	}
+.marker-cluster-medium div {
+	background-color: rgba(240, 194, 12, 0.6);
+	}
+
+.marker-cluster-large {
+	background-color: rgba(253, 156, 115, 0.6);
+	}
+.marker-cluster-large div {
+	background-color: rgba(241, 128, 23, 0.6);
+	}
+
+	/* IE 6-8 fallback colors */
+.leaflet-oldie .marker-cluster-small {
+	background-color: rgb(181, 226, 140);
+	}
+.leaflet-oldie .marker-cluster-small div {
+	background-color: rgb(110, 204, 57);
+	}
+
+.leaflet-oldie .marker-cluster-medium {
+	background-color: rgb(241, 211, 87);
+	}
+.leaflet-oldie .marker-cluster-medium div {
+	background-color: rgb(240, 194, 12);
+	}
+
+.leaflet-oldie .marker-cluster-large {
+	background-color: rgb(253, 156, 115);
+	}
+.leaflet-oldie .marker-cluster-large div {
+	background-color: rgb(241, 128, 23);
+}
+
+.marker-cluster {
+	background-clip: padding-box;
+	border-radius: 20px;
+	}
+.marker-cluster div {
+	width: 30px;
+	height: 30px;
+	margin-left: 5px;
+	margin-top: 5px;
+
+	text-align: center;
+	border-radius: 15px;
+	font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+	}
+.marker-cluster span {
+	line-height: 30px;
+	}
+`;
+
+/**
  * `weather_area`: the one place weather is drawn (Lee, 2026-11-02). Shapes outside it are not drawn and radar tiles
  * outside its box are not asked for. Nothing here names a publisher or a place.
  */
@@ -15888,6 +15970,52 @@ class GeoJsonLayerConfig {
 }
 
 /**
+ * HTML escaping for text that reaches the page as markup (LiveTrackMapCard#1, backlog 368). Leaflet writes a DivIcon's
+ * html, a tooltip or popup given as a string, a layers-control label and an attribution with innerHTML, and every
+ * name, state and attribute this card draws can come from another integration or straight from a public feed.
+ */
+
+const ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+
+/**
+ * Text escaped for HTML: element content or a quoted attribute value, either quote. null and undefined are "".
+ * @param {*} value
+ * @returns {string}
+ */
+function escapeHtml$2(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (c) => ESCAPES[c]);
+}
+
+/**
+ * A marker attribute value: exactly what a template literal would have written (undefined stays "undefined", as
+ * the marker and the canvas expect), escaped.
+ * @param {*} value
+ * @returns {string}
+ */
+function attr(value) {
+  return escapeHtml$2(`${value}`);
+}
+
+const NAMED = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+
+/**
+ * The text an escaped attribute value stands for, as the browser reads it: the five named entities and numeric
+ * ones. Anything else is left as it is.
+ * @param {*} value
+ * @returns {string}
+ */
+function unescapeHtml(value) {
+  return String(value ?? "").replace(/&(#[xX][0-9a-fA-F]+|#[0-9]+|[a-zA-Z]+);/g, (whole, e) => {
+    if (e[0] === "#") {
+      const n = e[1] === "x" || e[1] === "X" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+      return Number.isFinite(n) && n >= 0 && n <= 0x10ffff ? String.fromCodePoint(n) : whole;
+    }
+    const k = e.toLowerCase();
+    return Object.prototype.hasOwnProperty.call(NAMED, k) ? NAMED[k] : whole;
+  });
+}
+
+/**
  * What a path-follower's plan() returns when there is no way round over water:
  * place the marker at its fix, never slide it across land (Lee, 2026-09-29,
  * ECLIPSE through the DuSable Harbor breakwater). Its own module so Entity can
@@ -16135,7 +16263,7 @@ class GeoJson {
     // Create a simple tooltip from properties
     const entries = Object.entries(properties)
       .filter(([, value]) => value !== null && value !== undefined)
-      .map(([key, value]) => `${key}: ${value}`)
+      .map(([key, value]) => `${escapeHtml$2(key)}: ${escapeHtml$2(value)}`)   // a tooltip string is innerHTML (LiveTrackMapCard#1)
       .slice(0, 5); // Limit to first 5 properties
 
     return entries.length > 0 ? entries.join('<br>') : '';
@@ -16269,7 +16397,7 @@ class EntityHistory {
               fillOpacity: opacity,
               interactive: true,
             }
-          ).bindTooltip(`${this.entityTitle} ${entry.timestamp.toLocaleString()}`, {direction: 'top'})
+          ).bindTooltip(escapeHtml$2(`${this.entityTitle} ${entry.timestamp.toLocaleString()}`), {direction: 'top'})
         );
       }
 
@@ -17857,7 +17985,8 @@ const SHADOW_EASE_MS = 3000;
 const SHADOW_EASE_STEPS = 30;
 
 /**
- * The attributes written into a marker's DivIcon html (Entity.createMapMarker).
+ * The attributes written into a marker's DivIcon html (Entity.createMapMarker), entities decoded: the values are
+ * written escaped (util/Html.js, LiveTrackMapCard#1).
  * @param {string} html
  * @returns {{[name: string]: string}}
  */
@@ -17865,7 +17994,7 @@ function parseAttrs(html) {
   const out = {};
   const re = /\s([a-z-]+)=(?:"([^"]*)"|'([^']*)')/g;
   let m;
-  while ((m = re.exec(html || ""))) out[m[1]] = m[2] !== undefined ? m[2] : m[3];
+  while ((m = re.exec(html || ""))) out[m[1]] = unescapeHtml(m[2] !== undefined ? m[2] : m[3]);
   return out;
 }
 
@@ -19656,7 +19785,7 @@ class Entity {
     if (entity && entity.state) {
       const distance = this.formatDistance(entity.state, this.config.distanceUnit);
       if (distance) {
-        this.marker.setTooltipContent(distance);
+        this.marker.setTooltipContent(escapeHtml$2(distance));
       }
     }
   }
@@ -20045,7 +20174,7 @@ class Entity {
       // Anchored on the preceding whitespace so `rotation` cannot match
       // inside `rotation-transition` or any other *-rotation attribute.
       const pattern = new RegExp(`(\\s)${name}="[^"]*"`);
-      iconOptions.html = iconOptions.html.replace(pattern, (_, ws) => `${ws}${name}="${text}"`);
+      iconOptions.html = iconOptions.html.replace(pattern, (_, ws) => `${ws}${name}="${attr(text)}"`);
     }
   }
 
@@ -20583,42 +20712,42 @@ class Entity {
       icon: new leafletSrcExports.DivIcon({
         html: `
           <${MARKER_TAG}
-            entity-id="${this.id}"
-            title="${this.title}"
-            label="${this.config.label ?? ""}"
-            prefix="${this.config.prefix}"
-            suffix="${this.config.suffix}"
-            tooltip="${this.tooltip}"
-            icon="${icon ?? ""}"
-            picture="${picture ?? ""}"
-            bare-picture="${this.barePicture ? "true" : ""}"
-            ground-shadow="${shadowAlt}"
-            rotation="${rotation ?? ""}"
-            rotation-transition="${this.config.rotationTransition ?? 0}"
-            color="${color}"
-            label-color="${labelColor ?? ""}"
-            arrow="${arrow ?? ""}"
-            label-outline="${styling["label-outline"]}"
-            arrow-color="${styling["arrow-color"]}"
-            arrow-outline="${styling["arrow-outline"]}"
-            ring-color="${styling["ring-color"]}"
-            ring-width="${styling["ring-width"]}"
-            inner-ring-color="${styling["inner-ring-color"]}"
-            inner-ring-width="${styling["inner-ring-width"]}"
-            shape="${styling["shape"]}"
-            symbol="${styling["symbol"]}"
-            alternate="${styling["alternate"]}"
-            label-placement="${styling["label-placement"]}"
-            symbol-color="${styling["symbol-color"]}"
-            symbol-outline="${styling["symbol-outline"]}"
-            delay-badge="${late["delay-badge"]}"
-            delay-level="${late["delay-level"]}"
-            pulse="${late["pulse"]}"
-            style="${this.config.css}"
-            size="${this.config.size}"
-            extra-css-classes="${extraCssClasses}"
-            tap-action='${JSON.stringify(this.config.tapAction)}'
-            info="${hasInfo ? "true" : ""}"
+            entity-id="${attr(this.id)}"
+            title="${attr(this.title)}"
+            label="${attr(this.config.label ?? "")}"
+            prefix="${attr(this.config.prefix)}"
+            suffix="${attr(this.config.suffix)}"
+            tooltip="${attr(this.tooltip)}"
+            icon="${attr(icon ?? "")}"
+            picture="${attr(picture ?? "")}"
+            bare-picture="${attr(this.barePicture ? "true" : "")}"
+            ground-shadow="${attr(shadowAlt)}"
+            rotation="${attr(rotation ?? "")}"
+            rotation-transition="${attr(this.config.rotationTransition ?? 0)}"
+            color="${attr(color)}"
+            label-color="${attr(labelColor ?? "")}"
+            arrow="${attr(arrow ?? "")}"
+            label-outline="${attr(styling["label-outline"])}"
+            arrow-color="${attr(styling["arrow-color"])}"
+            arrow-outline="${attr(styling["arrow-outline"])}"
+            ring-color="${attr(styling["ring-color"])}"
+            ring-width="${attr(styling["ring-width"])}"
+            inner-ring-color="${attr(styling["inner-ring-color"])}"
+            inner-ring-width="${attr(styling["inner-ring-width"])}"
+            shape="${attr(styling["shape"])}"
+            symbol="${attr(styling["symbol"])}"
+            alternate="${attr(styling["alternate"])}"
+            label-placement="${attr(styling["label-placement"])}"
+            symbol-color="${attr(styling["symbol-color"])}"
+            symbol-outline="${attr(styling["symbol-outline"])}"
+            delay-badge="${attr(late["delay-badge"])}"
+            delay-level="${attr(late["delay-level"])}"
+            pulse="${attr(late["pulse"])}"
+            style="${attr(this.config.css)}"
+            size="${attr(this.config.size)}"
+            extra-css-classes="${attr(extraCssClasses)}"
+            tap-action='${attr(JSON.stringify(this.config.tapAction))}'
+            info="${attr(hasInfo ? "true" : "")}"
           ></${MARKER_TAG}>
         `,
         iconSize: [s, s],
@@ -21369,7 +21498,7 @@ class MapConfig {
 
 }
 
-/* global "0.1.9+ae5443e" */
+/* global "0.1.12+4cc0970" */
 
 /**
  * This card's version, stamped in at build time by build/stamp-version.js:
@@ -21379,7 +21508,7 @@ class MapConfig {
  * "0.0.0-unbuilt", which can never be mistaken for a release.
  * @type {string}
  */
-const VERSION = "0.1.9+ae5443e" ;
+const VERSION = "0.1.12+4cc0970" ;
 
 class HaUrlResolveService {
   hass;
@@ -21934,7 +22063,8 @@ class TileLayersService {
     if (on) layer.addTo(this.map);
     const control = this._ensureControl();
     this.byLayer.set(layer, name);
-    control.addOverlay(layer, name);
+    // Leaflet writes the label with innerHTML, and a publisher names its own layer (LiveTrackMapCard#1).
+    control.addOverlay(layer, escapeHtml$2(name));
     return on;
   }
 
@@ -25938,6 +26068,34 @@ function layerLabel(hass, id, itemName) {
 }
 
 /**
+ * Whether a publisher's layer checkbox starts ticked (06_MAP_CONTRACT_OVERLAYS.md D12 rule 4 and D19 rule 5, as
+ * amended for Live Track Internet, backlog 363). A publisher may declare `layer_default: "off"`: its box starts
+ * unticked. Anything else, or nothing, starts it ticked, as before. A dashboard's explicit `show` wins over the
+ * publisher, and the viewer's own stored choice wins over both (TileLayersService.addOverlay).
+ */
+
+/** The one value that starts a publisher's box unticked. */
+const LAYER_DEFAULT_OFF = "off";
+
+/**
+ * @param {object|undefined} attributes the publisher's attributes
+ * @returns {boolean} false only for `layer_default: "off"`
+ */
+function publisherShownByDefault(attributes) {
+  return attributes?.layer_default !== LAYER_DEFAULT_OFF;
+}
+
+/**
+ * The default to hand the layer control: the dashboard's `show` when it set one, else the publisher's.
+ * @param {?boolean} dashboardShow `show` from `shape_layers` / `point_layers`, or null when not set
+ * @param {object|undefined} attributes the publisher's attributes
+ * @returns {boolean}
+ */
+function layerShown(dashboardShow, attributes) {
+  return typeof dashboardShow === "boolean" ? dashboardShow : publisherShownByDefault(attributes);
+}
+
+/**
  * Shapes on the map (06_MAP_CONTRACT.md D12, backlog 277).
  *
  * A publisher is one entity whose `shapes_url` names a file of shapes by key
@@ -25947,9 +26105,17 @@ function layerLabel(hass, id, itemName) {
  * keeps it in memory only, and fills translucent shapes over the tiles and
  * under every marker, lowest priority first. Nothing here names a publisher.
  * A `polygons` item carrying `info` {title, text} is clickable and shows it
- * (D12 as amended for Live Track Weather item 310); every other shape stays
- * non-interactive.
+ * (D12 as amended for Live Track Weather item 310); so is a key whose file
+ * carries `info` beside `shapes` (amended for Live Track Internet, backlog
+ * 363), or a key with a live entry in the publisher's `zone_info`, which
+ * replaces the file's for that key (amended 2026-11-25); every other shape
+ * stays non-interactive. A key's geometry in the file
+ * may be a line, drawn as a `polygons` line is (backlog 363). A publisher may
+ * start its checkbox unticked with `layer_default: "off"` (backlog 363).
  */
+
+/** A clickable line is answered this many px wide, whatever its drawn weight (backlog 363). */
+const LINE_HIT_PX = 12;
 
 /** Colour and priority for an event the publisher sent no style for (D12 rule 8). */
 const UNKNOWN_STYLE = Object.freeze({ color: "#808080", priority: 999 });
@@ -25959,6 +26125,15 @@ const CASING_PX = 1;
 
 /** After a failed fetch, the same URL is tried again no sooner than this (D12 rule 6). */
 const RETRY_MS = 10 * 60 * 1000;
+
+/**
+ * Lines from a shape FILE (backlog 363: Live Track Internet's "all cables") are
+ * reference, drawn thin and faint under everything live; `shape_style`'s
+ * `file_line_weight` and `file_line_opacity` override each. Decided 2026-11-24:
+ * a card default for file lines, the values picked from pictures. Lines in
+ * `polygons` (storms, cables in trouble) keep the outline's weight and opacity.
+ */
+const DEFAULT_FILE_LINE_STYLE = Object.freeze({ weight: 1, opacity: 0.5 });
 
 /**
  * Defaults; `shape_style` in the card config overrides each. Chosen by Lee
@@ -26024,9 +26199,10 @@ function discoverPublishers(states) {
 
 /**
  * `shape_layers`: absent or "auto" discovers; false turns it off; a list names
- * publishers as `{entity, name, show}` or a bare entity id.
+ * publishers as `{entity, name, show}` or a bare entity id. `show` is null when
+ * the dashboard set none, so the publisher's `layer_default` decides (backlog 363).
  * @param {*} input
- * @returns {{mode: "auto"}|{mode: "off"}|{mode: "list", items: {entity: string, name: ?string, show: boolean}[]}}
+ * @returns {{mode: "auto"}|{mode: "off"}|{mode: "list", items: {entity: string, name: ?string, show: ?boolean}[]}}
  */
 function parseShapeLayersOption(input) {
   if (input === undefined || input === null || input === true || input === "auto") return { mode: "auto" };
@@ -26046,7 +26222,7 @@ function parseShapeLayersOption(input) {
     items.push({
       entity,
       name: typeof o.name === "string" && o.name.trim() !== "" ? o.name.trim() : null,
-      show: o.show !== false,
+      show: typeof o.show === "boolean" ? o.show : null,
     });
   }
   return { mode: "list", items };
@@ -26066,6 +26242,22 @@ function parseShapeStyle(input) {
   if (typeof input.weight === "number" && Number.isFinite(input.weight) && input.weight >= 0) s.weight = input.weight;
   if (input.renderer === "canvas" || input.renderer === "svg") s.renderer = input.renderer;
   if (typeof input.by_priority === "boolean") s.byPriority = input.by_priority;
+  return s;
+}
+
+/**
+ * `shape_style`'s `file_line_weight` (px, 0 or more) and `file_line_opacity`
+ * (0-1), each optional; anything else keeps the default (backlog 363).
+ * @param {*} input the card's `shape_style`
+ * @returns {{weight: number, opacity: number}}
+ */
+function parseFileLineStyle(input) {
+  const s = { ...DEFAULT_FILE_LINE_STYLE };
+  if (!isPlainObject$1(input)) return s;
+  const w = input.file_line_weight;
+  const o = input.file_line_opacity;
+  if (typeof w === "number" && Number.isFinite(w) && w >= 0) s.weight = w;
+  if (typeof o === "number" && Number.isFinite(o) && o >= 0 && o <= 1) s.opacity = o;
   return s;
 }
 
@@ -26108,22 +26300,31 @@ function isLine(g) {
 /**
  * The list to draw, in drawing order (D12 rules 3, 5, 7, 8): largest priority
  * first, 1 last; within a priority zones before polygons; zones by key,
- * polygons in the order sent.
+ * polygons in the order sent. A zone whose geometry is a line carries
+ * `line: true`; a zone whose key has an entry in the file's `info` carries it
+ * (both backlog 363). A valid entry in the publisher's live `zone_info` for
+ * that key is carried instead, whole, never merged with the file's; an entry
+ * that is not valid leaves the file's in force (D12 as amended 2026-11-25).
  * @param {object} attributes the publisher's attributes
  * @param {?object} shapes the file's `shapes`, or null before it arrives
- * @returns {{items: {kind: string, key: ?string, event: string, geometry: object, color: string, priority: number}[], missing: string[]}}
+ * @param {?object} [infos] the file's `info`, `{key: {title, text}}`, or null
+ * @returns {{items: {kind: string, key: ?string, event: string, geometry: object, color: string, priority: number, line?: boolean, info?: object}[], missing: string[]}}
  */
-function buildDrawList(attributes, shapes) {
+function buildDrawList(attributes, shapes, infos = null) {
   const items = [];
   const missing = [];
   const styles = attributes?.styles;
+  // Live click text per key (D12 as amended 2026-11-25): it wins over the file's `info` for that key.
+  const live = isPlainObject$1(attributes?.zone_info) ? attributes.zone_info : null;
   if (isPlainObject$1(shapes) && isPlainObject$1(attributes?.zones)) {
     for (const key of Object.keys(attributes.zones).sort()) {
       const event = attributes.zones[key];
       if (typeof event !== "string") continue;
       const geometry = shapes[key];
-      if (!isArea(geometry)) { missing.push(key); continue; }
-      items.push({ kind: "zone", key, event, geometry, ...styleFor(event, styles) });
+      const line = isLine(geometry);
+      if (!isArea(geometry) && !line) { missing.push(key); continue; }
+      const info = (live ? infoOf(live[key]) : null) ?? (isPlainObject$1(infos) ? infoOf(infos[key]) : null);
+      items.push({ kind: "zone", key, event, geometry, ...styleFor(event, styles), ...(line ? { line: true } : {}), ...(info ? { info } : {}) });
     }
   }
   const polygons = Array.isArray(attributes?.polygons) ? attributes.polygons : [];
@@ -26174,6 +26375,16 @@ function shapesOf(json) {
   return isPlainObject$1(json) && isPlainObject$1(json.shapes) ? json.shapes : null;
 }
 
+/**
+ * A parsed file's `info`, the clickable text per key beside `shapes` (backlog 363).
+ * Optional: a file without it, or with anything but a mapping, has none.
+ * @param {*} json
+ * @returns {?object}
+ */
+function infosOf(json) {
+  return isPlainObject$1(json) && isPlainObject$1(json.info) ? json.info : null;
+}
+
 class ShapeLayersService {
   /**
    * @param {L.Map} map
@@ -26186,10 +26397,13 @@ class ShapeLayersService {
     this.map = map;
     this.option = parseShapeLayersOption(option);
     this.style = parseShapeStyle(styleOption);
+    this.fileLine = parseFileLineStyle(styleOption);
     this.overlays = overlays;
     this.fetch = deps.fetch ?? ((...a) => globalThis.fetch(...a));
     this.now = deps.now ?? (() => Date.now());
     this.area = deps.area ?? null;
+    /** Set by MapCard: opens the popup of a dot under a container point, returns whether it did (D19 rule 4). */
+    this.pointsFirst = deps.pointsFirst ?? null;
     this.hass = null;
     this.renderer = null;
     /** @type {Map<string, {group: object, url: ?string, state: ?object, fileStatus: ?string, drawn: number}>} */
@@ -26227,13 +26441,13 @@ class ShapeLayersService {
 
   /**
    * @param {object} states
-   * @returns {Map<string, {name: ?string, show: boolean}>} publishers to keep a checkbox for
+   * @returns {Map<string, {name: ?string, show: ?boolean}>} publishers to keep a checkbox for
    */
   _wanted(states) {
     const out = new Map();
     if (this.option.mode === "off") return out;
     if (this.option.mode === "auto") {
-      for (const id of discoverPublishers(states)) out.set(id, { name: null, show: true });
+      for (const id of discoverPublishers(states)) out.set(id, { name: null, show: null });
       return out;
     }
     // A named entity keeps its checkbox while it exists, drawn or not.
@@ -26245,17 +26459,19 @@ class ShapeLayersService {
 
   /**
    * @param {string} id
-   * @param {{name: ?string, show: boolean}} item
+   * @param {{name: ?string, show: ?boolean}} item
    * @param {object} state
    */
   _update(id, item, state) {
     let p = this.publishers.get(id);
     if (!p) {
       const attribution = typeof state?.attributes?.attribution === "string" ? state.attributes.attribution : undefined;
-      const group = L$2.layerGroup([], attribution ? { attribution } : {});
+      // The attribution control writes it with innerHTML: the publisher's text, escaped (LiveTrackMapCard#1).
+      const group = L$2.layerGroup([], attribution ? { attribution: escapeHtml$2(attribution) } : {});
       // The device name left off the label (util/LayerLabel.js, Lee 2026-11-19).
       const label = layerLabel(this.hass ?? { states: { [id]: state } }, id, item.name);
-      this.overlays.addOverlay(group, label.name, item.show, label.former);
+      // The dashboard's `show`, else the publisher's `layer_default` (backlog 363); the viewer's tick wins over both.
+      this.overlays.addOverlay(group, label.name, layerShown(item.show, state?.attributes), label.former);
       p = { group, url: null, state: null, fileStatus: null, drawn: 0, order: 0 };
       this.publishers.set(id, p);
       // A re-ticked box puts its shapes back on top: restore the order (D16).
@@ -26278,7 +26494,7 @@ class ShapeLayersService {
     p.state = state;
     p.fileStatus = fileStatus;
     p.order = shapeOrderOf(state.attributes);
-    this._draw(p, state.attributes, fileStatus === "ok" ? file.shapes : null);
+    this._draw(p, state.attributes, fileStatus === "ok" ? file.shapes : null, fileStatus === "ok" ? file.info : null);
     this._restack(p);
   }
 
@@ -26327,6 +26543,7 @@ class ShapeLayersService {
         if (!shapes) throw new Error("no shapes mapping");
         entry.status = "ok";
         entry.shapes = shapes;
+        entry.info = infosOf(json);
       })
       .catch((e) => {
         if (e?.name === "AbortError") {
@@ -26351,10 +26568,11 @@ class ShapeLayersService {
    * @param {object} p the publisher record
    * @param {object} attributes
    * @param {?object} shapes
+   * @param {?object} [infos] the file's `info` (backlog 363)
    */
-  _draw(p, attributes, shapes) {
+  _draw(p, attributes, shapes, infos = null) {
     p.group.clearLayers();
-    const { items: all, missing } = buildDrawList(attributes, shapes);
+    const { items: all, missing } = buildDrawList(attributes, shapes, infos);
     const items = this.area ? all.filter((it) => geometryTouchesArea(it.geometry, this.area)) : all;
     for (const key of missing) {
       if (warnedKeys.has(key)) continue;
@@ -26365,18 +26583,26 @@ class ShapeLayersService {
     const renderer = this._renderer();
     items.forEach((it, i) => {
       const feature = { type: "Feature", properties: {}, geometry: it.geometry };
-      if (it.kind === "line" && it.casing) {
+      // A `polygons` line, or a key whose geometry in the file is a line (backlog 363).
+      const isLineItem = it.kind === "line" || it.line === true;
+      // A line from the FILE draws at the file-line style, a `polygons` line at the outline's (backlog 363).
+      const lineWeight = it.line === true ? this.fileLine.weight : this.style.weight;
+      const lineOpacity = it.line === true ? this.fileLine.opacity : this.style.opacity;
+      if (isLineItem && it.casing) {
         p.group.addLayer(L$2.geoJSON(feature, {
           interactive: false,
           renderer,
-          style: () => ({ color: it.casing, weight: this.style.weight + 2 * CASING_PX, opacity: this.style.opacity, fill: false }),
+          style: () => ({ color: it.casing, weight: lineWeight + 2 * CASING_PX, opacity: lineOpacity, fill: false }),
         }));
       }
+      // A clickable line is answered by a transparent band over it, LINE_HIT_PX wide (backlog 363): a 2 px
+      // line is too thin to hit with a finger. The drawn line itself stays non-interactive.
+      const band = isLineItem && !!it.info;
       const layer = L$2.geoJSON(feature, {
-        interactive: !!it.info,
+        interactive: !!it.info && !band,
         renderer,
-        style: () => (it.kind === "line"
-          ? { color: it.color, weight: this.style.weight, opacity: this.style.opacity, fill: false }
+        style: () => (isLineItem
+          ? { color: it.color, weight: lineWeight, opacity: lineOpacity, fill: false }
           : {
             color: it.color,
             fillColor: it.color,
@@ -26385,10 +26611,38 @@ class ShapeLayersService {
             fillOpacity: opacities[i],
           }),
       });
-      if (it.info) layer.bindPopup(infoHtml(it.info), INFO_POPUP);
+      if (it.info && !band) {
+        layer.bindPopup(infoHtml(it.info), INFO_POPUP);
+        this._dotsFirst(layer);
+      }
       p.group.addLayer(layer);
+      if (band) {
+        const hit = L$2.geoJSON(feature, {
+          interactive: true,
+          renderer,
+          style: () => ({ color: it.color, weight: Math.max(LINE_HIT_PX, lineWeight), opacity: 0, fill: false }),
+        });
+        hit.bindPopup(infoHtml(it.info), INFO_POPUP);
+        this._dotsFirst(hit);
+        p.group.addLayer(hit);
+      }
     });
     p.drawn = items.length;
+  }
+
+  /**
+   * A dot drawn over a clickable shape answers first (D19 rule 4 as amended 2026-11-24). Registered after the
+   * shape's own popup binding, so it runs after that popup opens; a dot's popup then replaces it (autoClose).
+   * @param {object} layer a clickable shape layer
+   */
+  _dotsFirst(layer) {
+    layer.on?.("click", (e) => {
+      try {
+        this.pointsFirst?.(e?.containerPoint);
+      } catch (err) {
+        Logger.error("[ShapeLayers] a dot under the click could not be asked; the shape's popup stays", err);
+      }
+    });
   }
 
   /** @param {object} p */
@@ -26478,9 +26732,10 @@ function discoverPointPublishers(states) {
 
 /**
  * `point_layers`: absent or "auto" discovers; false or "off" turns it off; a list names publishers as
- * `{entity, name, show}` or a bare entity id (as `shape_layers`).
+ * `{entity, name, show}` or a bare entity id (as `shape_layers`). `show` is null when the dashboard set none, so the
+ * publisher's `layer_default` decides (backlog 363).
  * @param {*} input
- * @returns {{mode: string, items?: {entity: string, name: ?string, show: boolean}[]}}
+ * @returns {{mode: string, items?: {entity: string, name: ?string, show: ?boolean}[]}}
  */
 function parsePointLayersOption(input) {
   if (input === undefined || input === null || input === true || input === "auto") return { mode: "auto" };
@@ -26493,7 +26748,7 @@ function parsePointLayersOption(input) {
     const entity = o.entity.trim();
     if (seen.has(entity)) continue;
     seen.add(entity);
-    items.push({ entity, name: typeof o.name === "string" && o.name.trim() ? o.name.trim() : null, show: o.show !== false });
+    items.push({ entity, name: typeof o.name === "string" && o.name.trim() ? o.name.trim() : null, show: typeof o.show === "boolean" ? o.show : null });
   }
   return { mode: "list", items };
 }
@@ -26848,7 +27103,7 @@ class PointLayersService {
     const out = new Map();
     if (this.option.mode === "off") return out;
     if (this.option.mode === "auto") {
-      for (const id of discoverPointPublishers(states)) out.set(id, { name: null, show: true });
+      for (const id of discoverPointPublishers(states)) out.set(id, { name: null, show: null });
       return out;
     }
     for (const it of this.option.items) if (states[it.entity]) out.set(it.entity, { name: it.name, show: it.show });
@@ -26859,13 +27114,15 @@ class PointLayersService {
     let p = this.publishers.get(id);
     if (!p) {
       const attribution = typeof state?.attributes?.attribution === "string" ? state.attributes.attribution : undefined;
-      const layer = new PointCanvasLayer(attribution ? { attribution } : {});
+      // The attribution control writes it with innerHTML: the publisher's text, escaped (LiveTrackMapCard#1).
+      const layer = new PointCanvasLayer(attribution ? { attribution: escapeHtml$2(attribution) } : {});
       // The device name left off the label (util/LayerLabel.js, Lee 2026-11-19).
       const label = layerLabel(this.hass ?? { states: { [id]: state } }, id, item.name);
       p = { layer, url: null, status: null, order: 0, state: null };
       this.publishers.set(id, p);
       layer.on?.("add", () => this._restack());
-      this.overlays.addOverlay(layer, label.name, item.show, label.former);
+      // The dashboard's `show`, else the publisher's `layer_default` (backlog 363); the viewer's tick wins over both.
+      this.overlays.addOverlay(layer, label.name, layerShown(item.show, state?.attributes), label.former);
     }
     if (!isPointPublisherState(state)) {
       if (p.url || p.state) p.layer.setData(null, {});
@@ -26943,10 +27200,23 @@ class PointLayersService {
   }
 
   _click(e) {
-    const h = e?.containerPoint ? this._hitAt(e.containerPoint) : null;
-    if (!h) return;
+    this.openAt(e?.containerPoint);
+  }
+
+  /**
+   * Opens the popup of the dot under a container point, the topmost publisher first. A clickable shape (D12) asks
+   * this on its own click, because the dots are drawn above the shapes and Leaflet stops a shape's click from
+   * reaching the map (Layer._openPopup: "prevent map click"). D19 rule 4 as amended 2026-11-24.
+   * @param {?{x: number, y: number}} cp a container point
+   * @returns {boolean} a dot was there and its popup opened
+   */
+  openAt(cp) {
+    if (this.disposed || !cp) return false;
+    const h = this._hitAt(cp);
+    if (!h) return false;
     const { latlng, html } = h.q.layer.popupFor(h.i);
     L$2.popup(INFO_POPUP).setLatLng(latlng).setContent(html).openOn(this.map);
+    return true;
   }
 
   _hover(e) {
@@ -34876,6 +35146,8 @@ class MapCard extends i {
     this.shapeLayersService = new ShapeLayersService(this.map, this._config.shapeLayers, this._config.shapeStyle, this.tileLayersService, { area: this._config.weatherArea });
     // Points on the map (D19): dots from a publisher's file, above the fills, below the markers.
     this.pointLayersService = new PointLayersService(this.map, this._config.pointLayers, this.tileLayersService, { area: this._config.weatherArea });
+    // A dot answers before a clickable shape under it: a shape's click never reaches the map (D19 rule 4).
+    this.shapeLayersService.pointsFirst = (cp) => this.pointLayersService?.openAt(cp) ?? false;
     // The weather radar overlay (D13): one layer, its own pane under the fills.
     this.radarOverlayService = new RadarOverlayService(this.map, this._config.weatherRadar, this.tileLayersService, { area: this._config.weatherArea });
     // Lightning (D14): its own pane right above the radar's.
@@ -34963,8 +35235,6 @@ class MapCard extends i {
 
     return b`
             <link rel="stylesheet" href="/static/images/leaflet/leaflet.css">
-            <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
-            <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
             <ha-card header="${this._config.title}">
               <div id="mapContainer" style="min-height: ${this._config.mapHeight}px">
                 <div id="map" style="min-height: ${this._config.mapHeight}px">
@@ -35461,7 +35731,8 @@ class MapCard extends i {
   }
 
   static get styles() {
-    return i$3`
+    // The markercluster stylesheets are bundled, not loaded from unpkg at runtime (LiveTrackMapCard#1).
+    return [r$2(MARKERCLUSTER_CSS), i$3`
       ha-card {
         height: 100%;
         display: flex;
@@ -35669,7 +35940,7 @@ class MapCard extends i {
       .leaflet-tile-pane {
         filter: var(--map-filter);
       }
-    `;
+    `];
   }
 }
 

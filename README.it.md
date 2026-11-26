@@ -22,7 +22,7 @@ sorvegliare gli aerei militari nelle zone che indichi.
 > [Suggeriscilo](#aiutaci-a-farlo-crescere), o aggiungilo tu: ti aiuteremo a
 > farlo.
 
-**Stato: 0.1.6, pubblicato.** Nel catalogo del Marketplace ([installalo più
+**Stato: 0.1.7, pubblicato.** Nel catalogo del Marketplace ([installalo più
 sotto](#installazione-passo-dopo-passo)).
 
 Opera originale di StrausbergAutomationWorks. Non affiliato a, né approvato

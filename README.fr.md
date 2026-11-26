@@ -23,7 +23,7 @@ des zones que vous nommez.
 > sur les avions. Le vôtre manque ? [Proposez-le](#aidez-le-à-grandir), ou
 > ajoutez-le vous-même : nous vous aiderons à le faire.
 
-**État : 0.1.6, publié.** Dans le catalogue du Marketplace ([l'installer
+**État : 0.1.7, publié.** Dans le catalogue du Marketplace ([l'installer
 ci-dessous](#linstaller-étape-par-étape)).
 
 Travail original de StrausbergAutomationWorks. Sans lien avec adsb.fi,

@@ -8,7 +8,7 @@
 
 > **正在成长，欢迎提出想法。** Live Track Aircraft 目前覆盖志愿者运行接收机的全世界，美国的航线和所有者名称最详细。我们正在添加更多航线来源和飞机信息。缺少你那里的吗？[提出建议](#帮助它成长)，或者自己添加：我们会帮你完成。
 
-**状态：0.1.6，已发布。** 已在 Marketplace 的目录中（[安装方法见下文](#安装步骤)）。
+**状态：0.1.7，已发布。** 已在 Marketplace 的目录中（[安装方法见下文](#安装步骤)）。
 
 StrausbergAutomationWorks 的原创作品。与 adsb.fi、adsb.lol、adsbdb、美国联邦航空管理局（Federal Aviation Administration，FAA）、OurAirports、ADS-B Radar、Planespotters.net、任何航空公司或任何飞机运营者均无关联，也未获得它们的认可。
 

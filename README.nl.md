@@ -22,7 +22,7 @@ ook zijn, en uitkijken naar militaire vliegtuigen in gebieden die je opgeeft.
 > [Stel het voor](#help-het-groeien), of voeg het zelf toe: we helpen je
 > daarbij.
 
-**Status: 0.1.6, uitgebracht.** In de catalogus van de Marktplaats ([installeer
+**Status: 0.1.7, uitgebracht.** In de catalogus van de Marktplaats ([installeer
 het hieronder](#installeren-stap-voor-stap)).
 
 Eigen werk van StrausbergAutomationWorks. Niet verbonden met, en niet

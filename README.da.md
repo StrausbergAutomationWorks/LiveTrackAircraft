@@ -21,7 +21,7 @@ holde øje med militærfly i områder, du angiver.
 > fly. Mangler dit? [Foreslå det](#hjælp-den-med-at-vokse), eller tilføj det
 > selv: vi hjælper dig med det.
 
-**Status: 0.1.6, udgivet.** I Markedspladsens katalog ([installér den
+**Status: 0.1.7, udgivet.** I Markedspladsens katalog ([installér den
 nedenfor](#installation-trin-for-trin)).
 
 Originalt arbejde af StrausbergAutomationWorks. Ikke tilknyttet eller
