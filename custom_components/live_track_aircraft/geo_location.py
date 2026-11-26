@@ -179,7 +179,7 @@ class Aircraft(GeolocationEvent):
             return ATTRIBUTION + "; " + ADSBDB_ATTRIBUTION
         return ATTRIBUTION
 
-    # The discriminator the shared map's auto-entities card filters on.
+    # The discriminator the shared map card filters on.
     _attr_source = DOMAIN
 
     # ! NOT a class constant. It was `_attr_icon = "mdi:airplane"`, which

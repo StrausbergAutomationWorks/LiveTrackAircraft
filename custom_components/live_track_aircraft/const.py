@@ -55,7 +55,7 @@ MAX_SCAN_INTERVAL = 3600
 
 # --- entity cap ---------------------------------------------------------
 # ! A GUARD RAIL, NOT A DISPLAY CONTROL. Thinning belongs to the card:
-# auto-entities filters on domain and attributes without a restart. An
+# the map card filters on domain and attributes without a restart. An
 # integration-side cap set too low loses data that was never published and
 # looks like poor coverage rather than a setting.
 #

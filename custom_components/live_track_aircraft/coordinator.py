@@ -846,7 +846,7 @@ class AircraftCoordinator(DataUpdateCoordinator):
 # --------------------------------------------------------------------------
 # The marker label.
 #
-# ! THIS ATTRIBUTE IS THE ENTIRE MAP DISPLAY. auto-entities renders
+# ! THIS ATTRIBUTE IS THE ENTIRE MAP DISPLAY. The map card renders
 # marker_label beside each marker at size 28 and nothing else, so it is a
 # short answer to "what is that", not a description.
 #
