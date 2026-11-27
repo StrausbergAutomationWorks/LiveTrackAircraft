@@ -133,7 +133,7 @@ kilde, som et andet allerede læser.
 | [Live Track Intercity Rail](https://github.com/StrausbergAutomationWorks/LiveTrackIntercityRail) | intercity- og fjerntog i Nordamerika, Europa og Australien | udgivet |
 | [Live Track SALT](https://github.com/StrausbergAutomationWorks/LiveTrackSALT) | fly og skibe fra udlændinge- og føderale ordensmyndigheder, fra offentlige lister | udgivet |
 | [Live Track Weather](https://github.com/StrausbergAutomationWorks/LiveTrackWeather) | vejr, storme og naturfarer | udgivet |
-| [Live Track Internet](https://github.com/StrausbergAutomationWorks/LiveTrackInternet) | internetudfald, søkabler og landforbindelser | udgivet |
+| [Live Track Internet](https://github.com/StrausbergAutomationWorks/LiveTrackInternet) | internetudfald, søkabler og landkabler | udgivet |
 | Live Track Stations | afgangstavler og "tid til at gå"-påmindelser for hver station | planlagt |
 | Live Track Satellites | satellitter, der passerer over dig | planlagt |
 | Live Track Freight Trains | gods- og arbejdstog, hvor jernbaner offentliggør dem | planlagt |
